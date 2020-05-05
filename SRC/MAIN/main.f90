@@ -24,7 +24,6 @@ program HICOLM
   use estrutura            ! definindo espaço real
   use brillouin            ! definindo zona de brillouin
   use molecular_dynamics   ! metodo Dinâmica Molecular
-  use tight_binding        ! metodo Tight-Binding
   use outfile              ! imprimindo informacoes em arquivo out
 
   implicit none
@@ -74,12 +73,7 @@ program HICOLM
   call reciprocal
   !========================================================
   !-calculando Dinâmica molecular
-  select case(method)
-  case('TB')
-     call tb(t3)
-  case('MD')
-     call md(t3)
-  end select
+  call md(t3)
   !========================================================
   !-calculando propriedades
   !if(ebndtot.eq.1)call solving(t4)

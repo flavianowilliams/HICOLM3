@@ -33,19 +33,28 @@ module vdw_module
   integer nvdwstp
   real(8) envdw_corr,virvdw_corr
 
+  ! integer nintp
+!  real(8) interp_v(50,50,1000000),interp_f(50,50,1000000),interp_dr(1000000)
+!  save nintp
+
   save nvdwstp,envdw_corr,virvdw_corr
 
 contains
 
-  subroutine vdw_convert
+  subroutine vdw_prepare
     !****************************************************************************************
-    ! Conversao de unidades de medida:                                                      *
-    ! Unidades de entrada ---> a.u.                                                         *
+    ! Preparando parametros para o calculo de Van der Waals:                                *
+    ! Conversao de unidades ---> a.u.                                                       *
     !****************************************************************************************
-
     implicit none
 
-    integer i,j
+    integer, allocatable :: chk(:,:)
+
+    integer i,j,k,ix,nx,ii,jj,ixx,nkb
+
+!    real(8) rinit,drintp,pot,fr
+
+    allocate(chk(spctot,spctot))
 
     !-convertendo parametros de Van der Waals
 
@@ -59,23 +68,12 @@ contains
           case(2)
              parvdw(i,j,1)=parvdw(i,j,1)/econv
              parvdw(i,j,2)=parvdw(i,j,2)/rconv
+          case(3)
+             parvdw(i,j,1)=parvdw(i,j,1)/econv
+             parvdw(i,j,2)=parvdw(i,j,2)/rconv
           end select
        end do
     end do
-
-    return
-
-  end subroutine vdw_convert
-
-  subroutine vdw_counts
-
-    implicit none
-
-    integer, allocatable :: chk(:,:)
-
-    integer i,j,k,ix,nx,ii,jj,ixx,nkb
-
-    allocate(chk(spctot,spctot))
 
     !-checando viabilidade de interacoes intermoleculares
 
@@ -88,6 +86,8 @@ contains
              nkb=3
           case(2)
              nkb=2
+          case(3)
+             nkb=2
           end select
           chk(i,j)=1
           do k=1,nkb
@@ -96,7 +96,14 @@ contains
        end do
     end do
 
-    !-calculando qde de Van der Waals e coulomb
+    !-calculando qde de Van der Waals
+
+    nvdw=0
+    do i=1,spctot
+       do j=i,spctot
+          if(chk(i,j).eq.1)nvdw=nvdw+1
+       end do
+    end do
 
     ix=1
     nx=1
@@ -119,7 +126,7 @@ contains
 
     return
 
-  end subroutine vdw_counts
+  end subroutine vdw_prepare
 
   subroutine vdw_calc(envdw,virvdw,ni,nj,xvz,yvz,zvz)
     !****************************************************************************************
@@ -184,6 +191,16 @@ contains
 
        fr=24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
 
+    case(3)
+
+       do ii=1,2
+          prm(ii)=parvdw(i,j,ii)
+       end do
+
+       pot=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
+
+       fr=24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
+
     end select
 
     return
@@ -196,7 +213,6 @@ contains
     ! - Contribuicao para o stress                                                          *
     ! - Forcas dos atomos i, j, k e n                                                       *
     !****************************************************************************************
-
     implicit none
 
     integer i,j
@@ -247,6 +263,14 @@ contains
              end do
              envdw_corr=0.d0
           case(2)
+             do ii=1,2
+                prm(ii)=parvdw(i,j,ii)
+             end do
+             es=4.d0*prm(1)*(prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
+             vs=-8.d0*prm(1)*(2.d0*(prm(2)/rcutoff)**6/3.d0-1.d0)*prm(2)**6/rcutoff**3
+             envdw_corr=envdw_corr+es*natnp(i)*natnp(j)
+             virvdw_corr=virvdw_corr+vs*natnp(i)*natnp(j)
+          case(3)
              do ii=1,2
                 prm(ii)=parvdw(i,j,ii)
              end do

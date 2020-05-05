@@ -27,13 +27,13 @@ module neighbour_list
   use vdw_module
   use coulomb_module
 
-  integer verlchk,ntrsffstp
+  integer verlchk
 
-  integer, allocatable :: ilist(:,:),ilista(:,:)
-  integer, allocatable :: nlist(:),nlista(:)
-  integer, allocatable :: trsffi(:)
+  integer, allocatable :: ilist(:,:)!,ilista(:,:)
+  integer, allocatable :: nlist(:)!,nlista(:)
+!  integer, allocatable :: trsffi(:)
 
-  save ntrsffstp,verlchk
+  save verlchk
 
 contains
 
@@ -43,74 +43,77 @@ contains
     !****************************************************************************************
     implicit none
 
-    integer numb,ierr
+    integer numb,ierr,ierra
 
     !-valores iniciais
 
     verlchk=1
+    ierr=0
+    ierra=0
 
-    !-alocando arrays (vizinhos intermoleculares)
+    !-alocando arrays
 
-    if(nvdw.ne.0.or.ncoul.ne.0)then
-       numb=int(0.125*max(ncoulstp,nvdwstp))
+!    if(nvdwstp.ne.0.or.ncoulstp.ne.0)then
+       numb=max(1,int(0.125*max(ncoulstp,nvdwstp)))
        allocate(ilist(natom,numb),nlist(natom),stat=ierr)
-    end if
+!    end if
 
     !-alocando arrays (vizinhos intramoleculares)
 
-    if(ntrsff.ne.0)then
-       allocate(ilista(natom,natom),nlista(natom))
-    end if
+!    if(ntrsff.ne.0)then
+!       allocate(ilista(natom,natom),nlista(natom),stat=ierra)
+!    end if
 
     if(ierr.ne.0)stop 'neighbour_prepare: allocation failed'
+    if(ierra.ne.0)stop 'neighbour_prepare: allocation failed'
 
     return
 
   end subroutine neighbour_prepare
 
-  subroutine verlet_list_all
-    !****************************************************************************************
-    ! Atualizacao a lista de vizinhos segundo o método de Verlet                            *
-    !****************************************************************************************
-
-    implicit none
-
-    integer i,j,nx
-    real(8) dr,xvz,yvz,zvz,drmax,drx,dry,drz
-
-    !-atualizando lista de vizinhos
-
-    do i=1,natom
-       nx=1
-       do j=1,natom
-          if(i.eq.j)cycle
-          call mic(i,j,xvz,yvz,zvz)
-          dr=sqrt(xvz**2+yvz**2+zvz**2)
-          if(dr.le.rcutoff)then
-             ilista(i,nx)=j
-             nx=nx+1
-          end if
-          nlista(i)=nx-1
-       end do
-    end do
-
-    !-atualizando intervalo
-
-    drmax=0.d0
-    do i=1,natom
-       drx=vax(i)*dtime+0.5d0*fax(i)*dtime**2/mass(i)
-       dry=vay(i)*dtime+0.5d0*fay(i)*dtime**2/mass(i)
-       drz=vaz(i)*dtime+0.5d0*faz(i)*dtime**2/mass(i)
-       dr=sqrt(drx**2+dry**2+drz**2)
-       drmax=max(drmax,dr)
-    end do
-
-    if(drmax.ne.0.d0)verlchk=min(verlchk,max(1,int(drcutoff/drmax)))
-
-    return
-
-  end subroutine verlet_list_all
-
+!  subroutine verlet_list_all
+!    !****************************************************************************************
+!    ! Atualizacao a lista de vizinhos segundo o método de Verlet                            *
+!    !****************************************************************************************
+!
+!    implicit none
+!
+!    integer i,j,nx
+!    real(8) dr,xvz,yvz,zvz,drmax,drx,dry,drz
+!
+!    !-atualizando lista de vizinhos
+!
+!    do i=1,natom
+!       nx=1
+!       do j=1,natom
+!          if(i.eq.j)cycle
+!          call mic(i,j,xvz,yvz,zvz)
+!          dr=sqrt(xvz**2+yvz**2+zvz**2)
+!          if(dr.le.rcutoff)then
+!             ilista(i,nx)=j
+!             nx=nx+1
+!          end if
+!          nlista(i)=nx-1
+!       end do
+!    end do
+!
+!    !-atualizando intervalo
+!
+!    drmax=0.d0
+!    do i=1,natom
+!       drx=vax(i)*dtime+0.5d0*fax(i)*dtime**2/mass(i)
+!       dry=vay(i)*dtime+0.5d0*fay(i)*dtime**2/mass(i)
+!       drz=vaz(i)*dtime+0.5d0*faz(i)*dtime**2/mass(i)
+!       dr=sqrt(drx**2+dry**2+drz**2)
+!       drmax=max(drmax,dr)
+!    end do
+!
+!    if(drmax.ne.0.d0)verlchk=min(verlchk,max(1,int(drcutoff/drmax)))
+!
+!    return
+!
+!  end subroutine verlet_list_all
+!
   subroutine verlet_list_inter
     !****************************************************************************************
     ! Atualizacao da lista de vizinhos segundo o método de Verlet                           *

@@ -28,8 +28,8 @@ module ensemble_npt
 
 contains
 
-  subroutine npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-       virbond,virbend,virtors,vircoul,virtrsff)
+  subroutine npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,virvdw, &
+       virbond,virbend,virtors,vircoul)
     !*************************************************************************************
     ! Controle da temperatura e pressão pelo algoritmo Berendsen                         *
     !*************************************************************************************
@@ -38,8 +38,8 @@ contains
 
     integer i,j
     real(8) temp,press,xhi,eta,ekinet,sigma
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw
 
     !-preparando parametro de escalonamento isotrópico
 
@@ -72,9 +72,9 @@ contains
 
     !-checando dimensoes da caixa
 
-    if((rcutoff+drcutoff).gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
 
     !-aplicando condicoes de contorno inversa
 
@@ -82,8 +82,8 @@ contains
 
     !-calculo das forças no instante t+dt posterior
 
-    call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond, &
-         virbend,virtors,vircoul,virtrsff)
+    call ff_modules(encoul,enbond,enbend,entors,envdw,virvdw,virbond, &
+         virbend,virtors,vircoul)
 
     !-calculando velocidades no instante t+dt posterior
 
@@ -131,7 +131,7 @@ contains
 
     !-calculo da pressao
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 
@@ -155,7 +155,7 @@ contains
   end subroutine npt_ber_vv
 
   subroutine npt_hoover_vv(vxhi,veta,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,&
-       envdw,entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+       envdw,virvdw,virbond,virbend,virtors,vircoul)
     !*************************************************************************************
     ! Controle da temperatura e pressão pelo algoritmo Berendsen                         *
     !*************************************************************************************
@@ -164,8 +164,8 @@ contains
 
     integer i,j
     real(8) temp,press,vxhi,veta,ekinet,sigma,qmass,pmass,vxhi0,veta0
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw
 
     !-massa do termostato e barostato
 
@@ -223,9 +223,9 @@ contains
 
     !-checando dimensoes da caixa
 
-    if((rcutoff+drcutoff).gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
 
     !-aplicando condicoes de contorno inversa
 
@@ -233,8 +233,8 @@ contains
 
     !-forças no instante t+dt
 
-    call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond, &
-         virbend,virtors,vircoul,virtrsff)
+    call ff_modules&
+         (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
 
     !-velocidades no instante t+dt
 
@@ -259,7 +259,7 @@ contains
 
     !-pressao no instante t+dt
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 
     !-parametros de escalonamento isotrópico no instante t+dt
@@ -333,7 +333,7 @@ contains
 
     !-pressao no instante t+dt
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 

@@ -1,0 +1,36 @@
+# Qde de frames
+35
+# tamanho da populacao
+1000 #AQUI
+# Qde maxima de passos
+1500
+# intervalo de valores dos genes
+0.25
+# opcao do tipo de cruzamento entre cromossomos: 0,1,2 ou 3; 0-> sem cruzamento
+3
+# porcentagem de individuos na nova geracao e probabilidade de mutacao
+0.3 0.03
+# tolerancia minima
+0.01
+# Descricao da molecula
+1                 # qde de tipos moleculares
+H2O               # id da molecula
+2 3               # qde moleculas, qde atomos por molecula
+1 2 3             # tipos atomicos
+8 1 1             # numero atomico
+-0.82 0.41 0.41   # cargas parciais
+
+2 2               # qde e tipo de bond
+-2070  54.0 0.97  # parametros
+F T T            # parametro fixo ou variavel
+1 2               # atomos da molecula ligados por bond
+1 3               # atomos da molecula ligados por bond
+
+1 1               # qde e tipo de bend
+9.0000 105.00     # parametros
+T T               # parametro fixo ou variavel
+2 1 3             # atomos da molecula ligados por bend
+
+1                 # qde de van der waals
+1 1 1  0.01 2.90  # tipos de atomos ligados por vdw, tipo vdw, parametros
+T T               # parametro fixo ou variavel

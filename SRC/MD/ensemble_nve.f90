@@ -28,8 +28,8 @@ module ensemble_nve
 
 contains
 
-  subroutine nve_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-       virbond,virbend,virtors,vircoul,virtrsff)
+  subroutine nve_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,virvdw, &
+       virbond,virbend,virtors,vircoul)
     !*************************************************************************************
     ! Ensemble microcanonico                                                             *
     !*************************************************************************************
@@ -38,8 +38,8 @@ contains
 
     integer i
     real(8) temp,press,ekinet
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw
 
     !-calculando posições no instante t+dt posterior
 
@@ -58,8 +58,8 @@ contains
 
     !-calculo das forças no instante t+dt posterior
 
-    call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond,virbend,virtors, &
-         vircoul,virtrsff)
+    call ff_modules&
+         (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
 
     !-calculando velocidades no instante t+dt posterior
 
@@ -84,7 +84,7 @@ contains
 
     !-calculo da pressao
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+3.d0*temp+virtot+virvdw_corr)/(3.d0*volume)
 

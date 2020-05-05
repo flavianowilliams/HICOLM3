@@ -82,6 +82,7 @@ contains
              partors(i,j,4)=partors(i,j,4)/econv
              partors(i,j,5)=partors(i,j,5)/econv
              partors(i,j,6)=partors(i,j,6)/econv
+             partors(i,j,7)=partors(i,j,7)/aconv
           end select
        end do
     end do
@@ -207,7 +208,6 @@ contains
        !-angulo do diedro
 
        phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dvc1*dvc2))
-
        phi=max(1.d-4,phi)
 
        call tors_flags(im,in,phi,pot,fd)
@@ -229,7 +229,7 @@ contains
     implicit none
 
     integer im,in
-    real(8) phi,fd,pot
+    real(8) phi,fd,pot,psi
 
     !-valores iniciais
 
@@ -246,12 +246,13 @@ contains
        pot=0.5d0*partors(im,in,1)*(cos(phi)-partors(im,in,2))**2
        fd=-sin(phi)*partors(im,in,1)*(cos(phi)-partors(im,in,2))
     case(3)
-       pot=partors(im,in,1)+partors(im,in,2)*cos(phi)+partors(im,in,3)*cos(phi)**2&
-            +partors(im,in,4)*cos(phi)**3+partors(im,in,5)*cos(phi)**4&
-            +partors(im,in,6)*cos(phi)**5
-       fd=-sin(phi)*(partors(im,in,2)+2.d0*partors(im,in,3)*cos(phi)&
-            +3.d0*partors(im,in,4)*cos(phi)**2+4.d0*partors(im,in,5)*cos(phi)**3&
-            +5.d0*partors(im,in,6)*cos(phi)**4)
+       psi=phi-partors(im,in,7)
+       pot=partors(im,in,1)+partors(im,in,2)*cos(psi)+partors(im,in,3)*cos(psi)**2&
+            +partors(im,in,4)*cos(psi)**3+partors(im,in,5)*cos(psi)**4&
+            +partors(im,in,6)*cos(psi)**5
+       fd=-sin(psi)*(partors(im,in,2)+2.d0*partors(im,in,3)*cos(psi)&
+            +3.d0*partors(im,in,4)*cos(psi)**2+4.d0*partors(im,in,5)*cos(psi)**3&
+            +5.d0*partors(im,in,6)*cos(psi)**4)
     end select
 
     return

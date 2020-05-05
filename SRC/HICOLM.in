@@ -1,0 +1,40 @@
+# Structure variables
+
+&STRUCT
+cell
+19.0 0.0  0.0
+0.0 19.0  0.0
+0.0  0.0 19.0
+molecs 1
+H2O 100 3
+reuse 0
+&END
+
+# Molecular dynamics variables
+
+&MD
+nhist 10
+preext 1.0d0
+text 298.0
+ntrialmax 100
+nrelax 1
+timestep 0.001
+ensemble npt berendsen 0.5 0.5 4.9e-5
+rcutoff 7.0 0.1
+&END
+
+# Force field variables
+
+&FORCE
+ $AMBER
+  molecule H2O
+  OW HW HW
+  -0.834 0.417 0.417
+ $END
+ $INTER
+ vdw 1
+ 1 1 lj 0.0 0.0
+ elect 1 coul
+ 1 -0.82
+ $END
+&END

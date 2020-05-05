@@ -79,6 +79,9 @@ contains
           case(2)
              parbnd(i,j,1)=parbnd(i,j,1)/(econv/rconv**2.d0)
              parbnd(i,j,2)=parbnd(i,j,2)/rconv
+          case(3)
+             parbnd(i,j,1)=parbnd(i,j,1)/(econv/rconv**2.d0)
+             parbnd(i,j,2)=parbnd(i,j,2)/rconv
           end select
        end do
     end do
@@ -112,6 +115,8 @@ contains
           case(1)
              nkb=3
           case(2)
+             nkb=2
+          case(3)
              nkb=2
           end select
           chk(i,j)=1
@@ -221,6 +226,13 @@ contains
        fr=2.d0*prm(1)*prm(2)*(exp(-2.d0*prm(2)*(dr-prm(3))) &
             -exp(-prm(2)*(dr-prm(3))))/dr
     case(2)
+       do ii=1,2
+          prm(ii)=parbnd(im,in,ii)
+       end do
+       pot=0.5d0*prm(1)*(dr-prm(2))**2
+
+       fr=-prm(1)*(dr-prm(2))/dr
+    case(3)
        do ii=1,2
           prm(ii)=parbnd(im,in,ii)
        end do

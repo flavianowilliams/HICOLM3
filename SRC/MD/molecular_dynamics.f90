@@ -59,19 +59,20 @@ contains
 
     call md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
 
-    write(6,'(96a1)')('#',i=1,93)
+    write(6,*)('#',i=1,93)
+    write(6,*)('MD RUNNING ',i=1,8)
+    write(6,*)('#',i=1,93)
     write(6,*)
-    write(6,'(a27,f12.4)')'  Correction of VdW energy:',envdw_corr*econv
-    write(6,'(a27,f12.4)')'Correction of VdW pressure:',virvdw_corr*econv
+
+    write(6,'(2x,a27,f12.4)')'  Correction of VdW energy:',envdw_corr*econv
+    write(6,'(2x,a27,f12.4)')'Correction of VdW pressure:',virvdw_corr*econv
     write(6,*)
 
     !-ciclo MD
 
-    write(6,*)
-
-    write(6,'(111a1)')('-',i=1,88)
-    write(6,10)'##','Step','Time','VOLUME','TEMPERA','PRESSURE','E(TOTL)'
-    write(6,'(111a1)')('-',i=1,88)
+    write(6,'(4x,111a1)')('-',i=1,84)
+    write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
+    write(6,'(4x,111a1)')('-',i=1,84)
 
     !-relaxação do sistema
 
@@ -94,7 +95,7 @@ contains
        time=time+dtime
     end do
 
-    write(6,'(111a1)')('-',i=1,88)
+    write(6,'(4x,111a1)')('-',i=1,84)
     write(6,*)
 
     !-contagem do tempo absoluto
@@ -105,8 +106,8 @@ contains
 
     return
 
-10  format(1x,a2,6x,a4,6x,a5,9x,a6,6x,a8,7x,a8,6x,a7)
-20  format(1x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
+20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 
   end subroutine md
 
@@ -121,8 +122,8 @@ contains
 
     integer i,nwr
     real(8) xhi,eta,sigma,ekinet,temp,press
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff,enpot
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw,enpot
 
     !-abrindo ficheiro de dados
 
@@ -136,24 +137,30 @@ contains
 
     call ff_prepare
 
+    !-checando dimensoes da caixa
+
+    if(rcutoff.gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
+
     !-preparando lista de vizinhos de Verlet
 
-    if(nvdw.ne.0.or.ncoul.ne.0)call verlet_list_inter
+    call verlet_list_inter
 
-    if(ntrsff.ne.0)call verlet_list_all
+!    if(ntrsff.ne.0)call verlet_list_all
 
     !-forças iniciais
 
-    if(reuse.eq.0)call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond, &
-         virbend,virtors,vircoul,virtrsff)
+    if(reuse.eq.0)call ff_modules&
+         (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
 
     !-energia potencial
 
-    enpot=encoul+enbond+enbend+entors+envdw+entrsff
+    enpot=encoul+enbond+enbend+entors+envdw
 
     !-correcao da energia de Van der Waals de curto alcance
 
-    if(nvdw.ne.0)call vdw_corr
+    call vdw_corr
 
     !-massa total
 
@@ -186,7 +193,7 @@ contains
 
     !-valor inicial da pressão
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 
@@ -207,38 +214,38 @@ contains
     integer mdstp,i,ix
     real(8) temp,press,xhi,eta,sigma
 
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff
-    real(8) ekinet,encoul,enbond,enbend,entors,envdw,entrsff,enpot
+    real(8) virvdw,virbond,virbend,virtors,vircoul
+    real(8) ekinet,encoul,enbond,enbend,entors,envdw,enpot
 
     !-integrando as variáveis canônicas posição e velocidade
 
     select case(ensble)
     case('nve')
-       call nve_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-            virbond,virbend,virtors,vircoul,virtrsff)
+       call nve_vv(temp,press,&
+            ekinet,encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
     case('nvt')
        select case(ensble_mt)
        case('berendsen')
           call nvt_ber_vv(sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
-               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+               virvdw,virbond,virbend,virtors,vircoul)
        case('hoover')
           call nvt_hoover_vv(xhi,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
-               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+               virvdw,virbond,virbend,virtors,vircoul)
        end select
     case('npt')
        select case(ensble_mt)
        case('berendsen')
-          call npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-               virbond,virbend,virtors,vircoul,virtrsff)
+          call npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,virvdw, &
+               virbond,virbend,virtors,vircoul)
        case('hoover')
-          call npt_hoover_vv(xhi,eta,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
-               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+          call npt_hoover_vv(xhi,eta,sigma,temp,press,ekinet,&
+               encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
        end select
     end select
 
     !-calculo da energia potencial
 
-    enpot=encoul+enbond+enbend+entors+envdw+entrsff
+    enpot=encoul+enbond+enbend+entors+envdw
 
     !-imprimindo estrutura
 
@@ -268,11 +275,9 @@ contains
 
     !-atualizando a lista de vizinhos de Verlet
 
-    if(mod(mdstp,verlchk).eq.0)then
-       if(nvdw.ne.0.or.ncoul.ne.0)call verlet_list_inter
-    end if
+    if(mod(mdstp,verlchk).eq.0)call verlet_list_inter
 
-    if(ntrsff.ne.0)call verlet_list_all
+!    if(ntrsff.ne.0)call verlet_list_all
 
     return
 
@@ -295,27 +300,27 @@ contains
     write(6,*)('MOLECULAR DYNAMICS ',j=1,5)
     write(6,*)('#',j=1,93)
     write(6,*)
-    write(6,'(5x,a30)')'Molecular dynamics information'
-    write(6,'(5x,36a1)')('-',j=1,36)
-    write(6,'(5x,a16,f7.2)')'Temperature (K):',text*teconv
-    write(6,'(7x,a14,es12.4)')'Pressure (atm):',preext*pconv
-    write(6,'(12x,a9,2x,a5,2x,a9)')'Ensemble:',ensble,ensble_mt
+    write(6,'(31x,a30)')'Molecular dynamics information'
+    write(6,'(28x,36a1)')('-',j=1,36)
+    write(6,'(28x,a12,1x,a3,1x,a9)')'Ensemble:',ensble,ensble_mt
     if(ensble.eq.'nvt')then
-       write(6,'(10x,a11,f5.2)')'Thermostat:',tstat*tconv
+       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',tstat*tconv
     elseif(ensble.eq.'npt')then
-       write(6,'(10x,a11,f5.2)')'Thermostat:',tstat*tconv
+       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',tstat*tconv
        if(ensble_mt.eq.'berendsen')then
-          write(6,'(10x,a11,f5.2,2x,es7.1)')'Barostat:',pstat*tconv,bfactor/pconv
+          write(6,'(28x,a12,5x,f8.2,1x,es7.1)')'Barostat:',pstat*tconv,bfactor/pconv
        elseif(ensble_mt.eq.'hoover')then
-          write(6,'(10x,a11,f5.2)')'Barostat:',pstat*tconv
+          write(6,'(28x,a12,5x,f8.2)')'Barostat:',pstat*tconv
        end if
     end if
-    write(6,'(5x,a16,i10)')'ntrialmax:',ntrialmax
-    write(6,'(5x,a16,i10)')'nrelax:',nrelax
-    write(6,'(5x,a16,i5)')'reuse:',reuse
-    write(6,'(5x,a16,es10.3)')'Timestep (ps):',dtime*tconv
-    write(6,'(5x,a16,2f6.3)')'rcutoff:',rcutoff*rconv,drcutoff*rconv
-    write(6,'(5x,36a1)')('-',j=1,36)
+    write(6,'(28x,a12,5x,f9.3,1x,a1)')'Temperature:',text*teconv,'K'
+    write(6,'(28x,a12,5x,f9.3,1x,a3)')'Pressure:',preext*pconv,'atm'
+    write(6,'(28x,a12,6x,i10)')'ntrialmax:',ntrialmax
+    write(6,'(28x,a12,6x,i10)')'nrelax:',nrelax
+    write(6,'(28x,a12,9x,i1)')'reuse:',reuse
+    write(6,'(28x,a12,8x,es10.3,1x,a2)')'Timestep:',dtime*tconv,'ps'
+    write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
+    write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
 
     return

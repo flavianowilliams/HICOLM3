@@ -33,7 +33,7 @@ module force_field
   use dihedral_module
   use vdw_module
   use coulomb_module
-  use tersoff_module
+  use neighbour_list
 
 contains
 
@@ -44,11 +44,8 @@ contains
 
     implicit none
 
-    integer i,j
+    integer i,j,k,l
     real(8) chqtot
-
-    write(6,'(96a1)')('#',i=1,93)
-    write(6,*)
 
     !-valores iniciais
 
@@ -64,17 +61,11 @@ contains
 
     !-unidades de Van der Waals
 
-    if(nvdw.ne.0)then
-       call vdw_convert
-       call vdw_counts
-    end if
+    call vdw_prepare
 
     !-unidades de Coulomb
 
-    if(ncoul.ne.0)then
-       call coulomb_convert
-       call coulomb_counts
-    end if
+    call coulomb_prepare
 
     !-alocando arrays (lista de vizinhos de Verlet)
 
@@ -104,73 +95,162 @@ contains
        call tors_counts
     end if
 
-    !-unidades de Tersoff
+    write(6,*)('#',j=1,93)
+    write(6,*)('FORCE FIELD ',j=1,8)
+    write(6,*)('#',j=1,93)
+    WRITE(6,*)
 
-    if(ntrsff.ne.0)call tersoff_convert
+    !-intramolecular description
+
+    write(6,'(39x,a14)')'INTRAMOLECULAR'
+    write(6,'(39x,a14)')'=============='
+    write(6,*)
 
     if(nmolec.ne.0)then
-       write(6,*)'Molecules'
-       write(6,'(111a1)')('-',i=1,52)
-       write(6,10)'Type','Qty','Sites','bonds','bends','dihdl'
-       write(6,'(111a1)')('-',i=1,52)
+       write(6,'(20x,a9)')'Molecules'
+       write(6,'(20x,111a1)')('-',i=1,52)
+       write(6,'(20x,a4,7x,a3,4x,a6,3(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
+       write(6,'(20x,111a1)')('-',i=1,52)
        do i=1,nmolec
-          write(6,20)namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
+          write(6,'(20x,a6,2x,i5,4(4x,i5))')&
+               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
        end do
-       write(6,'(111a1)')('-',i=1,52)
-       write(6,20)'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp
+       write(6,'(20x,111a1)')('-',i=1,52)
+       write(6,'(20x,a6,2x,i5,4(4x,i5))')'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp
        write(6,*)
     end if
 
+    write(6,*)
+    write(6,*)
+
+    k=0
+    do i=1,nmolec
+       write(6,'(42x,a6,1x,a7)')namemol(i),ff_model(i)
+       write(6,'(20x,111a1)')('*',j=1,52)
+       if(nxmolec(i).le.10)then
+          write(6,'(20x,a6,10(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
+       else
+          write(6,'(20x,a6,10(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
+          write(6,'(26x,10(1x,a2))')(atsp(j+k),j=1,nxmolec(i))
+       end if
+       write(6,*)
+       write(6,'(20x,a6,1x,i5)')'Bonds:',bondscnt(i)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,a4,2x,a4,2x,a4,3x,a10)')'Site','Site','Type','Parameters'
+       write(6,'(20x,111a1)')('-',j=1,52)
+       do j=1,bondscnt(i)
+          select case(bonds(i,j))
+          case(1)
+             write(6,'(20x,2(i3,3x),a4,1x,3f9.4)')(molbond(i,j,l),l=1,2),&
+                  'mors',parbnd(i,j,1)*econv,parbnd(i,j,2)*kconv,parbnd(i,j,3)*rconv
+          case(2)
+             write(6,'(20x,2(i3,3x),a4,1x,2f9.4)')(molbond(i,j,l),l=1,2),&
+                  'harm',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
+          case(3)
+             write(6,'(20x,2(i3,3x),a5,2f9.4)')(molbond(i,j,l),l=1,2),&
+                  'amber',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
+          end select
+       end do
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(20x,a6,1x,i5)')'Bends:',bendscnt(i)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,3(a4,2x),a4,4x,a10)')'Site','Site','Site','Type','Parameters'
+       write(6,'(20x,111a1)')('-',j=1,52)
+       do j=1,bendscnt(i)
+          select case(bends(i,j))
+          case(1)
+             write(6,'(20x,3(i3,3x),a4,3f9.3)')&
+                  (molbend(i,j,l),l=1,3),'harm',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
+          case(2)
+             write(6,'(20x,3(i3,3x),a5,3f8.3)')&
+                  (molbend(i,j,l),l=1,3),'amber',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
+          end select
+       end do
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(20x,a10,1x,i5)')'Dihedrals:',torscnt(i)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,4(a4,2x),a4,3x,a10)')'Site','Site','Site','Site','Type','Parameters'
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(20x,111a1)')('*',j=1,52)
+       write(6,*)
+       write(6,*)
+       k=k+nxmolec(i)
+    end do
+    write(6,*)
+    write(6,*)
+
+    !-intermolecular description
+
+    write(6,'(39x,a14)')'INTERMOLECULAR'
+    write(6,'(39x,a14)')'=============='
+    write(6,*)
+
     chqtot=0
-    do i=1,spctot
-       chqtot=chqtot+parcoul(atnp(i),1)
+    do i=1,natom
+       chqtot=chqtot+parcoul(atp(i),1)
     end do
 
-    if(spctot.lt.10)then
-       write(6,30)'Total of species:',spctot,'->',(atnp(i),i=1,spctot)
+    select case(coulop)
+    case('coul')
+       write(6,90)'Electrostatic interaction: Force-Shifted Coulomb Sum'
+       write(6,*)
+    end select
+
+    if(spctot.le.10)then
+       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+            'Total of species:',spctot,'->',(atsp(i),i=1,spctot)
+       write(6,*)
+       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
+            'Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,spctot)
        write(*,*)
-       write(6,80)' Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,spctot)
-       write(*,*)
+       write(6,82)' Total charge:',chqtot
+       write(6,*)
+       write(6,70)'       Maximum coulomb interaction:',ncoulstp
+       write(6,*)
     else
-       write(6,30)'Total of species:',spctot,'->',(atnp(i),i=1,10)
-       write(6,31)(atnp(i),i=11,spctot)
+       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+            'Total of species:',spctot,'->',(atsp(i),i=1,10)
+       write(6,'(27x,10(1x,a2))')(atsp(i),i=11,spctot)
        write(*,*)
-       write(6,80)' Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,10)
-       write(6,81)(parcoul(atnp(i),1),i=11,spctot)
+       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
+            'Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,10)
+       write(6,'(27x,10f7.3)')(parcoul(atnp(i),1),i=11,spctot)
        write(6,*)
        write(6,82)' Total charge:',chqtot
        write(6,*)
-    end if
-    write(6,*)'Intermolecular:'
-    write(6,*)
-
-    if(ncoul.ne.0)then
-       select case(coulop)
-       case('coul')
-          write(*,*)'Electrostatic interaction: Force-Shifted Coulomb Sum'
-          write(*,*)
-       end select
-    end if
-
-    if(nvdw.ne.0)then
-       write(6,60)'Van der Waals:',nvdw
-       write(6,*)
-       do i=1,spctot
-          do j=i,spctot
-             select case(vdw(i,j))
-             case(1)
-                write(6,50)&
-                     i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
-             case(2)
-                write(6,50)i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
-             end select
-          end do
-       end do
-       write(6,*)
        write(6,70)'       Maximum coulomb interaction:',ncoulstp
-       write(6,70)' Maximum Van der Waals interaction:',nvdwstp
        write(6,*)
     end if
+
+    write(6,'(20x,a15,i5)')'Van der Waals:',nvdw
+    write(6,'(20x,111a1)')('-',i=1,52)
+    write(6,'(20x,a4,2x,a4,2x,a4,3x,a10)')'Site','Site','Type','Parameters'
+    write(6,'(20x,111a1)')('-',i=1,52)
+    do i=1,spctot
+       do j=i,spctot
+          select case(vdw(i,j))
+          case(1)
+             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                  i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+          case(2)
+             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                  i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+          case(3)
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+                write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')&
+                     atsp(i),atsp(j),'amber',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             end if
+          end select
+       end do
+    end do
+    write(6,'(20x,111a1)')('-',i=1,52)
+    write(6,*)
+    write(6,70)' Maximum Van der Waals interaction:',nvdwstp
+    write(6,*)
 
     !-limpando memoria
 
@@ -178,27 +258,19 @@ contains
 
     return
 
-10  format(a4,7x,a3,4x,a6,4x,a5,4x,a5,4x,a5)
-20  format(a6,2x,i5,4(4x,i5))
-30  format(a18,i3,2x,a2,10i4)
-31  format(25x,10i4)
-50  format(5x,2i3,a5,5x,3f7.4)
-60  format(a14,i5)
-70  format(a35,i10)
-80  format(a18,i3,2x,a2,10f8.4)
-81  format(25x,10f8.4)
-82  format(a18,10f8.4)
+70  format(2x,a35,i10)
+82  format(2x,a18,10f8.4)
+90  format(2x,a53)
 
   end subroutine ff_prepare
 
-  subroutine ff_modules(encoul,&
-       enbond,enbend,entors,envdw,entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+  subroutine ff_modules&
+       (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
     !***************************************************************************************
     ! Modulos do campo de forca (intramolecular):                                          *
     ! - Estiramento;                                                                       *
     ! - Deformacao;                                                                        *
     ! - Torsao;                                                                            *
-    ! - Tersoff;                                                                           *
     ! - Van der Waals;                                                                     *
     ! - Eletrostatico.                                                                     *
     !***************************************************************************************
@@ -206,8 +278,8 @@ contains
     implicit none
 
     integer i
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff
+    real(8) encoul,enbond,enbend,entors,envdw
+    real(8) virvdw,virbond,virbend,virtors,vircoul
 
     !-valores iniciais
 
@@ -218,7 +290,6 @@ contains
     enbend=0.d0   !deformacao
     entors=0.d0   !torção
     envdw=0.d0    !Van der waals
-    entrsff=0.d0  !Tersoff
 
     !-virial
 
@@ -227,7 +298,6 @@ contains
     virbend=0.d0  !deformacao
     virtors=0.d0  !torção
     vircoul=0.d0  !coulombiano
-    virtrsff=0.d0 !Tersoff
 
     !-forcas atomicas
 
@@ -255,13 +325,9 @@ contains
 
     if(ntors.ne.0)call tors_calc(entors,virtors)
 
-    !-calculo da contribuicao de tersoff
-
-    if(ntrsff.ne.0)call tersoff_calc(entrsff,virtrsff)
-
     !-calculo das contribuicoes intermoleculares (Van der Waals e coulombiano)
 
-    if(nvdw.ne.0.or.ncoul.ne.0)call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+    call ff_modules_inter(envdw,encoul,virvdw,vircoul)
 
     return
 
@@ -285,13 +351,11 @@ contains
           ni=i
           nj=ilist(i,j)
           call mic(ni,nj,xvz,yvz,zvz)
-          if(nvdw.ne.0)then
-             if(parvdw(atp(ni),atp(nj),1).ne.0.d0) &
-                  call vdw_calc(envdw,virvdw,ni,nj,xvz,yvz,zvz)
-          end if
-          if(ncoul.ne.0)then
-             if(parcoul(atp(ni),1)*parcoul(atp(nj),1).ne.0.d0) &
-                  call coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
+          if(parvdw(atp(ni),atp(nj),1).gt.1.d-8)call vdw_calc(envdw,virvdw,ni,nj,xvz,yvz,zvz)
+          if(abs(parcoul(atp(ni),1)).gt.1.e-8)then
+             if(abs(parcoul(atp(nj),1)).gt.1.e-8)then
+                call coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
+             end if
           end if
        end do
     end do

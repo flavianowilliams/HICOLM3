@@ -75,6 +75,9 @@ contains
           case(1)
              parbend(i,j,1)=parbend(i,j,1)/econv
              parbend(i,j,2)=parbend(i,j,2)/aconv
+          case(2)
+             parbend(i,j,1)=parbend(i,j,1)/econv
+             parbend(i,j,2)=parbend(i,j,2)/aconv
           end select
        end do
     end do
@@ -111,6 +114,8 @@ contains
        do j=1,bendscnt(i)
           select case(bends(i,j))
           case(1)
+             nkb=2
+          case(2)
              nkb=2
           end select
           chk(i,j)=1
@@ -216,6 +221,9 @@ contains
 
     select case(bends(im,in))
     case(1)
+       pot=0.5d0*parbend(im,in,1)*(theta-parbend(im,in,2))**2
+       fa=parbend(im,in,1)*(theta-parbend(im,in,2))
+    case(2)
        pot=0.5d0*parbend(im,in,1)*(theta-parbend(im,in,2))**2
        fa=parbend(im,in,1)*(theta-parbend(im,in,2))
     end select

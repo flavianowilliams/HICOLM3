@@ -28,8 +28,8 @@ module ensemble_nvt
 
 contains
 
-  subroutine nvt_ber_vv(sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,&
-       virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+  subroutine nvt_ber_vv(sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
+       virvdw,virbond,virbend,virtors,vircoul)
     !*************************************************************************************
     ! Controle da temperatura pelo algoritmo Berendsen                                   *
     !*************************************************************************************
@@ -38,8 +38,8 @@ contains
 
     integer i
     real(8) temp,press,xhi,ekinet,sigma
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw
 
     !-calculando posições no instante t+dt posterior
 
@@ -58,8 +58,8 @@ contains
 
     !-calculo das forças no instante t+dt posterior
 
-    call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond,virbend,virtors, &
-         vircoul,virtrsff)
+    call ff_modules&
+         (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
 
     !-calculando velocidades no instante t+dt posterior
 
@@ -96,15 +96,9 @@ contains
 
     !-calculo da pressao
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
-
-    !-checando dimensoes da caixa
-
-    if((rcutoff+drcutoff).gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if((rcutoff+drcutoff).gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
 
     !-calculo do stress
 
@@ -126,7 +120,7 @@ contains
   end subroutine nvt_ber_vv
 
   subroutine nvt_hoover_vv(xhi,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
-       entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+       virvdw,virbond,virbend,virtors,vircoul)
     !*************************************************************************************
     ! Controle da temperatura pelo algoritmo Berendsen                                   *
     !*************************************************************************************
@@ -135,8 +129,8 @@ contains
 
     integer i
     real(8) temp,press,xhi,ekinet,sigma,qmass
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
+    real(8) encoul,enbond,enbend,entors,envdw
 
     !-calculando a massa do termostato
 
@@ -163,8 +157,8 @@ contains
 
     !-calculo das forças no instante t+dt posterior
 
-    call ff_modules(encoul,enbond,enbend,entors,envdw,entrsff,virvdw,virbond,virbend,virtors, &
-         vircoul,virtrsff)
+    call ff_modules&
+         (encoul,enbond,enbend,entors,envdw,virvdw,virbond,virbend,virtors,vircoul)
 
     !-calculando velocidades no instante t+dt
 
@@ -212,7 +206,7 @@ contains
 
     !-pressao
 
-    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+    virtot=virvdw+virbond+virbend+virtors+vircoul
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 

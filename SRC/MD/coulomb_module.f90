@@ -37,27 +37,7 @@ module coulomb_module
 
 contains
 
-  subroutine coulomb_convert
-    !****************************************************************************************
-    ! Conversao de unidades de medida:                                                      *
-    ! Unidades de entrada ---> a.u.                                                         *
-    !****************************************************************************************
-
-    implicit none
-
-    integer i
-
-    !-convertendo Van der Waals
-
-    do i=1,ntpmax
-       parcoul(i,1)=parcoul(i,1)/elconv
-    end do
-
-    return
-
-  end subroutine coulomb_convert
-
-  subroutine coulomb_counts
+  subroutine coulomb_prepare
 
     implicit none
 
@@ -66,6 +46,12 @@ contains
     integer i,j,ix,nx,ii,jj,ixx
 
     allocate(chk(spctot,spctot))
+
+    !-convertendo unidades de medida
+
+    do i=1,ntpmax
+       parcoul(i,1)=parcoul(i,1)/elconv
+    end do
 
     !-checando viabilidade de interacoes intermoleculares
 
@@ -76,7 +62,14 @@ contains
        end do
     end do
 
-    !-calculando qde de Van der Waals e coulomb
+    !-calculando qde de interacoes coulombianas
+
+    ncoul=0
+    do i=1,spctot
+       do j=i,spctot
+          if(chk(i,j).eq.1)ncoul=ncoul+1
+       end do
+    end do
 
     ix=1
     nx=1
@@ -99,7 +92,7 @@ contains
 
     return
 
-  end subroutine coulomb_counts
+  end subroutine coulomb_prepare
 
   subroutine coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
     !****************************************************************************************

@@ -22,6 +22,8 @@ module input
   !****************************************************************************************
 
   use sistema
+  use elements
+  use amber
 
   implicit none
   !----------------------------------------------------------------------------
@@ -31,7 +33,6 @@ module input
   real(8) elconv,keconv,n0,kb,kelect
   !
   complex(8) img
-  character(7) method
   !
   save rconv,econv,pconv,kconv,aconv,mconv,tconv,teconv,hcconv,elconv,keconv
   save kb,pi,img,n0
@@ -45,50 +46,34 @@ module input
   save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna,atp,fztp
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
-  integer nhist,ntrialmax,nrelax,nxmolec(molecmax),bendscnt(molecmax),bondscnt(molecmax)
-  integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax)
+  integer nhist,ntrialmax,nrelax,bendscnt(molecmax),bondscnt(molecmax),nzmolec(molecmax)
+  integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax),nxmolec(molecmax),ntmolec(molecmax)
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
-  integer nvdw,nbonds,nbends,ncoul,ntrsff,ntors,moltors(molecmax,torsmax,4)
+  integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
-  real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1),partrsff(ntpmax,ntpmax,16)
-  real(8) partors(molecmax,torsmax,6)
+  real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
+  real(8) partors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi
   !
   character(2) att
+  character(2) atsp(ntpmax)
   character(7) prop,ensble
   character(7) coulop
   character(9) ensble_mt
   character(10) namemol(molecmax)
+  character(7) ff_model(molecmax)
   !
-  save dtime,drmax,nhist,ntrialmax,nrelax,nxmolec,fmstp,dstp,xstp,ndstp,drcutoff
+  save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr
-  save parbnd,parvdw,parbend,parcoul,partrsff,lambdain,lambdafi,partors
-  save vdw,bonds,bends,nvdw,nbonds,nbends,ncoul,ntrsff,ntors,coulop,tersoff,tors
-  save bendscnt,molbend,bondscnt,molbond,torscnt
-  !----------------------------------------------------------------------------
-  !-variaveis do método Tight-binding
-  integer ntype,ntmolec(molecmax),nzmolec(molecmax),mmop(lmax,mmax)
-  integer nskpar,nlopar,mlop(lmax),mesh,nband,diagop,bandopt,msk(nparammax),mskt(nparammax)
-  integer nprllm(nparammax),npril(lmax,mmax),mpack(3),ebndtot,dband(5),mmopar(lmax)
-  integer nlo,lo(lmax),mo(lmax,mmax),mlo(mmax),norb,nonst,nparam,nparamt
-  integer dkrlx(nkrlxmax),nrlx(nkrlxmax),ntblx(nkrlxmax),nkrlx,nopt,lfermi
-  !
-  real(8) band(nbandmax,3),lcutt,rcutt,err,spr(lmax),onst0(lmax,mmax,nprllmmax)
-  real(8) fermi,ksh(3),tpr0(nparammax,nprllmmax),spr0(nparammax,nprllmmax)
-  real(8) dens0,kptt0(3),krlx(nkrlxmax,dkrlxmax)
-  !
-  logical chk(nparammax),chko(lmax,mmax),chkden
-  !
-  save ntype,ntmolec,nzmolec
-  save nskpar,nlopar,mlop,mesh,nband,diagop,bandopt,chk,chko,chkden,lfermi
-  save nprllm,npril,mpack,ebndtot,nlo,lo,mo,mlo,norb,nonst,nparam,nparamt,msk
-  save band,lcutt,rcutt,err,spr,ksh,kptt0,nopt,dkrlx,nrlx,ntblx,nkrlx,krlx
-  !---------------------------------------------------------------------------
+  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
+  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
+  save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model
+
 contains
 
   subroutine entrada(t0)
@@ -97,10 +82,7 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i
     real(8) t0,tf
-    character(7) in,char
-    character(9) key
 
     open(5,file='HICOLM.in',status='old')
     open(10,file='HICOLM.str',status='old')
@@ -113,23 +95,7 @@ contains
 
     call default
 
-    !-Escolha do metodo
-
-1   read(5,*,end=11)in
-
-    if(in.ne.'&INIT')goto 1
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       backspace(5)
-       read(5,*)key,char
-       if(key.eq.'method')method=char
-    end do
-
     !-lendo estrutura
-
-11  rewind(5)
 
     call sys_input
 
@@ -137,12 +103,7 @@ contains
 
     rewind(5)
 
-    select case(method)
-    case('TB')
-       call tb_input
-    case('MD')
-       call md_input
-    end select
+    call md_input
 
     !-convertendo unidades de medida
 
@@ -221,7 +182,19 @@ contains
        read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
     end do
 
-    !-calculando total de especies
+    !-definindo especies e total de especies
+
+!    nx=1
+!    nxx=0
+!    do i=1,nmolec
+!       do j=1,ntmolec(i)
+!          do k=1,nxmolec(i)
+!             atp(nx)=k+nxx
+!             nx=nx+1
+!          end do
+!       end do
+!       nxx=nxx+nxmolec(i)
+!    end do
 
     atnp(1)=atp(1)
 
@@ -230,10 +203,10 @@ contains
        do j=1,spctot
           if(atp(i).eq.atnp(j))goto 553
        end do
-      atnp(spctot+1)=atp(i)
-      spctot=spctot+1
-553   continue
-     end do
+       atnp(spctot+1)=atp(i)
+       spctot=spctot+1
+553    continue
+    end do
 
     do j=1,spctot
        natnp(j)=0
@@ -266,237 +239,67 @@ contains
 
   end subroutine sys_input
 
-    subroutine tb_input
-    !***************************************************************************************
-    ! Leitura dos parametros de entrada do metodo Tight-binding                            *
-    !***************************************************************************************
+  subroutine zmatrix(imol)
+
     implicit none
 
-    integer i,j,k,m,l1,l2,m1,nsk
-    real(8) val(20)
-    character(7) in,char
-    character(9) key
-    logical loc
+    integer i,j,jj,k,kk,ia,ib,ic,nx,imol
+    real(8) dr,rca,rcb,tol
 
-    write(*,*)'Encerrando: método tight-binding precisa de correção!!!!!!!!!!!!!!!!!!!'
-    stop
+    data tol /0.15d0/
 
-    !-parametros para o calculo tight-binding
-
-1   read(5,*,end=11)in
-
-    if(in.ne.'&TBIND')goto 1
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       backspace(5)
-       read(5,*)key,val(1)
-       if(key.eq.'diagop')diagop=int(val(1))
-       if(key.eq.'rcutt')rcutt=val(1)
-       if(key.eq.'lcutt')lcutt=val(1)
-       if(key.eq.'dens')then
-          backspace(5)
-          read(5,*)key,val(1),loc
-          dens0=val(1)
-          chkden=loc
-       end if
-       if(key.eq.'nonst')then
-          backspace(5)
-          read(5,*)key,val(1)
-          nonst=int(val(1))
-          do j=1,nonst
-             read(5,*)l1,m1,loc,val(1)
-             m1=m1+(l1+1)
-             l1=l1+1
-             chko(l1,m1)=loc
-             npril(l1,m1)=int(val(1))
-             backspace(5)
-             read(5,*)val(1),val(1),loc,val(1),(onst0(l1,m1,k),k=1,npril(l1,m1))
-          end do
-       end if
-       if(key.eq.'nsk')then
-          backspace(5)
-          read(5,*)key,val(1)
-          nsk=int(val(1))
-          do j=1,nsk
-             read(5,*)l1,l2,m1,val(1),loc
-             call labels(l1+1,l2+1,m1+1,m)
-             nprllm(m)=int(val(1))
-             read(5,*)(tpr0(m,k),k=1,nprllm(m))
-             read(5,*)(spr0(m,k),k=1,nprllm(m))
-             chk(m)=loc
-          end do
-       end if
+    nx=0
+    do i=2,imol
+       nx=nx+nxmolec(i)*ntmolec(i)
     end do
 
-    !-definindo parametros para o fitting
+    !-calculo das ligacoes quimicas
 
-11  rewind(5)
-
-2   read(5,*,end=22)in
-
-    if(in.ne.'&OPTIM')goto 2
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       backspace(5)
-       read(5,*)key,val(1)
-       if(key.eq.'nopt')nopt=int(val(1))
-       if(key.eq.'nkrlx')then
-          backspace(5)
-          read(5,*)key,val(1)
-          nkrlx=int(val(1))
-          do j=1,nkrlx
-             read(5,*)ntblx(j),nrlx(j),dkrlx(j)
-             backspace(5)
-             read(5,*)ntblx(j),nrlx(j),dkrlx(j),(krlx(j,k),k=1,dkrlx(j))
-          end do
-       end if
-    end do
-
-    !-momento angular e orbitais atomicos
-
-22  rewind(5)
-
-3   read(5,*,end=33)in
-
-    if(in.ne.'&ORBIT')goto 3
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       if(key.eq.'nlo')then
-          backspace(5)
-          read(5,*)key,val(1)
-          nlo=int(val(1))
-          do k=1,nlo
-             read(5,*)lo(k),mlo(k)
-             backspace(5)
-             read(5,*)val(1),val(2),(mo(k,j),j=1,mlo(k))
-          end do
-       end if
-    end do
-
-    !-propriedades do metodo tight-binding
-
-33  rewind(5)
-
-4   read(5,*,end=44)in
-
-    if(in.ne.'&PROPER')goto 4
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       if(key.eq.'prop')then
-          backspace(5)
-          read(5,*)key,char
-          prop=char
-       end if
-       if(key.eq.'bandopt')then
-          backspace(5)
-          read(5,*)key,val(1)
-          bandopt=int(val(1))
-       end if
-       if(key.eq.'nband')then
-          backspace(5)
-          read(5,*)key,val(1)
-          nband=int(val(1))
-          do j=1,nband
-             read(5,*)dband(j),(band(j,k),k=1,3)
-          end do
-       end if
-       if(key.eq.'mesh')then
-          backspace(5)
-          read(5,*)key,val(1)
-          mesh=int(val(1))
-       end if
-       if(key.eq.'fermi')then
-          backspace(5)
-          read(5,*)key,val(1)
-          fermi=int(val(1))
-       end if
-       if(key.eq.'lfermi')then
-          backspace(5)
-          read(5,*)key,val(1)
-          lfermi=int(val(1))
-       end if
-       if(key.eq.'kptt0')then
-          backspace(5)
-          read(5,*)key,(kptt0(j),j=1,3)
-       end if
-    end do
-
-    !-calculando qtdes de parametros e orbitais atomicos
-
-44  norb=0
-    do i=1,nlo
-       do j=1,mlo(i)
-          norb=norb+1
-       end do
-    end do
-
-    norb=norb*natom
-
-    do i=1,nlo
-       do j=1,mlo(i)
-          mo(i,j)=mo(i,j)+(lo(i)+1)
-       end do
-       lo(i)=lo(i)+1
-    end do
-
-    nlopar=0
-    do i=1,nlo
-       mmopar(nlopar+1)=0
-       do j=1,mlo(i)
-          if(chko(lo(i),mo(i,j)).eqv..true..and.chko(lo(i),mo(i,j)).neqv..false.)&
-               then
-             mlop(nlopar+1)=lo(i)
-             mmop(nlopar+1,mmopar(nlopar+1)+1)=mo(i,j)
-             mmopar(nlopar+1)=mmopar(nlopar+1)+1
+    bondscnt(imol)=1
+    do j=1,nxmolec(imol)
+       ia=j+nx
+       do jj=j+1,nxmolec(imol)
+          ib=jj+nx
+          dr=sqrt((xa(ia)-xa(ib))**2+(ya(ia)-ya(ib))**2+(za(ia)-za(ib))**2)
+          call covalent_radius(idna(ia),rca)
+          call covalent_radius(idna(ib),rcb)
+          if(dr.gt.(rca+rcb-tol).and.dr.le.(rca+rcb+tol))then
+             molbond(imol,bondscnt(imol),1)=j
+             molbond(imol,bondscnt(imol),2)=jj
+             bondscnt(imol)=bondscnt(imol)+1
           end if
        end do
-       nlopar=nlopar+1
     end do
 
-    nskpar=0
-    nparamt=0
-    do i=1,nlo
-       do j=i,nlo
-          l1=min(lo(i),lo(j))
-          l2=max(lo(i),lo(j))
-          do k=1,l1
-             call labels(l1,l2,k,m)
-             if(m.ne.0)then
-                if(chk(m).eqv..true..and.chk(m).neqv..false.)then
-                   msk(nskpar+1)=m
-                   nskpar=nskpar+1
+    bondscnt(imol)=bondscnt(imol)-1
+
+    !-calculo das deformacoes angulares
+
+    bendscnt(imol)=1
+    do j=1,bondscnt(imol)
+       do jj=j+1,bondscnt(imol)
+          do k=1,2
+             do kk=1,2
+                if(molbond(imol,j,k).eq.molbond(imol,jj,kk))then
+                   ib=molbond(imol,j,k)
+                   bendscnt(imol)=bendscnt(imol)+1
+                elseif(molbond(imol,j,k).ne.molbond(imol,jj,kk))then
+                   ia=molbond(imol,j,k)
+                   ic=molbond(imol,jj,kk)
                 end if
-                mskt(nparamt+1)=m
-                nparamt=nparamt+1
-             end if
+             end do
           end do
        end do
+       molbend(imol,j,1)=ia
+       molbend(imol,j,2)=ib
+       molbend(imol,j,3)=ic
     end do
 
-    nparam=0
-
-    if(chkden.eqv..true.)nparam=nparam+1
-
-    do i=1,nlopar
-       do j=1,mmopar(i)
-          nparam=nparam+npril(mlop(i),mmop(i,j))
-       end do
-    end do
-    do i=1,nskpar
-       nparam=nparam+2*nprllm(msk(i))
-    end do
+    bendscnt(imol)=bendscnt(imol)-1
 
     return
 
-  end subroutine tb_input
+  end subroutine zmatrix
 
   subroutine md_input
     !***************************************************************************************
@@ -504,7 +307,7 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i,ii,j,k,g,p,m,numt,nx,ival(20)
+    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
     real(8) val(20)
     character(7) in,char
     character(9) key,char2
@@ -641,63 +444,78 @@ contains
     do i=1,100
        read(5,*)key
        if(key.eq.'&END')exit
-       if(key.eq.'$INTER')then
-          do ii=1,100
+       if(key.eq.'$AMBER')then
+          spctt=0
+          do j=1,nmolec
              read(5,*)key
-             if(key.eq.'$END')goto 671
-             if(key.eq.'vdw')then
-                backspace(5)
-                read(5,*)key,nvdw
-                do j=1,nvdw
-                   read(5,*)ival(1),ival(2),char
-                   call vdw_opt(char,m,numt)
-                   backspace(5)
-                   read(5,*)ival(1),ival(2),char,(val(k),k=1,numt)
-                   do k=1,numt
-                      parvdw(ival(1),ival(2),k)=val(k)
-                      parvdw(ival(2),ival(1),k)=val(k)
-                   end do
-                   vdw(ival(1),ival(2))=m
-                   vdw(ival(2),ival(1))=m
+             if(key.eq.'$END')goto 433
+             backspace(5)
+             read(5,*)key,lxmol
+             do g=1,nmolec
+                if(lxmol.eq.namemol(g))then
+                   read(5,*)(atsp(k+spctt),k=1,nxmolec(g))
+                   read(5,*)(parcoul(k+spctt,1),k=1,nxmolec(g))
+                   ff_model(g)='(AMBER)'
+                   spctt=spctt+nxmolec(g)
+                   nx=g
+                end if
+             end do
+             call zmatrix(nx)
+             jj=spctt-nxmolec(nx)
+             do k=1,bondscnt(nx)
+                ii=jj+molbond(nx,k,1)
+                iii=jj+molbond(nx,k,2)
+                call amber_bonds(atsp(ii),atsp(iii),val)
+                do p=1,2
+                   parbnd(nx,k,p)=val(p)
                 end do
-             end if
-             if(key.eq.'elect')then
-                backspace(5)
-                read(5,*)key,ncoul,char
-                do j=1,ncoul
-                   call coul_opt(char,numt)
-                   read(5,*)ival(1),(val(k),k=1,numt)
-                   do k=1,numt
-                      parcoul(ival(1),k)=val(k)
-                   end do
+                bonds(nx,k)=3
+             end do
+             do k=1,bendscnt(nx)
+                ii=jj+molbend(nx,k,1)
+                iii=jj+molbend(nx,k,2)
+                iv=jj+molbend(nx,k,3)
+                call amber_bends(atsp(ii),atsp(iii),atsp(iv),val)
+                do p=1,2
+                   parbend(nx,k,p)=val(p)
                 end do
-                coulop=char
-             end if
-             if(key.eq.'tersoff')then
-                backspace(5)
-                read(5,*)key,char,ntrsff
-                call trsff_opt(char,m,numt)
-                do j=1,ntrsff
-                   read(5,*)ival(1),ival(2),(val(k),k=1,numt)
-                   do k=1,numt
-                      partrsff(ival(1),ival(2),k)=val(k)
-                      partrsff(ival(2),ival(1),k)=val(k)
-                   end do
-                   tersoff=m
+                bends(nx,k)=2
+             end do
+             do k=1,torscnt(nx)
+                ii=jj+moltors(nx,k,1)
+                iii=jj+moltors(nx,k,2)
+                iv=jj+moltors(nx,k,3)
+                v=jj+moltors(nx,k,4)
+!                call amber_dihedrals(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
+                do p=1,2
+                   partors(nx,k,p)=val(p)
                 end do
-             end if
+                tors(nx,k)=3
+             end do
+          end do
+433       do j=1,spctt
+             do jj=j,spctt
+                call amber_vdw(atsp(j),atsp(jj),val)
+                do k=1,2
+                   parvdw(j,jj,k)=val(k)
+                   parvdw(jj,j,k)=val(k)
+                end do
+                vdw(j,jj)=3
+                vdw(jj,j)=3
+             end do
           end do
        elseif(key.eq.'$INTRA')then
           do j=1,nmolec
-             read(5,*)lxmol
+             read(5,*)key,lxmol
              do g=1,molecmax
                 if(lxmol.eq.namemol(g))nx=g
              end do
              do g=1,3
                 read(5,*)key
-                if(key.eq.'$END')goto 671
+                backspace(5)
+                if(key.eq.'molecule')exit
+                if(key.eq.'$END')goto 523
                 if(key.eq.'bends')then
-                   backspace(5)
                    read(5,*)key,bendscnt(nx)
                    do k=1,bendscnt(nx)
                       read(5,*)ival(1),ival(2),ival(3),char
@@ -712,8 +530,22 @@ contains
                       molbend(nx,k,2)=ival(2)
                       molbend(nx,k,3)=ival(3)
                    end do
+                elseif(key.eq.'bends*')then
+                   read(5,*)key,ii
+                   do k=1,ii
+                      read(5,*)ival(1),ival(2),ival(3),char
+                      call bend_opt(char,m,numt)
+                      backspace(5)
+                      read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
+                      do p=1,numt
+                         parbend(nx,k,p)=val(p)
+                      end do
+                      bends(nx,k)=m
+                      molbend(nx,k,1)=ival(1)
+                      molbend(nx,k,2)=ival(2)
+                      molbend(nx,k,3)=ival(3)
+                   end do
                 elseif(key.eq.'bonds')then
-                   backspace(5)
                    read(5,*)key,bondscnt(nx)
                    do k=1,bondscnt(nx)
                       read(5,*)ival(1),ival(2),char
@@ -727,10 +559,39 @@ contains
                       molbond(nx,k,1)=ival(1)
                       molbond(nx,k,2)=ival(2)
                    end do
+                elseif(key.eq.'bonds*')then
+                   read(5,*)key,ii
+                   do k=1,ii
+                      read(5,*)ival(1),ival(2),char
+                      call bonds_opt(char,m,numt)
+                      backspace(5)
+                      read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
+                      do p=1,numt
+                         parbnd(nx,k,p)=val(p)
+                      end do
+                      bonds(nx,k)=m
+                      molbond(nx,k,1)=ival(1)
+                      molbond(nx,k,2)=ival(2)
+                   end do
                 elseif(key.eq.'dihedrals')then
-                   backspace(5)
                    read(5,*)key,torscnt(nx)
                    do k=1,torscnt(nx)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
+                      call dihedral_opt(char,m,numt)
+                      backspace(5)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                      do p=1,numt
+                         partors(nx,k,p)=val(p)
+                      end do
+                      tors(nx,k)=m
+                      moltors(nx,k,1)=ival(1)
+                      moltors(nx,k,2)=ival(2)
+                      moltors(nx,k,3)=ival(3)
+                      moltors(nx,k,4)=ival(4)
+                   end do
+                elseif(key.eq.'dihedrals*')then
+                   read(5,*)key,ii
+                   do k=1,ii
                       read(5,*)ival(1),ival(2),ival(3),ival(4),char
                       call dihedral_opt(char,m,numt)
                       backspace(5)
@@ -747,8 +608,39 @@ contains
                 end if
              end do
           end do
+       elseif(key.eq.'$INTER')then
+          do ii=1,100
+             read(5,*)key
+             backspace(5)
+             if(key.eq.'$END')goto 523
+             if(key.eq.'vdw')then
+                read(5,*)key,nx
+                do j=1,nx
+                   read(5,*)ival(1),ival(2),char
+                   call vdw_opt(char,m,numt)
+                   backspace(5)
+                   read(5,*)ival(1),ival(2),char,(val(k),k=1,numt)
+                   do k=1,numt
+                      parvdw(ival(1),ival(2),k)=val(k)
+                      parvdw(ival(2),ival(1),k)=val(k)
+                   end do
+                   vdw(ival(1),ival(2))=m
+                   vdw(ival(2),ival(1))=m
+                end do
+             elseif(key.eq.'elect')then
+                read(5,*)key,ncoul,char
+                do j=1,ncoul
+                   call coul_opt(char,numt)
+                   read(5,*)ival(1),(val(k),k=1,numt)
+                   do k=1,numt
+                      parcoul(ival(1),k)=val(k)
+                   end do
+                end do
+                coulop=char
+             end if
+          end do
        end if
-671    continue
+523    continue
     end do
 
     !-calculando parametros intramoleculares totais
@@ -771,40 +663,8 @@ contains
   subroutine default
     !***************************************************************************************
     ! Valores padrão                                                                       *
-    !***************************************************************************************
 
-    implicit none
-
-    integer i,j,k,l1,l2
-
-    method='MD'
-
-    prop='NONE'
-    mesh=1
-
-    nhist=1
-    text=273.d0
-    tstat=0.5d0
-    pstat=0.5d0
-    bfactor=4.679d-5
-    preext=1.d0
-    ntrialmax=1
-    nrelax=1
-    drmax=0.d0
-    fmstp=0.d0
-    ndstp=0
-    dstp=0
-    xstp=0
-    lrmax=0.d0
-    nrl=2
-
-    chkden=.false.
-
-    lambdain=0.d0
-    lambdafi=1.d0
-
-    ensble='nve'
-    ensble_mt='berendsen'
+    integer i,j,k
 
     rcutoff=0.d0
     drcutoff=0.d0
@@ -815,12 +675,7 @@ contains
 
     nbonds=0
     nbends=0
-    nvdw=0
-    ncoul=0
-    ntrsff=0
     ntors=0
-
-    ebndtot=0
 
     coulop='coul'
 
@@ -834,8 +689,9 @@ contains
     tersoff=0
 
     do i=1,molecmax
+       ff_model(i)=''
        do j=1,torsmax
-          do k=1,2
+          do k=1,7
              partors(i,j,k)=0.d0
           end do
           tors(i,j)=0
@@ -868,20 +724,12 @@ contains
 
     do i=1,ntpmax
        do j=1,ntpmax
-          do k=1,16
-             partrsff(i,j,k)=0.d0
-          end do
           do k=1,3
              parvdw(i,j,k)=0.d0
           end do
        end do
        parcoul(i,1)=0.d0
-    end do
-
-    do i=1,3
-       kptt0(i)=0.d0
-       mpack(i)=8
-       ksh(i)=0.d0
+       atsp(i)='X'
     end do
 
     a=0.d0
@@ -898,80 +746,6 @@ contains
     end do
 
     nfree=0
-
-    fermi=0.d0
-
-    lfermi=1
-
-    err=0.3d0
-
-    bandopt=1
-
-    diagop=1
-
-    ntype=1
-
-    dens0=0.d0
-
-    lcutt=0.15d0
-
-    rcutt=4.d0
-
-    nlo=3
-    do i=1,nlo
-       lo(i)=i
-       do j=1,lo(i)
-          mo(i,j)=j
-       end do
-    end do
-
-    norb=0
-    do i=1,nlo
-       do j=1,lo(i)
-          norb=norb+2*j-1
-       end do
-    end do
-
-    norb=norb*natmax
-
-    nskpar=0
-    do i=1,nlo
-       do j=i,nlo
-          nskpar=nskpar+max(lo(i),lo(j))
-       end do
-    end do
-
-    do i=1,nlo
-       do j=i+1,nlo
-          l1=min(lo(i),lo(j))
-          l2=max(lo(i),lo(j))
-          l1=l1-1
-          l2=l2-1
-          if(l1.eq.0.and.l2.eq.1)nskpar=nskpar-1
-          if(l1.eq.0.and.l2.eq.2)nskpar=nskpar-2
-          if(l1.eq.1.and.l2.eq.2)nskpar=nskpar-1
-       end do
-       do j=1,2*i+1
-          spr(i)=1.d0
-          chko(i,j)=.false.
-          npril(i,j)=1
-          do k=1,npril(i,j)
-             onst0(i,j,k)=0.d0
-          end do
-       end do
-       k=k+2*i-1
-    end do
-
-    nparam=2*nskpar+nlo+1
-
-    do i=1,nskpar
-       do j=1,nprllmmax
-          tpr0(i,j)=0.d0
-          spr0(i,j)=0.d0
-       end do
-       nprllm(i)=1
-       chk(i)=.false.
-    end do
 
     do i=1,6
        fzstr(i)=1.d0
@@ -1097,52 +871,6 @@ contains
 
   end subroutine convert
 
-  subroutine labels(l1,l2,m1,i)
-    !***************************************************************************************
-    ! Parametros Slater-Koster                                                             *
-    !***************************************************************************************
-
-    implicit none
-
-    integer l1,l2,la,lb,m1,i,ma
-
-    i=0
-
-    la=min(l1,l2)
-    lb=max(l1,l2)
-
-    la=la-1
-    lb=lb-1
-    ma=m1-1
-
-    if(la.eq.0)then
-       if(lb.eq.0)then
-          if(ma.eq.0)i=1
-       elseif(lb.eq.1)then
-          if(ma.eq.0)i=2
-       elseif(lb.eq.2)then
-          if(ma.eq.0)i=3
-       end if
-    elseif(la.eq.1)then
-       if(lb.eq.1)then
-          if(ma.eq.0)i=4
-          if(ma.eq.1)i=5
-       elseif(lb.eq.2)then
-          if(ma.eq.0)i=6
-          if(ma.eq.1)i=7
-       end if
-    elseif(la.eq.2)then
-       if(lb.eq.2)then
-          if(ma.eq.0)i=8
-          if(ma.eq.1)i=9
-          if(ma.eq.2)i=10
-       end if
-    end if
-
-    return
-
-  end subroutine labels
-
   subroutine cte
     !***************************************************************************************
     ! Constantes essenciais                                                                *
@@ -1231,25 +959,6 @@ contains
 
   end subroutine vdw_opt
 
-  subroutine trsff_opt(char,m,nprtrsff)
-    !***************************************************************************************
-    ! Flags do potencial Tersoff                                                           *
-    !***************************************************************************************
-    implicit none
-
-    integer nprtrsff,m
-    character(7) char
-
-    select case(char)
-    case('ters')
-       nprtrsff=10
-       m=1
-    end select
-
-    return
-
-  end subroutine trsff_opt
-
   subroutine coul_opt(char,nprcoul)
     !***************************************************************************************
     ! Flags do potencial eletrostatico                                                     *
@@ -1288,7 +997,7 @@ contains
       nprtors=2
     case('ryck')
        m=3
-       nprtors=6
+       nprtors=7
     end select
 
     return
