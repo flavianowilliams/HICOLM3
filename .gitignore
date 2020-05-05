@@ -1,6 +1,7 @@
 *~
 *.dat
 *.in
+*.str
 *.out
 *.XSF
 *.AXSF
