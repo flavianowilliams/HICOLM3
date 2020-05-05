@@ -1,0 +1,51 @@
+# Diretorio de instalacao do executavel
+ROOT=.
+#
+# Compilador
+FC=gfortran
+#
+# Instrucoes do compilador
+FFLAGS=-fcheck=all -fbacktrace -Wall
+#
+# bibliotecas
+LDFLAGS= -L $(ROOT)/libraries -llapack -lrefblas -lminpack
+#=====================================================================================
+OBJ_SYS = sistema.o input.o alloc_arrays.o utils.o estrutura.o brillouin.o
+#
+OBJ_MD = neighbour_list.o vdw_module.o coulomb_module.o \
+		bonds_module.o bends_module.o dihedral_module.o \
+		tersoff_module.o force_field.o ensemble_nve.o \
+		ensemble_nvt.o ensemble_npt.o molecular_dynamics.o
+#
+OBJ_TB = fitting.o matriz.o diagonalize.o optimizing.o propriedades.o tight_binding.o
+#
+OBJ_MAIN = outfile.o main.o
+#=====================================================================================
+ODIR1=$(ROOT)/MAIN
+ODIR2=$(ROOT)/MD
+ODIR3=$(ROOT)/TB
+ODIR4=$(ROOT)/MAIN
+#
+OBJ1 = $(patsubst %,$(ODIR1)/%,$(OBJ_SYS))
+OBJ2 = $(patsubst %,$(ODIR2)/%,$(OBJ_MD))
+OBJ3 = $(patsubst %,$(ODIR3)/%,$(OBJ_TB))
+OBJ4 = $(patsubst %,$(ODIR4)/%,$(OBJ_MAIN))
+#
+$(ODIR1)/%.o:
+		$(FC) -c $(FFLAGS) -o $@ $(ODIR1)/$*.f90
+#
+$(ODIR2)/%.o:
+		$(FC) -c $(FFLAGS) -o $@ $(ODIR2)/$*.f90
+#
+$(ODIR3)/%.o:
+		$(FC) -c $(FFLAGS) -o $@ $(ODIR3)/$*.f90
+#
+$(ODIR4)/%.o:
+		$(FC) -c $(FFLAGS) -o $@ $(ODIR4)/$*.f90
+#
+HICOLM:	$(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4)
+		$(FC) -o $@ $^ $(LDFLAGS)
+#
+clean:
+		rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.dat *.out *.md HICOLM
+#==========================================================================
