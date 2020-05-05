@@ -37,35 +37,36 @@ module input
   save kb,pi,img,n0
   !----------------------------------------------------------------------------
   !-variaveis de estrutura
-  integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax)
+  integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax),atp(natmax),fztp(natmax)
   !
   real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume
   real(8) vax(natmax),vay(natmax),vaz(natmax),fax(natmax),fay(natmax),faz(natmax)
   !
-  save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna
+  save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna,atp,fztp
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
   integer nhist,ntrialmax,nrelax,nxmolec(molecmax),bendscnt(molecmax),bondscnt(molecmax)
-  integer atp(natmax),ato(natmax),fztp(natmax),nrl,atnp(ntpmax),natnp(ntpmax)
+  integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax)
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,nbonds,nbends,ncoul,ntrsff,ntors,moltors(molecmax,torsmax,4)
   !
-  real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,fzstr(6)
-  real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3)
+  real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax
+  real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1),partrsff(ntpmax,ntpmax,16)
-  real(8) partors(molecmax,torsmax,2)
+  real(8) partors(molecmax,torsmax,6)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi
   !
   character(2) att
   character(7) prop,ensble
   character(7) coulop
+  character(9) ensble_mt
   character(10) namemol(molecmax)
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,nxmolec,fmstp,dstp,xstp,ndstp,drcutoff
-  save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,rcutoff
-  save att,atp,ato,nrl,fztp,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr
+  save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
+  save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr
   save parbnd,parvdw,parbend,parcoul,partrsff,lambdain,lambdafi,partors
   save vdw,bonds,bends,nvdw,nbonds,nbends,ncoul,ntrsff,ntors,coulop,tersoff,tors
   save bendscnt,molbend,bondscnt,molbond,torscnt
@@ -96,12 +97,13 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i,j
-    real(8) val(20),t0,tf
+    integer i
+    real(8) t0,tf
     character(7) in,char
     character(9) key
 
     open(5,file='HICOLM.in',status='old')
+    open(10,file='HICOLM.str',status='old')
 
     !-contagem de tempo
 
@@ -125,54 +127,19 @@ contains
        if(key.eq.'method')method=char
     end do
 
+    !-lendo estrutura
+
 11  rewind(5)
 
-2   read(5,*,end=22)in
+    call sys_input
 
-    !-Parametros de rede
+    !-lendo parametros do metodo escolhido
 
-    if(in.ne.'&CELL')goto 2
-
-    do i=1,3
-       read(5,*)(v(i,j),j=1,3)
-    end do
-
-    !-base
-
-22  rewind(5)
-
-3   read(5,*,end=33)in
-
-    if(in.ne.'&COORD')goto 3
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       backspace(5)
-       read(5,*)key,val(1)
-       if(key.eq.'reuse')reuse=int(val(1))
-       if(key.eq.'gsymopt')gsymopt=int(val(1))
-       if(key.eq.'err')err=val(1)
-       if(key.eq.'replc')then
-          backspace(5)
-          read(5,*)key,rxmx,rymx,rzmx
-       end if
-       if(key.eq.'natom')then
-          backspace(5)
-          read(5,*)key,val(1)
-          natom=int(val(1))
-          do j=1,natom
-             read(5,*)idna(j),xa(j),ya(j),za(j),atp(j),fztp(j)
-          end do
-       end if
-    end do
-
-33  rewind(5)
+    rewind(5)
 
     select case(method)
     case('TB')
        call tb_input
-!    rewind(5)
     case('MD')
        call md_input
     end select
@@ -191,7 +158,115 @@ contains
 
   end subroutine entrada
 
-  subroutine tb_input
+  subroutine sys_input
+    !***************************************************************************************
+    ! Leitura dos dados do sistema                                                         *
+    !***************************************************************************************
+    implicit none
+
+    integer i,j,k,natfx,ival(20)
+    character(7) in
+    character(9) key
+
+    !-base
+
+1   read(5,*,end=11)in
+
+    if(in.ne.'&STRUCT')goto 1
+
+    do i=1,100
+       read(5,*)key
+       if(key.eq.'&END')exit
+       if(key.eq.'cell')then
+          do j=1,3
+             read(5,*)(v(j,k),k=1,3)
+          end do
+          a=sqrt(v(1,1)**2+v(1,2)**2+v(1,3)**2)
+          b=sqrt(v(2,1)**2+v(2,2)**2+v(2,3)**2)
+          c=sqrt(v(3,1)**2+v(3,2)**2+v(3,3)**2)
+       end if
+       if(key.eq.'molecs')then
+          backspace(5)
+          read(5,*)key,nmolec
+          do j=1,nmolec
+             read(5,*)namemol(j),ntmolec(j),nxmolec(j)
+          end do
+       end if
+       if(key.eq.'reuse')then
+          backspace(5)
+          read(5,*)key,ival(1)
+          reuse=ival(1)
+       end if
+    end do
+
+    !-calculando moleculas e atomos totais
+
+11  moltot=1
+    natom=0
+    do i=1,nmolec
+       do j=1,ntmolec(i)
+          do k=1,nxmolec(i)
+             natom=natom+1
+          end do
+          nzmolec(moltot)=nxmolec(i)
+          moltot=moltot+1
+       end do
+    end do
+
+    moltot=moltot-1
+
+    !-lendo estrutura inicial
+
+    do i=1,natom
+       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
+    end do
+
+    !-calculando total de especies
+
+    atnp(1)=atp(1)
+
+    spctot=1
+    do i=2,natom
+       do j=1,spctot
+          if(atp(i).eq.atnp(j))goto 553
+       end do
+      atnp(spctot+1)=atp(i)
+      spctot=spctot+1
+553   continue
+     end do
+
+    do j=1,spctot
+       natnp(j)=0
+    end do
+
+    do i=1,natom
+       do j=1,spctot
+          if(atp(i).eq.atnp(j))natnp(j)=natnp(j)+1
+       end do
+    end do
+
+    !-calculando graus de liberdade
+
+    natfx=0
+    do i=1,natom
+       if(fztp(i).eq.0)natfx=natfx+1
+    end do
+
+    nfree=3*(natom-natfx-1)
+
+    !-redefinindo parametros de rede e posicoes atomicas
+
+    if(reuse.gt.0)call frame
+
+    !-definindo massa atomica
+
+    call atomic_mass
+
+    return
+
+  end subroutine sys_input
+
+    subroutine tb_input
     !***************************************************************************************
     ! Leitura dos parametros de entrada do metodo Tight-binding                            *
     !***************************************************************************************
@@ -202,6 +277,9 @@ contains
     character(7) in,char
     character(9) key
     logical loc
+
+    write(*,*)'Encerrando: método tight-binding precisa de correção!!!!!!!!!!!!!!!!!!!'
+    stop
 
     !-parametros para o calculo tight-binding
 
@@ -426,12 +504,11 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i,j,k,g,p,m,numt,natfx
+    integer i,ii,j,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
     character(7) in,char
-    character(9) key
-
-    !-parametros de dinâmica molecular
+    character(9) key,char2
+    character(10) lxmol
 
 1   read(5,*,end=11)in
 
@@ -442,13 +519,18 @@ contains
        if(key.eq.'&END')exit
        if(key.eq.'nhist')then
           backspace(5)
-          read(5,*)key,val(1)
-          nhist=int(val(1))
+          read(5,*)key,ival(1)
+          nhist=ival(1)
        end if
        if(key.eq.'ntrialmax')then
           backspace(5)
-          read(5,*)key,val(1)
-          ntrialmax=int(val(1))
+          read(5,*)key,ival(1)
+          ntrialmax=ival(1)
+       end if
+       if(key.eq.'nrelax')then
+          backspace(5)
+          read(5,*)key,ival(1)
+          nrelax=ival(1)
        end if
        if(key.eq.'rcutoff')then
           backspace(5)
@@ -463,12 +545,12 @@ contains
        end if
        if(key.eq.'drmax')then
           backspace(5)
-          read(5,*)key,(val(j),j=1,5)
+          read(5,*)key,val(1),val(2),ival(1),ival(2),ival(3)
           drmax=val(1)
           fmstp=val(2)
-          dstp=int(val(3))
-          ndstp=int(val(4))
-          xstp=int(val(5))
+          dstp=ival(1)
+          ndstp=ival(2)
+          xstp=ival(3)
        end if
        if(key.eq.'lambda')then
           backspace(5)
@@ -504,16 +586,39 @@ contains
              ensble=char
           elseif(char.eq.'nvt')then
              backspace(5)
-             read(5,*)key,char,val(1)
-             tstat=val(1)
-             ensble=char
+             read(5,*)key,char,char2
+             if(char2.eq.'berendsen')then
+                backspace(5)
+                read(5,*)key,char,char2,val(1)
+                ensble=char
+                ensble_mt=char2
+                tstat=val(1)
+             elseif(char2.eq.'hoover')then
+                backspace(5)
+                read(5,*)key,char,char2,val(1)
+                ensble=char
+                ensble_mt=char2
+                tstat=val(1)
+             end if
           elseif(char.eq.'npt')then
              backspace(5)
-             read(5,*)key,char,val(1),val(2),val(3)
-             tstat=val(1)
-             pstat=val(2)
-             bfactor=val(3)
-             ensble=char
+             read(5,*)key,char,char2
+             if(char2.eq.'berendsen')then
+                backspace(5)
+                read(5,*)key,char,char2,val(1),val(2),val(3)
+                ensble=char
+                ensble_mt=char2
+                tstat=val(1)
+                pstat=val(2)
+                bfactor=val(3)
+             elseif(char2.eq.'hoover')then
+                backspace(5)
+                read(5,*)key,char,char2,val(1),val(2)
+                ensble=char
+                ensble_mt=char2
+                tstat=val(1)
+                pstat=val(2)
+             end if
           end if
        end if
        if(key.eq.'fzstr')then
@@ -536,143 +641,119 @@ contains
     do i=1,100
        read(5,*)key
        if(key.eq.'&END')exit
-       if(key.eq.'ebndtot')then
-          backspace(5)
-          read(5,*)key,val(1)
-          ebndtot=int(val(1))
-       end if
-       if(key.eq.'vdw')then
-          backspace(5)
-          read(5,*)key,nvdw
-          do j=1,nvdw
-             read(5,*)val(1),val(2),char
-             call vdw_opt(char,m,numt)
-             backspace(5)
-             read(5,*)val(1),val(2),char,(val(k),k=3,2+numt)
-             do k=1,numt
-                parvdw(int(val(1)),int(val(2)),k)=val(k+2)
-                parvdw(int(val(2)),int(val(1)),k)=val(k+2)
-             end do
-             vdw(int(val(1)),int(val(2)))=m
-             vdw(int(val(2)),int(val(1)))=m
+       if(key.eq.'$INTER')then
+          do ii=1,100
+             read(5,*)key
+             if(key.eq.'$END')goto 671
+             if(key.eq.'vdw')then
+                backspace(5)
+                read(5,*)key,nvdw
+                do j=1,nvdw
+                   read(5,*)ival(1),ival(2),char
+                   call vdw_opt(char,m,numt)
+                   backspace(5)
+                   read(5,*)ival(1),ival(2),char,(val(k),k=1,numt)
+                   do k=1,numt
+                      parvdw(ival(1),ival(2),k)=val(k)
+                      parvdw(ival(2),ival(1),k)=val(k)
+                   end do
+                   vdw(ival(1),ival(2))=m
+                   vdw(ival(2),ival(1))=m
+                end do
+             end if
+             if(key.eq.'elect')then
+                backspace(5)
+                read(5,*)key,ncoul,char
+                do j=1,ncoul
+                   call coul_opt(char,numt)
+                   read(5,*)ival(1),(val(k),k=1,numt)
+                   do k=1,numt
+                      parcoul(ival(1),k)=val(k)
+                   end do
+                end do
+                coulop=char
+             end if
+             if(key.eq.'tersoff')then
+                backspace(5)
+                read(5,*)key,char,ntrsff
+                call trsff_opt(char,m,numt)
+                do j=1,ntrsff
+                   read(5,*)ival(1),ival(2),(val(k),k=1,numt)
+                   do k=1,numt
+                      partrsff(ival(1),ival(2),k)=val(k)
+                      partrsff(ival(2),ival(1),k)=val(k)
+                   end do
+                   tersoff=m
+                end do
+             end if
           end do
-       end if
-       if(key.eq.'elect')then
-          backspace(5)
-          read(5,*)key,char,ncoul
-          do j=1,ncoul
-             call coul_opt(char,numt)
-             read(5,*)(val(k),k=1,numt+1)
-             do k=1,numt
-                parcoul(int(val(1)),k)=val(k+1)
-             end do
-          end do
-          coulop=char
-       end if
-       if(key.eq.'tersoff')then
-          backspace(5)
-          read(5,*)key,char,ntrsff
-          call trsff_opt(char,m,numt)
-          do j=1,ntrsff
-             read(5,*)(val(k),k=1,numt+2)
-             do k=1,numt
-                partrsff(int(val(1)),int(val(2)),k)=val(k+2)
-                partrsff(int(val(2)),int(val(1)),k)=val(k+2)
-             end do
-             tersoff=m
-          end do
-       end if
-    end do
-
-    !-Descricao das moleculas por especie
-
-22  rewind(5)
-
-3   read(5,*,end=33)in
-
-    if(in.ne.'&MOLEC')goto 3
-
-    do i=1,100
-       read(5,*)key
-       if(key.eq.'&END')exit
-       if(key.eq.'molecs')then
-          backspace(5)
-          read(5,*)key,nmolec
+       elseif(key.eq.'$INTRA')then
           do j=1,nmolec
-             read(5,*)namemol(j),ntmolec(j),nxmolec(j)
+             read(5,*)lxmol
+             do g=1,molecmax
+                if(lxmol.eq.namemol(g))nx=g
+             end do
              do g=1,3
                 read(5,*)key
-                if(key.eq.'&END')goto 33
+                if(key.eq.'$END')goto 671
                 if(key.eq.'bends')then
                    backspace(5)
-                   read(5,*)key,bendscnt(j)
-                   do k=1,bendscnt(j)
-                      read(5,*)val(1),val(2),val(3),char
+                   read(5,*)key,bendscnt(nx)
+                   do k=1,bendscnt(nx)
+                      read(5,*)ival(1),ival(2),ival(3),char
                       call bend_opt(char,m,numt)
                       backspace(5)
-                      read(5,*)val(1),val(2),val(3),char,(val(p),p=4,3+numt)
+                      read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
                       do p=1,numt
-                         parbend(j,k,p)=val(p+3)
+                         parbend(nx,k,p)=val(p)
                       end do
-                      bends(j,k)=m
-                      molbend(j,k,1)=int(val(1))
-                      molbend(j,k,2)=int(val(2))
-                      molbend(j,k,3)=int(val(3))
+                      bends(nx,k)=m
+                      molbend(nx,k,1)=ival(1)
+                      molbend(nx,k,2)=ival(2)
+                      molbend(nx,k,3)=ival(3)
                    end do
                 elseif(key.eq.'bonds')then
                    backspace(5)
-                   read(5,*)key,bondscnt(j)
-                   do k=1,bondscnt(j)
-                      read(5,*)val(1),val(2),char
+                   read(5,*)key,bondscnt(nx)
+                   do k=1,bondscnt(nx)
+                      read(5,*)ival(1),ival(2),char
                       call bonds_opt(char,m,numt)
                       backspace(5)
-                      read(5,*)val(1),val(2),char,(val(p),p=3,2+numt)
+                      read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
                       do p=1,numt
-                         parbnd(j,k,p)=val(p+2)
+                         parbnd(nx,k,p)=val(p)
                       end do
-                      bonds(j,k)=m
-                      molbond(j,k,1)=int(val(1))
-                      molbond(j,k,2)=int(val(2))
+                      bonds(nx,k)=m
+                      molbond(nx,k,1)=ival(1)
+                      molbond(nx,k,2)=ival(2)
                    end do
-                elseif(key.eq.'dihedral')then
+                elseif(key.eq.'dihedrals')then
                    backspace(5)
-                   read(5,*)key,torscnt(i)
-                   do k=1,torscnt(i)
-                      read(5,*)val(1),val(2),val(3),val(4),char
+                   read(5,*)key,torscnt(nx)
+                   do k=1,torscnt(nx)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
                       call dihedral_opt(char,m,numt)
                       backspace(5)
-                      read(5,*)val(1),val(2),val(3),val(4),char,(val(p),p=5,4+numt)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
                       do p=1,numt
-                         partors(j,k,p)=val(p+4)
+                         partors(nx,k,p)=val(p)
                       end do
-                      tors(j,k)=m
-                      moltors(j,k,1)=int(val(1))
-                      moltors(j,k,2)=int(val(2))
-                      moltors(j,k,3)=int(val(3))
-                      moltors(j,k,4)=int(val(4))
+                      tors(nx,k)=m
+                      moltors(nx,k,1)=ival(1)
+                      moltors(nx,k,2)=ival(2)
+                      moltors(nx,k,3)=ival(3)
+                      moltors(nx,k,4)=ival(4)
                    end do
                 end if
              end do
-             backspace(5)
           end do
        end if
+671    continue
     end do
-
-    !-calculando moleculas totais
-
-33  moltot=1
-    do i=1,nmolec
-       do j=1,ntmolec(i)
-          nzmolec(moltot)=nxmolec(i)
-          moltot=moltot+1
-       end do
-    end do
-
-    moltot=moltot-1
 
     !-calculando parametros intramoleculares totais
 
-    nbends=0
+22  nbends=0
     nbonds=0
     ntors=0
     do i=1,nmolec
@@ -682,47 +763,6 @@ contains
           ntors=ntors+torscnt(i)
        end do
     end do
-
-    !-calculando total de especies
-
-    atnp(1)=atp(1)
-
-    spctot=1
-    do i=2,natom
-       do j=1,spctot
-          if(atp(i).eq.atnp(j))goto 553
-       end do
-      atnp(spctot+1)=atp(i)
-      spctot=spctot+1
-553   continue
-     end do
-
-    do j=1,spctot
-       natnp(j)=0
-    end do
-
-    do i=1,natom
-       do j=1,spctot
-          if(atp(i).eq.atnp(j))natnp(j)=natnp(j)+1
-       end do
-    end do
-
-    !-calculando graus de liberdade
-
-    natfx=0
-    do i=1,natom
-       if(fztp(i).eq.0)natfx=natfx+1
-    end do
-
-    nfree=3*(natom-natfx-1)
-
-    !-redefinindo parametros de rede e posicoes atomicas
-
-    if(reuse.eq.1)call frame
-
-    !-definindo massa atomica
-
-    call atomic_mass
 
   return
 
@@ -736,6 +776,8 @@ contains
     implicit none
 
     integer i,j,k,l1,l2
+
+    method='MD'
 
     prop='NONE'
     mesh=1
@@ -762,6 +804,7 @@ contains
     lambdafi=1.d0
 
     ensble='nve'
+    ensble_mt='berendsen'
 
     rcutoff=0.d0
     drcutoff=0.d0
@@ -1140,10 +1183,23 @@ contains
     read(1,*)
     read(1,*)natom
 
-    do i=1,natom
-       read(1,'(i5,3f14.8,2(2x,3f14.8))') &
-            idna(i),xa(i),ya(i),za(i),fax(i),fay(i),faz(i),vax(i),vay(i),vaz(i)
-    end do
+    select case(reuse)
+    case(1)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i)
+       end do
+    case(2)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i),fax(i),fay(i),faz(i)
+       end do
+    case(3)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i),fax(i),fay(i),faz(i),vax(i),vay(i),vaz(i)
+       end do
+    end select
 
     !-fechando arquivo XSF com as coordenadas atomicas
 
@@ -1227,6 +1283,12 @@ contains
     case('harm')
        m=1
        nprtors=2
+    case('hrm2')
+       m=2
+      nprtors=2
+    case('ryck')
+       m=3
+       nprtors=6
     end select
 
     return
@@ -1287,17 +1349,19 @@ contains
     do i=1,natom
        select case(idna(i))
        case(1)
-          mass(i)=1.00794d0
+          mass(i)=1.0079400d0
        case(6)
-          mass(i)=12.0107d0
+          mass(i)=12.010700d0
        case(7)
-          mass(i)=14.0067d0
+          mass(i)=14.006700d0
        case(8)
-          mass(i)=15.9994d0
+          mass(i)=15.999400d0
+       case(15)
+          mass(i)=30.973762d0
        case(18)
-          mass(i)=39.9480d0
+          mass(i)=39.948000d0
        case(80)
-          mass(i)=200.5900d0
+          mass(i)=200.59000d0
        end select
     end do
 

@@ -12,7 +12,7 @@ LDFLAGS= -L $(ROOT)/libraries -llapack -lrefblas -lminpack
 #=====================================================================================
 OBJ_SYS = sistema.o input.o alloc_arrays.o utils.o estrutura.o brillouin.o
 #
-OBJ_MD = neighbour_list.o vdw_module.o coulomb_module.o \
+OBJ_MD = vdw_module.o coulomb_module.o neighbour_list.o \
 		bonds_module.o bends_module.o dihedral_module.o \
 		tersoff_module.o force_field.o ensemble_nve.o \
 		ensemble_nvt.o ensemble_npt.o molecular_dynamics.o

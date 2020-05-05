@@ -89,9 +89,8 @@ contains
 
     !-imprimindo informaçoes do espaco reciproco
 
-    write(6,*)('#',i=1,70)
-    write(6,*)'$$$$$$$$$ ',('ESPACO RECIPROCO ',i=1,3),'$$$$$$$$$'
-    write(6,*)('#',i=1,70)
+    write(6,*)
+    write(6,*)'Reciprocal space:'
     write(6,*)
     write(6,'(a16,3f15.8)')'Lattice constts:',(vrn(i)*kconv,i=1,3)
     write(6,*)

@@ -163,7 +163,7 @@ contains
              call labels(lo(j),lo(i),m1,k)
              t1(1)=tpr0(k,1)*econv
              t1(2)=tpr0(k,2)
-             t1(3)=tpr0(k,3)*kconv
+             t1(3)=tpr0(k,3)*(econv/rconv)
              write(6,48)lo(j)-1,lo(i)-1,m1-1,(t1(l),l=1,nprllm(k))
           end do
        end do
@@ -223,7 +223,7 @@ contains
     do i=1,nparamt
        tpr0(mskt(i),1)=tpr0(mskt(i),1)/econv
        tpr0(mskt(i),2)=tpr0(mskt(i),2)
-       tpr0(mskt(i),3)=tpr0(mskt(i),3)/(1.0d0/rconv)
+       tpr0(mskt(i),3)=tpr0(mskt(i),3)/(econv/rconv)
     end do
 
     do i=1,nparamt

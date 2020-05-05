@@ -132,7 +132,7 @@ contains
     !-VR(r)+bij*VA(r)
 
     potp1=prm(1)*exp(-sqrt(2.d0*prm(3))*prm(2)*(dr-prm(4)))/(prm(3)-1.d0)
-    potp2=prm(1)*prm(3)*exp(-sqrt(2.d0/prm(3))*prm(2)*(dr-prm(4)))/(prm(3)-1.d0)
+    potp2=prm(1)*exp(-sqrt(2.d0/prm(3))*prm(2)*(dr-prm(4)))/(prm(3)-1.d0)
 
     potp=potp1-potg*potp2
 

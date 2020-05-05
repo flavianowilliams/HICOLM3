@@ -30,7 +30,10 @@ module coulomb_module
   use utils
   use estrutura
   use alloc_arrays
-  use neighbour_list
+
+  integer ncoulstp
+
+  save ncoulstp
 
 contains
 
@@ -53,6 +56,50 @@ contains
     return
 
   end subroutine coulomb_convert
+
+  subroutine coulomb_counts
+
+    implicit none
+
+    integer, allocatable :: chk(:,:)
+
+    integer i,j,ix,nx,ii,jj,ixx
+
+    allocate(chk(spctot,spctot))
+
+    !-checando viabilidade de interacoes intermoleculares
+
+    do i=1,spctot
+       do j=1,spctot
+          chk(i,j)=1
+          if(parcoul(i,1).eq.0.d0.or.parcoul(j,1).eq.0.d0)chk(i,j)=0
+       end do
+    end do
+
+    !-calculando qde de Van der Waals e coulomb
+
+    ix=1
+    nx=1
+    ncoulstp=0
+    do i=1,moltot-1
+       do ii=1,nzmolec(i)
+          ixx=nx+nzmolec(i)
+          do j=i+1,moltot
+             do jj=1,nzmolec(j)
+                if(chk(atp(ix),atp(ixx)).eq.1)ncoulstp=ncoulstp+1
+                ixx=ixx+1
+             end do
+          end do
+          ix=ix+1
+       end do
+       nx=nx+nzmolec(i)
+    end do
+
+    deallocate(chk)
+
+    return
+
+  end subroutine coulomb_counts
 
   subroutine coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
     !****************************************************************************************

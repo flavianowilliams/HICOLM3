@@ -182,7 +182,7 @@ contains
     do i=1,nparamt
        tpr0(mskt(i),1)=tpr0(mskt(i),1)*econv
        tpr0(mskt(i),2)=tpr0(mskt(i),2)
-       tpr0(mskt(i),3)=tpr0(mskt(i),3)*1.d0/rconv
+       tpr0(mskt(i),3)=tpr0(mskt(i),3)*econv/rconv
     end do
 
     do i=1,nparamt

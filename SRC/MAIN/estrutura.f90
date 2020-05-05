@@ -102,18 +102,22 @@ contains
 
     !-imprimindo informacoes do espaço real
 
-    write(6,*)('#',i=1,70)
-    write(6,*)'$$$$ ',('ESPACO REAL ',i=1,5),'$$$$$'
-    write(6,*)('#',i=1,70)
+    write(6,*)('#',i=1,93)
+    write(6,*)('STRUCTURE ',i=1,9)
+    write(6,*)('#',i=1,93)
     write(6,*)
-    write(6,'(a10,3f15.8)')'Latt ctes:',a*rconv,b*rconv,c*rconv
-    write(6,'(a10,3f15.8)')'Latt angs:',alpha*aconv,beta*aconv,gamma*aconv
+    write(6,'(a18,i5)')'Total of atoms:',natom
     write(6,*)
-    write(6,'(a10,3f15.8)')'Vectors R:',(v(1,i)*rconv,i=1,3)
-    write(6,'(a10,3f15.8)')'          ',(v(2,i)*rconv,i=1,3)
-    write(6,'(a10,3f15.8)')'          ',(v(3,i)*rconv,i=1,3)
+    write(6,*)'Real space:'
     write(6,*)
-    write(6,'(a14,f10.4)')'       VOLUME:',volume*rconv**3
+    write(6,'(a16,3f15.8)')'Lattice constts:',a*rconv,b*rconv,c*rconv
+    write(6,*)
+    write(6,'(a16,3f15.8)')'Lattice vectors:',(v(1,i)*rconv,i=1,3)
+    write(6,'(16x,3f15.8)')(v(2,i)*rconv,i=1,3)
+    write(6,'(16x,3f15.8)')(v(3,i)*rconv,i=1,3)
+
+    write(6,*)
+    write(6,'(a14,f14.4)')'       VOLUME:',volume*rconv**3
     write(6,*)
     write(6,'(a14,i10)')'     Symmetry:',gsym
 

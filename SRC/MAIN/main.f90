@@ -33,9 +33,9 @@ program HICOLM
   character(10) host,time
   character(8) date
 
-  open(6,file='HICOLM.out',status='unknown') ! imprimindo arquivo out
-
   call cpu_time(t0)
+
+  open(6,file='HICOLM.out',status='unknown') ! imprimindo arquivo out
 
   t1=0.d0
   t2=0.d0
@@ -50,7 +50,7 @@ program HICOLM
 
   !-cabecalho
   !
-  write(6,'(5x,a55)')'HICOLM: Multi-Methods for Molecules and Condensed Systems'
+  write(6,'(5x,a57)')'HICOLM: Multi-Methods for Molecules and Condensed Systems'
   write(6,*)
   write(6,'(''Host: '',2x,a10)')host
   write(6,'(''Date: '',2x,a8)')date

@@ -24,6 +24,8 @@ module neighbour_list
 
   use input
   use estrutura
+  use vdw_module
+  use coulomb_module
 
   integer verlchk,ntrsffstp
 
@@ -41,7 +43,7 @@ contains
     !****************************************************************************************
     implicit none
 
-    integer i,numb
+    integer numb,ierr
 
     !-valores iniciais
 
@@ -50,12 +52,8 @@ contains
     !-alocando arrays (vizinhos intermoleculares)
 
     if(nvdw.ne.0.or.ncoul.ne.0)then
-       numb=0
-       do i=1,moltot
-          numb=numb+(nzmolec(i)-1)
-       end do
-       numb=int(0.5*(natom-1)*natom)-numb
-       allocate(ilist(natom,numb),nlist(natom))
+       numb=int(0.125*max(ncoulstp,nvdwstp))
+       allocate(ilist(natom,numb),nlist(natom),stat=ierr)
     end if
 
     !-alocando arrays (vizinhos intramoleculares)
@@ -63,6 +61,8 @@ contains
     if(ntrsff.ne.0)then
        allocate(ilista(natom,natom),nlista(natom))
     end if
+
+    if(ierr.ne.0)stop 'neighbour_prepare: allocation failed'
 
     return
 

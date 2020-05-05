@@ -29,9 +29,9 @@ module vdw_module
   use input
   use estrutura
   use alloc_arrays
-  use neighbour_list
 
-  real(8) nvdwstp,envdw_corr,virvdw_corr
+  integer nvdwstp
+  real(8) envdw_corr,virvdw_corr
 
   save nvdwstp,envdw_corr,virvdw_corr
 
@@ -45,7 +45,7 @@ contains
 
     implicit none
 
-    integer nx,i,j,ii,jj,ni,nj
+    integer i,j
 
     !-convertendo parametros de Van der Waals
 
@@ -63,24 +63,63 @@ contains
        end do
     end do
 
-    !-calculando qde de Van der Waals e coulomb
+    return
 
-    nx=0
-    do i=1,moltot
-       do ii=1,nzmolec(i)
-          ni=(i-1)*nzmolec(i)+ii
-          do j=i+1,moltot
-             do jj=1,nzmolec(j)
-                nj=(j-1)*nzmolec(j)+jj
-                nvdwstp=nvdwstp+1
-             end do
+  end subroutine vdw_convert
+
+  subroutine vdw_counts
+
+    implicit none
+
+    integer, allocatable :: chk(:,:)
+
+    integer i,j,k,ix,nx,ii,jj,ixx,nkb
+
+    allocate(chk(spctot,spctot))
+
+    !-checando viabilidade de interacoes intermoleculares
+
+    nkb=1
+
+    do i=1,spctot
+       do j=1,spctot
+          select case(vdw(i,j))
+          case(1)
+             nkb=3
+          case(2)
+             nkb=2
+          end select
+          chk(i,j)=1
+          do k=1,nkb
+             if(parvdw(i,j,k).eq.0.d0)chk(i,j)=0
           end do
        end do
     end do
 
+    !-calculando qde de Van der Waals e coulomb
+
+    ix=1
+    nx=1
+    nvdwstp=0
+    do i=1,moltot-1
+       do ii=1,nzmolec(i)
+          ixx=nx+nzmolec(i)
+          do j=i+1,moltot
+             do jj=1,nzmolec(j)
+                if(chk(atp(ix),atp(ixx)).eq.1)nvdwstp=nvdwstp+1
+                ixx=ixx+1
+             end do
+          end do
+          ix=ix+1
+       end do
+       nx=nx+nzmolec(i)
+    end do
+
+    deallocate(chk)
+
     return
 
-  end subroutine vdw_convert
+  end subroutine vdw_counts
 
   subroutine vdw_calc(envdw,virvdw,ni,nj,xvz,yvz,zvz)
     !****************************************************************************************
@@ -198,8 +237,8 @@ contains
     envdw_corr=0.d0
     virvdw_corr=0.d0
 
-    do i=1,nvdw
-       do j=i,nvdw
+    do i=1,spctot
+       do j=i,spctot
           ptrm=vdw(i,j)
           select case(ptrm)
           case(1)

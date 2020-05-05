@@ -42,7 +42,7 @@ contains
     write(6,'(''  Elapsed time = '',f8.2,'' seconds'')') tf
     write(6,*)
     write(6,'(93a1)')('#',i=1,93)
-    write(6,*)('FIM!',i=1,20)
+    write(6,*)('END!',i=1,23)
     write(6,'(93a1)')('#',i=1,93)
     write(6,*)
 

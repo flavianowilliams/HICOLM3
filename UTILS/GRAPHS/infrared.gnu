@@ -17,7 +17,7 @@ set multiplot
 ########################################################################
 set origin 0,0
 set xrange [0:4000]
-set xlabel "Frequency (cm^{-1})"
+set xlabel "Wavenumber (cm^{-1})"
 set yrange [0:0.08]
 set ylabel "Intensity"
 unset ytics

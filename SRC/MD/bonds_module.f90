@@ -46,11 +46,15 @@ contains
     !****************************************************************************************
 
     implicit none
-!
-    allocate(bondij(2,nbonds))
-    allocate(bondim(nbonds))
-    allocate(bondib(nbonds))
-!
+
+    integer ierr
+
+    allocate(bondij(2,nbonds),bondim(nbonds),bondib(nbonds),stat=ierr)
+
+    if(ierr.ne.0)stop 'bonds_alloc: allocation failed'
+
+    return
+
   end subroutine bonds_alloc
 
   subroutine bonds_convert

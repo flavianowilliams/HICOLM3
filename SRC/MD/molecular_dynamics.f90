@@ -38,41 +38,28 @@ contains
 
   subroutine md(t3)
     !***************************************************************************************
-    ! Obtencao das variaveis canônicas a cada intervalo de tempo                           *
+    ! Calculo das variaveis canônicas a cada ciclo MD                                      *
     !***************************************************************************************
 
     implicit none
 
     integer i,ihist
-    real(8) t0,t3,time,temp,press
+    real(8) t0,t3,time,temp,press,xhi,eta,sigma
     real(8) enpot,ekinet
 
     !-contagem do tempo absoluto
 
     call cpu_time(t0)
 
-    !-preparando Dinâmica molecular
-
-    call md_prepare
-
     !-imprimindo parametros de entrada
 
     call md_print
 
-    !-correcao da energia VdW de curto alcance
+    !-preparando Dinâmica molecular
 
-    if(nvdw.ne.0)call vdw_corr
+    call md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
 
-    !-calculo da temperatura e energia cinetica no instante inicial
-
-    ekinet=0.d0
-    do i=1,natom
-       ekinet=ekinet+mass(i)*(vax(i)**2+vay(i)**2+vaz(i)**2)
-    end do
-
-    ekinet=0.5d0*ekinet
-
-    write(6,'(96a1)')('#',i=1,96)
+    write(6,'(96a1)')('#',i=1,93)
     write(6,*)
     write(6,'(a27,f12.4)')'  Correction of VdW energy:',envdw_corr*econv
     write(6,'(a27,f12.4)')'Correction of VdW pressure:',virvdw_corr*econv
@@ -90,7 +77,7 @@ contains
 
     time=dtime
     do i=1,nrelax
-       call mdloop(i,temp,press,ekinet,enpot)
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        time=time+dtime
@@ -100,7 +87,7 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,temp,press,ekinet,enpot)
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        if(mod(i,nhist).eq.0)call history(ihist)
@@ -119,11 +106,11 @@ contains
     return
 
 10  format(1x,a2,6x,a4,6x,a5,9x,a6,6x,a8,7x,a8,6x,a7)
-20  format(1x,a2,2x,i8,2x,e12.4,2x,e12.4,3(2x,e12.4))
+20  format(1x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 
   end subroutine md
 
-  subroutine md_prepare()
+  subroutine md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
     !***************************************************************************************
     ! Preparacao da dinâmica molecular:                                                    *
     ! - Preparando campo de forca;                                                         *
@@ -133,8 +120,9 @@ contains
     implicit none
 
     integer i,nwr
-    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff
-    real(8) encoul,enbond,enbend,entors,envdw,entrsff
+    real(8) xhi,eta,sigma,ekinet,temp,press
+    real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff,virtot
+    real(8) encoul,enbond,enbend,entors,envdw,entrsff,enpot
 
     !-abrindo ficheiro de dados
 
@@ -161,7 +149,11 @@ contains
 
     !-energia potencial
 
-!    enpot=encoul+enbond+enbend+entors+envdw+entrsff
+    enpot=encoul+enbond+enbend+entors+envdw+entrsff
+
+    !-correcao da energia de Van der Waals de curto alcance
+
+    if(nvdw.ne.0)call vdw_corr
 
     !-massa total
 
@@ -170,11 +162,39 @@ contains
        mtot=mtot+mass(i)
     end do
 
-   return
+    !-valores iniciais dos coeficientes de fricção
+
+    xhi=0.d0
+    eta=0.d0
+
+    !-calculo energia cinetica desejada
+
+    sigma=0.5d0*nfree*text
+
+    !-valor inicial da energia cinetica
+
+    ekinet=0.d0
+    do i=1,natom
+       ekinet=ekinet+mass(i)*(vax(i)**2+vay(i)**2+vaz(i)**2)
+    end do
+
+    ekinet=0.5d0*ekinet
+
+    !-valor inicial da temperatura
+
+    temp=2.d0*ekinet/nfree
+
+    !-valor inicial da pressão
+
+    virtot=virvdw+virbond+virbend+virtors+vircoul+virtrsff
+
+    press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
+
+    return
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,temp,press,ekinet,enpot)
+  subroutine mdloop(mdstp,xhi,eta,sigma,temp,press,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -185,7 +205,7 @@ contains
     implicit none
 
     integer mdstp,i,ix
-    real(8) temp,press
+    real(8) temp,press,xhi,eta,sigma
 
     real(8) virvdw,virbond,virbend,virtors,vircoul,virtrsff
     real(8) ekinet,encoul,enbond,enbend,entors,envdw,entrsff,enpot
@@ -197,11 +217,23 @@ contains
        call nve_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
             virbond,virbend,virtors,vircoul,virtrsff)
     case('nvt')
-       call nvt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-            virbond,virbend,virtors,vircoul,virtrsff)
+       select case(ensble_mt)
+       case('berendsen')
+          call nvt_ber_vv(sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
+               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+       case('hoover')
+          call nvt_hoover_vv(xhi,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
+               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+       end select
     case('npt')
-       call npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
-            virbond,virbend,virtors,vircoul,virtrsff)
+       select case(ensble_mt)
+       case('berendsen')
+          call npt_ber_vv(temp,press,ekinet,encoul,enbond,enbend,entors,envdw,entrsff,virvdw, &
+               virbond,virbend,virtors,vircoul,virtrsff)
+       case('hoover')
+          call npt_hoover_vv(xhi,eta,sigma,temp,press,ekinet,encoul,enbond,enbend,entors,envdw,&
+               entrsff,virvdw,virbond,virbend,virtors,vircoul,virtrsff)
+       end select
     end select
 
     !-calculo da energia potencial
@@ -218,7 +250,7 @@ contains
        ix=(mdstp-nrelax)/nhist
        write(2,10)ix
        write(2,20)(str(i)*econv/rconv**3,i=1,6)
-       write(2,20)(ix*dtime)*tconv,volume*rconv**3,temp*teconv,&
+       write(2,20)(ix*dtime)*nhist*tconv,volume*rconv**3,temp*teconv,&
             press*pconv,(ekinet+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
             (mtot/volume)*mconv/(6.02d-4*rconv**3)
        write(2,*)
@@ -259,26 +291,30 @@ contains
 
     integer j
 
-    write(6,*)('#',j=1,70)
-    write(6,*)'$$$',(' ENTRADA',j=1,8),'$$$'
-    write(6,*)('#',j=1,70)
+    write(6,*)('#',j=1,93)
+    write(6,*)('MOLECULAR DYNAMICS ',j=1,5)
+    write(6,*)('#',j=1,93)
     write(6,*)
-    write(6,'(5x,a30)')'Molecular mechanics parameters'
+    write(6,'(5x,a30)')'Molecular dynamics information'
     write(6,'(5x,36a1)')('-',j=1,36)
     write(6,'(5x,a16,f7.2)')'Temperature (K):',text*teconv
-    write(6,'(7x,a14,e12.4)')'Pressure (atm):',preext*pconv
-    write(6,'(12x,a9,a9)')'Ensemble:',ensble
+    write(6,'(7x,a14,es12.4)')'Pressure (atm):',preext*pconv
+    write(6,'(12x,a9,2x,a5,2x,a9)')'Ensemble:',ensble,ensble_mt
     if(ensble.eq.'nvt')then
        write(6,'(10x,a11,f5.2)')'Thermostat:',tstat*tconv
     elseif(ensble.eq.'npt')then
        write(6,'(10x,a11,f5.2)')'Thermostat:',tstat*tconv
-       write(6,'(10x,a11,2f5.2)')'Barostat:',pstat*tconv,bfactor/pconv
+       if(ensble_mt.eq.'berendsen')then
+          write(6,'(10x,a11,f5.2,2x,es7.1)')'Barostat:',pstat*tconv,bfactor/pconv
+       elseif(ensble_mt.eq.'hoover')then
+          write(6,'(10x,a11,f5.2)')'Barostat:',pstat*tconv
+       end if
     end if
     write(6,'(5x,a16,i10)')'ntrialmax:',ntrialmax
     write(6,'(5x,a16,i10)')'nrelax:',nrelax
     write(6,'(5x,a16,i5)')'reuse:',reuse
-    write(6,'(5x,a16,f5.3)')'Timestep (ps):',dtime*tconv
-    write(6,'(5x,a16,2f7.3)')'rcutoff:',rcutoff*rconv,drcutoff*rconv
+    write(6,'(5x,a16,es10.3)')'Timestep (ps):',dtime*tconv
+    write(6,'(5x,a16,2f6.3)')'rcutoff:',rcutoff*rconv,drcutoff*rconv
     write(6,'(5x,36a1)')('-',j=1,36)
     write(6,*)
 

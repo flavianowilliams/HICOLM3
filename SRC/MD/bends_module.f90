@@ -47,9 +47,11 @@ contains
 
     implicit none
 
-    allocate(bendij(3,nbends))
-    allocate(bendim(nbends))
-    allocate(bendib(nbends))
+    integer ierr
+
+    allocate(bendij(3,nbends),bendim(nbends),bendib(nbends),stat=ierr)
+
+    if(ierr.ne.0)stop 'bends_alloc: allocation failed'
 
     return
 

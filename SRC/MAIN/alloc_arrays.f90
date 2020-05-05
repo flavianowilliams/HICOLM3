@@ -34,12 +34,18 @@ contains
     !****************************************************************************************
     ! Alocacao de variaveis globais                                                         *
     !****************************************************************************************
+    implicit none
+
+    integer ierr
+
     !-alocando arrays referentes ao Campo de Força
     !
-    allocate(bondsmlc(nmolec),bendsmlc(nmolec),torsmlc(nmolec))
+    allocate(bondsmlc(nmolec),bendsmlc(nmolec),torsmlc(nmolec),stat=ierr)
     !
     !-alocando variaveis canonicas
     !
+    if(ierr.ne.0)stop 'system_arrays: allocation failed'
+
     return
 
   end subroutine system_arrays

@@ -42,24 +42,24 @@ module sistema
   !- dkrlxmax: Limite de pontos K para ajuste dos parametros SK
   !----------------------------------------------------------------
   !
-  parameter (natmax=2000)
-  parameter (ntpmax=10)
-  parameter (nkmax=150000)
+  parameter (natmax=3000)
+  parameter (ntpmax=25)
+  parameter (nkmax=15)
   parameter (nprllmmax=4)
   parameter (nparammax=10)
 
-  parameter (nbandmax=5000)
+  parameter (nbandmax=5)
 
   parameter (lmax=4)
   parameter (mmax=9)
 
-  parameter (nkrlxmax=100)
-  parameter (dkrlxmax=100)
+  parameter (nkrlxmax=10)
+  parameter (dkrlxmax=10)
 
-  parameter (molecmax=500)
+  parameter (molecmax=1000)
 
-  parameter (bendmax=20)
-  parameter (bondmax=30)
-  parameter (torsmax=10)
+  parameter (bendmax=50)
+  parameter (bondmax=50)
+  parameter (torsmax=50)
 
 end module sistema

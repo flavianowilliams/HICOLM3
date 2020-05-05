@@ -47,9 +47,9 @@ contains
 
     implicit none
 
-    allocate(torsijkn(4,ntors))
-    allocate(torsim(ntors))
-    allocate(torsib(ntors))
+    integer ierr
+
+    allocate(torsijkn(4,ntors),torsim(ntors),torsib(ntors),stat=ierr)
 
     return
 
@@ -73,6 +73,15 @@ contains
           case(1)
              partors(i,j,1)=partors(i,j,1)/econv
              partors(i,j,2)=partors(i,j,2)/aconv
+          case(2)
+             partors(i,j,1)=partors(i,j,1)/econv
+          case(3)
+             partors(i,j,1)=partors(i,j,1)/econv
+             partors(i,j,2)=partors(i,j,2)/econv
+             partors(i,j,3)=partors(i,j,3)/econv
+             partors(i,j,4)=partors(i,j,4)/econv
+             partors(i,j,5)=partors(i,j,5)/econv
+             partors(i,j,6)=partors(i,j,6)/econv
           end select
        end do
     end do
@@ -105,6 +114,10 @@ contains
           select case(tors(i,j))
           case(1)
              nkb=1
+          case(2)
+             nkb=1
+          case(3)
+             nkb=0
           end select
           chk(i,j)=1
           do k=1,nkb
@@ -229,6 +242,16 @@ contains
     case(1)
        pot=0.5d0*partors(im,in,1)*(phi-partors(im,in,2))**2
        fd=partors(im,in,1)*(phi-partors(im,in,2))
+    case(2)
+       pot=0.5d0*partors(im,in,1)*(cos(phi)-partors(im,in,2))**2
+       fd=-sin(phi)*partors(im,in,1)*(cos(phi)-partors(im,in,2))
+    case(3)
+       pot=partors(im,in,1)+partors(im,in,2)*cos(phi)+partors(im,in,3)*cos(phi)**2&
+            +partors(im,in,4)*cos(phi)**3+partors(im,in,5)*cos(phi)**4&
+            +partors(im,in,6)*cos(phi)**5
+       fd=-sin(phi)*(partors(im,in,2)+2.d0*partors(im,in,3)*cos(phi)&
+            +3.d0*partors(im,in,4)*cos(phi)**2+4.d0*partors(im,in,5)*cos(phi)**3&
+            +5.d0*partors(im,in,6)*cos(phi)**4)
     end select
 
     return

@@ -44,11 +44,10 @@ contains
 
     implicit none
 
-    integer i
+    integer i,j
+    real(8) chqtot
 
-    write(6,'(96a1)')('#',i=1,71)
-    write(6,*)'$$$$ ',('FORCE FIELD ',i=1,5),' $$$$'
-    write(6,'(96a1)')('#',i=1,71)
+    write(6,'(96a1)')('#',i=1,93)
     write(6,*)
 
     !-valores iniciais
@@ -63,17 +62,23 @@ contains
        torsmlc(i)=0
     end do
 
-    !-alocando arrays (lista de vizinhos de Verlet)
-
-    call neighbour_prepare
-
     !-unidades de Van der Waals
 
-    if(nvdw.ne.0)call vdw_convert
+    if(nvdw.ne.0)then
+       call vdw_convert
+       call vdw_counts
+    end if
 
     !-unidades de Coulomb
 
-    if(ncoul.ne.0)call coulomb_convert
+    if(ncoul.ne.0)then
+       call coulomb_convert
+       call coulomb_counts
+    end if
+
+    !-alocando arrays (lista de vizinhos de Verlet)
+
+    call neighbour_prepare
 
     !-unidades de estiramento
 
@@ -106,7 +111,7 @@ contains
     if(nmolec.ne.0)then
        write(6,*)'Molecules'
        write(6,'(111a1)')('-',i=1,52)
-       write(6,10)'Tipo','Qde','Sites','bonds','bends','dihdl'
+       write(6,10)'Type','Qty','Sites','bonds','bends','dihdl'
        write(6,'(111a1)')('-',i=1,52)
        do i=1,nmolec
           write(6,20)namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
@@ -116,9 +121,56 @@ contains
        write(6,*)
     end if
 
+    chqtot=0
+    do i=1,spctot
+       chqtot=chqtot+parcoul(atnp(i),1)
+    end do
+
+    if(spctot.lt.10)then
+       write(6,30)'Total of species:',spctot,'->',(atnp(i),i=1,spctot)
+       write(*,*)
+       write(6,80)' Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,spctot)
+       write(*,*)
+    else
+       write(6,30)'Total of species:',spctot,'->',(atnp(i),i=1,10)
+       write(6,31)(atnp(i),i=11,spctot)
+       write(*,*)
+       write(6,80)' Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,10)
+       write(6,81)(parcoul(atnp(i),1),i=11,spctot)
+       write(6,*)
+       write(6,82)' Total charge:',chqtot
+       write(6,*)
+    end if
+    write(6,*)'Intermolecular:'
     write(6,*)
-    write(6,30)'Total of species:',spctot,'->',(atnp(i),i=1,spctot)
-    write(6,*)
+
+    if(ncoul.ne.0)then
+       select case(coulop)
+       case('coul')
+          write(*,*)'Electrostatic interaction: Force-Shifted Coulomb Sum'
+          write(*,*)
+       end select
+    end if
+
+    if(nvdw.ne.0)then
+       write(6,60)'Van der Waals:',nvdw
+       write(6,*)
+       do i=1,spctot
+          do j=i,spctot
+             select case(vdw(i,j))
+             case(1)
+                write(6,50)&
+                     i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             case(2)
+                write(6,50)i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             end select
+          end do
+       end do
+       write(6,*)
+       write(6,70)'       Maximum coulomb interaction:',ncoulstp
+       write(6,70)' Maximum Van der Waals interaction:',nvdwstp
+       write(6,*)
+    end if
 
     !-limpando memoria
 
@@ -129,6 +181,13 @@ contains
 10  format(a4,7x,a3,4x,a6,4x,a5,4x,a5,4x,a5)
 20  format(a6,2x,i5,4(4x,i5))
 30  format(a18,i3,2x,a2,10i4)
+31  format(25x,10i4)
+50  format(5x,2i3,a5,5x,3f7.4)
+60  format(a14,i5)
+70  format(a35,i10)
+80  format(a18,i3,2x,a2,10f8.4)
+81  format(25x,10f8.4)
+82  format(a18,10f8.4)
 
   end subroutine ff_prepare
 
