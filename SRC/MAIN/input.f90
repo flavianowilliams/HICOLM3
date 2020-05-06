@@ -246,7 +246,7 @@ contains
 
     implicit none
 
-    integer i,j,jj,k,kk,ia,ib,ic,nx,imol
+    integer i,j,jj,k,kk,nx,imol,ia,ib
     real(8) dr,rca,rcb,tol
 
     data tol /0.15d0/
@@ -284,18 +284,14 @@ contains
           do k=1,2
              do kk=1,2
                 if(molbond(imol,j,k).eq.molbond(imol,jj,kk))then
-                   ib=molbond(imol,j,k)
+                   molbend(imol,bendscnt(imol),1)=molbond(imol,j,3-k)
+                   molbend(imol,bendscnt(imol),2)=molbond(imol,j,k)
+                   molbend(imol,bendscnt(imol),3)=molbond(imol,jj,3-kk)
                    bendscnt(imol)=bendscnt(imol)+1
-                elseif(molbond(imol,j,k).ne.molbond(imol,jj,kk))then
-                   ia=molbond(imol,j,k)
-                   ic=molbond(imol,jj,kk)
                 end if
              end do
           end do
        end do
-       molbend(imol,j,1)=ia
-       molbend(imol,j,2)=ib
-       molbend(imol,j,3)=ic
     end do
 
     bendscnt(imol)=bendscnt(imol)-1
