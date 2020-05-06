@@ -32,6 +32,8 @@ contains
     select case(zat)
     case(1)
        rc=0.37d0
+    case(6)
+       rc=0.77d0
     case(8)
        rc=0.73d0
     end select
