@@ -93,8 +93,19 @@ contains
        case('OW')
           select case(pb)
           case('HW')
-             prms(1)=45.9296d0
-             prms(2)=1.0120d0
+             !             prms(1)=45.9296d0
+             !             prms(2)=1.0120d0
+             prms(1)=23.98d0
+             prms(2)=0.9572d0
+          end select
+       case('CT')
+          select case(pb)
+          case('CT')
+             prms(1)=13.44d0
+             prms(2)=1.526d0
+          case('HC')
+             prms(1)=14.74d0
+             prms(2)=1.090d0
           end select
        end select
        pa=p2
