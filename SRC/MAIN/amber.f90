@@ -45,8 +45,8 @@ contains
        select case(pa)
        case('OW')
           epsi(i)=0.006591346d0
-          !       ri=1.7683d0
-          ri(i)=1.582746d0
+          ri(i)=1.7683d0
+!          ri(i)=1.582746d0
        case('HW')
           epsi(i)=0.d0
           ri(i)=0.d0
@@ -54,11 +54,11 @@ contains
           epsi(i)=0.d0
           ri(i)=0.d0
        case('CT')
-          epsi(i)=0.d0
-          ri(i)=0.d0
+          epsi(i)=0.004744034d0
+          ri(i)=1.9080d0
        case('HC')
-          epsi(i)=0.d0
-          ri(i)=0.d0
+          epsi(i)=0.0006808166d0
+          ri(i)=1.4870d0
        end select
        pa=p2
     end do
