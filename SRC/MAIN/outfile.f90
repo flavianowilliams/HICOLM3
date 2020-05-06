@@ -55,7 +55,7 @@ contains
     write(6,'(5x,a11)')'MIT License'
     write(6,'(5x,a35)')'Copyright (c) 2020 flavianowilliams'
     write(6,*)
-    write(6,'(5x,a75)')'Permission is hereby granted, free of charge, to any person obtaining a copy'
+    write(6,'(5x,a77)')'Permission is hereby granted, free of charge, to any person obtaining a copy'
     write(6,*)
 
     return
