@@ -7,7 +7,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 H2O 100 3
-reuse 0
+reuse 3
 &END
 
 # Molecular dynamics variables
@@ -30,11 +30,5 @@ rcutoff 7.0 0.1
   molecule H2O
   OW HW HW
   -0.834 0.417 0.417
- $END
- $INTER
- vdw 1
- 1 1 lj 0.0 0.0
- elect 1 coul
- 1 -0.82
  $END
 &END

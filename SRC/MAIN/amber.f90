@@ -26,37 +26,45 @@ contains
 
     implicit none
 
-    real(8) epsi,epsj,ri,rj,prms(2)
-    character(2) p1,p2
+    integer i
+    real(8) epsi(2),ri(2),prms(2)
+    character(2) p1,p2,pa
 
-    select case(p1)
-    case('OW')
-       epsi=0.006591346d0
-       !       ri=1.7683d0
-       ri=1.582746d0
-    case('HW')
-       epsi=0.d0
-       ri=0.d0
-    case('HO')
-       epsi=0.d0
-       ri=0.d0
-    end select
+    !-atribuindo valores iniciais
 
-    select case(p2)
-    case('OW')
-       epsj=0.006591346d0
-       !       rj=1.7683d0
-       rj=1.582746d0
-    case('HW')
-       epsj=0.d0
-       rj=0.d0
-    case('HO')
-       epsj=0.d0
-       rj=0.d0
-    end select
+    do i=1,2
+       epsi(i)=0.d0
+       ri(i)=0.d0
+    end do
 
-    prms(1)=sqrt(epsi*epsj)
-    prms(2)=ri+rj
+    !-calculando parametros de LJ de acordo com a regra de Lorentz-Berttelot
+
+    pa=p1
+
+    do i=1,2
+       select case(pa)
+       case('OW')
+          epsi(i)=0.006591346d0
+          !       ri=1.7683d0
+          ri(i)=1.582746d0
+       case('HW')
+          epsi(i)=0.d0
+          ri(i)=0.d0
+       case('HO')
+          epsi(i)=0.d0
+          ri(i)=0.d0
+       case('CT')
+          epsi(i)=0.d0
+          ri(i)=0.d0
+       case('HC')
+          epsi(i)=0.d0
+          ri(i)=0.d0
+       end select
+       pa=p2
+    end do
+
+    prms(1)=sqrt(epsi(1)*epsi(2))
+    prms(2)=ri(1)+ri(2)
 
     return
 
@@ -70,8 +78,12 @@ contains
     real(8) prms(2)
     character(2) p1,p2,pa,pb
 
+    !-atribuindo valores iniciais
+
     prms(1)=0.d0
     prms(2)=0.d0
+
+    !-calculando parametros de ligação
 
     pa=p1
     pb=p2

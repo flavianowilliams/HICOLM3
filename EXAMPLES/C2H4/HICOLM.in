@@ -28,7 +28,7 @@ rcutoff 7.0 0.1
 &FORCE
  $AMBER
   molecule C2H4
-  OW OW HW HW HW HW
+  CT CT HC HC HC HC
   0.0 0.0 0.0 0.0 0.0 0.0
  $END
 &END

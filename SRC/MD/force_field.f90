@@ -243,10 +243,10 @@ contains
              write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
                   i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
           case(3)
-             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+!             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
                 write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')&
                      atsp(i),atsp(j),'amber',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
-             end if
+!             end if
           end select
        end do
     end do
