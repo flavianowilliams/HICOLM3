@@ -142,6 +142,15 @@ contains
                 prms(2)=104.24d0
              end select
           end select
+       case('HC')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('HC')
+                prms(1)=1.52d0
+                prms(2)=109.50d0
+             end select
+          end select
        end select
        pa=p3
        pc=p1
