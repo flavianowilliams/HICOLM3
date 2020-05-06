@@ -1,7 +1,5 @@
 *~
 *.dat
-*.in
-*.str
 *.out
 *.XSF
 *.AXSF
@@ -11,3 +9,4 @@
 *.old
 HICOLM
 x2x
+properties
