@@ -230,6 +230,14 @@ contains
 
     nfree=3*(natom-natfx-1)
 
+    !-deslocando sistema para o centro da supercelula
+
+    do i=1,natom
+       xa(i)=xa(i)+0.5d0*(v(1,1)+v(2,1)+v(3,1))
+       ya(i)=ya(i)+0.5d0*(v(1,2)+v(2,2)+v(3,2))
+       za(i)=za(i)+0.5d0*(v(1,3)+v(2,3)+v(3,3))
+    end do
+
     !-redefinindo parametros de rede e posicoes atomicas
 
     if(reuse.gt.0)call frame

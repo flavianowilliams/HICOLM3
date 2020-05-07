@@ -7,7 +7,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C2H4 1 6
-reuse 0
+reuse 1
 &END
 
 # Molecular dynamics variables
@@ -15,10 +15,10 @@ reuse 0
 &MD
 nhist 10
 preext 1.0d0
-text 298.0
-ntrialmax 100
+text 0.0
+ntrialmax 100000
 nrelax 1
-timestep 0.001
+timestep 0.0001
 ensemble nvt berendsen 0.5 0.5 4.9e-5
 rcutoff 7.0 0.1
 &END
