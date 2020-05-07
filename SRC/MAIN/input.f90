@@ -329,7 +329,6 @@ contains
        end do
     end do
 
-    stop
     torscnt(imol)=torscnt(imol)-1
 
     return
@@ -521,11 +520,11 @@ contains
                 iii=jj+moltors(nx,k,2)
                 iv=jj+moltors(nx,k,3)
                 v=jj+moltors(nx,k,4)
-!                call amber_dihedrals(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
+                call amber_dihedrals(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
                 do p=1,2
                    partors(nx,k,p)=val(p)
                 end do
-                tors(nx,k)=3
+                tors(nx,k)=4
              end do
           end do
 433       do j=1,spctt

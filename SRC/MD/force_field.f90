@@ -176,6 +176,13 @@ contains
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,'(20x,4(a4,2x),a4,3x,a10)')'Site','Site','Site','Site','Type','Parameters'
        write(6,'(20x,111a1)')('-',j=1,52)
+       do j=1,torscnt(i)
+          select case(tors(i,j))
+          case(4)
+             write(6,'(20x,4(i3,3x),a5,3f8.3)')&
+                  (moltors(i,j,l),l=1,4),'amber',partors(i,j,1)*econv,partors(i,j,2)*aconv
+          end select
+       end do
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(20x,111a1)')('*',j=1,52)

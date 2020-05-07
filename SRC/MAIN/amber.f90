@@ -163,4 +163,45 @@ contains
 
   end subroutine amber_bends
 
+  subroutine amber_dihedrals(p1,p2,p3,p4,prms)
+
+    implicit none
+
+    integer i
+    real(8) prms(2)
+    character(2) p1,p2,p3,p4,pa,pb,pc,pd
+
+    prms(1)=0.d0
+    prms(2)=0.d0
+
+    pa=p1
+    pb=p2
+    pc=p3
+    pd=p4
+
+    do i=1,2
+       select case(pa)
+       case('HC')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('HC')
+                   prms(1)=0.0d0
+                   prms(2)=0.0d0
+                end select
+             end select
+          end select
+       end select
+       pa=p4
+       pb=p3
+       pc=p2
+       pd=p1
+    end do
+
+    return
+
+  end subroutine amber_dihedrals
+
 end module amber

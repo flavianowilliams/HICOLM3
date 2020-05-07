@@ -86,6 +86,9 @@ contains
              partors(i,j,5)=partors(i,j,5)/econv
              partors(i,j,6)=partors(i,j,6)/econv
              partors(i,j,7)=partors(i,j,7)/aconv
+          case(4)
+             partors(i,j,1)=partors(i,j,1)/econv
+             partors(i,j,2)=partors(i,j,2)/aconv
           end select
        end do
     end do
@@ -122,6 +125,8 @@ contains
              nkb=1
           case(3)
              nkb=0
+          case(4)
+             nkb=1
           end select
           chk(i,j)=1
           do k=1,nkb
@@ -256,6 +261,9 @@ contains
        fd=-sin(psi)*(partors(im,in,2)+2.d0*partors(im,in,3)*cos(psi)&
             +3.d0*partors(im,in,4)*cos(psi)**2+4.d0*partors(im,in,5)*cos(psi)**3&
             +5.d0*partors(im,in,6)*cos(psi)**4)
+    case(4)
+       pot=0.5d0*partors(im,in,1)*(phi-partors(im,in,2))**2
+       fd=partors(im,in,1)*(phi-partors(im,in,2))
     end select
 
     return
