@@ -7,7 +7,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C2H4 1 6
-reuse 0
+reuse 3
 &END
 
 # Molecular dynamics variables
