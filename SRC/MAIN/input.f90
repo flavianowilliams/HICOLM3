@@ -254,7 +254,7 @@ contains
 
     implicit none
 
-    integer i,j,jj,k,kk,nx,imol,ia,ib
+    integer i,j,jj,k,kk,ii,nx,imol,ia,ib
     real(8) dr,rca,rcb,tol
 
     data tol /0.5d0/
@@ -267,16 +267,16 @@ contains
     !-calculo das ligacoes quimicas
 
     bondscnt(imol)=1
-    do j=1,nxmolec(imol)
-       ia=j+nx
-       do jj=j+1,nxmolec(imol)
-          ib=jj+nx
+    do i=1,nxmolec(imol)
+       ia=i+nx
+       do j=i+1,nxmolec(imol)
+          ib=j+nx
           dr=sqrt((xa(ia)-xa(ib))**2+(ya(ia)-ya(ib))**2+(za(ia)-za(ib))**2)
           call covalent_radius(idna(ia),rca)
           call covalent_radius(idna(ib),rcb)
           if(dr.gt.(rca+rcb-tol).and.dr.le.(rca+rcb+tol))then
-             molbond(imol,bondscnt(imol),1)=j
-             molbond(imol,bondscnt(imol),2)=jj
+             molbond(imol,bondscnt(imol),1)=i
+             molbond(imol,bondscnt(imol),2)=j
              bondscnt(imol)=bondscnt(imol)+1
           end if
        end do
@@ -287,14 +287,14 @@ contains
     !-calculo das deformacoes angulares
 
     bendscnt(imol)=1
-    do j=1,bondscnt(imol)
-       do jj=j+1,bondscnt(imol)
+    do i=1,bondscnt(imol)
+       do j=i+1,bondscnt(imol)
           do k=1,2
              do kk=1,2
-                if(molbond(imol,j,k).eq.molbond(imol,jj,kk))then
-                   molbend(imol,bendscnt(imol),1)=molbond(imol,j,3-k)
-                   molbend(imol,bendscnt(imol),2)=molbond(imol,j,k)
-                   molbend(imol,bendscnt(imol),3)=molbond(imol,jj,3-kk)
+                if(molbond(imol,i,k).eq.molbond(imol,j,kk))then
+                   molbend(imol,bendscnt(imol),1)=molbond(imol,i,3-k)
+                   molbend(imol,bendscnt(imol),2)=molbond(imol,i,k)
+                   molbend(imol,bendscnt(imol),3)=molbond(imol,j,3-kk)
                    bendscnt(imol)=bendscnt(imol)+1
                 end if
              end do
@@ -307,10 +307,29 @@ contains
     !-calcudos dos diedros
 
     torscnt(imol)=1
-
     do i=1,bondscnt(imol)
+       do j=i+1,bondscnt(imol)
+          do k=j+1,bondscnt(imol)
+             do ii=1,2
+                do jj=1,2
+                   do kk=1,2
+                      if(molbond(imol,i,ii).eq.molbond(imol,j,jj))then
+                         if(molbond(imol,i,3-ii).eq.molbond(imol,k,kk))then
+                            moltors(imol,torscnt(imol),1)=molbond(imol,j,3-jj)
+                            moltors(imol,torscnt(imol),2)=molbond(imol,j,jj)
+                            moltors(imol,torscnt(imol),3)=molbond(imol,k,kk)
+                            moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
+                            torscnt(imol)=torscnt(imol)+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+          end do
+       end do
     end do
 
+    stop
     torscnt(imol)=torscnt(imol)-1
 
     return
