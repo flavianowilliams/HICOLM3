@@ -257,7 +257,7 @@ contains
     integer i,j,jj,k,kk,nx,imol,ia,ib
     real(8) dr,rca,rcb,tol
 
-    data tol /0.5d0/
+    data tol /0.4d0/
 
     nx=0
     do i=2,imol
