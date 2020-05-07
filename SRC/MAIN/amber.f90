@@ -149,6 +149,9 @@ contains
              case('HC')
                 prms(1)=1.52d0
                 prms(2)=109.50d0
+             case('CT')
+                prms(1)=2.17d0
+                prms(2)=109.50d0
              end select
           end select
        case('CT')
