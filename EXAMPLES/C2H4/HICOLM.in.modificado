@@ -31,4 +31,13 @@ rcutoff 7.0 0.1
   CT CT HC HC HC HC
   0.0 0.0 0.0 0.0 0.0 0.0
  $END
+ $INTRA
+  molecule C2H4
+  dihedrals* 2
+  3 1 2 6 harm 0.0 0.0
+  dihedrals* 3
+  4 1 2 5 harm 0.0 0.0
+  dihedrals* 4
+  4 1 2 6 harm 0.0 0.0
+ $END
 &END

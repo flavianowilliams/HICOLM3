@@ -163,10 +163,10 @@ contains
        do j=1,bendscnt(i)
           select case(bends(i,j))
           case(1)
-             write(6,'(20x,3(i3,3x),a4,3f9.3)')&
-                  (molbend(i,j,l),l=1,3),'harm',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
+             write(6,'(20x,3(i3,3x),a4,1x,2f8.3)')(molbend(i,j,l),l=1,3),&
+                  'harm',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
           case(2)
-             write(6,'(20x,3(i3,3x),a5,3f8.3)')&
+             write(6,'(20x,3(i3,3x),a5,2f8.3)')&
                   (molbend(i,j,l),l=1,3),'amber',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
           end select
        end do
@@ -174,12 +174,15 @@ contains
        write(6,*)
        write(6,'(20x,a10,1x,i5)')'Dihedrals:',torscnt(i)
        write(6,'(20x,111a1)')('-',j=1,52)
-       write(6,'(20x,4(a4,2x),a4,3x,a10)')'Site','Site','Site','Site','Type','Parameters'
+       write(6,'(20x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
        write(6,'(20x,111a1)')('-',j=1,52)
        do j=1,torscnt(i)
           select case(tors(i,j))
+          case(1)
+             write(6,'(20x,4(i3,3x),a4,1x,2f8.3)')(moltors(i,j,l),l=1,4),&
+                  'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
           case(4)
-             write(6,'(20x,4(i3,3x),a5,3f8.3)')&
+             write(6,'(20x,4(i3,3x),a5,2f8.3)')&
                   (moltors(i,j,l),l=1,4),'amber',partors(i,j,1)*econv,partors(i,j,2)*aconv
           end select
        end do

@@ -344,8 +344,8 @@ contains
     integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
     real(8) val(20)
     character(7) in,char
-    character(9) key,char2
-    character(10) lxmol
+    character(9) char2
+    character(10) lxmol,key
 
 1   read(5,*,end=11)in
 
@@ -544,12 +544,12 @@ contains
              do g=1,molecmax
                 if(lxmol.eq.namemol(g))nx=g
              end do
-             do g=1,3
+             do g=1,100
                 read(5,*)key
                 backspace(5)
                 if(key.eq.'molecule')exit
                 if(key.eq.'$END')goto 523
-                if(key.eq.'bends')then
+                if(key.eq.'bends#')then
                    read(5,*)key,bendscnt(nx)
                    do k=1,bendscnt(nx)
                       read(5,*)ival(1),ival(2),ival(3),char
@@ -566,20 +566,18 @@ contains
                    end do
                 elseif(key.eq.'bends*')then
                    read(5,*)key,ii
-                   do k=1,ii
-                      read(5,*)ival(1),ival(2),ival(3),char
-                      call bend_opt(char,m,numt)
-                      backspace(5)
-                      read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
-                      do p=1,numt
-                         parbend(nx,k,p)=val(p)
-                      end do
-                      bends(nx,k)=m
-                      molbend(nx,k,1)=ival(1)
-                      molbend(nx,k,2)=ival(2)
-                      molbend(nx,k,3)=ival(3)
+                   read(5,*)ival(1),ival(2),ival(3),char
+                   call bend_opt(char,m,numt)
+                   backspace(5)
+                   read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
+                   do p=1,numt
+                      parbend(nx,ii,p)=val(p)
                    end do
-                elseif(key.eq.'bonds')then
+                   bends(nx,ii)=m
+                   molbend(nx,ii,1)=ival(1)
+                   molbend(nx,ii,2)=ival(2)
+                   molbend(nx,ii,3)=ival(3)
+                elseif(key.eq.'bonds#')then
                    read(5,*)key,bondscnt(nx)
                    do k=1,bondscnt(nx)
                       read(5,*)ival(1),ival(2),char
@@ -595,19 +593,17 @@ contains
                    end do
                 elseif(key.eq.'bonds*')then
                    read(5,*)key,ii
-                   do k=1,ii
-                      read(5,*)ival(1),ival(2),char
-                      call bonds_opt(char,m,numt)
-                      backspace(5)
-                      read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
-                      do p=1,numt
-                         parbnd(nx,k,p)=val(p)
-                      end do
-                      bonds(nx,k)=m
-                      molbond(nx,k,1)=ival(1)
-                      molbond(nx,k,2)=ival(2)
+                   read(5,*)ival(1),ival(2),char
+                   call bonds_opt(char,m,numt)
+                   backspace(5)
+                   read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
+                   do p=1,numt
+                      parbnd(nx,ii,p)=val(p)
                    end do
-                elseif(key.eq.'dihedrals')then
+                   bonds(nx,ii)=m
+                   molbond(nx,ii,1)=ival(1)
+                   molbond(nx,ii,2)=ival(2)
+                elseif(key.eq.'dihedrals#')then
                    read(5,*)key,torscnt(nx)
                    do k=1,torscnt(nx)
                       read(5,*)ival(1),ival(2),ival(3),ival(4),char
@@ -625,20 +621,18 @@ contains
                    end do
                 elseif(key.eq.'dihedrals*')then
                    read(5,*)key,ii
-                   do k=1,ii
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
-                      call dihedral_opt(char,m,numt)
-                      backspace(5)
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
-                      do p=1,numt
-                         partors(nx,k,p)=val(p)
-                      end do
-                      tors(nx,k)=m
-                      moltors(nx,k,1)=ival(1)
-                      moltors(nx,k,2)=ival(2)
-                      moltors(nx,k,3)=ival(3)
-                      moltors(nx,k,4)=ival(4)
+                   read(5,*)ival(1),ival(2),ival(3),ival(4),char
+                   call dihedral_opt(char,m,numt)
+                   backspace(5)
+                   read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                   do p=1,numt
+                      partors(nx,ii,p)=val(p)
                    end do
+                   tors(nx,ii)=m
+                   moltors(nx,ii,1)=ival(1)
+                   moltors(nx,ii,2)=ival(2)
+                   moltors(nx,ii,3)=ival(3)
+                   moltors(nx,ii,4)=ival(4)
                 end if
              end do
           end do
