@@ -304,6 +304,15 @@ contains
 
     bendscnt(imol)=bendscnt(imol)-1
 
+    !-calcudos dos diedros
+
+    torscnt(imol)=1
+
+    do i=1,bondscnt(imol)
+    end do
+
+    torscnt(imol)=torscnt(imol)-1
+
     return
 
   end subroutine zmatrix
