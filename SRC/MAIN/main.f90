@@ -72,6 +72,9 @@ program HICOLM
   !-definindo coordenadas atomicas
   call coordenadas(t2)
   !========================================================
+  !-convertendo unidades de medida
+  call convert
+  !========================================================
   !-definindo vetores da rede reciproca
   call reciprocal
   !========================================================

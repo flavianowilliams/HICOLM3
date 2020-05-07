@@ -56,6 +56,10 @@ contains
     integer i,j
     real(8) vl(3),t1,tf,sum
 
+    !-redefinindo parametros de rede e posicoes atomicas
+
+    if(reuse.gt.0)call frame
+
     !-imprimindo coordenadas em arquivo AXSF
 
     open(7,file='HICOLM.AXSF',status='unknown')
@@ -370,5 +374,55 @@ contains
     return
 
   end subroutine history
+
+  subroutine frame
+    !***************************************************************************************
+    ! Leitura do ficheiro de entrada:                                                      *
+    ! - Coordenadas espaciais;                                                             *
+    ! - Velocidades;                                                                       *
+    ! - Forca.                                                                             *
+    !***************************************************************************************
+    implicit none
+
+    integer i,j
+
+    open(1,file='HICOLM.XSF',status='old')
+
+    do i=1,13
+       read(1,*)
+    end do
+
+    do i=1,3
+       read(1,'(3(3x,f14.8))')(v(i,j),j=1,3)
+    end do
+
+    read(1,*)
+    read(1,*)natom
+
+    select case(reuse)
+    case(1)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i)
+       end do
+    case(2)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i),fax(i),fay(i),faz(i)
+       end do
+    case(3)
+       do i=1,natom
+          read(1,'(i5,3f14.8,2(2x,3f14.8))') &
+               idna(i),xa(i),ya(i),za(i),fax(i),fay(i),faz(i),vax(i),vay(i),vaz(i)
+       end do
+    end select
+
+    !-fechando arquivo XSF com as coordenadas atomicas
+
+    close(1)
+
+    return
+
+  end subroutine frame
 
 end module estrutura
