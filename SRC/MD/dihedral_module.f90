@@ -126,7 +126,7 @@ contains
           case(3)
              nkb=0
           case(4)
-             nkb=1
+             nkb=2
           end select
           chk(i,j)=1
           do k=1,nkb
@@ -196,9 +196,15 @@ contains
        im=torsim(i)
        in=torsib(i)
 
-       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
-       call ccpmm(ib,ic,drjk(1),drjk(2),drjk(3))
-       call ccpmm(ic,id,drkn(1),drkn(2),drkn(3))
+!       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
+!       call ccpmm(ib,ic,drjk(1),drjk(2),drjk(3))
+!       call ccpmm(ic,id,drkn(1),drkn(2),drkn(3))
+
+       call mic(ia,ib,drij(1),drij(2),drij(3))
+       call mic(ib,ic,drjk(1),drjk(2),drjk(3))
+       call mic(ic,id,drkn(1),drkn(2),drkn(3))
+
+!       call tors_check(drij,drkn)
 
        !-produto vetorial
 
@@ -210,13 +216,14 @@ contains
        vc2y=drjk(3)*drkn(1)-drjk(1)*drkn(3)
        vc2z=drjk(1)*drkn(2)-drjk(2)*drkn(1)
 
-       dvc1=sqrt(vc1x**2+vc1y**2+vc1z**2)
-       dvc2=sqrt(vc2x**2+vc2y**2+vc2z**2)
+       dvc1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rij x rjk|
+       dvc2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|rjk x rkn|
 
        !-angulo do diedro
 
        phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dvc1*dvc2))
-       phi=max(1.d-4,phi)
+
+       phi=max(1.d-8,phi)
 
        call tors_flags(im,in,phi,pot,fd)
        call tors_force(ia,ib,ic,id,drij,drjk,drkn,dvc1,dvc2,phi,fd,virtors)
@@ -228,6 +235,26 @@ contains
     return
 
   end subroutine tors_calc
+
+  subroutine tors_check(drij,drkn)
+
+    implicit none
+
+    integer i
+    real(8) drij(3),drkn(3)
+
+    !-checando na direcao z
+
+    do i=1,3
+       if(drij(i).eq.0.d0.and.drkn(i).eq.0.d0)then
+          drij(i)=1.d-8
+          drkn(i)=1.d-8
+       end if
+    end do
+
+    return
+
+  end subroutine tors_check
 
   subroutine tors_flags(im,in,phi,pot,fd)
     !****************************************************************************************
@@ -285,11 +312,11 @@ contains
 
     !-componente d[(rij x rjk)*(rjk x rkn)/|rij x rjk||rjk x rkn|]
 
-    ix(1)=i1
-    ix(2)=i2
-    ix(3)=i3
-    ix(4)=i4
-    !
+    ix(1)=i1 !-i
+    ix(2)=i2 !-j
+    ix(3)=i3 !-k
+    ix(4)=i4 !-n
+
     do i=1,4
        do j=1,3
           dvc(i,j)=dfunc1(i1,i2,i3,i4,drij,drjk,drkn,ix(i),j)/(dvc1*dvc2) &
@@ -373,7 +400,7 @@ contains
 
   double precision function dfunc2(i1,i2,i3,dri1,dri2,i,j)
     !****************************************************************************************
-    ! d[(rjk x rkn)**2]                                                                     *
+    ! d[(rij x rjk)**2]                                                                     *
     !****************************************************************************************
 
     implicit none

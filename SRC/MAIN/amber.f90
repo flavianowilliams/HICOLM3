@@ -189,7 +189,7 @@ contains
                 select case(pd)
                 case('HC')
                    prms(1)=1.0d0
-                   prms(2)=170.0d0
+                   prms(2)=180.0d0
                 end select
              end select
           end select

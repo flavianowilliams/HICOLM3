@@ -334,7 +334,7 @@ contains
 
     if(nbends.ne.0)call bends_calc(enbend,virbend)
 
-    !-calculo da contribuicao de deformacao angular
+    !-calculo da contribuicao de diedros
 
     if(ntors.ne.0)call tors_calc(entors,virtors)
 
