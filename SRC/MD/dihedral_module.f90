@@ -204,8 +204,6 @@ contains
        call mic(ib,ic,drjk(1),drjk(2),drjk(3))
        call mic(ic,id,drkn(1),drkn(2),drkn(3))
 
-!       call tors_check(drij,drkn)
-
        !-produto vetorial
 
        vc1x=drij(2)*drjk(3)-drij(3)*drjk(2)
