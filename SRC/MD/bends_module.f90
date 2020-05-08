@@ -186,8 +186,11 @@ contains
        im=bendim(i)
        in=bendib(i)
 
-       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
-       call ccpmm(ia,ic,drik(1),drik(2),drik(3))
+       !       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
+       !       call ccpmm(ia,ic,drik(1),drik(2),drik(3))
+
+       call mic(ia,ib,drij(1),drij(2),drij(3))
+       call mic(ia,ic,drik(1),drik(2),drik(3))
 
        dr1=max(1.d-4,sqrt(drij(1)**2+drij(2)**2+drij(3)**2))
        dr2=max(1.d-4,sqrt(drik(1)**2+drik(2)**2+drik(3)**2))
