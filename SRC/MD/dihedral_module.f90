@@ -87,8 +87,8 @@ contains
              partors(i,j,6)=partors(i,j,6)/econv
              partors(i,j,7)=partors(i,j,7)/aconv
           case(4)
-             partors(i,j,1)=partors(i,j,1)/econv
-             partors(i,j,2)=partors(i,j,2)/aconv
+             partors(i,j,2)=partors(i,j,2)/econv
+             partors(i,j,3)=partors(i,j,3)/aconv
           end select
        end do
     end do
@@ -258,7 +258,7 @@ contains
     implicit none
 
     integer im,in
-    real(8) phi,fd,pot,psi
+    real(8) phi,fd,pot,psi,p1,p2,p3,p4
 
     !-valores iniciais
 
@@ -283,8 +283,12 @@ contains
             +3.d0*partors(im,in,4)*cos(psi)**2+4.d0*partors(im,in,5)*cos(psi)**3&
             +5.d0*partors(im,in,6)*cos(psi)**4)
     case(4)
-       pot=0.5d0*partors(im,in,1)*(phi-partors(im,in,2))**2
-       fd=partors(im,in,1)*(phi-partors(im,in,2))
+       p1=partors(im,in,1)
+       p2=partors(im,in,2)
+       p3=partors(im,in,3)
+       p4=partors(im,in,4)
+       pot=0.5d0*p2*(1.d0+cos(p4*phi-p3))/p1
+       fd=-0.5d0*p4*p2*sin(p4*phi-p3)/p1
     end select
 
     return

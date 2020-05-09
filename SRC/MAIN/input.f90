@@ -517,7 +517,7 @@ contains
                 iv=jj+moltors(nx,k,3)
                 v=jj+moltors(nx,k,4)
                 call amber_dihedrals(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,2
+                do p=1,4
                    partors(nx,k,p)=val(p)
                 end do
                 tors(nx,k)=4

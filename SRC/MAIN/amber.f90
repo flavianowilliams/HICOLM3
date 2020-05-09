@@ -168,11 +168,13 @@ contains
     implicit none
 
     integer i
-    real(8) prms(2)
+    real(8) prms(4)
     character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     prms(1)=0.d0
     prms(2)=0.d0
+    prms(3)=0.d0
+    prms(4)=0.d0
 
     pa=p1
     pb=p2
@@ -189,7 +191,9 @@ contains
                 select case(pd)
                 case('HC')
                    prms(1)=1.0d0
-                   prms(2)=180.0d0
+                   prms(2)=0.0065046d0
+                   prms(3)=0.0d0
+                   prms(4)=3.0d0
                 end select
              end select
           end select

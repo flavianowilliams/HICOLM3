@@ -182,11 +182,12 @@ contains
              write(6,'(20x,4(i3,3x),a4,1x,2f8.3)')(moltors(i,j,l),l=1,4),&
                   'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
           case(4)
-             i1=int(partors(i,j,1))
+             i1=nint(partors(i,j,1))
              f1=partors(i,j,2)*econv
              f2=partors(i,j,3)*aconv
-             i2=int(partors(i,j,4))
-             write(6,'(20x,4(i3,3x),a5,i2,2f8.3,i2)')(moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
+             i2=nint(partors(i,j,4))
+             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.5,f8.3,i2)')&
+                  (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
