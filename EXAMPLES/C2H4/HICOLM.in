@@ -7,7 +7,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C2H4 1 6
-reuse 0
+reuse 1
 &END
 
 # Molecular dynamics variables
@@ -30,5 +30,9 @@ rcutoff 7.0 0.1
   molecule C2H4
   CT CT HC HC HC HC
   0.0 0.0 0.0 0.0 0.0 0.0
+ $END
+ $INTRA
+  molecule C2H4
+  dihedrals# 0
  $END
 &END
