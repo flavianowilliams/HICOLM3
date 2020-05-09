@@ -81,7 +81,7 @@ contains
 
     !-aplicando condicoes de contorno inversa
 
-    call ccp_inv
+    call ccp
 
     !-calculo das forças no instante t+dt posterior
 
@@ -232,7 +232,7 @@ contains
 
     !-aplicando condicoes de contorno inversa
 
-    call ccp_inv
+    call ccp
 
     !-forças no instante t+dt
 

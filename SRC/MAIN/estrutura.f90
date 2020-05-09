@@ -101,7 +101,7 @@ contains
 
     !-aplicando condicoes de contorno inversa
 
-    call ccp_inv
+    call ccp
 
     !-Definindo grupo de simetria
 
@@ -162,7 +162,7 @@ contains
 
   end subroutine mic
 
-  subroutine ccp_inv()
+  subroutine ccp()
     !***************************************************************************************
     ! Condicoes de contorno inversa                                                        *
     !***************************************************************************************
@@ -182,7 +182,7 @@ contains
 
     return
 
-  end subroutine ccp_inv
+  end subroutine ccp
 
  subroutine cell_symmetry
    !***************************************************************************************
