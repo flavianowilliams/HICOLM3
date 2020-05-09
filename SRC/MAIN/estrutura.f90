@@ -140,27 +140,6 @@ contains
 
  end subroutine coordenadas
 
-!  subroutine ccp(i,j,rx,ry,rz,xvz,yvz,zvz)
-!    !****************************************************************************************
-!    ! Condicoes de contorno periodicas                                                      *
-!    !****************************************************************************************
-!    implicit none
-!
-!    integer i,j,rx,ry,rz
-!    real(8) xx,yy,zz,xvz,yvz,zvz
-!
-!    xx=xa(j)+rx*v(1,1)+ry*v(2,1)+rz*v(3,1)
-!    yy=ya(j)+rx*v(1,2)+ry*v(2,2)+rz*v(3,2)
-!    zz=za(j)+rx*v(1,3)+ry*v(2,3)+rz*v(3,3)
-!
-!    xvz=xx-xa(i)
-!    yvz=yy-ya(i)
-!    zvz=zz-za(i)
-!
-!    return
-!
-!  end subroutine ccp
-
   subroutine mic(i,j,xvz,yvz,zvz)
     !***************************************************************************************
     ! Convencao de minima imagem                                                           *
