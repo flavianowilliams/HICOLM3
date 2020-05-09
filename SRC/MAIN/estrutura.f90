@@ -205,37 +205,6 @@ contains
 
   end subroutine ccp_inv
 
-  subroutine ccpmm(i,j,xvz,yvz,zvz)
-    !***************************************************************************************
-    !subrotina responsavel por aplicar condicoes de contorno                               *
-    !***************************************************************************************
-
-    implicit none
-
-   integer i,j,rx,ry,rz
-   real(8) xvz,yvz,zvz,xx,yy,zz,xvzz,yvzz,zvzz
-
-   xvzz=xa(j)-xa(i)
-   yvzz=ya(j)-ya(i)
-   zvzz=za(j)-za(i)
-
-   do rx=-1,1
-      do ry=-1,1
-         do rz=-1,1
-            xx=rx*v(1,1)+ry*v(2,1)+rz*v(3,1)
-            yy=rx*v(1,2)+ry*v(2,2)+rz*v(3,2)
-            zz=rx*v(1,3)+ry*v(2,3)+rz*v(3,3)
-            xvz=xvzz-xx*aint(2.d0*xvzz/xx)
-            yvz=yvzz-yy*aint(2.d0*yvzz/yy)
-            zvz=zvzz-zz*aint(2.d0*zvzz/zz)
-         end do
-      end do
-   end do
-
-   return
-
- end subroutine ccpmm
-
  subroutine cell_symmetry
    !***************************************************************************************
    ! Grupos de simetria                                                                   *

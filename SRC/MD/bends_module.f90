@@ -186,9 +186,6 @@ contains
        im=bendim(i)
        in=bendib(i)
 
-       !       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
-       !       call ccpmm(ia,ic,drik(1),drik(2),drik(3))
-
        call mic(ia,ib,drij(1),drij(2),drij(3))
        call mic(ia,ic,drik(1),drik(2),drik(3))
 

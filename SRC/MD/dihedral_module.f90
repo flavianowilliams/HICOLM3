@@ -196,10 +196,6 @@ contains
        im=torsim(i)
        in=torsib(i)
 
-!       call ccpmm(ia,ib,drij(1),drij(2),drij(3))
-!       call ccpmm(ib,ic,drjk(1),drjk(2),drjk(3))
-!       call ccpmm(ic,id,drkn(1),drkn(2),drkn(3))
-
        call mic(ia,ib,drij(1),drij(2),drij(3))
        call mic(ib,ic,drjk(1),drjk(2),drjk(3))
        call mic(ic,id,drkn(1),drkn(2),drkn(3))

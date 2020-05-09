@@ -184,7 +184,6 @@ contains
        im=bondim(i)
        in=bondib(i)
 
-!       call ccpmm(ia,ib,xvz,yvz,zvz)
        call mic(ia,ib,xvz,yvz,zvz)
 
        !distancia interatomica
