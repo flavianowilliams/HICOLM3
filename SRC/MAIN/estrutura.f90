@@ -140,6 +140,44 @@ contains
 
  end subroutine coordenadas
 
+ subroutine translate
+
+   implicit none
+
+   integer i,j,k,np
+   real(8) shift
+   logical chk
+
+   shift=1.e-4
+
+   !-aplicando translacao nas moleculas
+
+   np=0
+   do i=1,nmolec
+      do j=1,ntmolec(i)
+         if(torscnt(i).gt.0)then
+            chk=.true.
+            do k=1,nxmolec(i)
+               if(za(np+k).ne.0.d0)chk=.false.
+            end do
+         end if
+         if(chk.eqv..true.)then
+            do k=1,nxmolec(i)
+               za(np+k)=za(np+k)+shift
+            end do
+         end if
+         np=np+nxmolec(i)
+      end do
+   end do
+
+   !-aplicando condicoes de contorno periodica
+
+   call ccp
+
+   return
+
+ end subroutine translate
+
   subroutine mic(i,j,xvz,yvz,zvz)
     !***************************************************************************************
     ! Convencao de minima imagem                                                           *

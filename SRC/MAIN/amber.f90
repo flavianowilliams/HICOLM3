@@ -243,6 +243,28 @@ contains
        pd=p1
     end do
 
+    pa=p1
+    pb=p2
+    pc=p3
+    pd=p4
+
+    do i=1,2
+       select case(pb)
+       case('C ')
+          select case(pc)
+          case('C ')
+             prms(1)=4.0d0
+             prms(2)=14.50d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       end select
+       pa=p4
+       pb=p3
+       pc=p2
+       pd=p1
+    end do
+
     !-fator conversao: kcal/mol -> eV
 
     ccnv=4.3363e-2
