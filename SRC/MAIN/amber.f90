@@ -27,7 +27,7 @@ contains
     implicit none
 
     integer i
-    real(8) epsi(2),ri(2),prms(2)
+    real(8) epsi(2),ri(2),prms(2),ccnv
     character(2) p1,p2,pa
 
     !-atribuindo valores iniciais
@@ -44,7 +44,7 @@ contains
     do i=1,2
        select case(pa)
        case('OW')
-          epsi(i)=0.006591346d0
+          epsi(i)=0.1520d0
           ri(i)=1.7683d0
 !          ri(i)=1.582746d0
        case('HW')
@@ -53,18 +53,29 @@ contains
        case('HO')
           epsi(i)=0.d0
           ri(i)=0.d0
-       case('CT')
-          epsi(i)=0.004744034d0
-          ri(i)=1.9080d0
        case('HC')
-          epsi(i)=0.0006808166d0
+          epsi(i)=0.0157d0
           ri(i)=1.4870d0
+       case('H4')
+          epsi(i)=0.0150d0
+          ri(i)=1.4090d0
+       case('C ')
+          epsi(i)=0.0860d0
+          ri(i)=1.9080d0
+       case('CT')
+          epsi(i)=0.1094d0
+          ri(i)=1.9080d0
        end select
        pa=p2
     end do
 
     prms(1)=sqrt(epsi(1)*epsi(2))
     prms(2)=ri(1)+ri(2)
+
+    !-fator conversao: kcal/mol -> eV
+
+    ccnv=4.3363e-2
+    prms(1)=prms(1)*ccnv
 
     return
 
@@ -75,7 +86,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(2)
+    real(8) prms(2),ccnv
     character(2) p1,p2,pa,pb
 
     !-atribuindo valores iniciais
@@ -95,22 +106,36 @@ contains
           case('HW')
              !             prms(1)=45.9296d0
              !             prms(2)=1.0120d0
-             prms(1)=23.98d0
+             prms(1)=553.0d0
              prms(2)=0.9572d0
+          end select
+       case('C ')
+          select case(pb)
+          case('C ')
+             prms(1)=310.0d0
+             prms(2)=1.525d0
+          case('H4')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
           end select
        case('CT')
           select case(pb)
           case('CT')
-             prms(1)=13.44d0
+             prms(1)=310.0d0
              prms(2)=1.526d0
           case('HC')
-             prms(1)=14.74d0
+             prms(1)=340.0d0
              prms(2)=1.090d0
           end select
        end select
        pa=p2
        pb=p1
     end do
+
+    !-fator conversao: kcal/mol -> eV
+
+    ccnv=4.3363e-2
+    prms(1)=prms(1)*ccnv
 
     return
 
@@ -121,7 +146,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(2)
+    real(8) prms(2),ccnv
     character(2) p1,p2,p3,pa,pb,pc
 
     prms(1)=0.d0
@@ -138,7 +163,7 @@ contains
           case('OW')
              select case(pc)
              case('HW')
-                prms(1)=3.2913d0
+                prms(1)=100.0d0
                 prms(2)=104.24d0
              end select
           end select
@@ -147,17 +172,31 @@ contains
           case('CT')
              select case(pc)
              case('HC')
-                prms(1)=1.52d0
+                prms(1)=35.0d0
                 prms(2)=109.50d0
              case('CT')
-                prms(1)=2.17d0
+                prms(1)=50.0d0
                 prms(2)=109.50d0
+             end select
+          end select
+       case('C ')
+          select case(pb)
+          case('C ')
+             select case(pc)
+             case('H4')
+                prms(1)=50.0d0
+                prms(2)=120.0d0
              end select
           end select
        end select
        pa=p3
        pc=p1
     end do
+
+    !-fator conversao: kcal/mol -> eV
+
+    ccnv=4.3363e-2
+    prms(1)=prms(1)*ccnv
 
     return
 
@@ -168,7 +207,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(4)
+    real(8) prms(4),ccnv
     character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     prms(1)=0.d0
@@ -191,7 +230,7 @@ contains
                 select case(pd)
                 case('HC')
                    prms(1)=1.0d0
-                   prms(2)=0.0065046d0
+                   prms(2)=0.15d0
                    prms(3)=0.0d0
                    prms(4)=3.0d0
                 end select
@@ -203,6 +242,11 @@ contains
        pc=p2
        pd=p1
     end do
+
+    !-fator conversao: kcal/mol -> eV
+
+    ccnv=4.3363e-2
+    prms(2)=prms(2)*ccnv
 
     return
 
