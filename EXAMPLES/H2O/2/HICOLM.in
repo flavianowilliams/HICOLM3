@@ -26,9 +26,21 @@ rcutoff 7.0 0.1
 # Force field variables
 
 &FORCE
- $AMBER
-  molecule H2O
-  OW HW HW
-  -0.834 0.417 0.417
+ $INTER
+  elect 3 coul
+  1 -0.82
+  2 +0.41
+  3 +0.41
+  vdw 1
+  1 1 lj 0.006739880631 3.165492
  $END
+  $INTRA
+  molecule H2O
+  bends# 1
+  2 1 3 harm 3.291300 104.24
+  bonds# 2
+  1 2 harm 45.9296213 1.012
+  1 3 harm 45.9296213 1.012
+  dihedrals# 0
+  $END
 &END

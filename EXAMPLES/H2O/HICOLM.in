@@ -26,9 +26,7 @@ rcutoff 7.0 0.1
 # Force field variables
 
 &FORCE
- $AMBER
-  molecule H2O
-  OW HW HW
-  -0.834 0.417 0.417
+ $INTRA
+  
  $END
 &END
