@@ -44,7 +44,7 @@ module estrutura
 
 contains
 
-  subroutine coordenadas(t1)
+  subroutine structure_prepare(t1)
     !***************************************************************************************
     ! Propriedades:                                                                        *
     ! - Definicao do grupo de simetria;                                                    *
@@ -107,6 +107,10 @@ contains
 
     call cell_symmetry
 
+    !-checando viabilidade geometrica de cada molecula
+
+    !call translate
+
     !-imprimindo informacoes do espaço real
 
     write(6,*)('#',i=1,93)
@@ -138,7 +142,7 @@ contains
 
     return
 
- end subroutine coordenadas
+  end subroutine structure_prepare
 
  subroutine translate
 

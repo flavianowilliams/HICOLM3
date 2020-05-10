@@ -136,10 +136,6 @@ contains
 
     write(2,'(i12,e12.4,3i7)')int((ntrialmax-nrelax)/nhist),dtime*tconv,nwr,natom,spctot
 
-    !-checando viabilidade geometrica de cada molecula
-
-!    call translate
-
     !-preparando Campo de Força
 
     call ff_prepare

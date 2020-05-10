@@ -70,7 +70,7 @@ program HICOLM
   call system_arrays
   !========================================================
   !-definindo coordenadas atomicas
-  call coordenadas(t2)
+  call structure_prepare(t2)
   !========================================================
   !-convertendo unidades de medida
   call convert
