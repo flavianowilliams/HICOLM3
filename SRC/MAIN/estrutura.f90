@@ -56,6 +56,10 @@ contains
     integer i,j
     real(8) vl(3),t1,tf,sum
 
+    !-contagem de tempo
+
+    call cpu_time(t1)
+
     !-redefinindo parametros de rede e posicoes atomicas
 
     if(reuse.gt.0)call frame
@@ -64,9 +68,9 @@ contains
 
     open(7,file='HICOLM.AXSF',status='unknown')
 
-    !-contagem de tempo
+    !-convertendo unidades de medida
 
-    call cpu_time(t1)
+    call convert
 
     !-volume da celula unitaria
 
@@ -109,7 +113,7 @@ contains
 
     !-checando viabilidade geometrica de cada molecula
 
-    !call translate
+    call structure_check
 
     !-imprimindo informacoes do espaço real
 
@@ -144,32 +148,35 @@ contains
 
   end subroutine structure_prepare
 
- subroutine translate
+ subroutine structure_check
 
    implicit none
 
-   integer i,j,k,np
-   real(8) shift
+   integer i,j,k,np,ni,nj,nk,nn
+   real(8) shift,dx1,dy1,dz1,dx2,dy2,dz2
    logical chk
 
-   shift=1.e-4
+   shift=1.d-3
 
    !-aplicando translacao nas moleculas
 
    np=0
    do i=1,nmolec
       do j=1,ntmolec(i)
-         if(torscnt(i).gt.0)then
-            chk=.true.
-            do k=1,nxmolec(i)
-               if(za(np+k).ne.0.d0)chk=.false.
-            end do
-         end if
-         if(chk.eqv..true.)then
-            do k=1,nxmolec(i)
-               za(np+k)=za(np+k)+shift
-            end do
-         end if
+         do k=1,torscnt(i)
+            chk=.false.
+            ni=np+moltors(i,k,1)
+            nj=np+moltors(i,k,2)
+            nk=np+moltors(i,k,3)
+            nn=np+moltors(i,k,4)
+            call mic(ni,nj,dx1,dy1,dz1)
+            call mic(nk,nn,dx2,dy2,dz2)
+            if(abs(dz1).lt.1.e-8.and.abs(dz2).lt.1.e-8)chk=.true.
+            if(chk.eqv..true.)then
+               za(ni)=za(ni)-shift
+               za(nn)=za(nn)+shift
+            end if
+         end do
          np=np+nxmolec(i)
       end do
    end do
@@ -180,7 +187,7 @@ contains
 
    return
 
- end subroutine translate
+ end subroutine structure_check
 
   subroutine mic(i,j,xvz,yvz,zvz)
     !***************************************************************************************

@@ -69,11 +69,11 @@ program HICOLM
   !-alocando arrays
   call system_arrays
   !========================================================
+  !-convertendo unidades de medida
+!  call convert
+  !========================================================
   !-definindo coordenadas atomicas
   call structure_prepare(t2)
-  !========================================================
-  !-convertendo unidades de medida
-  call convert
   !========================================================
   !-definindo vetores da rede reciproca
   call reciprocal

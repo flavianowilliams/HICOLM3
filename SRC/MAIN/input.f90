@@ -108,10 +108,6 @@ contains
 
     call md_input
 
-    !-convertendo unidades de medida
-
-!    call convert
-
     !-contagem de tempo
 
     call cpu_time(tf)
