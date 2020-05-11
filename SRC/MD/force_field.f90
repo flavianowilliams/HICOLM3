@@ -212,7 +212,10 @@ contains
     end do
 
     select case(coulop)
-    case('coul')
+    case(1)
+       write(6,90)'Electrostatic interaction: Direct Coulomb Sum'
+       write(6,*)
+    case(2)
        write(6,90)'Electrostatic interaction: Force-Shifted Coulomb Sum'
        write(6,*)
     end select

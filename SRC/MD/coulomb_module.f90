@@ -144,7 +144,15 @@ contains
     prm(2)=parcoul(j,1)
     !
     select case(coulop)
-    case('coul')
+    case(1)
+
+       pot=prm(1)*prm(2)/dr
+
+       fr=-prm(1)*prm(2)/dr**2
+
+       fr=-fr/dr ! -(1/r)*dU/dr
+
+    case(2)
 
        alcoul=1.d-1/kconv
 
@@ -159,7 +167,7 @@ contains
 
        fr=-fr/dr ! -(1/r)*dU/dr
 
-    case('escl')
+    case(3)
 
        lambda=lambdafi
 

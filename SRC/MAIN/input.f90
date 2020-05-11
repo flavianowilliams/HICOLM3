@@ -51,7 +51,7 @@ module input
   !-variaveis da mecanica molecular
   integer nhist,ntrialmax,nrelax,bendscnt(molecmax),bondscnt(molecmax),nzmolec(molecmax)
   integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax),nxmolec(molecmax),ntmolec(molecmax)
-  integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
+  integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff,coulop
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4)
@@ -65,7 +65,6 @@ module input
   character(2) att
   character(2) atsp(ntpmax)
   character(7) prop,ensble
-  character(7) coulop
   character(9) ensble_mt
   character(10) namemol(molecmax)
   character(7) ff_model(molecmax)
@@ -531,6 +530,7 @@ contains
                 vdw(jj,j)=3
              end do
           end do
+          coulop=1
        elseif(key.eq.'$INTRA')then
           do j=1,nmolec
              read(5,*)key,lxmol
@@ -649,15 +649,15 @@ contains
                    vdw(ival(2),ival(1))=m
                 end do
              elseif(key.eq.'elect')then
-                read(5,*)key,ncoul,char
+                read(5,*)key,ncoul,m
                 do j=1,ncoul
-                   call coul_opt(char,numt)
+                   call coul_opt(m,numt)
                    read(5,*)ival(1),(val(k),k=1,numt)
                    do k=1,numt
                       parcoul(ival(1),k)=val(k)
                    end do
                 end do
-                coulop=char
+                coulop=m
              end if
           end do
        end if
@@ -698,7 +698,7 @@ contains
     nbends=0
     ntors=0
 
-    coulop='coul'
+    coulop=1
 
     nmolec=0
     natom=0
@@ -934,19 +934,20 @@ contains
 
   end subroutine vdw_opt
 
-  subroutine coul_opt(char,nprcoul)
+  subroutine coul_opt(m,nprcoul)
     !***************************************************************************************
     ! Flags do potencial eletrostatico                                                     *
     !***************************************************************************************
     implicit none
 
-    integer nprcoul
-    character(7) char
+    integer nprcoul,m
 
-    select case(char)
-    case('coul')
+    select case(m)
+    case(1)
        nprcoul=1
-    case('escl')
+    case(2)
+       nprcoul=1
+    case(3)
        nprcoul=1
     end select
 
