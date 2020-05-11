@@ -16,7 +16,7 @@ reuse 3
 nhist 10
 preext 1.0d0
 text 298.0
-ntrialmax 100
+ntrialmax 10000
 nrelax 1
 timestep 0.001
 ensemble npt berendsen 0.5 0.5 4.9e-5
