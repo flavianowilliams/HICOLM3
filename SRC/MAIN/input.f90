@@ -60,7 +60,7 @@ module input
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
   real(8) partors(molecmax,torsmax,7)
-  real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,scaling_factor
+  real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw
   !
   character(2) att
   character(2) atsp(ntpmax)
@@ -72,7 +72,7 @@ module input
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
-  save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,scaling_factor
+  save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw
   save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model
@@ -776,7 +776,7 @@ contains
 
     dtime=0.0d0
     zmatrix_tol=0.5d0
-    scaling_factor=2.d0
+    sf_vdw=1.d0
 
     !-variaveis canonicas
 

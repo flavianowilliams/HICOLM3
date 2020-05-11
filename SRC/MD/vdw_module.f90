@@ -200,9 +200,9 @@ contains
           prm(ii)=parvdw(i,j,ii)
        end do
 
-       pot=scaling_factor*prm(1)*((prm(2)/dr)**12-2.d0*(prm(2)/dr)**6)
+       pot=prm(1)*((prm(2)/dr)**12-2.d0*(prm(2)/dr)**6)
 
-       fr=scaling_factor*12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
+       fr=12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
 
     end select
 
@@ -270,16 +270,17 @@ contains
                 prm(ii)=parvdw(i,j,ii)
              end do
              es=4.d0*prm(1)*(prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
-             vs=-8.d0*prm(1)*(2.d0*(prm(2)/rcutoff)**6/3.d0-1.d0)*prm(2)**6/rcutoff**3
+             vs=24.d0*prm(1)*&
+                  (2.d0*prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
              envdw_corr=envdw_corr+es*natnp(i)*natnp(j)
              virvdw_corr=virvdw_corr+vs*natnp(i)*natnp(j)
           case(3)
              do ii=1,2
                 prm(ii)=parvdw(i,j,ii)
              end do
-             es=scaling_factor*prm(1)*&
+             es=prm(1)*&
                   (prm(2)**12-6.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
-             vs=-scaling_factor*12.d0*prm(1)*&
+             vs=12.d0*prm(1)*&
                   (prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
              envdw_corr=envdw_corr+es*natnp(i)*natnp(j)
              virvdw_corr=virvdw_corr+vs*natnp(i)*natnp(j)
