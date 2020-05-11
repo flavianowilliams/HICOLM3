@@ -247,9 +247,9 @@ contains
     implicit none
 
     integer i,j,jj,k,kk,ii,nx,imol,ia,ib
-    real(8) dr,rca,rcb,tol
+    real(8) dr,rca,rcb,zmatrix_tol
 
-    data tol /0.5d0/
+    data zmatrix_tol /0.5d0/
 
     nx=0
     do i=2,imol
@@ -266,7 +266,7 @@ contains
           dr=sqrt((xa(ia)-xa(ib))**2+(ya(ia)-ya(ib))**2+(za(ia)-za(ib))**2)
           call covalent_radius(idna(ia),rca)
           call covalent_radius(idna(ib),rcb)
-          if(dr.gt.(rca+rcb-tol).and.dr.le.(rca+rcb+tol))then
+          if(dr.gt.(rca+rcb-zmatrix_tol).and.dr.le.(rca+rcb+zmatrix_tol))then
              molbond(imol,bondscnt(imol),1)=i
              molbond(imol,bondscnt(imol),2)=j
              bondscnt(imol)=bondscnt(imol)+1
@@ -471,11 +471,14 @@ contains
        read(5,*)key
        if(key.eq.'&END')exit
        if(key.eq.'$AMBER')then
+          read(5,*)key
+          backspace(5)
+          if(key.eq'zmatrix')then
+
+          end if
           spctt=0
           do j=1,nmolec
-             read(5,*)key
              if(key.eq.'$END')goto 433
-             backspace(5)
              read(5,*)key,lxmol
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
