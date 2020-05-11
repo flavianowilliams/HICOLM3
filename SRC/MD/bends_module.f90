@@ -227,8 +227,8 @@ contains
        pot=0.5d0*parbend(im,in,1)*(theta-parbend(im,in,2))**2
        fa=parbend(im,in,1)*(theta-parbend(im,in,2))
     case(2)
-       pot=0.5d0*parbend(im,in,1)*(theta-parbend(im,in,2))**2
-       fa=parbend(im,in,1)*(theta-parbend(im,in,2))
+       pot=parbend(im,in,1)*(theta-parbend(im,in,2))**2
+       fa=2.d0*parbend(im,in,1)*(theta-parbend(im,in,2))
     end select
 
     return

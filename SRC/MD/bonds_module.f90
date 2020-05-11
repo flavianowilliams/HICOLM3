@@ -239,9 +239,9 @@ contains
        do ii=1,2
           prm(ii)=parbnd(im,in,ii)
        end do
-       pot=0.5d0*prm(1)*(dr-prm(2))**2
+       pot=prm(1)*(dr-prm(2))**2
 
-       fr=-prm(1)*(dr-prm(2))/dr
+       fr=-2.d0*prm(1)*(dr-prm(2))/dr
     end select
 
     return
