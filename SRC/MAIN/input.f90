@@ -56,7 +56,7 @@ module input
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4)
   !
-  real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax
+  real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
   real(8) partors(molecmax,torsmax,7)
@@ -70,7 +70,7 @@ module input
   character(10) namemol(molecmax)
   character(7) ff_model(molecmax)
   !
-  save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff
+  save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr
   save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
@@ -247,9 +247,7 @@ contains
     implicit none
 
     integer i,j,jj,k,kk,ii,nx,imol,ia,ib
-    real(8) dr,rca,rcb,zmatrix_tol
-
-    data zmatrix_tol /0.5d0/
+    real(8) dr,rca,rcb
 
     nx=0
     do i=2,imol
@@ -473,8 +471,8 @@ contains
        if(key.eq.'$AMBER')then
           read(5,*)key
           backspace(5)
-          if(key.eq'zmatrix')then
-
+          if(key.eq.'zmatrix')then
+             read(5,*)key,zmatrix_tol
           end if
           spctt=0
           do j=1,nmolec
@@ -777,6 +775,7 @@ contains
     !-parametros da Dinâmica Molecular
 
     dtime=0.0d0
+    zmatrix_tol=0.5d0
 
     !-variaveis canonicas
 

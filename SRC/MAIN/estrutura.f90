@@ -154,9 +154,8 @@ contains
 
    integer i,j,k,np,ni,nj,nk,nn
    real(8) shift,dx1,dy1,dz1,dx2,dy2,dz2
-   logical chk
 
-   shift=1.d-3
+   shift=1.d-2
 
    !-aplicando translacao nas moleculas
 
@@ -164,15 +163,21 @@ contains
    do i=1,nmolec
       do j=1,ntmolec(i)
          do k=1,torscnt(i)
-            chk=.false.
             ni=np+moltors(i,k,1)
             nj=np+moltors(i,k,2)
             nk=np+moltors(i,k,3)
             nn=np+moltors(i,k,4)
             call mic(ni,nj,dx1,dy1,dz1)
             call mic(nk,nn,dx2,dy2,dz2)
-            if(abs(dz1).lt.1.e-8.and.abs(dz2).lt.1.e-8)chk=.true.
-            if(chk.eqv..true.)then
+            if(abs(dx1).lt.1.e-8.and.abs(dx2).lt.1.e-8)then
+               za(ni)=za(ni)-shift
+               za(nn)=za(nn)+shift
+            end if
+            if(abs(dy1).lt.1.e-8.and.abs(dy2).lt.1.e-8)then
+               za(ni)=za(ni)-shift
+               za(nn)=za(nn)+shift
+            end if
+            if(abs(dz1).lt.1.e-8.and.abs(dz2).lt.1.e-8)then
                za(ni)=za(ni)-shift
                za(nn)=za(nn)+shift
             end if
