@@ -33,6 +33,7 @@ module coulomb_module
   use utils
   use estrutura
   use alloc_arrays
+  use dihedral_module
 
   integer ncoulstp
 
@@ -120,6 +121,37 @@ contains
     return
 
   end subroutine coulomb_calc
+
+  subroutine coulomb_14sf(encoul,vircoul)
+
+    implicit none
+
+    integer i,ni,nj
+    real(8) pot,fr,xvz,yvz,zvz
+    real(8) encoul,vircoul
+
+    do i=1,ntorsstp
+
+       ni=torsijkn(1,i)
+       nj=torsijkn(4,i)
+
+       call mic(ni,nj,xvz,yvz,zvz)
+
+       call coulomb_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
+
+       pot=pot*sf_coul
+       fr=fr*sf_coul
+
+       call coulomb_force(ni,nj,xvz,yvz,zvz,fr)
+
+       vircoul=vircoul+fr*(xvz**2+yvz**2+zvz**2)
+       encoul=encoul+pot
+
+    end do
+
+    return
+
+  end subroutine coulomb_14sf
 
   subroutine coulomb_flags(i,j,xvz,yvz,zvz,pot,fr)
     !****************************************************************************************

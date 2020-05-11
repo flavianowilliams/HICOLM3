@@ -113,7 +113,7 @@ contains
 
     !-checando viabilidade geometrica de cada molecula
 
-    call structure_check
+!    call structure_check
 
     !-imprimindo informacoes do espaço real
 

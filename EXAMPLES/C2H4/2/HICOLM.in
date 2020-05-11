@@ -7,7 +7,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C2H4 1 6
-reuse 0
+reuse 1
 &END
 
 # Molecular dynamics variables
@@ -16,10 +16,10 @@ reuse 0
 nhist 10
 preext 1.0d0
 text 0.0
-ntrialmax 1000000
+ntrialmax 10000
 nrelax 1
-timestep 0.00000001
-ensemble nvt berendsen 0.5 0.5 4.9e-5
+timestep 0.001
+ensemble nvt berendsen 1.0 0.5 4.9e-5
 rcutoff 7.0 0.1
 &END
 
@@ -29,6 +29,13 @@ rcutoff 7.0 0.1
  $AMBER
   molecule C2H4
   C C H4 H4 H4 H4
-  0.0 0.0 0.0 0.0 0.0 0.0
+  -0.35498 -0.35498 0.177749 0.177749 0.177749 0.177749
+ $END
+ $INTRA
+  molecule C2H4
+  bends* 5
+  3 1 4 harm 3.04 120.0
+  bends* 6
+  5 2 6 harm 3.04 120.0
  $END
 &END

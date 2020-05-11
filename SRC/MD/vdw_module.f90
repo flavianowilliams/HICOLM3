@@ -32,6 +32,7 @@ module vdw_module
   use input
   use estrutura
   use alloc_arrays
+  use dihedral_module
 
   integer nvdwstp
   real(8) envdw_corr,virvdw_corr
@@ -147,12 +148,44 @@ contains
 
     call vdw_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
     call vdw_force(ni,nj,xvz,yvz,zvz,fr)
+
     virvdw=virvdw+fr*(xvz**2+yvz**2+zvz**2)
     envdw=envdw+pot
 
     return
 
   end subroutine vdw_calc
+
+  subroutine vdw_14sf(envdw,virvdw)
+
+    implicit none
+
+    integer i,ni,nj
+    real(8) pot,fr,xvz,yvz,zvz
+    real(8) envdw,virvdw
+
+    do i=1,ntorsstp
+
+       ni=torsijkn(1,i)
+       nj=torsijkn(4,i)
+
+       call mic(ni,nj,xvz,yvz,zvz)
+
+       call vdw_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
+
+       pot=pot*sf_vdw
+       fr=fr*sf_vdw
+
+       call vdw_force(ni,nj,xvz,yvz,zvz,fr)
+
+       virvdw=virvdw+fr*(xvz**2+yvz**2+zvz**2)
+       envdw=envdw+pot
+
+    end do
+
+    return
+
+  end subroutine vdw_14sf
 
   subroutine vdw_flags(i,j,xvz,yvz,zvz,pot,fr)
     !****************************************************************************************

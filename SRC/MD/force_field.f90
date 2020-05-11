@@ -345,6 +345,11 @@ contains
 
     if(ntors.ne.0)call tors_calc(entors,virtors)
 
+    !-calculado fator de interacao 1-4
+
+    call vdw_14sf(envdw,virvdw)
+    call coulomb_14sf(encoul,vircoul)
+
     !-calculo das contribuicoes intermoleculares (Van der Waals e coulombiano)
 
     call ff_modules_inter(envdw,encoul,virvdw,vircoul)

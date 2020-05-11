@@ -230,26 +230,6 @@ contains
 
   end subroutine tors_calc
 
-  subroutine tors_check(drij,drkn)
-
-    implicit none
-
-    integer i
-    real(8) drij(3),drkn(3)
-
-    !-checando na direcao z
-
-    do i=1,3
-       if(drij(i).eq.0.d0.and.drkn(i).eq.0.d0)then
-          drij(i)=1.d-8
-          drkn(i)=1.d-8
-       end if
-    end do
-
-    return
-
-  end subroutine tors_check
-
   subroutine tors_flags(im,in,phi,pot,fd)
     !****************************************************************************************
     ! Compontente angular                                                                   *
