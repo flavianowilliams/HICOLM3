@@ -46,7 +46,6 @@ contains
        case('OW')
           epsi(i)=0.1520d0
           ri(i)=1.7683d0
-!          ri(i)=1.582746d0
        case('HW')
           epsi(i)=0.d0
           ri(i)=0.d0
@@ -71,6 +70,9 @@ contains
 
     prms(1)=sqrt(epsi(1)*epsi(2))
     prms(2)=ri(1)+ri(2)
+
+!    prms(1)=prms(1)!*4.d0
+!    prms(2)=prms(2)/2**(1.d0/6.d0)
 
     !-fator conversao: kcal/mol -> eV
 
