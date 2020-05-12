@@ -27,6 +27,7 @@ program HICOLM
   use estrutura            ! definindo espaço real
   use brillouin            ! definindo zona de brillouin
   use molecular_dynamics   ! metodo Dinâmica Molecular
+  use optimize             ! ferramenta de otimizacao do sistema
   use outfile              ! imprimindo informacoes em arquivo out
 
   implicit none
@@ -80,6 +81,8 @@ program HICOLM
   !========================================================
   !-calculando Dinâmica molecular
   call md(t3)
+  !-otimizando sistema
+  call opt
   !========================================================
   !-calculando propriedades
   !if(ebndtot.eq.1)call solving(t4)
