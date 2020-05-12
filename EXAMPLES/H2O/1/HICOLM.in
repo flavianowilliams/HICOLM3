@@ -16,7 +16,7 @@ reuse 3
 nhist 10
 preext 1.0d0
 text 298.0
-ntrialmax 100
+ntrialmax 1000
 nrelax 1
 timestep 0.001
 ensemble npt berendsen 0.5 0.5 4.9e-5
@@ -30,5 +30,9 @@ rcutoff 7.0 0.1
   molecule H2O
   OW HW HW
   -0.834 0.417 0.417
+ $END
+ $INTER
+  vdw 1
+  1 1 lj 0.00674 3.165492
  $END
 &END
