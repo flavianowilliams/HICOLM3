@@ -13,7 +13,7 @@ reuse 3
 # Molecular dynamics variables
 
 &MD
-nhist 10
+nhist 100
 preext 1.0d0
 text 298.0
 ntrialmax 1000
