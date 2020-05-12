@@ -136,6 +136,11 @@ contains
           write(6,'(20x,a6,10(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
           write(6,'(26x,10(1x,a2))')(atsp(j+k),j=1,nxmolec(i))
        end if
+       if(ff_model(i).eq.'(AMBER)')then
+          write(6,*)
+          write(6,'(20x,a28,2x,f7.4)')'scale factor (eletrostatic):',sf_coul
+          write(6,'(20x,a29,1x,f7.4)')'scale factor (Van der Waals):',sf_vdw
+       end if
        write(6,*)
        write(6,'(20x,a6,1x,i5)')'Bonds:',bondscnt(i)
        write(6,'(20x,111a1)')('-',j=1,52)
@@ -345,7 +350,7 @@ contains
 
     if(ntors.ne.0)call tors_calc(entors,virtors)
 
-    !-calculado fator de interacao 1-4
+    !-calculo do fator de interacao 1-4
 
     call vdw_14sf(envdw,virvdw)
     call coulomb_14sf(encoul,vircoul)
