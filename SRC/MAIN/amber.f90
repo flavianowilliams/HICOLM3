@@ -71,8 +71,7 @@ contains
     prms(1)=sqrt(epsi(1)*epsi(2))
     prms(2)=ri(1)+ri(2)
 
-!    prms(1)=prms(1)!*4.d0
-!    prms(2)=prms(2)/2**(1.d0/6.d0)
+!    prms(2)=prms(2)/2**(1.d0/6.d0) !convertendo parametro p/ outra versao de LJ
 
     !-fator conversao: kcal/mol -> eV
 

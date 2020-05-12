@@ -233,9 +233,13 @@ contains
           prm(ii)=parvdw(i,j,ii)
        end do
 
+       !-versao LJ segundo AMBER
+
        pot=prm(1)*((prm(2)/dr)**12-2.d0*(prm(2)/dr)**6)
 
        fr=12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
+
+       !-versão LJ normal
 
 !       pot=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
 
@@ -315,11 +319,16 @@ contains
              do ii=1,2
                 prm(ii)=parvdw(i,j,ii)
              end do
+             !-versao LJ normal
+
 !             es=4.d0*prm(1)*(prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
 !             vs=24.d0*prm(1)*&
 !                  (2.d0*prm(2)**12-3.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
 !             envdw_corr=envdw_corr+es*natnp(i)*natnp(j)
 !             virvdw_corr=virvdw_corr+vs*natnp(i)*natnp(j)
+
+             !-versao LJ segundo AMBER
+
              es=prm(1)*&
                   (prm(2)**12-6.d0*(rcutoff*prm(2))**6)/(9.d0*rcutoff**9)
              vs=12.d0*prm(1)*&

@@ -339,7 +339,21 @@ contains
 
     !-contribuicao para o virial
 
-    virtors=0.d0
+    virtors=virtors-fbi(1)*xa(i1)
+    virtors=virtors-fbi(2)*ya(i1)
+    virtors=virtors-fbi(3)*za(i1)
+
+    virtors=virtors-fbj(1)*xa(i2)
+    virtors=virtors-fbj(2)*ya(i2)
+    virtors=virtors-fbj(3)*za(i2)
+
+    virtors=virtors-fbk(1)*xa(i3)
+    virtors=virtors-fbk(2)*ya(i3)
+    virtors=virtors-fbk(3)*za(i3)
+
+    virtors=virtors-fbn(1)*xa(i4)
+    virtors=virtors-fbn(2)*ya(i4)
+    virtors=virtors-fbn(3)*za(i4)
 
     !-calculo da contribuicao para o stress
 
