@@ -30,6 +30,6 @@ rcutoff 7.0 0.1
  $AMBER
   molecule C2H4
   CT CT HC HC HC HC
-  0.0 0.0 0.0 0.0 0.0 0.0
+  -0.355 -0.355 0.178 0.178 0.178 0.178
  $END
 &END
