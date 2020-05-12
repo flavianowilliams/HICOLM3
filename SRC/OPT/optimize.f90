@@ -20,11 +20,60 @@
 !
 module optimize
 
+  use input
+  use estrutura
+  use force_field
+
 contains
 
   subroutine opt
 
     implicit none
+
+    integer i
+    real(8) encoul,enbond,enbend,entors,envdw
+    real(8) virvdw,virbond,virbend,virtors,vircoul
+
+    !-valores iniciais
+
+    !-energia
+
+    encoul=0.d0   !coulombiano
+    enbond=0.d0   !estiramento
+    enbend=0.d0   !deformacao
+    entors=0.d0   !torção
+    envdw=0.d0    !Van der waals
+
+    !-virial
+
+    virvdw=0.d0   !Van der Waals
+    virbond=0.d0  !estiramento
+    virbend=0.d0  !deformacao
+    virtors=0.d0  !torção
+    vircoul=0.d0  !coulombiano
+
+    !-forcas atomicas
+
+    do i=1,natom
+       fax(i)=0.d0
+       fay(i)=0.d0
+       faz(i)=0.d0
+    end do
+
+    !-stress
+
+    do i=1,6
+       str(i)=0.d0
+    end do
+
+    !-preparando Campo de Força
+
+    call ff_prepare
+
+    !-calculando contribuição intramolecular
+
+    call ff_modules_intra&
+         (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
 
     return
 

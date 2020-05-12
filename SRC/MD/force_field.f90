@@ -338,6 +338,27 @@ contains
        str(i)=0.d0
     end do
 
+    !-calculo das contribuicoes intramoleculares (bonds, bends, dihedrals, 1-4 interaction)
+
+    call ff_modules_intra&
+         (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+
+    !-calculo das contribuicoes intermoleculares (Van der Waals e coulombiano)
+
+    call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+
+    return
+
+  end subroutine ff_modules
+
+  subroutine ff_modules_intra&
+       (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+
+    implicit none
+
+    real(8) enbond,enbend,entors,envdw,encoul
+    real(8) virbond,virbend,virtors,virvdw,vircoul
+
     !-calculo da contribuicao de estiramento
 
     if(nbonds.ne.0)call bonds_calc(enbond,virbond)
@@ -355,13 +376,9 @@ contains
     call vdw_14sf(envdw,virvdw)
     call coulomb_14sf(encoul,vircoul)
 
-    !-calculo das contribuicoes intermoleculares (Van der Waals e coulombiano)
-
-    call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-
     return
 
-  end subroutine ff_modules
+  end subroutine ff_modules_intra
 
   subroutine ff_modules_inter(envdw,encoul,virvdw,vircoul)
     !***************************************************************************************

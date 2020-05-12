@@ -80,7 +80,7 @@ program HICOLM
   call reciprocal
   !========================================================
   !-calculando Dinâmica molecular
-  call md(t3)
+!  call md(t3)
   !-otimizando sistema
   call opt
   !========================================================
