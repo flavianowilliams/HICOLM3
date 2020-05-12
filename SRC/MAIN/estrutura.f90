@@ -113,7 +113,7 @@ contains
 
     !-checando viabilidade geometrica de cada molecula
 
-!    call structure_check
+    call structure_check
 
     !-imprimindo informacoes do espaço real
 
@@ -155,7 +155,7 @@ contains
    integer i,j,k,np,ni,nj,nk,nn
    real(8) shift,dx1,dy1,dz1,dx2,dy2,dz2
 
-   shift=1.d-2
+   shift=1.d-1
 
    !-aplicando translacao nas moleculas
 

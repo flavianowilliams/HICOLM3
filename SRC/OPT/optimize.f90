@@ -30,34 +30,15 @@ contains
 
     implicit none
 
-    integer i
-    real(8) encoul,enbond,enbend,entors,envdw
+    integer i,j
+    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
+    real(8) encoul,enbond,enbend,entors,envdw,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
-    !-valores iniciais
-
-    !-energia
-
-    encoul=0.d0   !coulombiano
-    enbond=0.d0   !estiramento
-    enbend=0.d0   !deformacao
-    entors=0.d0   !torção
-    envdw=0.d0    !Van der waals
-
-    !-virial
-
-    virvdw=0.d0   !Van der Waals
-    virbond=0.d0  !estiramento
-    virbend=0.d0  !deformacao
-    virtors=0.d0  !torção
-    vircoul=0.d0  !coulombiano
-
-    !-forcas atomicas
-
     do i=1,natom
-       fax(i)=0.d0
-       fay(i)=0.d0
-       faz(i)=0.d0
+       gax(i)=0.d0
+       gay(i)=0.d0
+       gaz(i)=0.d0
     end do
 
     !-stress
@@ -72,11 +53,81 @@ contains
 
     !-calculando contribuição intramolecular
 
-    call ff_modules_intra&
-         (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)(' OPT',i=1,23)
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)
+    write(6,*)'Comecando a zica!!!!'
+    write(6,*)
+
+    do i=1,50
+       encoul=0.d0   !coulombiano
+       enbond=0.d0   !estiramento
+       enbend=0.d0   !deformacao
+       entors=0.d0   !torção
+       envdw=0.d0    !Van der waals
+       do j=1,natom
+          fax(j)=0.d0
+          fay(j)=0.d0
+          faz(j)=0.d0
+       end do
+       call ff_modules_intra&
+            (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+       enpot=enbond+enbend+entors+envdw+encoul
+       call steepest_descent
+       call opt_check(gax,gay,gaz,dfmax)
+       call geometria
+       write(6,10)'OP',i,enpot*econv,dfmax*econv/rconv
+       do j=1,natom
+          gax(j)=fax(j)
+          gay(j)=fay(j)
+          gaz(j)=faz(j)
+       end do
+    end do
 
     return
 
+10  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+
   end subroutine opt
+
+  subroutine steepest_descent
+
+    implicit none
+
+    integer i
+    real(8) lambda,df
+
+    lambda=1.e-4
+
+    do i=1,natom
+       df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
+       xa(i)=xa(i)+lambda*fax(i)/df
+       ya(i)=ya(i)+lambda*fay(i)/df
+       za(i)=za(i)+lambda*faz(i)/df
+    end do
+
+    return
+
+  end subroutine steepest_descent
+
+  subroutine opt_check(gax,gay,gaz,dfmax)
+
+    implicit none
+
+    integer i
+    real(8) dfmax,gax(natom),gay(natom),gaz(natom),dfx,dfy,dfz
+
+    dfmax=0.d0
+    do i=1,natom
+       dfx=fax(i)-gax(i)
+       dfy=fay(i)-gay(i)
+       dfz=faz(i)-gaz(i)
+       dfmax=max(dfmax,sqrt(dfx**2+dfy**2+dfz**2))
+    end do
+
+    return
+
+  end subroutine opt_check
 
 end module optimize
