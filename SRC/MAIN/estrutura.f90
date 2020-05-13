@@ -113,7 +113,7 @@ contains
 
     !-checando viabilidade geometrica de cada molecula
 
-    call structure_check
+    if(ntors.ge.1)call structure_check
 
     !-imprimindo informacoes do espaço real
 

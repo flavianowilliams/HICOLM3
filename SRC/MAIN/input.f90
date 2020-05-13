@@ -334,11 +334,13 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
+    integer i,j,ival(20)
     real(8) val(20)
     character(7) in,char
     character(9) char2
-    character(10) lxmol,key
+    character(10) key
+
+    rewind(5)
 
 1   read(5,*,end=11)in
 
@@ -471,16 +473,15 @@ contains
     integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
     real(8) val(20)
     character(7) in,char
-    character(9) char2
     character(10) lxmol,key
 
     !-Campo de Forca
 
     rewind(5)
 
-2   read(5,*,end=22)in
+1   read(5,*,end=11)in
 
-    if(in.ne.'&FORCE')goto 2
+    if(in.ne.'&FORCE')goto 1
 
     do i=1,100
        read(5,*)key
@@ -684,7 +685,7 @@ contains
 
     !-calculando parametros intramoleculares totais
 
-22  nbends=0
+11  nbends=0
     nbonds=0
     ntors=0
     do i=1,nmolec

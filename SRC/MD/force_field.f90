@@ -369,12 +369,13 @@ contains
 
     !-calculo da contribuicao de diedros
 
-    if(ntors.ne.0)call tors_calc(entors,virtors)
+    if(ntors.ne.0)then
 
-    !-calculo do fator de interacao 1-4
+       call tors_calc(entors,virtors)
+       call vdw_14sf(envdw,virvdw)
+       call coulomb_14sf(encoul,vircoul)
 
-    call vdw_14sf(envdw,virvdw)
-    call coulomb_14sf(encoul,vircoul)
+    end if
 
     return
 
