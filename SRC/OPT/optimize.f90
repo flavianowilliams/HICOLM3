@@ -35,6 +35,12 @@ contains
     real(8) encoul,enbond,enbend,entors,envdw,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
+    !-criando ficheiro de saida
+
+    open(3,file='HICOLM_opt.dat',status='unknown')
+
+    !-valores iniciais
+
     do i=1,natom
        gax(i)=0.d0
        gay(i)=0.d0
@@ -60,7 +66,7 @@ contains
     write(6,*)'Comecando a zica!!!!'
     write(6,*)
 
-    do i=1,50
+    do i=1,1000
        encoul=0.d0   !coulombiano
        enbond=0.d0   !estiramento
        enbend=0.d0   !deformacao
@@ -77,7 +83,7 @@ contains
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
        call geometria
-       write(6,10)'OP',i,enpot*econv,dfmax*econv/rconv
+       if(i.ge.2)write(3,10)i,dfmax*econv/rconv,enpot*econv
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -87,7 +93,7 @@ contains
 
     return
 
-10  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+10  format(5x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 
   end subroutine opt
 
