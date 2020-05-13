@@ -80,9 +80,9 @@ program HICOLM
   call reciprocal
   !========================================================
   !-calculando Dinâmica molecular
-!  call md(t3)
+  call md(t3)
   !-otimizando sistema
-  call opt
+!  call opt
   !========================================================
   !-calculando propriedades
   !if(ebndtot.eq.1)call solving(t4)

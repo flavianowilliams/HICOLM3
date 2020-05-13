@@ -107,6 +107,10 @@ contains
 
     call md_input
 
+    !-lendo informacoes do campo de forca
+
+    call ff_input
+
     !-contagem de tempo
 
     call cpu_time(tf)
@@ -456,9 +460,23 @@ contains
        end if
     end do
 
+11  return
+
+  end subroutine md_input
+
+  subroutine ff_input
+
+    implicit none
+
+    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
+    real(8) val(20)
+    character(7) in,char
+    character(9) char2
+    character(10) lxmol,key
+
     !-Campo de Forca
 
-11  rewind(5)
+    rewind(5)
 
 2   read(5,*,end=22)in
 
@@ -677,9 +695,9 @@ contains
        end do
     end do
 
-  return
+    return
 
-  end subroutine md_input
+  end subroutine ff_input
 
   subroutine default
     !***************************************************************************************
