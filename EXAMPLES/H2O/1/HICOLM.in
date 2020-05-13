@@ -1,6 +1,6 @@
 # Start MD method
 
-@MDRUNNING # direct molecular dynamics
+@MDPREPARE # direct molecular dynamics
 
 # Structure variables
 
