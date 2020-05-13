@@ -104,7 +104,7 @@ contains
     integer i
     real(8) lambda,df
 
-    lambda=1.e-4
+    lambda=1.e-5
 
     do i=1,natom
        df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
