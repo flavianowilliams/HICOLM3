@@ -32,7 +32,7 @@ contains
 
     integer i,j
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) encoul,enbond,enbend,entors,envdw,enpot
+    real(8) encoul,enbond,enbend,entors,envdw,enpot,enpot0
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
     !-criando ficheiro de saida
@@ -40,6 +40,8 @@ contains
     open(3,file='HICOLM_opt.dat',status='unknown')
 
     !-valores iniciais
+
+    enpot0=0.d0
 
     do i=1,natom
        gax(i)=0.d0
@@ -81,12 +83,13 @@ contains
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
        call geometria
-       if(i.ge.2)write(3,10)i,dfmax*econv/rconv,enpot*econv
+       if(i.ge.2)write(3,10)i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
           gaz(j)=faz(j)
        end do
+       enpot0=enpot
     end do
 
     return
