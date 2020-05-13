@@ -66,6 +66,10 @@ contains
     write(6,'(93a1)')('#',i=1,93)
     write(6,*)
 
+    write(6,'(4x,111a1)')('-',i=1,84)
+    write(6,10)'##','STEP','DFORCE',' FORCE',' ENERGY' ,'DENERGY'
+    write(6,'(4x,111a1)')('-',i=1,84)
+
     do i=1,1000
        encoul=0.d0   !coulombiano
        enbond=0.d0   !estiramento
@@ -83,7 +87,8 @@ contains
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
        call geometria
-       if(i.ge.2)write(3,10)i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
+       if(mod(i,10).eq.0)write(6,20)'SD',i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
+       if(i.ge.2)write(3,30)i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -94,7 +99,9 @@ contains
 
     return
 
-10  format(5x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
+20  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
+30  format(5x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 
   end subroutine opt
 
