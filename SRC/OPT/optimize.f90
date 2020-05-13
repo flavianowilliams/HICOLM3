@@ -63,8 +63,6 @@ contains
     write(6,*)(' OPT',i=1,23)
     write(6,'(93a1)')('#',i=1,93)
     write(6,*)
-    write(6,*)'Comecando a zica!!!!'
-    write(6,*)
 
     do i=1,1000
        encoul=0.d0   !coulombiano
