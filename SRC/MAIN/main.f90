@@ -79,10 +79,14 @@ program HICOLM
   !-definindo vetores da rede reciproca
   call reciprocal
   !========================================================
-  !-calculando Dinâmica molecular
-  call md(t3)
-  !-otimizando sistema
-!  call opt
+  select case(method)
+  case('@MDPREPARE')
+     !-calculando Dinâmica molecular
+     call opt
+  case('@MDRUNNING')
+     !-otimizando sistema
+     call md(t3)
+  end select
   !========================================================
   !-calculando propriedades
   !if(ebndtot.eq.1)call solving(t4)

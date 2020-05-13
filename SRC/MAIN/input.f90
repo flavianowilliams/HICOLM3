@@ -66,7 +66,7 @@ module input
   character(2) atsp(ntpmax)
   character(7) prop,ensble
   character(9) ensble_mt
-  character(10) namemol(molecmax)
+  character(10) method,namemol(molecmax)
   character(7) ff_model(molecmax)
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
@@ -85,6 +85,8 @@ contains
     implicit none
 
     real(8) t0,tf
+    character(10) in
+    logical lval
 
     open(5,file='HICOLM.in',status='old')
     open(10,file='HICOLM.str',status='old')
@@ -105,9 +107,22 @@ contains
 
     rewind(5)
 
-    call md_input
+    lval=.false.
+    do while (lval.eqv..false.)
 
-    !-lendo informacoes do campo de forca
+       read(5,*,end=11)in
+
+       if(in.eq.'@MDPREPARE')then
+          call opt_input
+          lval=.true.
+       elseif(in.eq.'@MDRUNNING')then
+          call md_input
+          lval=.true.
+       end if
+
+    end do
+
+    !-lendo informacoes do campo de força
 
     call ff_input
 
@@ -118,6 +133,8 @@ contains
     t0=tf-t0
 
     return
+
+11  stop 'entrada: Method does not found'
 
   end subroutine entrada
 
@@ -130,6 +147,8 @@ contains
     integer i,j,k,natfx,ival(20)
     character(7) in
     character(9) key
+
+    rewind(5)
 
     !-base
 
@@ -328,6 +347,18 @@ contains
 
   end subroutine zmatrix
 
+  subroutine opt_input
+
+    implicit none
+
+    !-escolha do metodo
+
+    method='@MDPREPARE'
+
+    return
+
+  end subroutine opt_input
+
   subroutine md_input
     !***************************************************************************************
     ! Leitura dos parametros de entrada da Dinamica molecular                              *
@@ -462,7 +493,11 @@ contains
        end if
     end do
 
-11  return
+    !-escolha do metodo
+
+11  method='@MDRUNNING'
+
+    return
 
   end subroutine md_input
 
