@@ -875,8 +875,8 @@ contains
     !-parametros de otimizacao
 
     opt_ntrialmax=100000
-    opt_dfmax=1.e-4
-    opt_gamma=1.e-5
+    opt_dfmax=5.e-4
+    opt_gamma=1.e-4
 
     !-variaveis canonicas
 

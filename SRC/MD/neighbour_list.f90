@@ -56,16 +56,8 @@ contains
 
     !-alocando arrays
 
-!    if(nvdwstp.ne.0.or.ncoulstp.ne.0)then
-       numb=max(1,int(0.125*max(ncoulstp,nvdwstp)))
-       allocate(ilist(natom,numb),nlist(natom),stat=ierr)
-!    end if
-
-    !-alocando arrays (vizinhos intramoleculares)
-
-!    if(ntrsff.ne.0)then
-!       allocate(ilista(natom,natom),nlista(natom),stat=ierra)
-!    end if
+    numb=max(1,int(0.125*max(ncoulstp,nvdwstp)))
+    allocate(ilist(natom,numb),nlist(natom),stat=ierr)
 
     if(ierr.ne.0)stop 'neighbour_prepare: allocation failed'
     if(ierra.ne.0)stop 'neighbour_prepare: allocation failed'
@@ -74,49 +66,6 @@ contains
 
   end subroutine neighbour_prepare
 
-!  subroutine verlet_list_all
-!    !****************************************************************************************
-!    ! Atualizacao a lista de vizinhos segundo o método de Verlet                            *
-!    !****************************************************************************************
-!
-!    implicit none
-!
-!    integer i,j,nx
-!    real(8) dr,xvz,yvz,zvz,drmax,drx,dry,drz
-!
-!    !-atualizando lista de vizinhos
-!
-!    do i=1,natom
-!       nx=1
-!       do j=1,natom
-!          if(i.eq.j)cycle
-!          call mic(i,j,xvz,yvz,zvz)
-!          dr=sqrt(xvz**2+yvz**2+zvz**2)
-!          if(dr.le.rcutoff)then
-!             ilista(i,nx)=j
-!             nx=nx+1
-!          end if
-!          nlista(i)=nx-1
-!       end do
-!    end do
-!
-!    !-atualizando intervalo
-!
-!    drmax=0.d0
-!    do i=1,natom
-!       drx=vax(i)*dtime+0.5d0*fax(i)*dtime**2/mass(i)
-!       dry=vay(i)*dtime+0.5d0*fay(i)*dtime**2/mass(i)
-!       drz=vaz(i)*dtime+0.5d0*faz(i)*dtime**2/mass(i)
-!       dr=sqrt(drx**2+dry**2+drz**2)
-!       drmax=max(drmax,dr)
-!    end do
-!
-!    if(drmax.ne.0.d0)verlchk=min(verlchk,max(1,int(drcutoff/drmax)))
-!
-!    return
-!
-!  end subroutine verlet_list_all
-!
   subroutine verlet_list_inter
     !****************************************************************************************
     ! Atualizacao da lista de vizinhos segundo o método de Verlet                           *

@@ -41,6 +41,12 @@ contains
 
     !-valores iniciais
 
+    vircoul=0.d0   !coulombiano
+    virbond=0.d0   !estiramento
+    virbend=0.d0   !deformacao
+    virtors=0.d0   !torção
+    virvdw=0.d0    !Van der waals
+
     enpot0=0.d0
 
     do i=1,natom
@@ -58,6 +64,10 @@ contains
     !-preparando Campo de Força
 
     call ff_prepare
+
+    !-preparando lista de vizinhos de Verlet
+
+    call verlet_list_inter
 
     !-imprimindo informacoes no ficheiro de saida
 
@@ -85,16 +95,18 @@ contains
        call ff_modules_intra&
             (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
        eintra=enbond+enbend+entors+envdw+encoul
-       einter=0.d0
+       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+       einter=envdw+encoul
        enpot=eintra+einter
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
        call geometria
-       if(mod(i,25).eq.0)write(6,20)'SD',&
+       if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        if(i.ge.2)write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        if(dfmax.le.opt_dfmax)exit
+       call verlet_list_inter
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
