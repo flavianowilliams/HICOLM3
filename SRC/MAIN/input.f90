@@ -399,6 +399,8 @@ contains
 
 11  method='@MDPREPARE'
 
+    opt_gamma=max(opt_gamma,1.d-3)
+
     return
 
   end subroutine opt_input

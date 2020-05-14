@@ -61,6 +61,9 @@ contains
 !       str(i)=0.d0
 !    end do
 
+    einter=0.d0
+    eintra=0.d0
+
     !-preparando Campo de Força
 
     call ff_prepare
@@ -86,6 +89,7 @@ contains
     !-calculando contribuição intramolecular
 
     call opt_intra(eintra,einter)
+    call opt_inter(eintra,einter)
 
     write(6,'(4x,111a1)')('-',i=1,84)
     write(6,*)
@@ -108,7 +112,7 @@ contains
 
     enpot0=0.d0
 
-    do i=1,opt_ntrialmax
+    do i=1,1000
        encoul=0.d0   !coulombiano
        enbond=0.d0   !estiramento
        enbend=0.d0   !deformacao
@@ -123,18 +127,14 @@ contains
             (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
        eintra=enbond+enbend+entors+envdw+encoul
        enpot=eintra+einter
-       if(mod(i,50).eq.0)write(6,20)'SD',&
+       if(mod(i,50).eq.0)write(6,10)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
-       if(i.ge.2)write(3,30)&
+       if(i.ge.2)write(3,20)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
-       call geometria
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
+       call geometria
        if(dfmax.le.opt_dfmax)exit
-!       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-!       einter=envdw+encoul
-!       enpot=eintra+einter
-!       call verlet_list_inter
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -145,10 +145,56 @@ contains
 
     return
 
-20  format(5x,a2,2x,i8,5(2x,es12.4))
-30  format(5x,i8,5(2x,es12.4))
+10  format(5x,a2,2x,i8,5(2x,es12.4))
+20  format(5x,i8,5(2x,es12.4))
 
   end subroutine opt_intra
+
+  subroutine opt_inter(eintra,einter)
+
+    implicit none
+
+    integer i,j
+    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
+    real(8) encoul,envdw,enpot,enpot0,eintra,einter
+    real(8) virvdw,vircoul
+
+    enpot0=0.d0
+
+    do i=1001,opt_ntrialmax
+       encoul=0.d0   !coulombiano
+       envdw=0.d0    !Van der waals
+       do j=1,natom
+          fax(j)=0.d0
+          fay(j)=0.d0
+          faz(j)=0.d0
+       end do
+       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+       einter=envdw+encoul
+       enpot=eintra+einter
+       if(mod(i,50).eq.0)write(6,10)'SD',&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       if(i.ge.2)write(3,20)&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       call steepest_descent
+       call opt_check(gax,gay,gaz,dfmax)
+       call geometria
+       if(dfmax.le.opt_dfmax)exit
+       call verlet_list_inter
+       do j=1,natom
+          gax(j)=fax(j)
+          gay(j)=fay(j)
+          gaz(j)=faz(j)
+       end do
+       enpot0=enpot
+    end do
+
+    return
+
+10  format(5x,a2,2x,i8,5(2x,es12.4))
+20  format(5x,i8,5(2x,es12.4))
+
+  end subroutine opt_inter
 
   subroutine steepest_descent
 
