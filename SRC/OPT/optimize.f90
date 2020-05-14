@@ -69,17 +69,44 @@ contains
 
     call verlet_list_inter
 
+    !-correcao da energia de Van der Waals de curto alcance
+
+    call vdw_corr
+
     !-imprimindo informacoes no ficheiro de saida
 
     call opt_print
-
-    !-calculando contribuição intramolecular
 
     write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
 
     write(6,'(4x,111a1)')('-',i=1,84)
     write(6,10)'##','STEP','INTRA','INTER','ENERGY','DENERGY','DFORCE'
     write(6,'(4x,111a1)')('-',i=1,84)
+
+    !-calculando contribuição intramolecular
+
+    call opt_intra(eintra,einter)
+
+    write(6,'(4x,111a1)')('-',i=1,84)
+    write(6,*)
+
+    return
+
+5   format(5x,a1,14x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
+10  format(5x,a2,6x,a4,6x,a5,9x,a5,9x,a6,7x,a7,8x,a6)
+
+  end subroutine opt
+
+  subroutine opt_intra(eintra,einter)
+
+    implicit none
+
+    integer i,j
+    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
+    real(8) encoul,enbond,enbend,entors,envdw,enpot,enpot0,eintra,einter
+    real(8) virvdw,virbond,virbend,virtors,vircoul
+
+    enpot0=0.d0
 
     do i=1,opt_ntrialmax
        encoul=0.d0   !coulombiano
@@ -95,18 +122,19 @@ contains
        call ff_modules_intra&
             (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
        eintra=enbond+enbend+entors+envdw+encoul
-       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-       einter=envdw+encoul
        enpot=eintra+einter
-       call steepest_descent
-       call opt_check(gax,gay,gaz,dfmax)
-       call geometria
        if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        if(i.ge.2)write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       call geometria
+       call steepest_descent
+       call opt_check(gax,gay,gaz,dfmax)
        if(dfmax.le.opt_dfmax)exit
-       call verlet_list_inter
+!       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+!       einter=envdw+encoul
+!       enpot=eintra+einter
+!       call verlet_list_inter
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -115,17 +143,12 @@ contains
        enpot0=enpot
     end do
 
-    write(6,'(4x,111a1)')('-',i=1,84)
-    write(6,*)
-
     return
 
-5  format(5x,a1,14x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
-10  format(5x,a2,6x,a4,6x,a5,9x,a5,9x,a6,7x,a7,8x,a6)
 20  format(5x,a2,2x,i8,5(2x,es12.4))
 30  format(5x,i8,5(2x,es12.4))
 
-  end subroutine opt
+  end subroutine opt_intra
 
   subroutine steepest_descent
 

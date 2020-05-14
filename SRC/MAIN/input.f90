@@ -387,6 +387,12 @@ contains
           read(5,*)key,val(1)
           opt_dfmax=val(1)
        end if
+       if(key.eq.'rcutoff')then
+          backspace(5)
+          read(5,*)key,val(1),val(2)
+          rcutoff=val(1)
+          drcutoff=val(2)
+       end if
     end do
 
     !-escolha do metodo
@@ -779,8 +785,8 @@ contains
 
     integer i,j,k
 
-    rcutoff=0.d0
-    drcutoff=0.d0
+    rcutoff=10.d0
+    drcutoff=0.1d0
 
     reuse=0
 
