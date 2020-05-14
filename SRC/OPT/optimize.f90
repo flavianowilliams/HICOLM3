@@ -30,10 +30,10 @@ contains
 
     implicit none
 
-    integer i,j
-    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) encoul,enbond,enbend,entors,envdw,enpot,enpot0,eintra,einter
-    real(8) virvdw,virbond,virbend,virtors,vircoul
+    integer i
+!    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
+    real(8) eintra,einter
+!    real(8) virvdw,virbond,virbend,virtors,vircoul
 
     !-criando ficheiro de saida
 
@@ -41,25 +41,25 @@ contains
 
     !-valores iniciais
 
-    vircoul=0.d0   !coulombiano
-    virbond=0.d0   !estiramento
-    virbend=0.d0   !deformacao
-    virtors=0.d0   !torção
-    virvdw=0.d0    !Van der waals
+!    vircoul=0.d0   !coulombiano
+!    virbond=0.d0   !estiramento
+!    virbend=0.d0   !deformacao
+!    virtors=0.d0   !torção
+!    virvdw=0.d0    !Van der waals
 
-    enpot0=0.d0
+!    enpot0=0.d0
 
-    do i=1,natom
-       gax(i)=0.d0
-       gay(i)=0.d0
-       gaz(i)=0.d0
-    end do
+!    do i=1,natom
+!       gax(i)=0.d0
+!       gay(i)=0.d0
+!       gaz(i)=0.d0
+!    end do
 
     !-stress
 
-    do i=1,6
-       str(i)=0.d0
-    end do
+!    do i=1,6
+!       str(i)=0.d0
+!    end do
 
     !-preparando Campo de Força
 
