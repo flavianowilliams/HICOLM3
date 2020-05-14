@@ -59,12 +59,11 @@ contains
 
     call ff_prepare
 
-    !-calculando contribuição intramolecular
+    !-imprimindo informacoes no ficheiro de saida
 
-    write(6,'(93a1)')('#',i=1,93)
-    write(6,*)(' OPT',i=1,23)
-    write(6,'(93a1)')('#',i=1,93)
-    write(6,*)
+    call opt_print
+
+    !-calculando contribuição intramolecular
 
     write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
 
@@ -90,12 +89,12 @@ contains
        enpot=eintra+einter
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
-       if(dfmax.le.opt_dfmax)exit
        call geometria
        if(mod(i,25).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        if(i.ge.2)write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       if(dfmax.le.opt_dfmax)exit
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -152,5 +151,29 @@ contains
     return
 
   end subroutine opt_check
+
+  subroutine opt_print
+    !*************************************************************************
+    ! Impressão dos dados de entrada                                         *
+    !*************************************************************************
+    implicit none
+
+    integer i,j
+
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)(' OPT',i=1,23)
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)
+    write(6,'(30x,a30)')'Steepest descent information'
+    write(6,'(28x,36a1)')('-',j=1,36)
+    write(6,'(28x,a12,6x,i10)')'ntrialmax:',opt_ntrialmax
+    write(6,'(28x,a12,8x,es10.3,1x,a4)')'dfmax:',opt_dfmax*econv/rconv,'eV/A'
+    write(6,'(28x,a12,8x,es10.3)')'gamma:',opt_gamma
+    write(6,'(28x,36a1)')('-',j=1,36)
+    write(6,*)
+
+    return
+
+  end subroutine opt_print
 
 end module optimize
