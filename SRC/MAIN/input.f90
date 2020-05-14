@@ -399,7 +399,7 @@ contains
 
 11  method='@MDPREPARE'
 
-    opt_gamma=max(opt_gamma,1.d-3)
+    opt_gamma=max(opt_gamma,1.d-4)
 
     return
 
