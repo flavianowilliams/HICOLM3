@@ -1,0 +1,33 @@
+# Start MD method
+
+@MDPREPARE # optimizing initial system
+
+# Structure variables
+
+&STRUCT
+ cell
+  19.0 0.0  0.0
+  0.0 19.0  0.0
+  0.0  0.0 19.0
+ molecs 1
+  H2O 100 3
+ reuse 0
+&END
+
+# Molecular dynamics variables
+
+&OPT
+ dfmax 3.5e-4
+ gamma 1.e-5
+ ntrialmax 100000
+&END
+
+# Force field variables
+
+&FORCE
+ $AMBER
+  molecule H2O
+  OW HW HW
+  -0.834 0.417 0.417
+ $END
+&END

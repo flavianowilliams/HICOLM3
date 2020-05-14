@@ -32,7 +32,7 @@ contains
 
     integer i,j
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) encoul,enbond,enbend,entors,envdw,enpot,enpot0
+    real(8) encoul,enbond,enbend,entors,envdw,enpot,enpot0,eintra,einter
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
     !-criando ficheiro de saida
@@ -66,11 +66,13 @@ contains
     write(6,'(93a1)')('#',i=1,93)
     write(6,*)
 
+    write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
+
     write(6,'(4x,111a1)')('-',i=1,84)
-    write(6,10)'##','STEP','DFORCE',' FORCE',' ENERGY' ,'DENERGY'
+    write(6,10)'##','STEP','INTRA','INTER','ENERGY','DENERGY','DFORCE'
     write(6,'(4x,111a1)')('-',i=1,84)
 
-    do i=1,1000
+    do i=1,opt_ntrialmax
        encoul=0.d0   !coulombiano
        enbond=0.d0   !estiramento
        enbend=0.d0   !deformacao
@@ -83,12 +85,17 @@ contains
        end do
        call ff_modules_intra&
             (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-       enpot=enbond+enbend+entors+envdw+encoul
+       eintra=enbond+enbend+entors+envdw+encoul
+       einter=0.d0
+       enpot=eintra+einter
        call steepest_descent
        call opt_check(gax,gay,gaz,dfmax)
+       if(dfmax.le.opt_dfmax)exit
        call geometria
-       if(mod(i,10).eq.0)write(6,20)'SD',i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
-       if(i.ge.2)write(3,30)i,dfmax*econv/rconv,enpot*econv,(enpot-enpot0)*econv
+       if(mod(i,25).eq.0)write(6,20)'SD',&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       if(i.ge.2)write(3,30)&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        do j=1,natom
           gax(j)=fax(j)
           gay(j)=fay(j)
@@ -97,11 +104,15 @@ contains
        enpot0=enpot
     end do
 
+    write(6,'(4x,111a1)')('-',i=1,84)
+    write(6,*)
+
     return
 
-10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
-20  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
-30  format(5x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+5  format(5x,a1,14x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
+10  format(5x,a2,6x,a4,6x,a5,9x,a5,9x,a6,7x,a7,8x,a6)
+20  format(5x,a2,2x,i8,5(2x,es12.4))
+30  format(5x,i8,5(2x,es12.4))
 
   end subroutine opt
 
@@ -110,15 +121,13 @@ contains
     implicit none
 
     integer i
-    real(8) lambda,df
-
-    lambda=1.e-5
+    real(8) df
 
     do i=1,natom
        df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
-       xa(i)=xa(i)+lambda*fax(i)/df
-       ya(i)=ya(i)+lambda*fay(i)/df
-       za(i)=za(i)+lambda*faz(i)/df
+       xa(i)=xa(i)+opt_gamma*fax(i)/df
+       ya(i)=ya(i)+opt_gamma*fay(i)/df
+       za(i)=za(i)+opt_gamma*faz(i)/df
     end do
 
     return

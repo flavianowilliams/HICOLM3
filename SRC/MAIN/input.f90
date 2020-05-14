@@ -75,7 +75,14 @@ module input
   save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model
-
+  !
+  !----------------------------------------------------------------------------
+  !-variaveis da mecanica molecular
+  integer opt_ntrialmax
+  real(8) opt_dfmax,opt_gamma
+  !
+  save opt_ntrialmax,opt_dfmax,opt_gamma
+  !
 contains
 
   subroutine entrada(t0)
@@ -351,9 +358,40 @@ contains
 
     implicit none
 
+    integer i,ival(20)
+    real(8) val(20)
+    character(7) in
+    character(10) key
+
+    rewind(5)
+
+1   read(5,*,end=11)in
+
+    if(in.ne.'&OPT')goto 1
+
+    do i=1,100
+       read(5,*)key
+       if(key.eq.'&END')exit
+       if(key.eq.'ntrialmax')then
+          backspace(5)
+          read(5,*)key,ival(1)
+          opt_ntrialmax=ival(1)
+       end if
+       if(key.eq.'gamma')then
+          backspace(5)
+          read(5,*)key,val(1)
+          opt_gamma=val(1)
+       end if
+       if(key.eq.'dfmax')then
+          backspace(5)
+          read(5,*)key,val(1)
+          opt_dfmax=val(1)
+       end if
+    end do
+
     !-escolha do metodo
 
-    method='@MDPREPARE'
+11  method='@MDPREPARE'
 
     return
 
@@ -834,6 +872,12 @@ contains
     sf_vdw=1.d0/2.d0
     sf_coul=1.d0/1.2d0
 
+    !-parametros de otimizacao
+
+    opt_ntrialmax=100000
+    opt_dfmax=1.e-4
+    opt_gamma=1.e-5
+
     !-variaveis canonicas
 
     do i=1,natmax
@@ -918,6 +962,10 @@ contains
        fay(i)=fay(i)/(econv/rconv)
        faz(i)=faz(i)/(econv/rconv)
     end do
+
+    !-parametros de otimizacao
+
+    opt_dfmax=opt_dfmax/(econv/rconv)
 
     !-parametros da Dinâmica Molecular
 
