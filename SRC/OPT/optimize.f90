@@ -158,7 +158,7 @@ contains
        write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
-       if(dfmax.le.opt_dfmax)exit
+!       if(dfmax.le.opt_dfmax)exit
 
        do j=1,natom
           fax(j)=0.d0

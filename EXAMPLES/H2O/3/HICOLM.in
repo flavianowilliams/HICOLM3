@@ -1,7 +1,7 @@
 # Start MD method
 
 @MDPREPARE # optimizing initial system
-#@MDRUNNING # dinamica molecular
+#@MDRUNNING # molecular dynamics
 
 # Structure variables
 
@@ -12,15 +12,15 @@
   0.0  0.0 19.0
  molecs 1
   H2O 100 3
- reuse 1
+ reuse 0
 &END
 
 # Molecular dynamics variables
 
 &OPT
- dfmax 1.0e-4                 # intra and intermolecular gradient force tolerance (default: 5.e-4)
+ dfmax 1.0e-5                 # intra and intermolecular gradient force tolerance (default: 5.e-4)
  gamma 1.e-7                  # limit deslocation of each atom (default: 0.0001)
- ntrialmax 70000 100000         # limit of steps (default: 100000)
+ ntrialmax 90000 100000         # limit of steps (default: 100000)
 &END
 
 #&MD
