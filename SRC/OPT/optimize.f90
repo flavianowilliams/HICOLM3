@@ -98,12 +98,10 @@ contains
 
     call opt_check(gax,gay,gaz,dfmax)
 
-    i=1
-
     write(6,20)'SD',&
-         i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+         1,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
     write(3,30)&
-         i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+         1,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
     !-imprimindo informacoes no ficheiro de saida
 
