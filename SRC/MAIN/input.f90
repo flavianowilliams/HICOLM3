@@ -78,10 +78,10 @@ module input
   !
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
-  integer opt_ntrialmax
+  integer opt_ntotal,opt_ninter
   real(8) opt_dfmax,opt_gamma
   !
-  save opt_ntrialmax,opt_dfmax,opt_gamma
+  save opt_ntotal,opt_ninter,opt_dfmax,opt_gamma
   !
 contains
 
@@ -374,8 +374,9 @@ contains
        if(key.eq.'&END')exit
        if(key.eq.'ntrialmax')then
           backspace(5)
-          read(5,*)key,ival(1)
-          opt_ntrialmax=ival(1)
+          read(5,*)key,ival(1),ival(2)
+          opt_ninter=ival(1)
+          opt_ntotal=ival(2)
        end if
        if(key.eq.'gamma')then
           backspace(5)
@@ -880,7 +881,8 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ntrialmax=100000
+    opt_ninter=70000
+    opt_ntotal=100000
     opt_dfmax=5.e-4
     opt_gamma=1.e-4
 

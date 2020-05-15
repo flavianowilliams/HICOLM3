@@ -118,7 +118,7 @@ contains
 
     !-calculando contribuição intramolecular
 
-    do i=2,opt_ntrialmax
+    do i=2,opt_ntotal
 
        encoul=0.d0   !coulombiano
        envdw=0.d0    !Van der waals
@@ -134,7 +134,7 @@ contains
 
        call verlet_list_inter
 
-       if(i.le.700)then
+       if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           call steepest_descent_CM
           einter=envdw+encoul+envdw_corr
@@ -157,6 +157,8 @@ contains
        call opt_check(gax,gay,gaz,dfmax)
 
        call geometria
+
+       write(3,*)dfmax*econv/rconv
 
        if(dfmax.le.opt_dfmax)exit
 
@@ -277,7 +279,8 @@ contains
     write(6,*)
     write(6,'(30x,a30)')'Steepest descent information'
     write(6,'(28x,36a1)')('-',j=1,36)
-    write(6,'(28x,a12,6x,i10)')'ntrialmax:',opt_ntrialmax
+    write(6,'(28x,a12,6x,i10)')'n(interm):',opt_ninter
+    write(6,'(28x,a12,6x,i10)')' n(total):',opt_ntotal
     write(6,'(28x,a12,8x,es10.3,1x,a4)')'dfmax:',opt_dfmax*econv/rconv,'eV/A'
     write(6,'(28x,a12,8x,es10.3)')'gamma:',opt_gamma
     write(6,'(28x,36a1)')('-',j=1,36)
