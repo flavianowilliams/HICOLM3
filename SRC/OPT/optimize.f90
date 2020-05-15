@@ -32,7 +32,7 @@ contains
 
     integer i,j
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) eintra,einter,enpot0,enpot
+    real(8) encoul,enbond,enbend,entors,envdw,eintra,einter,enpot0,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
     !-criando ficheiro de saida
@@ -40,12 +40,6 @@ contains
     open(3,file='HICOLM_opt.dat',status='unknown')
 
     !-valores iniciais
-
-    vircoul=0.d0   !coulombiano
-    virbond=0.d0   !estiramento
-    virbend=0.d0   !deformacao
-    virtors=0.d0   !torção
-    virvdw=0.d0    !Van der waals
 
     do i=1,natom
        gax(i)=0.d0
@@ -97,20 +91,41 @@ contains
           faz(j)=0.d0
        end do
 
-       if(i.le.2000)then
-          call opt_intra(eintra,einter)
-       else
-          call opt_inter(einter)
-       end if
+       encoul=0.d0   !coulombiano
+       envdw=0.d0    !Van der waals
+       enbond=0.d0   !estiramento
+       enbend=0.d0   !deformacao
+       entors=0.d0   !torção
 
+       vircoul=0.d0   !coulombiano
+       virbond=0.d0   !estiramento
+       virbend=0.d0   !deformacao
+       virtors=0.d0   !torção
+       virvdw=0.d0    !Van der waals
+
+       call ff_modules_intra&
+            (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+
+       call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+
+       eintra=enbond+enbend+entors+envdw+encoul
+       einter=envdw+encoul+envdw_corr
        enpot=eintra+einter
-
-       call opt_check(gax,gay,gaz,dfmax)
 
        if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        if(i.ge.2)write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+
+       if(i.le.1000)then
+          call steepest_descent_CM
+       else
+          call steepest_descent
+       end if
+
+       call verlet_list_inter
+
+       call opt_check(gax,gay,gaz,dfmax)
 
        do j=1,natom
           gax(j)=fax(j)
@@ -137,59 +152,6 @@ contains
 30  format(5x,i8,5(2x,es12.4))
 
   end subroutine opt
-
-  subroutine opt_intra(eintra,einter)
-
-    implicit none
-
-!    integer i,j
-!    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) encoul,enbond,enbend,entors,envdw,eintra,einter
-    real(8) virvdw,virbond,virbend,virtors,vircoul
-
-    encoul=0.d0   !coulombiano
-    enbond=0.d0   !estiramento
-    enbend=0.d0   !deformacao
-    entors=0.d0   !torção
-    envdw=0.d0    !Van der waals
-
-    call ff_modules_intra&
-         (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-
-    call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-
-    eintra=enbond+enbend+entors+envdw+encoul
-    einter=envdw+encoul
-
-    call steepest_descent
-
-    return
-
-  end subroutine opt_intra
-
-  subroutine opt_inter(einter)
-
-    implicit none
-
-!    integer i,j
-!    real(8) dfmax,gax(natom),gay(natom),gaz(natom)
-    real(8) encoul,envdw,einter
-    real(8) virvdw,vircoul
-
-    encoul=0.d0   !coulombiano
-    envdw=0.d0    !Van der waals
-
-    call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-
-    call steepest_descent_CM
-
-    call verlet_list_inter
-
-    einter=envdw+encoul
-
-    return
-
-  end subroutine opt_inter
 
   subroutine steepest_descent
 
