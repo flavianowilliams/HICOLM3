@@ -94,8 +94,16 @@ contains
     eintra=enbond+enbend+entors+envdw+encoul
     einter=envdw+encoul+envdw_corr
     enpot0=eintra+einter
+    enpot=eintra+einter
 
     call opt_check(gax,gay,gaz,dfmax)
+
+    i=1
+
+    write(6,20)'SD',&
+         i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+    write(3,30)&
+         i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
     !-imprimindo informacoes no ficheiro de saida
 
@@ -109,7 +117,7 @@ contains
 
     !-calculando contribuição intramolecular
 
-    do i=1,opt_ntrialmax
+    do i=2,opt_ntrialmax
 
        encoul=0.d0   !coulombiano
        envdw=0.d0    !Van der waals
@@ -123,10 +131,13 @@ contains
        virtors=0.d0   !torção
        virvdw=0.d0    !Van der waals
 
+       call verlet_list_inter
+
        if(i.le.70000)then
           call steepest_descent_CM
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           einter=envdw+encoul+envdw_corr
+          write(*,*)eintra,einter
        else
           call steepest_descent
           call ff_modules_intra&
@@ -138,13 +149,10 @@ contains
 
        enpot=eintra+einter
 
-       write(*,*)enpot,eintra,einter
        if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
-
-       call verlet_list_inter
 
        call opt_check(gax,gay,gaz,dfmax)
 
@@ -213,7 +221,7 @@ contains
              mtotal=mtotal+mass(nx)
           end do
           do k=1,nxmolec(i)
-             df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)
+             df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)/mtotal
              xa(nx)=xa(nx)+opt_gamma*fcm(1)/df
              ya(nx)=ya(nx)+opt_gamma*fcm(2)/df
              za(nx)=za(nx)+opt_gamma*fcm(3)/df
