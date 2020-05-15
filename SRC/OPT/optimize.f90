@@ -134,15 +134,15 @@ contains
 
        call verlet_list_inter
 
-       if(i.le.70000)then
-          call steepest_descent_CM
+       if(i.le.700)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+          call steepest_descent_CM
           einter=envdw+encoul+envdw_corr
        else
-          call steepest_descent
           call ff_modules_intra&
                (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+          call steepest_descent
           eintra=enbond+enbend+entors+envdw+encoul
           einter=envdw+encoul+envdw_corr
        end if
@@ -154,7 +154,7 @@ contains
        write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
-!       call opt_check(gax,gay,gaz,dfmax)
+       call opt_check(gax,gay,gaz,dfmax)
 
        call geometria
 
@@ -191,9 +191,9 @@ contains
 
     do i=1,natom
        df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
-       xa(i)=xa(i)+opt_gamma*fax(i)/df
-       ya(i)=ya(i)+opt_gamma*fay(i)/df
-       za(i)=za(i)+opt_gamma*faz(i)/df
+       xa(i)=xa(i)+opt_gamma*fax(i)!/df
+       ya(i)=ya(i)+opt_gamma*fay(i)!/df
+       za(i)=za(i)+opt_gamma*faz(i)!/df
     end do
 
     return
@@ -222,9 +222,10 @@ contains
           end do
           do k=1,nxmolec(i)
              df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)/mtotal
-             xa(nx)=xa(nx)+opt_gamma*fcm(1)/df
-             ya(nx)=ya(nx)+opt_gamma*fcm(2)/df
-             za(nx)=za(nx)+opt_gamma*fcm(3)/df
+             write(*,*)df
+             xa(nx)=xa(nx)+opt_gamma*fcm(1)!/df
+             ya(nx)=ya(nx)+opt_gamma*fcm(2)!/df
+             za(nx)=za(nx)+opt_gamma*fcm(3)!/df
              nx=nx+1
           end do
        end do
