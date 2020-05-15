@@ -192,9 +192,9 @@ contains
     do i=1,natom
        df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
        if(df.gt.1.d-8)then
-          xa(i)=xa(i)+opt_gamma*fax(i)/df
-          ya(i)=ya(i)+opt_gamma*fay(i)/df
-          za(i)=za(i)+opt_gamma*faz(i)/df
+          xa(i)=xa(i)+opt_gamma*fax(i)!/df
+          ya(i)=ya(i)+opt_gamma*fay(i)!/df
+          za(i)=za(i)+opt_gamma*faz(i)!/df
        end if
     end do
 
@@ -225,9 +225,9 @@ contains
           do k=1,nxmolec(i)
              df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)/mtotal
              if(df.ge.1.d-8)then
-                xa(nx)=xa(nx)+opt_gamma*fcm(1)/df
-                ya(nx)=ya(nx)+opt_gamma*fcm(2)/df
-                za(nx)=za(nx)+opt_gamma*fcm(3)/df
+                xa(nx)=xa(nx)+opt_gamma*fcm(1)!/df
+                ya(nx)=ya(nx)+opt_gamma*fcm(2)!/df
+                za(nx)=za(nx)+opt_gamma*fcm(3)!/df
              end if
              nx=nx+1
           end do
