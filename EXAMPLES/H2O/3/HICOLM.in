@@ -18,7 +18,7 @@
 
 &OPT
  dfmax 6.5e-4             # intra and intermolecular gradient force tolerance (default: 5.e-4)
- gamma 4.e-5              # limit deslocation of each atom (default: 0.0001)
+ gamma 1.e-5              # limit deslocation of each atom (default: 0.0001)
  ntrialmax 10000         # limit of steps (default: 100000)
 &END
 

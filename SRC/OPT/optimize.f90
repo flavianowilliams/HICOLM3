@@ -61,6 +61,16 @@ contains
 
     call vdw_corr
 
+    !-imprimindo informacoes no ficheiro de saida
+
+    call opt_print
+
+    write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
+
+    write(6,'(4x,111a1)')('-',i=1,84)
+    write(6,10)'##','STEP','INTRA','INTER','ENERGY','DENERGY','DFORCE'
+    write(6,'(4x,111a1)')('-',i=1,84)
+
     !-calculando valores iniciais
 
     do j=1,natom
@@ -93,25 +103,18 @@ contains
 
     eintra=enbond+enbend+entors+envdw+encoul
     einter=envdw+encoul+envdw_corr
-    enpot0=eintra+einter
     enpot=eintra+einter
 
     call opt_check(gax,gay,gaz,dfmax)
+
+    call geometria
 
     write(6,20)'SD',&
          1,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
     write(3,30)&
          1,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
-    !-imprimindo informacoes no ficheiro de saida
-
-    call opt_print
-
-    write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
-
-    write(6,'(4x,111a1)')('-',i=1,84)
-    write(6,10)'##','STEP','INTRA','INTER','ENERGY','DENERGY','DFORCE'
-    write(6,'(4x,111a1)')('-',i=1,84)
+    enpot0=enpot
 
     !-calculando contribuição intramolecular
 
@@ -135,7 +138,6 @@ contains
           call steepest_descent_CM
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           einter=envdw+encoul+envdw_corr
-          write(*,*)eintra,einter
        else
           call steepest_descent
           call ff_modules_intra&
@@ -152,7 +154,7 @@ contains
        write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
-       call opt_check(gax,gay,gaz,dfmax)
+!       call opt_check(gax,gay,gaz,dfmax)
 
        call geometria
 
