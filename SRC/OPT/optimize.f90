@@ -149,16 +149,14 @@ contains
 
        enpot=eintra+einter
 
-       if(mod(i,50).eq.0)write(6,20)'SD',&
-            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
-       write(3,30)&
-            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
-
        call opt_check(gax,gay,gaz,dfmax)
 
        call geometria
 
-       write(3,*)dfmax*econv/rconv
+       if(mod(i,50).eq.0)write(6,20)'SD',&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
+       write(3,30)&
+            i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
        if(dfmax.le.opt_dfmax)exit
 
