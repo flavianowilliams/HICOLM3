@@ -883,8 +883,8 @@ contains
 
     opt_ninter=70000
     opt_ntotal=100000
-    opt_dfmax=5.e-4
-    opt_gamma=1.e-4
+    opt_dfmax=1.e-6
+    opt_gamma=1.e-6
 
     !-variaveis canonicas
 
