@@ -225,9 +225,9 @@ contains
           do k=1,nxmolec(i)
              df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)/mtotal
              if(df.ge.1.d-8)then
-                xa(nx)=xa(nx)+opt_gamma*fcm(1)!/df
-                ya(nx)=ya(nx)+opt_gamma*fcm(2)!/df
-                za(nx)=za(nx)+opt_gamma*fcm(3)!/df
+                xa(nx)=xa(nx)+opt_gamma*fcm(1)/mtotal!/df
+                ya(nx)=ya(nx)+opt_gamma*fcm(2)/mtotal!/df
+                za(nx)=za(nx)+opt_gamma*fcm(3)/mtotal!/df
              end if
              nx=nx+1
           end do
@@ -280,7 +280,7 @@ contains
     write(6,'(28x,a12,6x,i10)')'n(interm):',opt_ninter
     write(6,'(28x,a12,6x,i10)')' n(total):',opt_ntotal
     write(6,'(28x,a12,8x,es10.3,1x,a4)')'dfmax:',opt_dfmax*econv/rconv,'eV/A'
-    write(6,'(28x,a12,8x,es10.3)')'gamma:',opt_gamma
+    write(6,'(28x,a12,8x,es10.3,1x,a1)')'gamma:',opt_gamma*rconv**2/econv,'A^2/eV'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
 

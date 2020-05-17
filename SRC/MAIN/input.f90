@@ -881,10 +881,10 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ninter=70000
+    opt_ninter=95000
     opt_ntotal=100000
     opt_dfmax=1.e-6
-    opt_gamma=1.e-7
+    opt_gamma=1.e-5
 
     !-variaveis canonicas
 
@@ -974,6 +974,7 @@ contains
     !-parametros de otimizacao
 
     opt_dfmax=opt_dfmax/(econv/rconv)
+    opt_gamma=opt_gamma/(rconv**2/econv)
 
     !-parametros da Dinâmica Molecular
 
