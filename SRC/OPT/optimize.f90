@@ -158,7 +158,7 @@ contains
        write(3,30)&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
 
-!       if(dfmax.le.opt_dfmax)exit
+       if(dfmax.le.opt_dfmax)exit
 
        do j=1,natom
           fax(j)=0.d0
@@ -187,16 +187,12 @@ contains
     implicit none
 
     integer i
-    real(8) df
 
     do i=1,natom
-       df=sqrt(fax(i)**2+fay(i)**2+faz(i)**2)
-       if(df.gt.1.d-8)then
-          xa(i)=xa(i)+opt_gamma*fax(i)!/df
-          ya(i)=ya(i)+opt_gamma*fay(i)!/df
-          za(i)=za(i)+opt_gamma*faz(i)!/df
-       end if
-    end do
+       xa(i)=xa(i)+opt_gamma*fax(i)
+       ya(i)=ya(i)+opt_gamma*fay(i)
+       za(i)=za(i)+opt_gamma*faz(i)
+       end do
 
     return
 
@@ -207,7 +203,7 @@ contains
     implicit none
 
     integer i,j,k,nx
-    real(8) df,mtotal,fcm(3)
+    real(8) mtotal,fcm(3)
 
     nx=1
     do i=1,nmolec
@@ -223,12 +219,9 @@ contains
              mtotal=mtotal+mass(nx)
           end do
           do k=1,nxmolec(i)
-             df=sqrt(fcm(1)**2+fcm(2)**2+fcm(3)**2)/mtotal
-             if(df.ge.1.d-8)then
-                xa(nx)=xa(nx)+opt_gamma*fcm(1)/mtotal!/df
-                ya(nx)=ya(nx)+opt_gamma*fcm(2)/mtotal!/df
-                za(nx)=za(nx)+opt_gamma*fcm(3)/mtotal!/df
-             end if
+             xa(nx)=xa(nx)+opt_gamma*fcm(1)/mtotal
+             ya(nx)=ya(nx)+opt_gamma*fcm(2)/mtotal
+             za(nx)=za(nx)+opt_gamma*fcm(3)/mtotal
              nx=nx+1
           end do
        end do

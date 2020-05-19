@@ -5,26 +5,26 @@
 # Structure variables
 
 &STRUCT
-cell
-19.0 0.0  0.0
-0.0 19.0  0.0
-0.0  0.0 19.0
-molecs 1
-H2O 100 3
-reuse 3
+ cell
+  19.0 0.0  0.0
+  0.0 19.0  0.0
+  0.0  0.0 19.0
+ molecs 1
+  H2O 100 3
+ reuse 1
 &END
 
 # Molecular dynamics variables
 
 &MD
-nhist 10
-preext 1.0d0
-text 298.0
-ntrialmax 1000
-nrelax 1
-timestep 0.001
-ensemble npt berendsen 0.5 0.5 4.9e-5
-rcutoff 7.0 0.1
+ nhist 10
+ preext 1.0d0
+ text 298.0
+ ntrialmax 1000
+ nrelax 1
+ timestep 0.001
+ ensemble npt berendsen 0.5 0.5 4.9e-5
+ rcutoff 7.0 0.1
 &END
 
 # Force field variables
