@@ -350,6 +350,8 @@ contains
 
     torscnt(imol)=torscnt(imol)-1
 
+    write(*,*)torscnt(imol)
+    stop
     return
 
   end subroutine zmatrix
