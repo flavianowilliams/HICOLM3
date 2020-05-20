@@ -1,0 +1,40 @@
+# Start MD
+
+#@MDRUNNING
+@MDPREPARE
+
+# Structure variables
+
+&STRUCT
+cell
+19.0 0.0  0.0
+0.0 19.0  0.0
+0.0  0.0 19.0
+molecs 1
+C3O2H5 1 9
+reuse 0
+&END
+
+# Molecular dynamics variables
+
+#&MD
+#nhist 10
+#preext 1.0d0
+#text 0.0
+#ntrialmax 10000
+#nrelax 1
+#timestep 0.001
+#ensemble nvt berendsen 0.5 0.5 4.9e-5
+#rcutoff 7.0 0.1
+#&END
+
+# Force field variables
+
+&FORCE
+ zmatrix 0.3
+ $AMBER
+  molecule C3O2H5
+  OH C O CA CA HO HC HC HC
+  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+ $END
+&END
