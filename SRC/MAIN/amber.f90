@@ -52,6 +52,21 @@ contains
        case('HS')
           epsi(i)=0.0157d0
           ri(i)=0.6000d0
+       case('H1')
+          epsi(i)=0.0157d0
+          ri(i)=1.3870d0
+       case('H2')
+          epsi(i)=0.0157d0
+          ri(i)=1.2870d0
+       case('H3')
+          epsi(i)=0.0157d0
+          ri(i)=1.1870d0
+       case('HP')
+          epsi(i)=0.0157d0
+          ri(i)=1.1000d0
+       case('')
+          epsi(i)=0.1520d0
+          ri(i)=1.7683d0
        case('OW')
           epsi(i)=0.1520d0
           ri(i)=1.7683d0
