@@ -395,6 +395,9 @@ contains
           case('HP')
              prms(1)=340.0d0
              prms(2)=1.090d0
+          case('N*')
+             prms(1)=337.0d0
+             prms(2)=1.475d0
           end select
        end select
        pa=p2
