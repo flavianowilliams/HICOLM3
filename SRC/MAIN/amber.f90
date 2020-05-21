@@ -366,12 +366,33 @@ contains
              prms(1)=480.0d0
              prms(2)=1.240d0
           end select
+       case('CQ')
+          select case(pb)
+          case('H5')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('NC')
+             prms(1)=502.0d0
+             prms(2)=1.324d0
+          end select
        case('CT')
           select case(pb)
           case('CT')
              prms(1)=310.0d0
              prms(2)=1.526d0
           case('HC')
+             prms(1)=340.0d0
+             prms(2)=1.090d0
+          case('H1')
+             prms(1)=340.0d0
+             prms(2)=1.090d0
+          case('H2')
+             prms(1)=340.0d0
+             prms(2)=1.090d0
+          case('H3')
+             prms(1)=340.0d0
+             prms(2)=1.090d0
+          case('HP')
              prms(1)=340.0d0
              prms(2)=1.090d0
           end select
