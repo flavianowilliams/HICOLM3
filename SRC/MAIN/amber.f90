@@ -43,6 +43,15 @@ contains
 
     do i=1,2
        select case(pa)
+       case('H ')
+          epsi(i)=0.0157d0
+          ri(i)=0.6000d0
+       case('HO')
+          epsi(i)=0.0000d0
+          ri(i)=0.0000d0
+       case('HS')
+          epsi(i)=0.0157d0
+          ri(i)=0.6000d0
        case('OW')
           epsi(i)=0.1520d0
           ri(i)=1.7683d0
