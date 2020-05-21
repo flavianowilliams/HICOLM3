@@ -213,8 +213,6 @@ contains
        case('OW')
           select case(pb)
           case('HW')
-             !             prms(1)=45.9296d0
-             !             prms(2)=1.0120d0
              prms(1)=553.0d0
              prms(2)=0.9572d0
           end select
@@ -223,7 +221,46 @@ contains
           case('C ')
              prms(1)=310.0d0
              prms(2)=1.525d0
+          case('CA')
+             prms(1)=469.0d0
+             prms(2)=1.409d0
+          case('CB')
+             prms(1)=447.0d0
+             prms(2)=1.419d0
+          case('CM')
+             prms(1)=410.0d0
+             prms(2)=1.444d0
+          case('CT')
+             prms(1)=317.0d0
+             prms(2)=1.522d0
+          case('N ')
+             prms(1)=490.0d0
+             prms(2)=1.335d0
+          case('N*')
+             prms(1)=424.0d0
+             prms(2)=1.383d0
+          case('NA')
+             prms(1)=418.0d0
+             prms(2)=1.388d0
+          case('NC')
+             prms(1)=457.0d0
+             prms(2)=1.358d0
+          case('O ')
+             prms(1)=570.0d0
+             prms(2)=1.229d0
+          case('O2')
+             prms(1)=656.0d0
+             prms(2)=1.250d0
+          case('OH')
+             prms(1)=450.0d0
+             prms(2)=1.364d0
+          case('OS')
+             prms(1)=450.0d0
+             prms(2)=1.323d0
           case('H4')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('H5')
              prms(1)=367.0d0
              prms(2)=1.080d0
           end select
