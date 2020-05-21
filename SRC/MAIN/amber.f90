@@ -264,6 +264,108 @@ contains
              prms(1)=367.0d0
              prms(2)=1.080d0
           end select
+       case('CA')
+          select case(pb)
+          case('CA')
+             prms(1)=469.0d0
+             prms(2)=1.400d0
+          case('CB')
+             prms(1)=469.0d0
+             prms(2)=1.404d0
+          case('CM')
+             prms(1)=427.0d0
+             prms(2)=1.433d0
+          case('CN')
+             prms(1)=469.0d0
+             prms(2)=1.400d0
+          case('CT')
+             prms(1)=317.0d0
+             prms(2)=1.510d0
+          case('HA')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('H4')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('N2')
+             prms(1)=481.0d0
+             prms(2)=1.340d0
+          case('NA')
+             prms(1)=427.0d0
+             prms(2)=1.381d0
+          case('NC')
+             prms(1)=483.0d0
+             prms(2)=1.339d0
+          case('OH')
+             prms(1)=450.0d0
+             prms(2)=1.364d0
+          end select
+       case('CB')
+          select case(pb)
+          case('CB')
+             prms(1)=520.0d0
+             prms(2)=1.370d0
+          case('N*')
+             prms(1)=436.0d0
+             prms(2)=1.374d0
+          case('NB')
+             prms(1)=414.0d0
+             prms(2)=1.391d0
+          case('NC')
+             prms(1)=461.0d0
+             prms(2)=1.354d0
+          end select
+       case('CD')
+          select case(pb)
+          case('HA')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('CD')
+             prms(1)=469.0d0
+             prms(2)=1.400d0
+          case('CM')
+             prms(1)=549.0d0
+             prms(2)=1.350d0
+          case('CT')
+             prms(1)=317.0d0
+             prms(2)=1.510d0
+          end select
+       case('CK')
+          select case(pb)
+          case('H5')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('N*')
+             prms(1)=440.0d0
+             prms(2)=1.371d0
+          case('NB')
+             prms(1)=529.0d0
+             prms(2)=1.304d0
+          end select
+       case('CM')
+          select case(pb)
+          case('CM')
+             prms(1)=549.0d0
+             prms(2)=1.350d0
+          case('CT')
+             prms(1)=317.0d0
+             prms(2)=1.510d0
+          case('HA')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('H4')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('H5')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('N*')
+             prms(1)=448.0d0
+             prms(2)=1.365d0
+          case('OS')
+             prms(1)=480.0d0
+             prms(2)=1.240d0
+          end select
        case('CT')
           select case(pb)
           case('CT')
