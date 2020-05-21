@@ -398,6 +398,30 @@ contains
           case('N*')
              prms(1)=337.0d0
              prms(2)=1.475d0
+          case('N2')
+             prms(1)=337.0d0
+             prms(2)=1.463d0
+          case('OH')
+             prms(1)=320.0d0
+             prms(2)=1.410d0
+          case('OS')
+             prms(1)=320.0d0
+             prms(2)=1.410d0
+          end select
+       case('C*')
+          select case(pb)
+          case('HC')
+             prms(1)=367.0d0
+             prms(2)=1.080d0
+          case('CB')
+             prms(1)=388.0d0
+             prms(2)=1.459d0
+          case('CT')
+             prms(1)=317.0d0
+             prms(2)=1.495d0
+          case('CW')
+             prms(1)=546.0d0
+             prms(2)=1.352d0
           end select
        end select
        pa=p2
