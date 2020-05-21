@@ -136,6 +136,42 @@ contains
        case('Na')
           epsi(i)=0.00277d0
           ri(i)=1.8680d0
+       case('K ')
+          epsi(i)=0.000328d0
+          ri(i)=2.6580d0
+       case('Rb')
+          epsi(i)=0.00017d0
+          ri(i)=2.9560d0
+       case('Cs')
+          epsi(i)=0.0000806d0
+          ri(i)=3.3950d0
+       case('MG')
+          epsi(i)=0.8947d0
+          ri(i)=0.7926d0
+       case('C0')
+          epsi(i)=0.459789d0
+          ri(i)=1.7131d0
+       case('Zn')
+          epsi(i)=0.0125d0
+          ri(i)=1.1000d0
+       case('F ')
+          epsi(i)=0.0610d0
+          ri(i)=1.7500d0
+       case('Cl')
+          epsi(i)=0.2650d0
+          ri(i)=1.9480d0
+       case('Br')
+          epsi(i)=0.3200d0
+          ri(i)=2.2200d0
+       case('I ')
+          epsi(i)=0.4000d0
+          ri(i)=2.3500d0
+       case('IB')
+          epsi(i)=0.1000d0
+          ri(i)=5.0000d0
+       case('LP')
+          epsi(i)=0.0000d0
+          ri(i)=0.0000d0
        end select
        pa=p2
     end do
