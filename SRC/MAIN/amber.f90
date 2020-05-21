@@ -52,6 +52,9 @@ contains
        case('HS')
           epsi(i)=0.0157d0
           ri(i)=0.6000d0
+       case('HC')
+          epsi(i)=0.0157d0
+          ri(i)=1.4870d0
        case('H1')
           epsi(i)=0.0157d0
           ri(i)=1.3870d0
@@ -64,30 +67,75 @@ contains
        case('HP')
           epsi(i)=0.0157d0
           ri(i)=1.1000d0
-       case('')
-          epsi(i)=0.1520d0
-          ri(i)=1.7683d0
-       case('OW')
-          epsi(i)=0.1520d0
-          ri(i)=1.7683d0
-       case('HW')
-          epsi(i)=0.d0
-          ri(i)=0.d0
-       case('HO')
-          epsi(i)=0.d0
-          ri(i)=0.d0
-       case('HC')
-          epsi(i)=0.0157d0
-          ri(i)=1.4870d0
+       case('HA')
+          epsi(i)=0.0150d0
+          ri(i)=1.4590d0
        case('H4')
           epsi(i)=0.0150d0
           ri(i)=1.4090d0
-       case('C ')
+       case('H5')
+          epsi(i)=0.0150d0
+          ri(i)=1.3590d0
+       case('HW')
+          epsi(i)=0.0000d0
+          ri(i)=0.0000d0
+       case('HZ')
+          epsi(i)=0.0150d0
+          ri(i)=1.4590d0
+       case('O ')
+          epsi(i)=0.2100d0
+          ri(i)=1.6612d0
+       case('O2')
+          epsi(i)=0.2100d0
+          ri(i)=1.6612d0
+       case('OW')
+          epsi(i)=0.1520d0
+          ri(i)=1.7683d0
+       case('OH')
+          epsi(i)=0.2104d0
+          ri(i)=1.7210d0
+       case('OS')
+          epsi(i)=0.1700d0
+          ri(i)=1.6837d0
+       case('C*')
           epsi(i)=0.0860d0
           ri(i)=1.9080d0
        case('CT')
           epsi(i)=0.1094d0
           ri(i)=1.9080d0
+       case('C ')
+          epsi(i)=0.0860d0
+          ri(i)=1.9080d0
+       case('N ')
+          epsi(i)=0.1700d0
+          ri(i)=1.8240d0
+       case('N3')
+          epsi(i)=0.1700d0
+          ri(i)=1.8240d0
+       case('NY')
+          epsi(i)=0.1700d0
+          ri(i)=1.8240d0
+       case('S ')
+          epsi(i)=0.2500d0
+          ri(i)=2.0000d0
+       case('SH')
+          epsi(i)=0.2500d0
+          ri(i)=2.0000d0
+       case('P ')
+          epsi(i)=0.2000d0
+          ri(i)=2.1000d0
+       case('IM')
+          epsi(i)=0.1000d0
+          ri(i)=2.4700d0
+       case('Li')
+          epsi(i)=0.0183d0
+          ri(i)=1.1370d0
+       case('IP')
+          epsi(i)=0.00277d0
+          ri(i)=1.8680d0
+       case('Na')
+          epsi(i)=0.00277d0
+          ri(i)=1.8680d0
        end select
        pa=p2
     end do
