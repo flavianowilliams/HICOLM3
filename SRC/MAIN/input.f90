@@ -275,7 +275,7 @@ contains
 
     implicit none
 
-    integer i,j,jj,k,kk,ii,nx,imol,ia,ib
+    integer i,j,k,kk,ii,nx,imol,ia,ib
     real(8) dr,rca,rcb
 
     nx=0
@@ -327,21 +327,66 @@ contains
 
     torscnt(imol)=1
     do i=1,bondscnt(imol)
-       do j=i+1,bondscnt(imol)
+       do j=1,i-1
+          do k=1,j-1
+             do ii=1,2
+                do kk=1,2
+                   if(molbond(imol,j,1).eq.molbond(imol,i,3-ii))then
+                      if(molbond(imol,j,2).eq.molbond(imol,k,kk))then
+                         moltors(imol,torscnt(imol),1)=molbond(imol,i,ii)
+                         moltors(imol,torscnt(imol),2)=molbond(imol,j,1)
+                         moltors(imol,torscnt(imol),3)=molbond(imol,j,2)
+                         moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
+                         torscnt(imol)=torscnt(imol)+1
+                      end if
+                   end if
+                end do
+             end do
+          end do
           do k=j+1,bondscnt(imol)
              do ii=1,2
-                do jj=1,2
-                   do kk=1,2
-                      if(molbond(imol,i,ii).eq.molbond(imol,j,jj))then
-                         if(molbond(imol,i,3-ii).eq.molbond(imol,k,kk))then
-                            moltors(imol,torscnt(imol),1)=molbond(imol,j,3-jj)
-                            moltors(imol,torscnt(imol),2)=molbond(imol,j,jj)
-                            moltors(imol,torscnt(imol),3)=molbond(imol,k,kk)
-                            moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
-                            torscnt(imol)=torscnt(imol)+1
-                         end if
+                do kk=1,2
+                   if(molbond(imol,j,1).eq.molbond(imol,i,3-ii))then
+                      if(molbond(imol,j,2).eq.molbond(imol,k,kk))then
+                         moltors(imol,torscnt(imol),1)=molbond(imol,i,ii)
+                         moltors(imol,torscnt(imol),2)=molbond(imol,j,1)
+                         moltors(imol,torscnt(imol),3)=molbond(imol,j,2)
+                         moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
+                         torscnt(imol)=torscnt(imol)+1
                       end if
-                   end do
+                   end if
+                end do
+             end do
+          end do
+       end do
+       do j=i+1,bondscnt(imol)
+          do k=1,j-1
+             do ii=1,2
+                do kk=1,2
+                   if(molbond(imol,j,1).eq.molbond(imol,i,3-ii))then
+                      if(molbond(imol,j,2).eq.molbond(imol,k,kk))then
+                         moltors(imol,torscnt(imol),1)=molbond(imol,i,ii)
+                         moltors(imol,torscnt(imol),2)=molbond(imol,j,1)
+                         moltors(imol,torscnt(imol),3)=molbond(imol,j,2)
+                         moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
+                         torscnt(imol)=torscnt(imol)+1
+                      end if
+                   end if
+                end do
+             end do
+          end do
+          do k=j+1,bondscnt(imol)
+             do ii=1,2
+                do kk=1,2
+                   if(molbond(imol,j,1).eq.molbond(imol,i,3-ii))then
+                      if(molbond(imol,j,2).eq.molbond(imol,k,kk))then
+                         moltors(imol,torscnt(imol),1)=molbond(imol,i,ii)
+                         moltors(imol,torscnt(imol),2)=molbond(imol,j,1)
+                         moltors(imol,torscnt(imol),3)=molbond(imol,j,2)
+                         moltors(imol,torscnt(imol),4)=molbond(imol,k,3-kk)
+                         torscnt(imol)=torscnt(imol)+1
+                      end if
+                   end if
                 end do
              end do
           end do
@@ -350,8 +395,6 @@ contains
 
     torscnt(imol)=torscnt(imol)-1
 
-    write(*,*)torscnt(imol)
-    stop
     return
 
   end subroutine zmatrix
