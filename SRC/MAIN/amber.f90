@@ -27,7 +27,7 @@ contains
     implicit none
 
     integer i
-    real(8) epsi(2),ri(2),prms(2),ccnv
+    real(8) epsi(2),ri(2),prms(2)
     character(2) p1,p2,pa
 
     !-atribuindo valores iniciais
@@ -181,11 +181,6 @@ contains
 
 !    prms(2)=prms(2)/2**(1.d0/6.d0) !convertendo parametro p/ outra versao de LJ
 
-    !-fator conversao: kcal/mol -> eV
-
-!    ccnv=4.3363e-2
-!    prms(1)=prms(1)*ccnv
-
     return
 
   end subroutine amber_vdw
@@ -195,7 +190,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(2),ccnv
+    real(8) prms(2)
     character(2) p1,p2,pa,pb
 
     !-atribuindo valores iniciais
@@ -647,11 +642,6 @@ contains
        pb=p1
     end do
 
-    !-fator conversao: kcal/mol -> eV
-
-!    ccnv=4.3363e-2
-!    prms(1)=prms(1)*ccnv
-
     return
 
   end subroutine amber_bonds
@@ -661,7 +651,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(2),ccnv
+    real(8) prms(2)
     character(2) p1,p2,p3,pa,pb,pc
 
     prms(1)=0.d0
@@ -870,11 +860,6 @@ contains
        pc=p1
     end do
 
-    !-fator conversao: kcal/mol -> eV
-
-!    ccnv=4.3363e-2
-!    prms(1)=prms(1)*ccnv
-
     return
 
   end subroutine amber_bends
@@ -884,7 +869,7 @@ contains
     implicit none
 
     integer i
-    real(8) prms(4),ccnv
+    real(8) prms(4)
     character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     prms(1)=0.d0
@@ -1114,11 +1099,6 @@ contains
        pc=p2
        pd=p1
     end do
-
-    !-fator conversao: kcal/mol -> eV
-
-!    ccnv=4.3363e-2
-!    prms(2)=prms(2)*ccnv
 
     return
 
