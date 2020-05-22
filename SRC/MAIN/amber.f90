@@ -934,6 +934,11 @@ contains
              prms(2)=14.50d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('CA')
+             prms(1)=4.0d0
+             prms(2)=14.50d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
           end select
        end select
        pa=p4
