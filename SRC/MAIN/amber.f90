@@ -953,6 +953,36 @@ contains
              prms(2)=14.50d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('CB')
+             prms(1)=4.0d0
+             prms(2)=12.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=8.70d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=10.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('N ')
+             prms(1)=4.0d0
+             prms(2)=10.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=5.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NA')
+             prms(1)=4.0d0
+             prms(2)=5.20d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
           case('OH')
              prms(1)=2.0d0
              prms(2)=4.60d0

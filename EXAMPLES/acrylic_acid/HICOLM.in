@@ -37,4 +37,11 @@ reuse 0
   OH C O CA CA HO HA HA HA
   0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
  $END
+ $INTRA
+  molecule C3O2H5
+   bends* 4
+    3 2 4 amber 3.47 120.0
+   bends* 10
+    8 5 9 amber 1.52 119.0
+ $END
 &END
