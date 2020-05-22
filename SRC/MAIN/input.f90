@@ -977,7 +977,7 @@ contains
     rconv=rconv*(1.d+10) !OK
     kconv=1.d0/rconv !OK
     !    econv=econv*(6.241506363094d+18) !OK
-    econv=econv*(1.438364d+20) !OK
+    econv=econv*(1.438689d+20) !OK
     pconv=pconv*(0.9872d-5) !OK
     tconv=tconv*(1.d+12) !OK
     elconv=1.d0 !OK
