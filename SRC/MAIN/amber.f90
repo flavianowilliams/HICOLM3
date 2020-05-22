@@ -1092,6 +1092,21 @@ contains
              prms(2)=20.60d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('CW')
+             prms(1)=4.0d0
+             prms(2)=21.50d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NA')
+             prms(1)=4.0d0
+             prms(2)=5.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NB')
+             prms(1)=2.0d0
+             prms(2)=4.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
           end select
        end select
        pa=p4
