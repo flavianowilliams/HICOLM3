@@ -983,6 +983,21 @@ contains
              prms(2)=5.20d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('NC')
+             prms(1)=2.0d0
+             prms(2)=8.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('O ')
+             prms(1)=4.0d0
+             prms(2)=11.20d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('OS')
+             prms(1)=2.0d0
+             prms(2)=5.40d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
           case('OH')
              prms(1)=2.0d0
              prms(2)=4.60d0
