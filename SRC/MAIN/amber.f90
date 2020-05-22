@@ -1080,6 +1080,19 @@ contains
              prms(3)=180.0d0
              prms(4)=2.0d0
           end select
+       case('CC')
+          select case(pc)
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('CV')
+             prms(1)=4.0d0
+             prms(2)=20.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
        end select
        pa=p4
        pb=p3
