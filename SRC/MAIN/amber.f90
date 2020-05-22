@@ -913,6 +913,20 @@ contains
                 end select
              end select
           end select
+       case('HO')
+          select case(pb)
+          case('OH')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('O ')
+                   prms(1)=1.0d0
+                   prms(2)=1.9d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
        end select
        pa=p4
        pb=p3
@@ -934,6 +948,19 @@ contains
              prms(2)=14.50d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('CA')
+             prms(1)=4.0d0
+             prms(2)=14.50d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('OH')
+             prms(1)=2.0d0
+             prms(2)=4.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CA')
+          select case(pc)
           case('CA')
              prms(1)=4.0d0
              prms(2)=14.50d0
