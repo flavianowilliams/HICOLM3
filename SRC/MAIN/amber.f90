@@ -792,6 +792,27 @@ contains
                 prms(1)=50.0d0
                 prms(2)=119.20d0
              end select
+          case('NA')
+             select case(pc)
+             case('C ')
+                prms(1)=70.0d0
+                prms(2)=126.40d0
+             case('CA')
+                prms(1)=70.0d0
+                prms(2)=125.20d0
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=116.80d0
+             end select
+          case('NC')
+             select case(pc)
+             case('CA')
+                prms(1)=70.0d0
+                prms(2)=120.50d0
+             case('LP')
+                prms(1)=150.0d0
+                prms(2)=120.00d0
+             end select
           end select
        end select
        pa=p3
