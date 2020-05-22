@@ -183,8 +183,8 @@ contains
 
     !-fator conversao: kcal/mol -> eV
 
-    ccnv=4.3363e-2
-    prms(1)=prms(1)*ccnv
+!    ccnv=4.3363e-2
+!    prms(1)=prms(1)*ccnv
 
     return
 
@@ -649,8 +649,8 @@ contains
 
     !-fator conversao: kcal/mol -> eV
 
-    ccnv=4.3363e-2
-    prms(1)=prms(1)*ccnv
+!    ccnv=4.3363e-2
+!    prms(1)=prms(1)*ccnv
 
     return
 
@@ -872,8 +872,8 @@ contains
 
     !-fator conversao: kcal/mol -> eV
 
-    ccnv=4.3363e-2
-    prms(1)=prms(1)*ccnv
+!    ccnv=4.3363e-2
+!    prms(1)=prms(1)*ccnv
 
     return
 
@@ -1117,8 +1117,8 @@ contains
 
     !-fator conversao: kcal/mol -> eV
 
-    ccnv=4.3363e-2
-    prms(2)=prms(2)*ccnv
+!    ccnv=4.3363e-2
+!    prms(2)=prms(2)*ccnv
 
     return
 
