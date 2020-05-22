@@ -149,13 +149,13 @@ contains
        do j=1,bondscnt(i)
           select case(bonds(i,j))
           case(1)
-             write(6,'(20x,2(i3,3x),a4,1x,3f9.4)')(molbond(i,j,l),l=1,2),&
+             write(6,'(20x,2(i3,3x),a4,1x,3f9.2)')(molbond(i,j,l),l=1,2),&
                   'mors',parbnd(i,j,1)*econv,parbnd(i,j,2)*kconv,parbnd(i,j,3)*rconv
           case(2)
-             write(6,'(20x,2(i3,3x),a4,1x,2f9.4)')(molbond(i,j,l),l=1,2),&
+             write(6,'(20x,2(i3,3x),a4,1x,2f9.2)')(molbond(i,j,l),l=1,2),&
                   'harm',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
           case(3)
-             write(6,'(20x,2(i3,3x),a5,2f9.4)')(molbond(i,j,l),l=1,2),&
+             write(6,'(20x,2(i3,3x),a5,2f9.2)')(molbond(i,j,l),l=1,2),&
                   'amber',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
           end select
        end do
@@ -168,10 +168,10 @@ contains
        do j=1,bendscnt(i)
           select case(bends(i,j))
           case(1)
-             write(6,'(20x,3(i3,3x),a4,1x,2f8.3)')(molbend(i,j,l),l=1,3),&
+             write(6,'(20x,3(i3,3x),a4,1x,2f8.1)')(molbend(i,j,l),l=1,3),&
                   'harm',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
           case(2)
-             write(6,'(20x,3(i3,3x),a5,2f8.3)')&
+             write(6,'(20x,3(i3,3x),a5,2f8.1)')&
                   (molbend(i,j,l),l=1,3),'amber',parbend(i,j,1)*econv,parbend(i,j,2)*aconv
           end select
        end do
@@ -184,14 +184,14 @@ contains
        do j=1,torscnt(i)
           select case(tors(i,j))
           case(1)
-             write(6,'(20x,4(i3,3x),a4,1x,2f8.3)')(moltors(i,j,l),l=1,4),&
+             write(6,'(20x,4(i3,3x),a4,1x,2f8.1)')(moltors(i,j,l),l=1,4),&
                   'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
           case(4)
              i1=nint(partors(i,j,1))
              f1=partors(i,j,2)*econv
              f2=partors(i,j,3)*aconv
              i2=nint(partors(i,j,4))
-             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.5,f8.3,i2)')&
+             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.5,f8.1,i2)')&
                   (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
        end do
