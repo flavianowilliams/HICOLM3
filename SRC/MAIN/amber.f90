@@ -723,6 +723,30 @@ contains
                 prms(1)=70.0d0
                 prms(2)=130.00d0
              end select
+          case('CT')
+             select case(pc)
+             case('H1')
+                prms(1)=50.0d0
+                prms(2)=109.50d0
+             case('HP')
+                prms(1)=50.0d0
+                prms(2)=109.50d0
+             case('HC')
+                prms(1)=50.0d0
+                prms(2)=109.50d0
+             case('N ')
+                prms(1)=63.0d0
+                prms(2)=110.10d0
+             case('N3')
+                prms(1)=80.0d0
+                prms(2)=111.20d0
+             case('CT')
+                prms(1)=63.0d0
+                prms(2)=111.10d0
+             case('OS')
+                prms(1)=60.0d0
+                prms(2)=109.50d0
+             end select
           case('CA')
              select case(pc)
              case('CA')
@@ -746,6 +770,27 @@ contains
              case('H4')
                 prms(1)=50.0d0
                 prms(2)=119.70d0
+             end select
+          case('N ')
+             select case(pc)
+             case('CT')
+                prms(1)=50.0d0
+                prms(2)=121.90d0
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
+             end select
+          case('N*')
+             select case(pc)
+             case('CM')
+                prms(1)=70.0d0
+                prms(2)=121.60d0
+             case('CT')
+                prms(1)=70.0d0
+                prms(2)=117.60d0
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=119.20d0
              end select
           end select
        end select
