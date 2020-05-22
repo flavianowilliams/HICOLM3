@@ -929,7 +929,7 @@ contains
     opt_ninter=95000
     opt_ntotal=100000
     opt_dfmax=1.e-4
-    opt_gamma=1.e-5
+    opt_gamma=1.e-7
 
     !-variaveis canonicas
 
