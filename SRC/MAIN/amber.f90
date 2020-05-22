@@ -832,6 +832,24 @@ contains
                 prms(2)=109.50d0
              end select
           end select
+       case('CA')
+          select case(pb)
+          case('C ')
+             select case(pc)
+             case('CA')
+                prms(1)=63.0d0
+                prms(2)=120.00d0
+             case('OH')
+                prms(1)=70.0d0
+                prms(2)=120.00d0
+             end select
+          case('HW')
+             select case(pc)
+             case('OW')
+                prms(1)=0.0d0
+                prms(2)=127.74d0
+             end select
+          end select
        end select
        pa=p3
        pc=p1
