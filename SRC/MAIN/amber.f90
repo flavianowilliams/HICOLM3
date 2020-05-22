@@ -1011,6 +1011,74 @@ contains
              prms(2)=14.50d0
              prms(3)=180.0d0
              prms(4)=2.0d0
+          case('CB')
+             prms(1)=4.0d0
+             prms(2)=14.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=10.20d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CN')
+             prms(1)=4.0d0
+             prms(2)=14.50d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('N2')
+             prms(1)=4.0d0
+             prms(2)=9.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NA')
+             prms(1)=4.0d0
+             prms(2)=6.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NC')
+             prms(1)=2.0d0
+             prms(2)=9.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('OH')
+             prms(1)=2.0d0
+             prms(2)=1.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CB')
+          select case(pc)
+          case('CB')
+             prms(1)=4.0d0
+             prms(2)=21.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CN')
+             prms(1)=4.0d0
+             prms(2)=12.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=6.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NB')
+             prms(1)=2.0d0
+             prms(2)=5.10d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NC')
+             prms(1)=2.0d0
+             prms(2)=8.30d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
           end select
        end select
        pa=p4
