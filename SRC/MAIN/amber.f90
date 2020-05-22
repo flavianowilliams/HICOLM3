@@ -842,6 +842,9 @@ contains
              case('OH')
                 prms(1)=70.0d0
                 prms(2)=120.00d0
+             case('HA')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
              end select
           case('HW')
              select case(pc)
