@@ -856,6 +856,15 @@ contains
                 prms(2)=120.00d0
              end select
           end select
+       case('O ')
+          select case(pb)
+          case('C ')
+             select case(pc)
+             case('OH')
+                prms(1)=80.0d0
+                prms(2)=120.00d0
+             end select
+          end select
        end select
        pa=p3
        pc=p1

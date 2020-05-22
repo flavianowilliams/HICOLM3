@@ -1149,6 +1149,9 @@ contains
     case('harm')
        m=1
        nprbend=2
+    case('amber')
+       m=2
+       nprbend=2
     end select
 
     return
