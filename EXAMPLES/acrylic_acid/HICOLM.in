@@ -34,7 +34,7 @@ reuse 0
  zmatrix 0.5
  $AMBER
   molecule C3O2H5
-  OH C O CA CA HO HC HC HC
+  OH C O CA CA HO HA HA HA
   0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
  $END
 &END

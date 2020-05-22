@@ -614,12 +614,33 @@ contains
           end select
        case('LP')
           select case(pb)
-          case('')
-             prms(1)=148.0d0
-             prms(2)=2.166d0
-          case('')
-             prms(1)=171.0d0
-             prms(2)=2.075d0
+          case('O ')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('OH')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('OS')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('N3')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('NT')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('NB')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('NC')
+             prms(1)=600.0d0
+             prms(2)=0.200d0
+          case('NS')
+             prms(1)=600.0d0
+             prms(2)=0.700d0
+          case('SH')
+             prms(1)=600.0d0
+             prms(2)=0.700d0
           end select
        end select
        pa=p2
@@ -657,6 +678,12 @@ contains
           case('OW')
              select case(pc)
              case('HW')
+                prms(1)=100.0d0
+                prms(2)=104.24d0
+             end select
+          case('HW')
+             select case(pc)
+             case('OW')
                 prms(1)=100.0d0
                 prms(2)=104.24d0
              end select
