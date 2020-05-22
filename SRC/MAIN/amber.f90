@@ -813,6 +813,24 @@ contains
                 prms(1)=150.0d0
                 prms(2)=120.00d0
              end select
+          case('OH')
+             select case(pc)
+             case('HO')
+                prms(1)=50.0d0
+                prms(2)=113.00d0
+             case('LP')
+                prms(1)=150.0d0
+                prms(2)=120.00d0
+             end select
+          case('OS')
+             select case(pc)
+             case('CT')
+                prms(1)=60.0d0
+                prms(2)=117.00d0
+             case('LP')
+                prms(1)=150.0d0
+                prms(2)=109.50d0
+             end select
           end select
        end select
        pa=p3
