@@ -54,7 +54,8 @@ module input
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff,coulop
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
-  integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4)
+  integer nvdw,ncoul,nbonds,nbends,ntors,nitors,moltors(molecmax,torsmax,4)
+  integer itors(molecmax,torsmax)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
@@ -73,7 +74,7 @@ module input
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
   save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
-  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
+  save vdw,bonds,bends,nbonds,nbends,ntors,nitors,coulop,tersoff,tors,atsp,itors
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model
   !
   !----------------------------------------------------------------------------

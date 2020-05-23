@@ -197,6 +197,28 @@ contains
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,*)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(20x,a19,1x,i5)')'Improper dihedrals:',torscnt(i)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
+       write(6,'(20x,111a1)')('-',j=1,52)
+       do j=1,torscnt(i)
+          select case(tors(i,j))
+          case(1)
+             write(6,'(20x,4(i3,3x),a4,1x,2f8.1)')(moltors(i,j,l),l=1,4),&
+                  'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
+          case(4)
+             i1=nint(partors(i,j,1))
+             f1=partors(i,j,2)*econv
+             f2=partors(i,j,3)*aconv
+             i2=nint(partors(i,j,4))
+             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.2,f8.1,i2)')&
+                  (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
+          end select
+       end do
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
        write(6,'(20x,111a1)')('*',j=1,52)
        write(6,*)
        write(6,*)
@@ -259,16 +281,20 @@ contains
        do j=i,spctot
           select case(vdw(i,j))
           case(1)
-             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                  i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0.and.parvdw(i,j,3).ne.0.d0)then
+                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                     i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             end if
           case(2)
-             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                  i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                     i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             end if
           case(3)
-!             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
                 write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')&
                      atsp(i),atsp(j),'amber',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
-!             end if
+             end if
           end select
        end do
     end do

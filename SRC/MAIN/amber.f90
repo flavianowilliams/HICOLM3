@@ -872,6 +872,7 @@ contains
     character(2) p1,p2,p3,p4
 
     call amber_dihedrals_proper(p1,p2,p3,p4,prms)
+    call amber_dihedrals_general(p2,p3,prms)
 
     return
 
@@ -940,9 +941,9 @@ contains
 
     implicit none
 
-    integer i
-    real(8) prms(4)
-    character(2) p1,p2,p3,p4,pa,pb,pc,pd
+      integer i
+      real(8) prms(4)
+      character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     prms(1)=0.d0
     prms(2)=0.d0
@@ -953,6 +954,63 @@ contains
     pb=p2
     pc=p3
     pd=p4
+
+    do i=1,2
+       select case(pa)
+       case('HC')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('HC')
+                   prms(1)=1.0d0
+                   prms(2)=0.15d0
+                   prms(3)=0.0d0
+                   prms(4)=3.0d0
+                end select
+             end select
+          end select
+       case('HO')
+          select case(pb)
+          case('OH')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('O ')
+                   prms(1)=1.0d0
+                   prms(2)=1.9d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
+       end select
+       pa=p4
+       pb=p3
+       pc=p2
+       pd=p1
+    end do
+
+    return
+
+  end subroutine amber_dihedrals_improper
+
+  subroutine amber_dihedrals_general(p2,p3,prms)
+
+    implicit none
+
+    integer i
+    real(8) prms(4)
+    character(2) p2,p3,pb,pc
+
+    prms(1)=0.d0
+    prms(2)=0.d0
+    prms(3)=0.d0
+    prms(4)=0.d0
+
+    pb=p2
+    pc=p3
 
     do i=1,2
        select case(pb)
@@ -1217,14 +1275,12 @@ contains
              prms(4)=2.0d0
           end select
        end select
-       pa=p4
        pb=p3
        pc=p2
-       pd=p1
     end do
 
     return
 
-  end subroutine amber_dihedrals_improper
+  end subroutine amber_dihedrals_general
 
 end module amber
