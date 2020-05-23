@@ -868,9 +868,22 @@ contains
 
     implicit none
 
-    integer i
     real(8) prms(4)
-    character(2) p1,p2,p3,p4,pa,pb,pc,pd
+    character(2) p1,p2,p3,p4
+
+    call amber_dihedrals_proper(p1,p2,p3,p4,prms)
+
+    return
+
+  end subroutine amber_dihedrals
+
+  subroutine amber_dihedrals_proper(p1,p2,p3,p4,prms)
+
+    implicit none
+
+      integer i
+      real(8) prms(4)
+      character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     prms(1)=0.d0
     prms(2)=0.d0
@@ -918,6 +931,23 @@ contains
        pc=p2
        pd=p1
     end do
+
+    return
+
+  end subroutine amber_dihedrals_proper
+
+  subroutine amber_dihedrals_improper(p1,p2,p3,p4,prms)
+
+    implicit none
+
+    integer i
+    real(8) prms(4)
+    character(2) p1,p2,p3,p4,pa,pb,pc,pd
+
+    prms(1)=0.d0
+    prms(2)=0.d0
+    prms(3)=0.d0
+    prms(4)=0.d0
 
     pa=p1
     pb=p2
@@ -1195,6 +1225,6 @@ contains
 
     return
 
-  end subroutine amber_dihedrals
+  end subroutine amber_dihedrals_improper
 
 end module amber
