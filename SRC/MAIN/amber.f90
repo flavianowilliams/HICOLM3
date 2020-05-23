@@ -1093,6 +1093,99 @@ contains
              prms(3)=180.0d0
              prms(4)=2.0d0
           end select
+       case('CD')
+          select case(pc)
+          case('CD')
+             prms(1)=4.0d0
+             prms(2)=4.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=26.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CK')
+          select case(pc)
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=6.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NB')
+             prms(1)=2.0d0
+             prms(2)=20.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CM')
+          select case(pc)
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=26.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=7.40d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('OS')
+             prms(1)=2.0d0
+             prms(2)=2.10d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CN')
+          select case(pc)
+          case('NA')
+             prms(1)=4.0d0
+             prms(2)=6.10d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CQ')
+          select case(pc)
+          case('NC')
+             prms(1)=2.0d0
+             prms(2)=13.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CT')
+          select case(pc)
+          case('CT')
+             prms(1)=9.0d0
+             prms(2)=1.40d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('CY')
+             prms(1)=3.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=1.0d0
+          case('CZ')
+             prms(1)=3.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=1.0d0
+          case('N ')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          end select
        end select
        pa=p4
        pb=p3
