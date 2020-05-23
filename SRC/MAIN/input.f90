@@ -1084,6 +1084,9 @@ contains
     case('lj')
        m=2
        nprvdw=2
+    case('amber')
+       m=3
+       nprvdw=2
     end select
 
     return
