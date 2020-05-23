@@ -1084,6 +1084,9 @@ contains
     case('lj')
        m=2
        nprvdw=2
+    case('amber')
+       m=3
+       nprvdw=2
     end select
 
     return
@@ -1127,9 +1130,12 @@ contains
     case('hrm2')
        m=2
       nprtors=2
-    case('ryck')
-       m=3
-       nprtors=7
+   case('ryck')
+      m=3
+      nprtors=7
+   case('amber')
+      m=4
+      nprtors=4
     end select
 
     return
@@ -1173,6 +1179,9 @@ contains
        nprpar=3
     case('harm')
        m=2
+       nprpar=2
+    case('amber')
+       m=3
        nprpar=2
     end select
 
