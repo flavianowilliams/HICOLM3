@@ -33,7 +33,7 @@ module coulomb_module
   use utils
   use estrutura
   use alloc_arrays
-  use dihedral_module
+  use dihedral_proper_module
 
   integer ncoulstp
 

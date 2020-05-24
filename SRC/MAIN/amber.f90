@@ -868,14 +868,23 @@ contains
 
     implicit none
 
-    integer i
     real(8) prms(4)
-    character(2) p1,p2,p3,p4,pa,pb,pc,pd
+    character(2) p1,p2,p3,p4
 
-    prms(1)=0.d0
-    prms(2)=0.d0
-    prms(3)=0.d0
-    prms(4)=0.d0
+    call amber_dihedrals_general(p2,p3,prms)
+    call amber_dihedrals_proper(p1,p2,p3,p4,prms)
+
+    return
+
+  end subroutine amber_dihedrals
+
+  subroutine amber_dihedrals_proper(p1,p2,p3,p4,prms)
+
+    implicit none
+
+      integer i
+      real(8) prms(4)
+      character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
     pa=p1
     pb=p2
@@ -919,10 +928,85 @@ contains
        pd=p1
     end do
 
+    return
+
+  end subroutine amber_dihedrals_proper
+
+  subroutine amber_dihedrals_improper(p1,p2,p3,p4,prms)
+
+    implicit none
+
+      integer i
+      real(8) prms(4)
+      character(2) p1,p2,p3,p4,pa,pb,pc,pd
+
+    prms(1)=0.d0
+    prms(2)=0.d0
+    prms(3)=0.d0
+
     pa=p1
     pb=p2
     pc=p3
     pd=p4
+
+    do i=1,2
+       select case(pa)
+       case('CB')
+          select case(pb)
+          case('CK')
+             select case(pc)
+             case('N*')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=180.0d0
+                   prms(3)=2.0d0
+                end select
+             end select
+          end select
+       end select
+       pa=p4
+       pb=p3
+       pc=p2
+       pd=p1
+    end do
+
+    pc=p3
+    pd=p4
+
+    do i=1,2
+       select case(pc)
+       case('CA')
+          select case(pd)
+          case('HA')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       end select
+       pc=p4
+       pd=p3
+    end do
+
+    return
+
+  end subroutine amber_dihedrals_improper
+
+  subroutine amber_dihedrals_general(p2,p3,prms)
+
+    implicit none
+
+    integer i
+    real(8) prms(4)
+    character(2) p2,p3,pb,pc
+
+    prms(1)=0.d0
+    prms(2)=0.d0
+    prms(3)=0.d0
+    prms(4)=0.d0
+
+    pb=p2
+    pc=p3
 
     do i=1,2
        select case(pb)
@@ -1093,15 +1177,106 @@ contains
              prms(3)=180.0d0
              prms(4)=2.0d0
           end select
+       case('CD')
+          select case(pc)
+          case('CD')
+             prms(1)=4.0d0
+             prms(2)=4.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=26.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CK')
+          select case(pc)
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=6.80d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('NB')
+             prms(1)=2.0d0
+             prms(2)=20.00d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CM')
+          select case(pc)
+          case('CM')
+             prms(1)=4.0d0
+             prms(2)=26.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('CT')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('N*')
+             prms(1)=4.0d0
+             prms(2)=7.40d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          case('OS')
+             prms(1)=2.0d0
+             prms(2)=2.10d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CN')
+          select case(pc)
+          case('NA')
+             prms(1)=4.0d0
+             prms(2)=6.10d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CQ')
+          select case(pc)
+          case('NC')
+             prms(1)=2.0d0
+             prms(2)=13.60d0
+             prms(3)=180.0d0
+             prms(4)=2.0d0
+          end select
+       case('CT')
+          select case(pc)
+          case('CT')
+             prms(1)=9.0d0
+             prms(2)=1.40d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('CY')
+             prms(1)=3.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=1.0d0
+          case('CZ')
+             prms(1)=3.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=1.0d0
+          case('N ')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          end select
        end select
-       pa=p4
        pb=p3
        pc=p2
-       pd=p1
     end do
 
     return
 
-  end subroutine amber_dihedrals
+  end subroutine amber_dihedrals_general
 
 end module amber

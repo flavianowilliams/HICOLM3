@@ -32,7 +32,7 @@ module vdw_module
   use input
   use estrutura
   use alloc_arrays
-  use dihedral_module
+  use dihedral_proper_module
 
   integer nvdwstp
   real(8) envdw_corr,virvdw_corr

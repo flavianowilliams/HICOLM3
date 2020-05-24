@@ -33,7 +33,8 @@ module force_field
   use alloc_arrays
   use bonds_module
   use bends_module
-  use dihedral_module
+  use dihedral_proper_module
+  use dihedral_improper_module
   use vdw_module
   use coulomb_module
   use neighbour_list
@@ -55,11 +56,13 @@ contains
     nbondstp=0
     nbendstp=0
     ntorsstp=0
+    nitorsstp=0
 
     do i=1,nmolec
        bondsmlc(i)=0
        bendsmlc(i)=0
        torsmlc(i)=0
+       itorsmlc(i)=0
     end do
 
     !-unidades de Van der Waals
@@ -90,12 +93,20 @@ contains
        call bends_counts
     end if
 
-    !-unidades de torção
+    !-unidades de diedros
 
     if(ntors.ne.0)then
        call tors_alloc
        call tors_convert
        call tors_counts
+    end if
+
+    !-unidades de diedros improprios
+
+    if(nitors.ne.0)then
+       call itors_alloc
+       call itors_convert
+       call itors_counts
     end if
 
     write(6,*)('#',j=1,93)
@@ -110,16 +121,17 @@ contains
     write(6,*)
 
     if(nmolec.ne.0)then
-       write(6,'(20x,a9)')'Molecules'
-       write(6,'(20x,111a1)')('-',i=1,52)
-       write(6,'(20x,a4,7x,a3,4x,a6,3(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
-       write(6,'(20x,111a1)')('-',i=1,52)
+       write(6,'(16x,a9)')'Molecules'
+       write(6,'(15x,111a1)')('-',i=1,62)
+       write(6,'(16x,a4,7x,a3,4x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl','idhdl'
+       write(6,'(15x,111a1)')('-',i=1,62)
        do i=1,nmolec
-          write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
+          write(6,'(16x,a6,2x,i5,5(4x,i5))')&
+               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i),itorsmlc(i)
        end do
-       write(6,'(20x,111a1)')('-',i=1,52)
-       write(6,'(20x,a6,2x,i5,4(4x,i5))')'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp
+       write(6,'(15x,111a1)')('-',i=1,62)
+       write(6,'(16x,a6,2x,i5,5(4x,i5))')&
+            'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp,nitorsstp
        write(6,*)
     end if
 
@@ -197,6 +209,22 @@ contains
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,*)
+       write(6,'(20x,a19,1x,i5)')'Improper dihedrals:',itorscnt(i)
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,'(20x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
+       write(6,'(20x,111a1)')('-',j=1,52)
+       do j=1,itorscnt(i)
+          select case(itors(i,j))
+          case(1)
+             f1=paritors(i,j,1)*econv
+             f2=paritors(i,j,2)*aconv
+             i2=nint(paritors(i,j,3))
+             write(6,'(20x,4(i3,3x),a5,2x,f8.2,f8.1,2x,i2)')&
+                  (moltors(i,j,l),l=1,4),'amber',f1,f2,i2
+          end select
+       end do
+       write(6,'(20x,111a1)')('-',j=1,52)
+       write(6,*)
        write(6,'(20x,111a1)')('*',j=1,52)
        write(6,*)
        write(6,*)
@@ -259,16 +287,20 @@ contains
        do j=i,spctot
           select case(vdw(i,j))
           case(1)
-             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                  i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0.and.parvdw(i,j,3).ne.0.d0)then
+                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                     i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             end if
           case(2)
-             write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                  i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
+                     i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             end if
           case(3)
-!             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
+             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
                 write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')&
                      atsp(i),atsp(j),'amber',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
-!             end if
+             end if
           end select
        end do
     end do
@@ -376,6 +408,8 @@ contains
        call coulomb_14sf(encoul,vircoul)
 
     end if
+
+    if(nitors.ne.0)call itors_calc(entors,virtors)
 
     return
 

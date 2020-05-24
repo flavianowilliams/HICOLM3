@@ -1,3 +1,8 @@
+# Start MD
+
+#@MDRUNNING
+@MDPREPARE
+
 # Structure variables
 
 &STRUCT
@@ -7,7 +12,15 @@ cell
 0.0  0.0 19.0
 molecs 1
 C2H4 1 6
-reuse 1
+reuse 0
+&END
+
+# Optimization options
+
+&OPT
+ dfmax 1.e-4
+ gamma 1.e-7
+ ntrialmax 0 100000
 &END
 
 # Molecular dynamics variables
@@ -16,9 +29,9 @@ reuse 1
 nhist 10
 preext 1.0d0
 text 0.0
-ntrialmax 10000
+ntrialmax 1000
 nrelax 1
-timestep 0.001
+timestep 0.00000000001
 ensemble nvt berendsen 1.0 0.5 4.9e-5
 rcutoff 7.0 0.1
 &END
@@ -28,7 +41,7 @@ rcutoff 7.0 0.1
 &FORCE
  $AMBER
   molecule C2H4
-  C C H4 H4 H4 H4
+  CA CA HA HA HA HA
   -0.35498 -0.35498 0.177749 0.177749 0.177749 0.177749
  $END
  $INTRA
