@@ -670,10 +670,10 @@ contains
                 iv=jj+moltors(nx,k,3)
                 v=jj+moltors(nx,k,4)
                 call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,4
+                do p=1,3
                    paritors(nx,k,p)=val(p)
                 end do
-                itors(nx,k)=4
+                itors(nx,k)=1
              end do
           end do
 433       do j=1,spctt

@@ -121,17 +121,17 @@ contains
     write(6,*)
 
     if(nmolec.ne.0)then
-       write(6,'(20x,a9)')'Molecules'
-       write(6,'(20x,111a1)')('-',i=1,52)
-       write(6,'(20x,a4,7x,a3,4x,a6,3(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
-       write(6,'(20x,111a1)')('-',i=1,52)
+       write(6,'(16x,a9)')'Molecules'
+       write(6,'(15x,111a1)')('-',i=1,62)
+       write(6,'(16x,a4,7x,a3,4x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl','idhdl'
+       write(6,'(15x,111a1)')('-',i=1,62)
        do i=1,nmolec
-          write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),itorsmlc(i)
+          write(6,'(16x,a6,2x,i5,5(4x,i5))')&
+               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i),itorsmlc(i)
        end do
-       write(6,'(20x,111a1)')('-',i=1,52)
-       write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-            'Total:',moltot,natom,nbondstp,nbendstp,nitorsstp
+       write(6,'(15x,111a1)')('-',i=1,62)
+       write(6,'(16x,a6,2x,i5,5(4x,i5))')&
+            'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp,nitorsstp
        write(6,*)
     end if
 
@@ -412,6 +412,8 @@ contains
        call coulomb_14sf(encoul,vircoul)
 
     end if
+
+    if(nitors.ne.0)call itors_calc(entors,virtors)
 
     return
 
