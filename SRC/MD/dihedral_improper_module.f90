@@ -231,7 +231,7 @@ contains
        p2=paritors(im,in,2)
        p3=paritors(im,in,3)
        pot=0.5d0*p1*(1.d0+cos(p3*phi-p2))
-       fd=-0.5d0*p3*p2*sin(p3*phi-p2)
+       fd=-0.5d0*p3*p1*sin(p3*phi-p2)
     end select
 
     return
