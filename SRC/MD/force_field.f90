@@ -216,15 +216,11 @@ contains
        do j=1,itorscnt(i)
           select case(itors(i,j))
           case(1)
-             write(6,'(20x,4(i3,3x),a4,1x,2f8.1)')(moltors(i,j,l),l=1,4),&
-                  'harm',paritors(i,j,1)*econv,paritors(i,j,2)*aconv
-          case(4)
-             i1=nint(paritors(i,j,1))
-             f1=paritors(i,j,2)*econv
-             f2=paritors(i,j,3)*aconv
-             i2=nint(paritors(i,j,4))
-             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.2,f8.1,i2)')&
-                  (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
+             f1=paritors(i,j,1)*econv
+             f2=paritors(i,j,2)*aconv
+             i2=nint(paritors(i,j,3))
+             write(6,'(20x,4(i3,3x),a5,2x,f8.2,f8.1,2x,i2)')&
+                  (moltors(i,j,l),l=1,4),'amber',f1,f2,i2
           end select
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
