@@ -29,10 +29,6 @@ module dihedral_proper_module
   ! Flaviano Williams Fernandes, 05 de dezembro de 2018                                     *
   !******************************************************************************************
 
-!  use input
-!  use utils
-!  use estrutura
-!  use alloc_arrays
   use dihedral_module
 
   integer, allocatable :: torsijkn(:,:)

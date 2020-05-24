@@ -27,7 +27,7 @@ module alloc_arrays
 
   use input
 
-  integer, allocatable :: bondsmlc(:),bendsmlc(:),torsmlc(:)
+  integer, allocatable :: bondsmlc(:),bendsmlc(:),torsmlc(:),itorsmlc(:)
 
   real(8) strmax,str(6),cxx(6,6),exx(6),sxx(6,6)
 
@@ -43,7 +43,7 @@ contains
 
     !-alocando arrays referentes ao Campo de Força
     !
-    allocate(bondsmlc(nmolec),bendsmlc(nmolec),torsmlc(nmolec),stat=ierr)
+    allocate(bondsmlc(nmolec),bendsmlc(nmolec),torsmlc(nmolec),itorsmlc(nmolec),stat=ierr)
     !
     !-alocando variaveis canonicas
     !

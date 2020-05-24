@@ -34,6 +34,7 @@ module force_field
   use bonds_module
   use bends_module
   use dihedral_proper_module
+  use dihedral_improper_module
   use vdw_module
   use coulomb_module
   use neighbour_list
@@ -55,12 +56,13 @@ contains
     nbondstp=0
     nbendstp=0
     ntorsstp=0
-!    nitorsstp=0
+    nitorsstp=0
 
     do i=1,nmolec
        bondsmlc(i)=0
        bendsmlc(i)=0
        torsmlc(i)=0
+       itorsmlc(i)=0
     end do
 
     !-unidades de Van der Waals
@@ -102,7 +104,9 @@ contains
     !-unidades de diedros improprios
 
     if(nitors.ne.0)then
-!       call itors_alloc
+       call itors_alloc
+       call itors_convert
+       call itors_counts
     end if
 
     write(6,*)('#',j=1,93)
@@ -123,11 +127,11 @@ contains
        write(6,'(20x,111a1)')('-',i=1,52)
        do i=1,nmolec
           write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
+               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),itorsmlc(i)
        end do
        write(6,'(20x,111a1)')('-',i=1,52)
        write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-            'Total:',moltot,natom,nbondstp,nbendstp!,(ntorsstp+nitorsstp)
+            'Total:',moltot,natom,nbondstp,nbendstp,nitorsstp
        write(6,*)
     end if
 

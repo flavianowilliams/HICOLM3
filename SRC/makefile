@@ -14,8 +14,8 @@ OBJ_SYS = sistema.o elements.o utils.o amber.o input.o alloc_arrays.o estrutura.
 		brillouin.o
 #
 OBJ_MD = bonds_module.o bends_module.o dihedral_module.o dihedral_proper_module.o \
-	vdw_module.o coulomb_module.o neighbour_list.o force_field.o ensemble_nve.o \
-	ensemble_nvt.o ensemble_npt.o molecular_dynamics.o
+	 dihedral_improper_module.o vdw_module.o coulomb_module.o neighbour_list.o \
+	 force_field.o ensemble_nve.o ensemble_nvt.o ensemble_npt.o molecular_dynamics.o
 #
 OBJ_OPT = optimize.o
 #

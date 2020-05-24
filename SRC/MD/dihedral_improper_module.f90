@@ -29,10 +29,6 @@ module dihedral_improper_module
   ! Flaviano Williams Fernandes, 05 de dezembro de 2018                                     *
   !******************************************************************************************
 
-  use input
-  use utils
-  use estrutura
-  use alloc_arrays
   use dihedral_module
 
   integer, allocatable :: itorsijkn(:,:)
@@ -143,7 +139,7 @@ contains
     do i=1,nmolec
        nxx=0
        do j=1,ntmolec(i)
-          do k=1,torscnt(i)
+          do k=1,itorscnt(i)
              ni=np+moltors(i,k,1)
              nj=np+moltors(i,k,2)
              nk=np+moltors(i,k,3)
@@ -221,7 +217,7 @@ contains
        phi=max(1.d-8,phi)
 
        call itors_flags(im,in,phi,pot,fd)
-       call itors_force(ia,ib,ic,id,drij,drjk,drkn,dvc1,dvc2,phi,fd,virtors)
+       call tors_force(ia,ib,ic,id,drij,drjk,drkn,dvc1,dvc2,phi,fd,virtors)
 
        entors=entors+pot
 

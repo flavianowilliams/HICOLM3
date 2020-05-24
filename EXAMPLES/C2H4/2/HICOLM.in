@@ -1,7 +1,7 @@
 # Start MD
 
-#@MDRUNNING
-@MDPREPARE
+@MDRUNNING
+#@MDPREPARE
 
 # Structure variables
 
