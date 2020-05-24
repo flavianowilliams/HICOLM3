@@ -55,12 +55,12 @@ module input
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,ncoul,nbonds,nbends,ntors,nitors,moltors(molecmax,torsmax,4)
-  integer itors(molecmax,torsmax)
+  integer itors(molecmax,torsmax),itorscnt(molecmax)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
-  real(8) partors(molecmax,torsmax,7)
+  real(8) partors(molecmax,torsmax,7),paritors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
   character(2) att
@@ -73,9 +73,9 @@ module input
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors
+  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,paritors
   save vdw,bonds,bends,nbonds,nbends,ntors,nitors,coulop,tersoff,tors,atsp,itors
-  save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model
+  save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
@@ -663,6 +663,18 @@ contains
                 end do
                 tors(nx,k)=4
              end do
+             itorscnt(nx)=torscnt(nx)
+             do k=1,itorscnt(nx)
+                ii=jj+moltors(nx,k,1)
+                iii=jj+moltors(nx,k,2)
+                iv=jj+moltors(nx,k,3)
+                v=jj+moltors(nx,k,4)
+                call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
+                do p=1,4
+                   paritors(nx,k,p)=val(p)
+                end do
+                itors(nx,k)=4
+             end do
           end do
 433       do j=1,spctt
              do jj=j,spctt
@@ -814,11 +826,13 @@ contains
 11  nbends=0
     nbonds=0
     ntors=0
+    nitors=0
     do i=1,nmolec
        do j=1,ntmolec(i)
           nbends=nbends+bendscnt(i)
           nbonds=nbonds+bondscnt(i)
           ntors=ntors+torscnt(i)
+          nitors=nitors+itorscnt(i)
        end do
     end do
 
@@ -842,6 +856,7 @@ contains
     nbonds=0
     nbends=0
     ntors=0
+    nitors=0
 
     coulop=1
 
@@ -859,12 +874,14 @@ contains
        do j=1,torsmax
           do k=1,7
              partors(i,j,k)=0.d0
+             paritors(i,j,k)=0.d0
           end do
           tors(i,j)=0
           moltors(i,j,1)=0
           moltors(i,j,2)=0
           moltors(i,j,3)=0
           moltors(i,j,4)=0
+          itors(i,j)=0
        end do
        do j=1,bendmax
           do k=1,4

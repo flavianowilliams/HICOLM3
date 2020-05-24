@@ -957,17 +957,17 @@ contains
 
     do i=1,2
        select case(pa)
-       case('HC')
+       case('H4')
           select case(pb)
-          case('CT')
+          case('C ')
              select case(pc)
-             case('CT')
+             case('C ')
                 select case(pd)
-                case('HC')
+                case('H4')
                    prms(1)=1.0d0
-                   prms(2)=0.15d0
-                   prms(3)=0.0d0
-                   prms(4)=3.0d0
+                   prms(2)=1.d0
+                   prms(3)=1.0d0
+                   prms(4)=1.0d0
                 end select
              end select
           end select
@@ -979,8 +979,8 @@ contains
                 select case(pd)
                 case('O ')
                    prms(1)=1.0d0
-                   prms(2)=1.9d0
-                   prms(3)=0.0d0
+                   prms(2)=1.0d0
+                   prms(3)=1.0d0
                    prms(4)=1.0d0
                 end select
              end select

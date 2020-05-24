@@ -55,6 +55,7 @@ contains
     nbondstp=0
     nbendstp=0
     ntorsstp=0
+!    nitorsstp=0
 
     do i=1,nmolec
        bondsmlc(i)=0
@@ -90,12 +91,18 @@ contains
        call bends_counts
     end if
 
-    !-unidades de torção
+    !-unidades de diedros
 
     if(ntors.ne.0)then
        call tors_alloc
        call tors_convert
        call tors_counts
+    end if
+
+    !-unidades de diedros improprios
+
+    if(nitors.ne.0)then
+!       call itors_alloc
     end if
 
     write(6,*)('#',j=1,93)
@@ -119,7 +126,8 @@ contains
                namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
        end do
        write(6,'(20x,111a1)')('-',i=1,52)
-       write(6,'(20x,a6,2x,i5,4(4x,i5))')'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp
+       write(6,'(20x,a6,2x,i5,4(4x,i5))')&
+            'Total:',moltot,natom,nbondstp,nbendstp!,(ntorsstp+nitorsstp)
        write(6,*)
     end if
 
@@ -197,22 +205,20 @@ contains
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,*)
-       write(6,'(20x,111a1)')('-',j=1,52)
-       write(6,*)
-       write(6,'(20x,a19,1x,i5)')'Improper dihedrals:',torscnt(i)
+       write(6,'(20x,a19,1x,i5)')'Improper dihedrals:',itorscnt(i)
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,'(20x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
        write(6,'(20x,111a1)')('-',j=1,52)
-       do j=1,torscnt(i)
-          select case(tors(i,j))
+       do j=1,itorscnt(i)
+          select case(itors(i,j))
           case(1)
              write(6,'(20x,4(i3,3x),a4,1x,2f8.1)')(moltors(i,j,l),l=1,4),&
-                  'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
+                  'harm',paritors(i,j,1)*econv,paritors(i,j,2)*aconv
           case(4)
-             i1=nint(partors(i,j,1))
-             f1=partors(i,j,2)*econv
-             f2=partors(i,j,3)*aconv
-             i2=nint(partors(i,j,4))
+             i1=nint(paritors(i,j,1))
+             f1=paritors(i,j,2)*econv
+             f2=paritors(i,j,3)*aconv
+             i2=nint(paritors(i,j,4))
              write(6,'(20x,4(i3,3x),a5,2x,i2,f8.2,f8.1,i2)')&
                   (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
