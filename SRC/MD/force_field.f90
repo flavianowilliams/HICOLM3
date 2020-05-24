@@ -33,7 +33,7 @@ module force_field
   use alloc_arrays
   use bonds_module
   use bends_module
-  use dihedral_module
+  use dihedral_proper_module
   use vdw_module
   use coulomb_module
   use neighbour_list
