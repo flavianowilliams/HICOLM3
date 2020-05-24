@@ -1,7 +1,7 @@
 # Start MD
 
-#@MDRUNNING
-@MDPREPARE
+@MDRUNNING
+#@MDPREPARE
 
 # Structure variables
 
@@ -12,7 +12,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C3O2H5 1 9
-reuse 0
+reuse 1
 &END
 
 # Optimization options
@@ -25,16 +25,16 @@ reuse 0
 
 # Molecular dynamics variables
 
-#&MD
-#nhist 10
-#preext 1.0d0
-#text 0.0
-#ntrialmax 10000
-#nrelax 1
-#timestep 0.001
-#ensemble nvt berendsen 0.5 0.5 4.9e-5
-#rcutoff 7.0 0.1
-#&END
+&MD
+nhist 10
+preext 1.0d0
+text 298.0
+ntrialmax 10000
+nrelax 1
+timestep 0.001
+ensemble nvt berendsen 0.5 0.5 4.9e-5
+rcutoff 7.0 0.1
+&END
 
 # Force field variables
 
