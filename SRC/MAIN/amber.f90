@@ -1276,6 +1276,46 @@ contains
              prms(2)=0.00d0
              prms(3)=0.0d0
              prms(4)=2.0d0
+          case('N*')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('N2')
+             prms(1)=6.0d0
+             prms(2)=0.00d0
+             prms(3)=0.0d0
+             prms(4)=2.0d0
+          case('NT')
+             prms(1)=6.0d0
+             prms(2)=1.80d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('N3')
+             prms(1)=9.0d0
+             prms(2)=1.40d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('OH')
+             prms(1)=3.0d0
+             prms(2)=0.50d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('OS')
+             prms(1)=3.0d0
+             prms(2)=1.15d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('S ')
+             prms(1)=3.0d0
+             prms(2)=1.00d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
+          case('SH')
+             prms(1)=3.0d0
+             prms(2)=0.75d0
+             prms(3)=0.0d0
+             prms(4)=3.0d0
           end select
        end select
        pb=p3
