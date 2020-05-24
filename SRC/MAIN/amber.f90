@@ -983,9 +983,16 @@ contains
              prms(2)=180.0d0
              prms(3)=2.0d0
           end select
+       case('C ')
+          select case(pd)
+          case('O ')
+             prms(1)=10.5d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
        end select
-       pc=p4
-       pd=p3
+       pc=p2
+       pd=p1
     end do
 
     return
