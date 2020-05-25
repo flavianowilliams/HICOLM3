@@ -55,7 +55,7 @@ module input
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,ncoul,nbonds,nbends,ntors,nitors,moltors(molecmax,torsmax,4)
-  integer itors(molecmax,torsmax),itorscnt(molecmax)
+  integer itors(molecmax,torsmax),itorscnt(molecmax),molitors(molecmax,torsmax,4)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
@@ -73,7 +73,7 @@ module input
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,paritors
+  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,paritors,moltors,molitors
   save vdw,bonds,bends,nbonds,nbends,ntors,nitors,coulop,tersoff,tors,atsp,itors
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
@@ -665,10 +665,14 @@ contains
              end do
              itorscnt(nx)=torscnt(nx)
              do k=1,itorscnt(nx)
-                ii=jj+moltors(nx,k,1)
-                iii=jj+moltors(nx,k,2)
-                iv=jj+moltors(nx,k,3)
-                v=jj+moltors(nx,k,4)
+                molitors(nx,k,1)=moltors(nx,k,1)
+                molitors(nx,k,2)=moltors(nx,k,2)
+                molitors(nx,k,3)=moltors(nx,k,3)
+                molitors(nx,k,4)=moltors(nx,k,4)
+                ii=jj+molitors(nx,k,1)
+                iii=jj+molitors(nx,k,2)
+                iv=jj+molitors(nx,k,3)
+                v=jj+molitors(nx,k,4)
                 call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
                 do p=1,3
                    paritors(nx,k,p)=val(p)
@@ -882,6 +886,10 @@ contains
           moltors(i,j,3)=0
           moltors(i,j,4)=0
           itors(i,j)=0
+          molitors(i,j,1)=0
+          molitors(i,j,2)=0
+          molitors(i,j,3)=0
+          molitors(i,j,4)=0
        end do
        do j=1,bendmax
           do k=1,4

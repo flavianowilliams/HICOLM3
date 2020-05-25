@@ -220,7 +220,7 @@ contains
              f2=paritors(i,j,2)*aconv
              i2=nint(paritors(i,j,3))
              write(6,'(20x,4(i3,3x),a5,2x,f8.2,f8.1,2x,i2)')&
-                  (moltors(i,j,l),l=1,4),'amber',f1,f2,i2
+                  (molitors(i,j,l),l=1,4),'amber',f1,f2,i2
           end select
        end do
        write(6,'(20x,111a1)')('-',j=1,52)

@@ -121,10 +121,10 @@ contains
        nxx=0
        do j=1,ntmolec(i)
           do k=1,itorscnt(i)
-             ni=np+moltors(i,k,1)
-             nj=np+moltors(i,k,2)
-             nk=np+moltors(i,k,3)
-             nn=np+moltors(i,k,4)
+             ni=np+molitors(i,k,1)
+             nj=np+molitors(i,k,2)
+             nk=np+molitors(i,k,3)
+             nn=np+molitors(i,k,4)
              if(chk(i,k).eq.1)then
                 itorsijkn(1,nx)=ni
                 itorsijkn(2,nx)=nj
