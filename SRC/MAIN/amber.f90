@@ -982,6 +982,14 @@ contains
              prms(1)=1.1d0
              prms(2)=180.0d0
              prms(3)=2.0d0
+          case('H4')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          case('H5')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
           end select
        case('C ')
           select case(pd)
@@ -1052,24 +1060,7 @@ contains
              prms(1)=1.1d0
              prms(2)=180.0d0
              prms(3)=2.0d0
-          end select
-       case('CM')
-          select case(pd)
           case('HA')
-             prms(1)=1.1d0
-             prms(2)=180.0d0
-             prms(3)=2.0d0
-          end select
-       case('CA')
-          select case(pd)
-          case('H4')
-             prms(1)=1.1d0
-             prms(2)=180.0d0
-             prms(3)=2.0d0
-          end select
-       case('CA')
-          select case(pd)
-          case('H5')
              prms(1)=1.1d0
              prms(2)=180.0d0
              prms(3)=2.0d0
