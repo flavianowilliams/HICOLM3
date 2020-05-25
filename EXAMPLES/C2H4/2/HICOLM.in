@@ -20,7 +20,7 @@ reuse 0
 &OPT
  dfmax 1.e-4
  gamma 1.e-7
- ntrialmax 0 100000
+ ntrialmax 0 100
 &END
 
 # Molecular dynamics variables
