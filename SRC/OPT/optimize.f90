@@ -30,7 +30,7 @@ contains
 
     implicit none
 
-    integer i,j
+    integer i,j,ihist
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
     real(8) encoul,enbond,enbend,entors,envdw,eintra,einter,enpot0,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -118,6 +118,8 @@ contains
 
     !-calculando contribuição intramolecular
 
+    ihist=1
+
     do i=2,opt_ntotal
 
        encoul=0.d0   !coulombiano
@@ -153,7 +155,7 @@ contains
 
        call geometria
 
-       if(mod(i,nhist).eq.0)call history(1)
+       if(mod(i,nhist).eq.0)call history(ihist)
 
        if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
