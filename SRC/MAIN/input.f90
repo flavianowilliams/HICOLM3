@@ -665,10 +665,14 @@ contains
              end do
              itorscnt(nx)=torscnt(nx)
              do k=1,itorscnt(nx)
-                ii=jj+moltors(nx,k,1)
-                iii=jj+moltors(nx,k,2)
-                iv=jj+moltors(nx,k,3)
-                v=jj+moltors(nx,k,4)
+                molitors(nx,k,1)=moltors(nx,k,1)
+                molitors(nx,k,2)=moltors(nx,k,2)
+                molitors(nx,k,3)=moltors(nx,k,3)
+                molitors(nx,k,4)=moltors(nx,k,4)
+                ii=jj+molitors(nx,k,1)
+                iii=jj+molitors(nx,k,2)
+                iv=jj+molitors(nx,k,3)
+                v=jj+molitors(nx,k,4)
                 call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
                 do p=1,3
                    paritors(nx,k,p)=val(p)
@@ -882,6 +886,10 @@ contains
           moltors(i,j,3)=0
           moltors(i,j,4)=0
           itors(i,j)=0
+          molitors(i,j,1)=0
+          molitors(i,j,2)=0
+          molitors(i,j,3)=0
+          molitors(i,j,4)=0
        end do
        do j=1,bendmax
           do k=1,4
