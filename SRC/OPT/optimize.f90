@@ -153,6 +153,8 @@ contains
 
        call geometria
 
+       if(mod(i,nhist).eq.0)call history(1)
+
        if(mod(i,50).eq.0)write(6,20)'SD',&
             i,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
        write(3,30)&
