@@ -1155,13 +1155,13 @@ contains
        nprtors=2
     case('hrm2')
        m=2
-      nprtors=2
-   case('ryck')
-      m=3
-      nprtors=7
-   case('amber')
-      m=4
-      nprtors=4
+       nprtors=2
+    case('ryck')
+       m=3
+       nprtors=7
+    case('amber')
+       m=4
+       nprtors=4
     end select
 
     return

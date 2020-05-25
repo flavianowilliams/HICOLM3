@@ -73,6 +73,19 @@ contains
           case(1)
              paritors(i,j,1)=paritors(i,j,1)/econv
              paritors(i,j,2)=paritors(i,j,2)/aconv
+          case(2)
+             paritors(i,j,1)=paritors(i,j,1)/econv
+          case(3)
+             paritors(i,j,1)=paritors(i,j,1)/econv
+             paritors(i,j,2)=paritors(i,j,2)/econv
+             paritors(i,j,3)=paritors(i,j,3)/econv
+             paritors(i,j,4)=paritors(i,j,4)/econv
+             paritors(i,j,5)=paritors(i,j,5)/econv
+             paritors(i,j,6)=paritors(i,j,6)/econv
+             paritors(i,j,7)=paritors(i,j,7)/aconv
+          case(4)
+             paritors(i,j,2)=paritors(i,j,2)/econv
+             paritors(i,j,3)=paritors(i,j,3)/aconv
           end select
        end do
     end do
@@ -105,6 +118,12 @@ contains
           select case(itors(i,j))
           case(1)
              nkb=1
+          case(2)
+             nkb=1
+          case(3)
+             nkb=0
+          case(4)
+             nkb=2
           end select
           chk(i,j)=1
           do k=1,nkb
@@ -216,7 +235,7 @@ contains
     implicit none
 
     integer im,in
-    real(8) phi,fd,pot,p1,p2,p3
+    real(8) psi,phi,fd,pot,p1,p2,p3,p4
 
     !-valores iniciais
 
@@ -227,11 +246,26 @@ contains
 
     select case(itors(im,in))
     case(1)
+       pot=0.5d0*paritors(im,in,1)*(phi-paritors(im,in,2))**2
+       fd=paritors(im,in,1)*(phi-paritors(im,in,2))
+    case(2)
+       pot=0.5d0*paritors(im,in,1)*(cos(phi)-paritors(im,in,2))**2
+       fd=-sin(phi)*paritors(im,in,1)*(cos(phi)-paritors(im,in,2))
+    case(3)
+       psi=phi-paritors(im,in,7)
+       pot=paritors(im,in,1)+paritors(im,in,2)*cos(psi)+paritors(im,in,3)*cos(psi)**2&
+            +paritors(im,in,4)*cos(psi)**3+paritors(im,in,5)*cos(psi)**4&
+            +paritors(im,in,6)*cos(psi)**5
+       fd=-sin(psi)*(paritors(im,in,2)+2.d0*paritors(im,in,3)*cos(psi)&
+            +3.d0*paritors(im,in,4)*cos(psi)**2+4.d0*paritors(im,in,5)*cos(psi)**3&
+            +5.d0*paritors(im,in,6)*cos(psi)**4)
+    case(4)
        p1=paritors(im,in,1)
        p2=paritors(im,in,2)
        p3=paritors(im,in,3)
-       pot=0.5d0*p1*(1.d0+cos(p3*phi-p2))
-       fd=-0.5d0*p3*p1*sin(p3*phi-p2)
+       p4=paritors(im,in,4)
+       pot=0.5d0*p2*(1.d0+cos(p4*phi-p3))/p1
+       fd=-0.5d0*p4*p2*sin(p4*phi-p3)/p1
     end select
 
     return
