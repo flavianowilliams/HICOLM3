@@ -423,6 +423,11 @@ contains
           opt_ninter=ival(1)
           opt_ntotal=ival(2)
        end if
+       if(key.eq.'nhist')then
+          backspace(5)
+          read(5,*)key,ival(1)
+          nhist=ival(1)
+       end if
        if(key.eq.'gamma')then
           backspace(5)
           read(5,*)key,val(1)
