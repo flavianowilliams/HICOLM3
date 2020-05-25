@@ -405,6 +405,7 @@ contains
     implicit none
 
     integer i,j,k,l,nx,ia,ib,ic,id,imol
+    real(8) prms(4)
 
     nx=0
     do i=2,imol
@@ -421,6 +422,7 @@ contains
              ic=k+nx
              do l=k+1,nxmolec(imol)
                 id=l+nx
+                call amber_dihedrals_improper(atp(ia),atp(ib),atp(ic),atp(id),prms)
                 write(*,*)ia,ib,ic,id
              end do
           end do
