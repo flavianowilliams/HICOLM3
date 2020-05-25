@@ -990,6 +990,90 @@ contains
              prms(2)=180.0d0
              prms(3)=2.0d0
           end select
+       case('N ')
+          select case(pd)
+          case('H ')
+             prms(1)=1.0d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('N2')
+          select case(pd)
+          case('H ')
+             prms(1)=1.0d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('NA')
+          select case(pd)
+          case('H ')
+             prms(1)=1.0d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CW')
+          select case(pd)
+          case('H4')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CR')
+          select case(pd)
+          case('H5')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CV')
+          select case(pd)
+          case('H4')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CQ')
+          select case(pd)
+          case('H5')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CK')
+          select case(pd)
+          case('H5')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CM')
+          select case(pd)
+          case('H4')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CM')
+          select case(pd)
+          case('HA')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CA')
+          select case(pd)
+          case('H4')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
+       case('CA')
+          select case(pd)
+          case('H5')
+             prms(1)=1.1d0
+             prms(2)=180.0d0
+             prms(3)=2.0d0
+          end select
        end select
        pc=p2
        pd=p1
