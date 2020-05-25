@@ -630,7 +630,7 @@ contains
 
     implicit none
 
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
+    integer i,ii,iii,iv,v,j,jj,k,l,g,p,m,numt,nx,ival(20),spctt
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
@@ -698,8 +698,8 @@ contains
                 tors(nx,k)=4
              end do
 !             call zmatrix_improper(nx)
-             itorscnt(nx)=torscnt(nx)
-             do k=1,itorscnt(nx)
+!             itorscnt(nx)=torscnt(nx)
+!             do k=1,itorscnt(nx)
 !                molitors(nx,k,1)=moltors(nx,k,1)
 !                molitors(nx,k,2)=moltors(nx,k,2)
 !                molitors(nx,k,3)=moltors(nx,k,3)
@@ -708,26 +708,26 @@ contains
 !                iii=jj+molitors(nx,k,2)
 !                iv=jj+molitors(nx,k,3)
 !                v=jj+molitors(nx,k,4)
-                do i=1,nxmolec(imol)
-                   ii=i+nx
-                   do j=i+1,nxmolec(imol)
-                      iii=j+nx
-                      do k=j+1,nxmolec(imol)
-                         iv=k+nx
-                         do l=k+1,nxmolec(imol)
-                            v=l+nx
-                            call amber_dihedrals_improper&
-                                 (atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                         end do
+             do k=1,nxmolec(nx)
+                ii=k+nx
+                do g=k+1,nxmolec(nx)
+                   iii=g+nx
+                   do p=g+1,nxmolec(nx)
+                      iv=p+nx
+                      do l=p+1,nxmolec(nx)
+                         v=l+nx
+                         call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
+                         write(*,*)atsp(ii),atsp(iii),atsp(iv),atsp(v)
+!                         do p=1,3
+!                            paritors(nx,k,p)=val(p)
+!                         end do
+!                         itors(nx,k)=1
                       end do
                    end do
                 end do
-!                call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,3
-                   paritors(nx,k,p)=val(p)
-                end do
-                itors(nx,k)=1
              end do
+!                call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
+!             end do
              stop
           end do
 433       do j=1,spctt
