@@ -400,6 +400,14 @@ contains
 
   end subroutine zmatrix
 
+  subroutine zmatrix_improper
+
+    implicit none
+
+    return
+
+  end subroutine zmatrix_improper
+
   subroutine opt_input
 
     implicit none
