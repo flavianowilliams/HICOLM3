@@ -425,10 +425,11 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   write(*,'(4a5)')atsp(ia),atsp(ib),atsp(ic),atsp(id)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -437,10 +438,10 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -452,10 +453,10 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -464,10 +465,10 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -482,23 +483,22 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
              end do
              do l=k+1,nxmolec(imol)
                 id=l+nx
-                write(*,*)ia,ib,ic,id
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -510,10 +510,10 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
@@ -522,10 +522,10 @@ contains
                 id=l+nx
                 call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
                 if(prms(1).gt.1.d-8)then
-                   ia=molitors(imol,itorscnt(imol),1)
-                   ib=molitors(imol,itorscnt(imol),2)
-                   ic=molitors(imol,itorscnt(imol),3)
-                   id=molitors(imol,itorscnt(imol),4)
+                   molitors(imol,itorscnt(imol),1)=ia
+                   molitors(imol,itorscnt(imol),2)=ib
+                   molitors(imol,itorscnt(imol),3)=ic
+                   molitors(imol,itorscnt(imol),4)=id
                    itors(imol,itorscnt(imol))=1
                    itorscnt(imol)=itorscnt(imol)+1
                 end if
