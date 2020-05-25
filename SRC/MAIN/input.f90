@@ -450,6 +450,9 @@ contains
 
 11  method='@MDPREPARE'
 
+    ntrialmax=opt_ntotal
+    nrelax=0
+
     return
 
   end subroutine opt_input

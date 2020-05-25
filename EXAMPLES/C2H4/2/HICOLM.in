@@ -19,8 +19,8 @@ reuse 0
 
 &OPT
  dfmax 1.e-4
- gamma 1.e-7
- nhist 100
+ gamma 1.e-5
+ nhist 1000
  ntrialmax 0 100000
 &END
 

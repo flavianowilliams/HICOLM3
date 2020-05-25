@@ -30,7 +30,7 @@ contains
 
     implicit none
 
-    integer i,j,ihist
+    integer i,j,ihist,nx
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
     real(8) encoul,enbond,enbend,entors,envdw,eintra,einter,enpot0,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -73,6 +73,9 @@ contains
 
     !-calculando valores iniciais
 
+    ihist=1
+    nx=1
+
     do j=1,natom
        fax(j)=0.d0
        fay(j)=0.d0
@@ -109,6 +112,8 @@ contains
 
     call geometria
 
+    if(mod(i,nhist).eq.0)call history(ihist)
+
     write(6,20)'SD',&
          1,eintra*econv,einter*econv,enpot*econv,abs(enpot-enpot0)*econv,dfmax*econv/rconv
     write(3,30)&
@@ -117,8 +122,6 @@ contains
     enpot0=enpot
 
     !-calculando contribuição intramolecular
-
-    ihist=1
 
     do i=2,opt_ntotal
 
@@ -171,11 +174,19 @@ contains
        end do
 
        enpot0=enpot
+       nx=nx+1
 
     end do
 
     write(6,'(4x,111a1)')('-',i=1,84)
     write(6,*)
+
+    !-terminando impressao em history
+
+    do i=nx+1,opt_ntotal
+       if(mod(i,nhist).eq.0)call history(ihist)
+       write(*,*)i,ihist
+    end do
 
     return
 
