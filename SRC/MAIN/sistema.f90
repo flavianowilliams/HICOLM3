@@ -63,6 +63,6 @@ module sistema
 
   parameter (bendmax=50)
   parameter (bondmax=50)
-  parameter (torsmax=50)
+  parameter (torsmax=500)
 
 end module sistema

@@ -54,13 +54,12 @@ module input
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff,coulop
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
-  integer nvdw,ncoul,nbonds,nbends,ntors,nitors,moltors(molecmax,torsmax,4)
-  integer itors(molecmax,torsmax),itorscnt(molecmax),molitors(molecmax,torsmax,4)
+  integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4),itorscnt(molecmax)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
-  real(8) partors(molecmax,torsmax,7),paritors(molecmax,torsmax,7)
+  real(8) partors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
   character(2) att
@@ -73,8 +72,8 @@ module input
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,paritors,moltors,molitors
-  save vdw,bonds,bends,nbonds,nbends,ntors,nitors,coulop,tersoff,tors,atsp,itors
+  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,moltors
+  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
   !----------------------------------------------------------------------------
@@ -663,22 +662,6 @@ contains
                 end do
                 tors(nx,k)=4
              end do
-             itorscnt(nx)=torscnt(nx)
-             do k=1,itorscnt(nx)
-                molitors(nx,k,1)=moltors(nx,k,1)
-                molitors(nx,k,2)=moltors(nx,k,2)
-                molitors(nx,k,3)=moltors(nx,k,3)
-                molitors(nx,k,4)=moltors(nx,k,4)
-                ii=jj+molitors(nx,k,1)
-                iii=jj+molitors(nx,k,2)
-                iv=jj+molitors(nx,k,3)
-                v=jj+molitors(nx,k,4)
-                call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,3
-                   paritors(nx,k,p)=val(p)
-                end do
-                itors(nx,k)=1
-             end do
           end do
 433       do j=1,spctt
              do jj=j,spctt
@@ -757,6 +740,22 @@ contains
                    bonds(nx,ii)=m
                    molbond(nx,ii,1)=ival(1)
                    molbond(nx,ii,2)=ival(2)
+                elseif(key.eq.'dihedrals!')then
+                   read(5,*)key,itorscnt(nx)
+                   do k=1,itorscnt(nx)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
+                      call dihedral_opt(char,m,numt)
+                      backspace(5)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                      do p=1,numt
+                         partors(nx,k+torscnt(nx),p)=val(p)
+                      end do
+                      tors(nx,k+torscnt(nx))=m
+                      moltors(nx,k+torscnt(nx),1)=ival(1)
+                      moltors(nx,k+torscnt(nx),2)=ival(2)
+                      moltors(nx,k+torscnt(nx),3)=ival(3)
+                      moltors(nx,k+torscnt(nx),4)=ival(4)
+                   end do
                 elseif(key.eq.'dihedrals#')then
                    read(5,*)key,torscnt(nx)
                    do k=1,torscnt(nx)
@@ -830,13 +829,11 @@ contains
 11  nbends=0
     nbonds=0
     ntors=0
-    nitors=0
     do i=1,nmolec
        do j=1,ntmolec(i)
           nbends=nbends+bendscnt(i)
           nbonds=nbonds+bondscnt(i)
-          ntors=ntors+torscnt(i)
-          nitors=nitors+itorscnt(i)
+          ntors=ntors+(torscnt(i)+itorscnt(i))
        end do
     end do
 
@@ -860,7 +857,6 @@ contains
     nbonds=0
     nbends=0
     ntors=0
-    nitors=0
 
     coulop=1
 
@@ -878,18 +874,12 @@ contains
        do j=1,torsmax
           do k=1,7
              partors(i,j,k)=0.d0
-             paritors(i,j,k)=0.d0
           end do
           tors(i,j)=0
           moltors(i,j,1)=0
           moltors(i,j,2)=0
           moltors(i,j,3)=0
           moltors(i,j,4)=0
-          itors(i,j)=0
-          molitors(i,j,1)=0
-          molitors(i,j,2)=0
-          molitors(i,j,3)=0
-          molitors(i,j,4)=0
        end do
        do j=1,bendmax
           do k=1,4
@@ -911,6 +901,7 @@ contains
        bendscnt(i)=0
        bondscnt(i)=0
        torscnt(i)=0
+       itorscnt(i)=0
     end do
 
     do i=1,ntpmax
@@ -920,7 +911,7 @@ contains
           end do
        end do
        parcoul(i,1)=0.d0
-       atsp(i)='X'
+       atsp(i)='X '
     end do
 
     a=0.d0
@@ -1155,13 +1146,13 @@ contains
        nprtors=2
     case('hrm2')
        m=2
-      nprtors=2
-   case('ryck')
-      m=3
-      nprtors=7
-   case('amber')
-      m=4
-      nprtors=4
+       nprtors=2
+    case('ryck')
+       m=3
+       nprtors=7
+    case('amber')
+       m=4
+       nprtors=4
     end select
 
     return

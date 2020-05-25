@@ -33,8 +33,7 @@ module force_field
   use alloc_arrays
   use bonds_module
   use bends_module
-  use dihedral_proper_module
-  use dihedral_improper_module
+  use dihedral_module
   use vdw_module
   use coulomb_module
   use neighbour_list
@@ -56,13 +55,11 @@ contains
     nbondstp=0
     nbendstp=0
     ntorsstp=0
-    nitorsstp=0
 
     do i=1,nmolec
        bondsmlc(i)=0
        bendsmlc(i)=0
        torsmlc(i)=0
-       itorsmlc(i)=0
     end do
 
     !-unidades de Van der Waals
@@ -101,14 +98,6 @@ contains
        call tors_counts
     end if
 
-    !-unidades de diedros improprios
-
-    if(nitors.ne.0)then
-       call itors_alloc
-       call itors_convert
-       call itors_counts
-    end if
-
     write(6,*)('#',j=1,93)
     write(6,*)('FORCE FIELD ',j=1,8)
     write(6,*)('#',j=1,93)
@@ -121,17 +110,17 @@ contains
     write(6,*)
 
     if(nmolec.ne.0)then
-       write(6,'(16x,a9)')'Molecules'
-       write(6,'(15x,111a1)')('-',i=1,62)
-       write(6,'(16x,a4,7x,a3,4x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl','idhdl'
-       write(6,'(15x,111a1)')('-',i=1,62)
+       write(6,'(20x,a9)')'Molecules'
+       write(6,'(19x,111a1)')('-',i=1,54)
+       write(6,'(20x,a4,7x,a3,4x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
+       write(6,'(19x,111a1)')('-',i=1,54)
        do i=1,nmolec
-          write(6,'(16x,a6,2x,i5,5(4x,i5))')&
-               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i),itorsmlc(i)
+          write(6,'(20x,a6,2x,i5,4(4x,i5))')&
+               namemol(i),ntmolec(i),nxmolec(i),bondsmlc(i),bendsmlc(i),torsmlc(i)
        end do
-       write(6,'(15x,111a1)')('-',i=1,62)
-       write(6,'(16x,a6,2x,i5,5(4x,i5))')&
-            'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp,nitorsstp
+       write(6,'(19x,111a1)')('-',i=1,54)
+       write(6,'(20x,a6,2x,i5,5(4x,i5))')&
+            'Total:',moltot,natom,nbondstp,nbendstp,ntorsstp
        write(6,*)
     end if
 
@@ -213,14 +202,15 @@ contains
        write(6,'(20x,111a1)')('-',j=1,52)
        write(6,'(20x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
        write(6,'(20x,111a1)')('-',j=1,52)
-       do j=1,itorscnt(i)
-          select case(itors(i,j))
-          case(1)
-             f1=paritors(i,j,1)*econv
-             f2=paritors(i,j,2)*aconv
-             i2=nint(paritors(i,j,3))
-             write(6,'(20x,4(i3,3x),a5,2x,f8.2,f8.1,2x,i2)')&
-                  (molitors(i,j,l),l=1,4),'amber',f1,f2,i2
+       do j=torscnt(i)+1,(torscnt(i)+itorscnt(i))
+          select case(tors(i,j))
+          case(4)
+             i1=nint(partors(i,j,1))
+             f1=partors(i,j,2)*econv
+             f2=partors(i,j,3)*aconv
+             i2=nint(partors(i,j,4))
+             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.2,f8.1,i2)')&
+                  (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
        end do
        write(6,'(20x,111a1)')('-',j=1,52)
@@ -409,7 +399,7 @@ contains
 
     end if
 
-    if(nitors.ne.0)call itors_calc(entors,virtors)
+!    if(nitors.ne.0)call itors_calc(entors,virtors)
 
     return
 
