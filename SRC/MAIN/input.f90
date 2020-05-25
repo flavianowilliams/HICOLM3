@@ -709,15 +709,16 @@ contains
 !                iv=jj+molitors(nx,k,3)
 !                v=jj+molitors(nx,k,4)
              do k=1,nxmolec(nx)
-                ii=k+nx
+                ii=jj+k
                 do g=k+1,nxmolec(nx)
-                   iii=g+nx
+                   iii=jj+g
                    do p=g+1,nxmolec(nx)
-                      iv=p+nx
+                      iv=jj+p
                       do l=p+1,nxmolec(nx)
-                         v=l+nx
+                         v=jj+l
                          call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                         write(*,*)atsp(ii),atsp(iii),atsp(iv),atsp(v)
+                         write(*,*)ii,iii,iv,v
+                         write(*,'(4a4,f7.2)')atsp(ii),atsp(iii),atsp(iv),atsp(v),val(1)
 !                         do p=1,3
 !                            paritors(nx,k,p)=val(p)
 !                         end do
@@ -970,7 +971,7 @@ contains
           end do
        end do
        parcoul(i,1)=0.d0
-       atsp(i)='X'
+       atsp(i)='X '
     end do
 
     a=0.d0
