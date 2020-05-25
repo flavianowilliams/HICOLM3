@@ -185,7 +185,6 @@ contains
 
     do i=nx+1,opt_ntotal
        if(mod(i,nhist).eq.0)call history(ihist)
-       write(*,*)i,ihist
     end do
 
     return
