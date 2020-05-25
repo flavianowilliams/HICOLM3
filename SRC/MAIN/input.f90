@@ -400,147 +400,6 @@ contains
 
   end subroutine zmatrix
 
-  subroutine zmatrix_improper(imol)
-
-    implicit none
-
-    integer i,j,k,l,nx,ia,ib,ic,id,imol
-    real(8) prms(4)
-
-    nx=0
-    do i=2,imol
-       nx=nx+nxmolec(i)*ntmolec(i)
-    end do
-
-    !-calculo das ligacoes quimicas
-
-    itorscnt(imol)=1
-    do i=1,nxmolec(imol)
-       ia=i+nx
-       do j=1,i-1
-          ib=j+nx
-          do k=1,j-1
-             ic=k+nx
-             do l=1,k-1
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   write(*,'(4a5)')atsp(ia),atsp(ib),atsp(ic),atsp(id)
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-             do l=k+1,nxmolec(imol)
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-          end do
-          do k=j+1,nxmolec(imol)
-             ic=k+nx
-             do l=1,k-1
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-             do l=k+1,nxmolec(imol)
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-          end do
-       end do
-       do j=i+1,nxmolec(imol)
-          ib=j+nx
-          do k=1,j-1
-             ic=k+nx
-             do l=1,k-1
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-             do l=k+1,nxmolec(imol)
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-          end do
-          do k=j+1,nxmolec(imol)
-             ic=k+nx
-             do l=1,k-1
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-             do l=k+1,nxmolec(imol)
-                id=l+nx
-                call amber_dihedrals_improper(atsp(ia),atsp(ib),atsp(ic),atsp(id),prms)
-                if(prms(1).gt.1.d-8)then
-                   molitors(imol,itorscnt(imol),1)=ia
-                   molitors(imol,itorscnt(imol),2)=ib
-                   molitors(imol,itorscnt(imol),3)=ic
-                   molitors(imol,itorscnt(imol),4)=id
-                   itors(imol,itorscnt(imol))=1
-                   itorscnt(imol)=itorscnt(imol)+1
-                end if
-             end do
-          end do
-       end do
-    end do
-
-    itorscnt(imol)=itorscnt(imol)-1
-
-    stop
-    return
-
-  end subroutine zmatrix_improper
-
   subroutine opt_input
 
     implicit none
@@ -804,24 +663,6 @@ contains
                 end do
                 tors(nx,k)=4
              end do
-             call zmatrix_improper(nx)
-!             itorscnt(nx)=torscnt(nx)
-             do k=1,itorscnt(nx)
-!                molitors(nx,k,1)=moltors(nx,k,1)
-!                molitors(nx,k,2)=moltors(nx,k,2)
-!                molitors(nx,k,3)=moltors(nx,k,3)
-!                molitors(nx,k,4)=moltors(nx,k,4)
-                ii=jj+molitors(nx,k,1)
-                iii=jj+molitors(nx,k,2)
-                iv=jj+molitors(nx,k,3)
-                v=jj+molitors(nx,k,4)
-                call amber_dihedrals_improper(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,3
-                   paritors(nx,k,p)=val(p)
-                end do
-!                itors(nx,k)=1
-             end do
-!             stop
           end do
 433       do j=1,spctt
              do jj=j,spctt
@@ -900,6 +741,22 @@ contains
                    bonds(nx,ii)=m
                    molbond(nx,ii,1)=ival(1)
                    molbond(nx,ii,2)=ival(2)
+                elseif(key.eq.'dihedrals!')then
+                   read(5,*)key,itorscnt(nx)
+                   do k=1,itorscnt(nx)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
+                      call dihedral_opt(char,m,numt)
+                      backspace(5)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                      do p=1,numt
+                         paritors(nx,k,p)=val(p)
+                      end do
+                      itors(nx,k)=m
+                      molitors(nx,k,1)=ival(1)
+                      molitors(nx,k,2)=ival(2)
+                      molitors(nx,k,3)=ival(3)
+                      molitors(nx,k,4)=ival(4)
+                   end do
                 elseif(key.eq.'dihedrals#')then
                    read(5,*)key,torscnt(nx)
                    do k=1,torscnt(nx)
