@@ -400,10 +400,34 @@ contains
 
   end subroutine zmatrix
 
-  subroutine zmatrix_improper
+  subroutine zmatrix_improper(imol)
 
     implicit none
 
+    integer i,j,k,l,nx,ia,ib,ic,id,imol
+
+    nx=0
+    do i=2,imol
+       nx=nx+nxmolec(i)*ntmolec(i)
+    end do
+
+    !-calculo das ligacoes quimicas
+
+    do i=1,nxmolec(imol)
+       ia=i+nx
+       do j=i+1,nxmolec(imol)
+          ib=j+nx
+          do k=j+1,nxmolec(imol)
+             ic=k+nx
+             do l=k+1,nxmolec(imol)
+                id=l+nx
+                write(*,*)ia,ib,ic,id
+             end do
+          end do
+       end do
+    end do
+
+    stop
     return
 
   end subroutine zmatrix_improper
@@ -671,6 +695,7 @@ contains
                 end do
                 tors(nx,k)=4
              end do
+             call zmatrix_improper(nx)
              itorscnt(nx)=torscnt(nx)
              do k=1,itorscnt(nx)
                 molitors(nx,k,1)=moltors(nx,k,1)
