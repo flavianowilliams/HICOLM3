@@ -11,7 +11,7 @@
   0.0  0.0 19.0
  molecs 1
   H2O 100 3
- reuse 0
+ reuse 1
 &END
 
 # Molecular dynamics variables
@@ -21,6 +21,7 @@
  gamma 1.e-8                # ... (default: 1.e-7)
  ntrialmax 1000 1000    # limit of inter and intramolecular steps (default: 95000 100000)
  nhist 100
+ rcutoff 7.0 0.1            # cutoff radius and width (default: 10 A 0.1 A)
 &END
 
 #&MD
