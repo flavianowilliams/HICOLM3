@@ -961,12 +961,6 @@ contains
                    prms(3)=0.0d0
                    prms(4)=1.0d0
                 end select
-             end select
-          end select
-       case('CT')
-          select case(pb)
-          case('CT')
-             select case(pc)
              case('C ')
                 select case(pd)
                 case('N ')
@@ -974,6 +968,41 @@ contains
                    prms(2)=0.07d0
                    prms(3)=0.0d0
                    prms(4)=2.0d0
+                end select
+             case('CT')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.20d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
+             case('NT')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.48d0
+                   prms(3)=180.0d0
+                   prms(4)=2.0d0
+                end select
+             case('OS')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.1d0
+                   prms(3)=180.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          case('S ')
+             select case(pc)
+             case('S ')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.6d0
+                   prms(3)=0.0d0
+                   prms(4)=3.0d0
                 end select
              end select
           end select
