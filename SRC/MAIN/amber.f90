@@ -993,6 +993,14 @@ contains
                    prms(3)=180.0d0
                    prms(4)=2.0d0
                 end select
+             case('OS')
+                select case(pd)
+                case('C ')
+                   prms(1)=1.0d0
+                   prms(2)=0.8d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
              end select
           case('S ')
              select case(pc)
