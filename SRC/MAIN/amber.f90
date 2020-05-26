@@ -1326,6 +1326,90 @@ contains
                 end select
              end select
           end select
+       case('F ')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('F ')
+                   prms(1)=1.0d0
+                   prms(2)=1.20d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
+       case('Cl')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('Cl')
+                   prms(1)=1.0d0
+                   prms(2)=0.45d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
+       case('Br')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('Br')
+                   prms(1)=1.0d0
+                   prms(2)=0.0d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
+       case('H2')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('OS')
+                select case(pd)
+                case('LP')
+                   prms(1)=1.0d0
+                   prms(2)=0.0d0
+                   prms(3)=0.0d0
+                   prms(4)=3.0d0
+                end select
+             end select
+          end select
+       case('HA')
+          select case(pb)
+          case('CM')
+             select case(pc)
+             case('OS')
+                select case(pd)
+                case('LP')
+                   prms(1)=1.0d0
+                   prms(2)=0.0d0
+                   prms(3)=180.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
+       case('H4')
+          select case(pb)
+          case('CM')
+             select case(pc)
+             case('OS')
+                select case(pd)
+                case('LP')
+                   prms(1)=1.0d0
+                   prms(2)=0.0d0
+                   prms(3)=180.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
        end select
        pa=p4
        pb=p3
