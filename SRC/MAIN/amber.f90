@@ -863,6 +863,15 @@ contains
                 prms(1)=63.0d0
                 prms(2)=120.00d0
              end select
+          case('CB')
+             select case(pc)
+             case('CB')
+                prms(1)=63.0d0
+                prms(2)=117.30d0
+             case('NB')
+                prms(1)=70.0d0
+                prms(2)=132.40d0
+             end select
           end select
        case('O ')
           select case(pb)
@@ -901,6 +910,9 @@ contains
              case('N2')
                 prms(1)=70.0d0
                 prms(2)=123.50d0
+             case('NC')
+                prms(1)=70.0d0
+                prms(2)=117.30d0
              end select
           end select
        end select
