@@ -286,6 +286,7 @@ contains
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,'(28x,a12,6x,i10)')'n(interm):',opt_ninter
     write(6,'(28x,a12,6x,i10)')' n(total):',opt_ntotal
+    write(6,'(28x,a12,6x,i10)')'    nhist:',nhist
     write(6,'(28x,a12,1x,es10.2,1x,a10)')'dfmax:',opt_dfmax*econv/rconv,'kcal/mol*A'
     write(6,'(28x,a12,1x,es10.2,1x,a12)')'gamma:',opt_gamma*rconv**2/econv,'A^2*mol/kcal'
     write(6,'(28x,36a1)')('-',j=1,36)
