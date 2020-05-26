@@ -879,6 +879,30 @@ contains
                 prms(2)=125.00d0
              end select
           end select
+       case('CB')
+          select case(pb)
+          case('C ')
+             select case(pc)
+             case('NA')
+                prms(1)=70.0d0
+                prms(2)=111.30d0
+             case('O ')
+                prms(1)=80.0d0
+                prms(2)=128.80d0
+             end select
+          case('CA')
+             select case(pc)
+             case('HA')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
+             case('H4')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
+             case('N2')
+                prms(1)=70.0d0
+                prms(2)=123.50d0
+             end select
+          end select
        end select
        pa=p3
        pc=p1
