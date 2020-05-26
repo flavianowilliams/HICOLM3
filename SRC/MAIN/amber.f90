@@ -893,6 +893,20 @@ contains
 
     do i=1,2
        select case(pa)
+       case('N ')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('N ')
+                   prms(1)=1.0d0
+                   prms(2)=2.00d0
+                   prms(3)=180.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
        case('HC')
           select case(pb)
           case('CT')
