@@ -866,6 +866,8 @@ contains
     nbends=0
     ntors=0
 
+    nhist=1
+
     coulop=1
 
     nmolec=0
