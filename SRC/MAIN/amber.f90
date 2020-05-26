@@ -1174,6 +1174,29 @@ contains
                    prms(3)=180.0d0
                    prms(4)=3.0d0
                 end select
+             case('CT')
+                select case(pd)
+                case('OS')
+                   prms(1)=1.0d0
+                   prms(2)=0.25d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                case('OH')
+                   prms(1)=1.0d0
+                   prms(2)=0.25d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                case('F ')
+                   prms(1)=1.0d0
+                   prms(2)=0.19d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                case('Cl')
+                   prms(1)=1.0d0
+                   prms(2)=0.25d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
              end select
           end select
        end select
