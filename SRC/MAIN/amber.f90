@@ -963,6 +963,34 @@ contains
                 end select
              end select
           end select
+       case('CT')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('N ')
+                   prms(1)=1.0d0
+                   prms(2)=0.07d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
+       case('H ')
+          select case(pb)
+          case('N ')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('O ')
+                   prms(1)=1.0d0
+                   prms(2)=2.0d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
        end select
        pa=p4
        pb=p3
