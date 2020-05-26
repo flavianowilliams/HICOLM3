@@ -871,6 +871,66 @@ contains
              case('NB')
                 prms(1)=70.0d0
                 prms(2)=132.40d0
+             case('CN')
+                prms(1)=63.0d0
+                prms(2)=116.20d0
+             end select
+          case('CM')
+             select case(pc)
+             case('CM')
+                prms(1)=63.0d0
+                prms(2)=117.00d0
+             case('HA')
+                prms(1)=50.0d0
+                prms(2)=123.30d0
+             case('H4')
+                prms(1)=50.0d0
+                prms(2)=123.30d0
+             end select
+          case('CT')
+             select case(pc)
+             case('HC')
+                prms(1)=50.0d0
+                prms(2)=109.50d0
+             end select
+          case('CN')
+             select case(pc)
+             case('CB')
+                prms(1)=63.0d0
+                prms(2)=122.70d0
+             case('NA')
+                prms(1)=70.0d0
+                prms(2)=132.80d0
+             end select
+          case('N2')
+             select case(pc)
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
+             case('CT')
+                prms(1)=50.0d0
+                prms(2)=123.20d0
+             end select
+          case('NA')
+             select case(pc)
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=118.00d0
+             end select
+          case('NC')
+             select case(pc)
+             case('CB')
+                prms(1)=70.0d0
+                prms(2)=112.20d0
+             case('CQ')
+                prms(1)=70.0d0
+                prms(2)=118.60d0
+             end select
+          case('OH')
+             select case(pc)
+             case('HO')
+                prms(1)=50.0d0
+                prms(2)=113.00d0
              end select
           end select
        case('O ')
@@ -952,6 +1012,24 @@ contains
              case('H ')
                 prms(1)=50.0d0
                 prms(2)=125.80d0
+             end select
+          case('NB')
+             select case(pc)
+             case('CK')
+                prms(1)=70.0d0
+                prms(2)=103.80d0
+             case('LP')
+                prms(1)=150.0d0
+                prms(2)=126.00d0
+             end select
+          case('NC')
+             select case(pc)
+             case('CQ')
+                prms(1)=70.0d0
+                prms(2)=111.00d0
+             case('LP')
+                prms(1)=150.0d0
+                prms(2)=120.00d0
              end select
           end select
        end select
