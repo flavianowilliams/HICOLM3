@@ -918,6 +918,27 @@ contains
                    prms(2)=0.15d0
                    prms(3)=0.0d0
                    prms(4)=3.0d0
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.16d0
+                   prms(3)=0.0d0
+                   prms(4)=3.0d0
+                end select
+             case('C ')
+                select case(pd)
+                case('O ')
+                   prms(1)=1.0d0
+                   prms(2)=0.08d0
+                   prms(3)=180.0d0
+                   prms(4)=3.0d0
+                end select
+             case('CM')
+                select case(pd)
+                case('CM')
+                   prms(1)=1.0d0
+                   prms(2)=1.15d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
                 end select
              end select
           end select
@@ -930,6 +951,14 @@ contains
                 case('O ')
                    prms(1)=1.0d0
                    prms(2)=1.9d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             case('CT')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=0.25d0
                    prms(3)=0.0d0
                    prms(4)=1.0d0
                 end select
@@ -1011,6 +1040,46 @@ contains
                 end select
              end select
           end select
+          select case(pb)
+          case('OS')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('OS')
+                   prms(1)=1.0d0
+                   prms(2)=1.35d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                case('N*')
+                   prms(1)=1.0d0
+                   prms(2)=0.65d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          case('CM')
+             select case(pc)
+             case('CM')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=1.9d0
+                   prms(3)=180.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          case('CZ')
+             select case(pc)
+             case('CZ')
+                select case(pd)
+                case('HZ')
+                   prms(1)=1.0d0
+                   prms(2)=0.0d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             end select
+          end select
        case('H ')
           select case(pb)
           case('N ')
@@ -1022,6 +1091,88 @@ contains
                    prms(2)=2.0d0
                    prms(3)=0.0d0
                    prms(4)=1.0d0
+                end select
+             end select
+          end select
+       case('OH')
+          select case(pb)
+          case('P ')
+             select case(pc)
+             case('OS')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=1.2d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          case('CT')
+             select case(pc)
+             case('CT')
+                select case(pd)
+                case('OH')
+                   prms(1)=1.0d0
+                   prms(2)=0.175d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
+       case('OS')
+          select case(pb)
+          case('P ')
+             select case(pc)
+             case('OS')
+                select case(pd)
+                case('CT')
+                   prms(1)=1.0d0
+                   prms(2)=1.2d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          case('CT')
+             select case(pc)
+             case('N*')
+                select case(pd)
+                case('CK')
+                   prms(1)=1.0d0
+                   prms(2)=2.5d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                case('CM')
+                   prms(1)=1.0d0
+                   prms(2)=2.5d0
+                   prms(3)=0.0d0
+                   prms(4)=1.0d0
+                end select
+             case('CT')
+                select case(pd)
+                case('OS')
+                   prms(1)=1.0d0
+                   prms(2)=1.175d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                case('OH')
+                   prms(1)=1.0d0
+                   prms(2)=1.175d0
+                   prms(3)=0.0d0
+                   prms(4)=2.0d0
+                end select
+             end select
+          end select
+       case('H1')
+          select case(pb)
+          case('CT')
+             select case(pc)
+             case('C ')
+                select case(pd)
+                case('O ')
+                   prms(1)=1.0d0
+                   prms(2)=0.08d0
+                   prms(3)=180.0d0
+                   prms(4)=3.0d0
                 end select
              end select
           end select
