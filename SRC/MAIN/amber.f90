@@ -844,6 +844,24 @@ contains
              case('HA')
                 prms(1)=50.0d0
                 prms(2)=120.00d0
+             case('CA')
+                prms(1)=63.0d0
+                prms(2)=120.00d0
+             case('CB')
+                prms(1)=63.0d0
+                prms(2)=120.00d0
+             case('CT')
+                prms(1)=70.0d0
+                prms(2)=120.00d0
+             case('H4')
+                prms(1)=50.0d0
+                prms(2)=120.00d0
+             case('OH')
+                prms(1)=70.0d0
+                prms(2)=120.00d0
+             case('CN')
+                prms(1)=63.0d0
+                prms(2)=120.00d0
              end select
           end select
        case('O ')
