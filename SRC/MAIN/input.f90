@@ -608,7 +608,7 @@ contains
     character(7) in,char
     character(10) lxmol,key
 
-    !-Campo de Forca
+    !-Parametros do campo de Forca
 
     rewind(5)
 

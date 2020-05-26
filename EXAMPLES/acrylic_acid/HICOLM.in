@@ -1,7 +1,7 @@
 # Start MD
 
-@MDRUNNING
-#@MDPREPARE
+#@MDRUNNING
+@MDPREPARE
 
 # Structure variables
 
@@ -12,7 +12,7 @@ cell
 0.0  0.0 19.0
 molecs 1
 C3O2H5 1 9
-reuse 1
+reuse 0
 &END
 
 # Optimization options

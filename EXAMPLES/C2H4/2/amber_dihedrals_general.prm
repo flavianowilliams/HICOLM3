@@ -1,0 +1,63 @@
+X -C -C -X    4   14.50        180.0             2.         Junmei et al, 1999
+X -C -CA-X    4   14.50        180.0             2.         intrpol.bsd.on C6H6
+X -C -CB-X    4   12.00        180.0             2.         intrpol.bsd.on C6H6
+X -C -CM-X    4    8.70        180.0             2.         intrpol.bsd.on C6H6
+X -C -CT-X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -C -N -X    4   10.00        180.0             2.         AA,NMA
+X -C -N*-X    4    5.80        180.0             2.         JCC,7,(1986),230
+X -C -NA-X    4    5.40        180.0             2.         JCC,7,(1986),230
+X -C -NC-X    2    8.00        180.0             2.         JCC,7,(1986),230
+X -C -O -X    4   11.20        180.0             2.         Junmei et al, 1999
+X -C -OH-X    2    4.60        180.0             2.         Junmei et al, 1999
+X -C -OS-X    2    5.40        180.0             2.         Junmei et al, 1999
+X -CA-CA-X    4   14.50        180.0             2.         intrpol.bsd.on C6H6
+X -CA-CB-X    4   14.00        180.0             2.         intrpol.bsd.on C6H6
+X -CA-CM-X    4   10.20        180.0             2.         intrpol.bsd.on C6H6
+X -CA-CN-X    4   14.50        180.0             2.         reinterpolated 93'
+X -CA-CT-X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -CA-N2-X    4    9.60        180.0             2.         reinterpolated 93'
+X -CA-NA-X    4    6.00        180.0             2.         JCC,7,(1986),230
+X -CA-NC-X    2    9.60        180.0             2.         JCC,7,(1986),230
+X -CA-OH-X    2    1.80        180.0             2.         Junmei et al, 99
+X -CB-CB-X    4   21.80        180.0             2.         intrpol.bsd.on C6H6
+X -CB-CN-X    4   12.00        180.0             2.         reinterpolated 93'
+X -CB-N*-X    4    6.60        180.0             2.         JCC,7,(1986),230
+X -CB-NB-X    2    5.10        180.0             2.         JCC,7,(1986),230
+X -CB-NC-X    2    8.30        180.0             2.         JCC,7,(1986),230
+X -CC-CT-X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -CC-CV-X    4   20.60        180.0             2.         intrpol.bsd.on C6H6
+X -CC-CW-X    4   21.50        180.0             2.         intrpol.bsd.on C6H6
+X -CC-NA-X    4    5.60        180.0             2.         JCC,7,(1986),230
+X -CC-NB-X    2    4.80        180.0             2.         JCC,7,(1986),230
+X -CD-CD-X    4    4.00        180.0             2.         Junmei et al, 1999
+X -CD-CT-X    6    0.00          0.0             2.         Junmei et al, 1999
+X -CD-CM-X    4   26.60        180.0             2.         Junmei et al, 1999
+X -CK-N*-X    4    6.80        180.0             2.         JCC,7,(1986),230
+X -CK-NB-X    2   20.00        180.0             2.         JCC,7,(1986),230
+X -CM-CM-X    4   26.60        180.0             2.         intrpol.bsd.on C6H6
+X -CM-CT-X    6    0.00          0.0             3.         JCC,7,(1986),230
+X -CM-N*-X    4    7.40        180.0             2.         JCC,7,(1986),230
+X -CM-OS-X    2    2.10        180.0             2.         Junmei et al, 1999
+X -CN-NA-X    4    6.10        180.0             2.         reinterpolated 93'
+X -CQ-NC-X    2   13.60        180.0             2.         JCC,7,(1986),230
+X -CT-CT-X    9    1.40          0.0             3.         JCC,7,(1986),230
+X -CT-CY-X    3    0.00          0.0             1.         Junmei et al, 1999
+X -CT-CZ-X    3    0.00          0.0             1.         Junmei et al, 1999
+X -CT-N -X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -CT-N*-X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -CT-N2-X    6    0.00          0.0             3.         JCC,7,(1986),230
+X -CT-NT-X    6    1.80          0.0             3.         Junmei et al, 1999
+X -CT-N3-X    9    1.40          0.0             3.         JCC,7,(1986),230
+X -CT-OH-X    3    0.50          0.0             3.         JCC,7,(1986),230
+X -CT-OS-X    3    1.15          0.0             3.         JCC,7,(1986),230
+X -CT-S -X    3    1.00          0.0             3.         JCC,7,(1986),230
+X -CT-SH-X    3    0.75          0.0             3.         JCC,7,(1986),230
+X -C*-CB-X    4    6.70        180.0             2.         intrpol.bsd.onC6H6aa
+X -C*-CT-X    6    0.00          0.0             2.         JCC,7,(1986),230
+X -C*-CW-X    4   26.10        180.0             2.         intrpol.bsd.on C6H6
+X -CR-NA-X    4    9.30        180.0             2.         JCC,7,(1986),230
+X -CR-NB-X    2   10.00        180.0             2.         JCC,7,(1986),230
+X -CV-NB-X    2    4.80        180.0             2.         JCC,7,(1986),230
+X -CW-NA-X    4    6.00        180.0             2.         JCC,7,(1986),230
+X -OH-P -X    3    0.75          0.0             3.         JCC,7,(1986),230
+X -OS-P -X    3    0.75          0.0             3.         JCC,7,(1986),230
