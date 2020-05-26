@@ -1,7 +1,6 @@
 # Start MD method
 
 @MDPREPARE # optimizing initial system
-#@MDRUNNING # molecular dynamics
 
 # Structure variables
 
@@ -21,6 +20,7 @@
  dfmax 1.0e-2               # intra and intermolecular gradient force tolerance (default: 1.e-2)
  gamma 1.e-7                # ... (default: 1.e-7)
  ntrialmax 100000 100000    # limit of inter and intramolecular steps (default: 95000 100000)
+ nhist 100
 &END
 
 #&MD
