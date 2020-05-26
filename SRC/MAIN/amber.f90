@@ -899,6 +899,27 @@ contains
                 prms(1)=80.0d0
                 prms(2)=128.80d0
              end select
+          case('CB')
+             select case(pc)
+             case('N*')
+                prms(1)=70.0d0
+                prms(2)=106.20d0
+             case('NB')
+                prms(1)=70.0d0
+                prms(2)=110.40d0
+             case('NC')
+                prms(1)=70.0d0
+                prms(2)=127.70d0
+             end select
+          case('C*')
+             select case(pc)
+             case('CT')
+                prms(1)=70.0d0
+                prms(2)=128.60d0
+             case('CW')
+                prms(1)=63.0d0
+                prms(2)=106.40d0
+             end select
           case('CA')
              select case(pc)
              case('HA')
@@ -913,6 +934,24 @@ contains
              case('NC')
                 prms(1)=70.0d0
                 prms(2)=117.30d0
+             end select
+          case('CN')
+             select case(pc)
+             case('NA')
+                prms(1)=70.0d0
+                prms(2)=104.40d0
+             end select
+          case('N*')
+             select case(pc)
+             case('CK')
+                prms(1)=70.0d0
+                prms(2)=105.40d0
+             case('CT')
+                prms(1)=70.0d0
+                prms(2)=125.80d0
+             case('H ')
+                prms(1)=50.0d0
+                prms(2)=125.80d0
              end select
           end select
        end select
