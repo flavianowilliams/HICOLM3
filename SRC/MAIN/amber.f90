@@ -50,8 +50,8 @@ contains
              ri(i)=dble(x1)
           end if
        end do
-       px=p2
 10     rewind(4)
+       px=p2
     end do
 
     prms(1)=sqrt(epsi(1)*epsi(2))
