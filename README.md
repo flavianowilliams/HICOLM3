@@ -1,4 +1,4 @@
-# HICOLM x.y.z
+# HICOLM
  Multi-Methods for Molecules and Condensed Systems
 
 Below is a list of publications involving the HICOLM program:
