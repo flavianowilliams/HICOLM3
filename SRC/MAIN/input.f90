@@ -682,7 +682,7 @@ contains
                 vdw(jj,j)=3
              end do
           end do
-          coulop=1
+          coulop=2
        elseif(key.eq.'$INTRA')then
           do j=1,nmolec
              read(5,*)key,lxmol
