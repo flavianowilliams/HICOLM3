@@ -189,8 +189,10 @@ contains
 
     !-imprimindo mensagem de aviso
 
-    if(nx.eq.opt_ntotal)&
-         write(6,*)'Warning! The o optimization does not reach the convergence criteria.'
+    if(nx.eq.opt_ntotal)then
+       write(6,'(4x,a68)')'Warning: The o optimization does not reach the convergence criteria!'
+       write(6,*)
+    end if
 
     return
 
