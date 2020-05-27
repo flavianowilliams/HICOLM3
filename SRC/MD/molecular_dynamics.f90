@@ -140,12 +140,6 @@ contains
 
     call ff_prepare
 
-    !-checando dimensoes da caixa
-
-    if(rcutoff.gt.0.5d0*a)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if(rcutoff.gt.0.5d0*b)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-    if(rcutoff.gt.0.5d0*c)stop 'npt_ber_vv: rcutoff exceeds the half-box size'
-
     !-preparando lista de vizinhos de Verlet
 
     call verlet_list_inter

@@ -328,6 +328,12 @@ contains
     real(8) encoul,enbond,enbend,entors,envdw
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
+    !-checando dimensoes da caixa
+
+    if(rcutoff.gt.0.5d0*a)stop 'ff_modules: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*b)stop 'ff_modules: rcutoff exceeds the half-box size'
+    if(rcutoff.gt.0.5d0*c)stop 'ff_modules: rcutoff exceeds the half-box size'
+
     !-valores iniciais
 
     !-energia
