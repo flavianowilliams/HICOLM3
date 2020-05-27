@@ -5,15 +5,31 @@
 make clean
 make
 #
+# -- definind installation directory --
+#
+exe_dir="/usr/local/bin"
+aux_dir="/usr/local/share"
+#
+# -- uninstalling program
+#
+if [ -f "$exe_dir/hicolm" ]
+then
+    rm $exe_dir/hicolm
+fi
+#
+if [ -d "$aux_dir/HICOLM" ]
+then
+    rm -r $aux_dir/HICOLM
+fi
+#
 # --creating directory--
 #
-mkdir /usr/local/share/HICOLM
-mkdir /usr/local/share/HICOLM/amber
+mkdir $aux_dir/HICOLM
+mkdir $aux_dir/HICOLM/amber
 #
 # --copying files--
 #
-cp HICOLM /usr/local/bin/hicolm
-#
-cp AMBER/*.prm /usr/local/share/HICOLM/amber/.
+cp AMBER/*.prm $aux_dir/HICOLM/amber/.
+cp HICOLM $exe_dir/hicolm
 #
 make clean

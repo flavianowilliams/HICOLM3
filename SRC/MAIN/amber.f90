@@ -32,7 +32,7 @@ contains
     character(2) p1,p2,pa,px
 
     open(4,file='/usr/local/share/HICOLM/amber/amber_vdw.prm',status='old')
-!    open(4,file='amber_vdw.prm',status='old')
+!    open(4,file=TRIM(ADJUSTL(fileplace))//'/amber_vdw.prm',status='old')
 
     !-atribuindo valores iniciais
 
@@ -56,8 +56,6 @@ contains
 
     prms(1)=sqrt(epsi(1)*epsi(2))
     prms(2)=ri(1)+ri(2)
-
-    !    prms(2)=prms(2)/2**(1.d0/6.d0) !convertendo parametro p/ outra versao de LJ
 
     close(4)
 
@@ -108,7 +106,6 @@ contains
     character(2) p1,p2,p3,pa,pb,pc
 
     open(4,file='/usr/local/share/HICOLM/amber/amber_angles.prm',status='old')
-!    open(4,file='amber_angles.prm',status='old')
 
     !-atribuindo valores iniciais
 
@@ -163,7 +160,6 @@ contains
     character(2) p2,p3,pa,pb,pc,pd
 
     open(4,file='/usr/local/share/HICOLM/amber/amber_dihedrals_general.prm',status='old')
-!    open(4,file='amber_dihedrals_general.prm',status='old')
 
     do i=1,1000
        read(4,'(a2,1x,a2,1x,a2,1x,a2,i4,f8.2,8x,f5.1,12x,i2)',end=10)pa,pb,pc,pd,x1,x2,x3,x4
@@ -195,7 +191,6 @@ contains
     real(4) x2,x3
     character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
-!    open(4,file='amber_dihedrals_proper.prm',status='old')
     open(4,file='/usr/local/share/HICOLM/amber/amber_dihedrals_proper.prm',status='old')
 
     do i=1,1000
