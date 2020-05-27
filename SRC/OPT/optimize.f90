@@ -187,6 +187,11 @@ contains
        if(mod(i,nhist).eq.0)call history(ihist)
     end do
 
+    !-imprimindo mensagem de aviso
+
+    if(nx.eq.opt_ntotal)&
+         write(6,*)'Warning! The o optimization does not reach the convergence criteria.'
+
     return
 
 5   format(5x,a1,14x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
