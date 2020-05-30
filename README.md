@@ -1,6 +1,7 @@
 # HICOLM Multi-Methods for Molecules and Condensed Systems
 
 [![license](https://img.shields.io/github/license/desktop/desktop.svg?style=flat-square)](https://github.com/desktop/desktop/blob/development/LICENSE)
+[![All Releases tags](https://img.shields.io/github/release/nwchemgit/nwchem/all.svg)](https://github.com/nwchemgit/nwchem/releases)
 
 Hicolm is an open source package focused in molecular modelling of condensed systems by using multi-methods in computational chemistry
 
