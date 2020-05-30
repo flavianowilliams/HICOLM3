@@ -1,5 +1,4 @@
-# HICOLM
- Multi-Methods for Molecules and Condensed Systems
+# HICOLM Multi-Methods for Molecules and Condensed Systems
 
 [![license](https://img.shields.io/github/license/desktop/desktop.svg?style=flat-square)](https://github.com/flavianowilliams/HICOLM/LICENSE)
 
