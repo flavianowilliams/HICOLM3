@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
+#   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
 # describe: Installation of HICOLM package
-# version: 3.0.0
-# license: MIT license
+#  version: 3.0.0
+#  license: MIT license
 #
 # --compiling codes--
 #

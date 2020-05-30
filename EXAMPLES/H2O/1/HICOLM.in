@@ -9,8 +9,9 @@
   19.0 0.0  0.0
   0.0 19.0  0.0
   0.0  0.0 19.0
- molecs 1
-  H2O 100 3
+ molecs 2
+  H2O1 50 3
+  H2O2 50 3
  reuse 1
 &END
 
@@ -31,7 +32,10 @@
 
 &FORCE
  $AMBER
-  molecule H2O
+  molecule H2O1
+  OW HW HW
+  -0.834 0.417 0.417
+  molecule H2O2
   OW HW HW
   -0.834 0.417 0.417
  $END
