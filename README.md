@@ -36,6 +36,23 @@ After install the user must create in working directory the following input file
 
 * Hicolm.in, with relevant informations of structure, MD parameters and force field.
 
+```
+@MDRUNNING # direct molecular dynamics
+
+&STRUCT
+...
+&END
+
+&MD
+&END
+
+&OPT
+&END
+
+&FORCE
+&END
+```
+
 * Hicolm.str, with coordinates and species identification of each atom.
 
 After that, run the command `hicolm` in your working directory. Four output files will be create:
