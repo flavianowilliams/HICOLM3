@@ -1,5 +1,5 @@
 [![license](https://img.shields.io/dub/l/vibe-d?logoColor=green&style=plastic)](https://github.com/desktop/desktop/blob/development/LICENSE)
-[![license](https://img.shields.io/github/v/release/flavianowilliams/HICOLM)](https://github.com/desktop/desktop/blob/development/LICENSE)
+[![latest](https://img.shields.io/github/v/release/flavianowilliams/HICOLM?style=plastic)](https://github.com/flavianowilliams/HICOLM/releases/latest)
 ![downloads](https://img.shields.io/github/downloads/flavianowilliams/HICOLM/latest/total?style=plastic)
 
 # HICOLM Multi-Methods for Molecules and Condensed Systems
