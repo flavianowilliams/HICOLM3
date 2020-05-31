@@ -13,6 +13,10 @@ Below is a list of publications involving the HICOLM program:
 
 # Installation
 
+To install Hicolm, just run as a superuser the script install.sh in the SRC directory,
+
+
+
 # Usage
 
 # License
