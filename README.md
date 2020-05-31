@@ -29,3 +29,11 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 * Amber Protocol available in Force Field section.
 * Optimization method by steepest descent algorithm.
+
+# Usage
+
+After install the user must create in working directory the following input files:
+
+* Hicolm.in
+
+* Hicolm.str
