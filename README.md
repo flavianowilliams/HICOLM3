@@ -19,7 +19,7 @@ To install Hicolm just run "as a superuser" the script install.sh in the SRC dir
 $ sudo ./install.sh
 ```
 
-Note: Only gfortran libraries is necessary to install Hicolm program.
+Notice: Only gfortran libraries is necessary to install Hicolm program.
 
 # Usage
 
