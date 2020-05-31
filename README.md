@@ -37,3 +37,10 @@ After install the user must create in working directory the following input file
 * Hicolm.in
 
 * Hicolm.str
+
+After that, run the command `hicolm` in your working directory. Four output files will be create:
+
+1. Hicolm.out: Which contains relevant informations about the simulation;
+2. Hicolm.md: With informations about energy, force, velocity and positions of each atom at each MD cycle;
+3. Hicolm.XSF: The latest force, velocity and positions of each atom;
+4. Hicolm.AXSF: Conjunction of frames containing force, velocity and positions.
