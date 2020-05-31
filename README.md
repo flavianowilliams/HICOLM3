@@ -34,9 +34,9 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 After install the user must create in working directory the following input files:
 
-* Hicolm.in
+* Hicolm.in, with relevant informations of structure, MD parameters and force field.
 
-* Hicolm.str
+* Hicolm.str, with coordinates and species identification of each atom.
 
 After that, run the command `hicolm` in your working directory. Four output files will be create:
 
