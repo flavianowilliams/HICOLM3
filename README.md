@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/github/license/desktop/desktop.svg?style=flat-square)](https://github.com/desktop/desktop/blob/development/LICENSE)
+[![license](https://img.shields.io/dub/l/vibe-d?logoColor=green&style=plastic)](https://github.com/desktop/desktop/blob/development/LICENSE)
 
 # HICOLM Multi-Methods for Molecules and Condensed Systems
 
