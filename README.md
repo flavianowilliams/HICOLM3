@@ -88,4 +88,4 @@ After that, run the command `hicolm` in your working directory. Four output file
 3. **Hicolm.XSF**: The latest force, velocity and positions of each atom in XSF format (see [XCrysDen format](http://www.xcrysden.org/doc/XSF.html));
 4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions in AXSF format.
 
-For more information, you can run some examples in EXAMPLE directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
+For more information, you can run the examples in the EXAMPLE directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
