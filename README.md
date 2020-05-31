@@ -4,7 +4,7 @@
 ![size](https://img.shields.io/github/repo-size/flavianowilliams/HICOLM?color=yellow&style=plastic)
 ![releasedate](https://img.shields.io/github/release-date-pre/flavianowilliams/HICOLM?color=brown&style=plastic)
 
-# HICOLM Multi-Methods for Molecules and Condensed Systems
+# HICOLM: Multi-Methods for Molecules and Condensed Systems
 
 Hicolm is an open source package focused in molecular modelling of condensed systems.
 
@@ -23,7 +23,7 @@ To install just run "as a superuser" the script install.sh in the SRC directory,
 $ sudo ./install.sh
 ```
 
-Notice: gfortran libraries is necessary to compile the Hicolm program.
+Notice: gfortran library is necessary to compile the Hicolm program.
 
 # Highliths
 
@@ -34,9 +34,9 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 # Usage
 
-After install the user must create in working directory the following input files:
+After install the user must create in the working directory the following input files:
 
-* Hicolm.in, with relevant informations about the structure, MD parameters and force field:
+* Hicolm.in, with relevant informations about the structure, MD parameters and the force field:
 
 ```
  # direct molecular dynamics
@@ -70,7 +70,7 @@ After install the user must create in working directory the following input file
 
 The detailed description of each directive can be seen in <a href="https://seer.ufrgs.br/rita/article/view/RITA_VOL26_NR3_90">doi: 10.22456/2175-2745.92486.</a></p>
 
-* Hicolm.str, with coordinates and species identification of each atom. Below is an example of C2H4 molecule, the first collumn in the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie identification and the last collum is the freeze option of each atom (0 freeze, 1 free).
+* Hicolm.str, with coordinates and species identification of each atom. Below is an example of C2H4 molecule, the first collumn in the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie identification and the last one is the freeze option of each atom (0 freeze, 1 free).
 
 ```
     6    0.00632000    0.00000000    0.00000000        1      1
@@ -83,7 +83,7 @@ The detailed description of each directive can be seen in <a href="https://seer.
 
 After that, run the command `hicolm` in your working directory. Four output files will be create:
 
-1. **Hicolm.out**: Contains relevant information about the simulation;
+1. **Hicolm.out**: Contains relevant informations about the simulation;
 2. **Hicolm.md**: With values of energy, force, velocity and positions of each atom at each MD cycle;
 3. **Hicolm.XSF**: The latest force, velocity and positions of each atom in XSF format (see [XCrysDen format](http://www.xcrysden.org/doc/XSF.html));
 4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions in AXSF format.
