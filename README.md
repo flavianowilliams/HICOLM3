@@ -34,7 +34,7 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 After install the user must create in working directory the following input files:
 
-* Hicolm.in, with relevant informations of structure, MD parameters and force field:
+* Hicolm.in, with relevant informations about the structure, MD parameters and force field:
 
 ```
  # direct molecular dynamics
@@ -66,7 +66,7 @@ After install the user must create in working directory the following input file
 &END
 ```
 
-* Hicolm.str, with coordinates and species identification of each atom:
+* Hicolm.str, with coordinates and species identification of each atom. Below is an example of C2H4 molecule, the first collumn in the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie identification and the last collum is the freeze option of each atom (0 freeze, 1 free).
 
 ```
     6    0.00632000    0.00000000    0.00000000        1      1
