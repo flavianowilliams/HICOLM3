@@ -37,19 +37,32 @@ After install the user must create in working directory the following input file
 * Hicolm.in, with relevant informations of structure, MD parameters and force field.
 
 ```
-@MDRUNNING # direct molecular dynamics
+ # direct molecular dynamics
+ 
+ @MDRUNNING
 
-&STRUCT
+# System information
+
+&STRUCT    
 ...
 &END
 
+# MD parameters
+
 &MD
+...
 &END
+
+# Optimization parameters
 
 &OPT
+...
 &END
 
+# Force Field information
+
 &FORCE
+...
 &END
 ```
 
