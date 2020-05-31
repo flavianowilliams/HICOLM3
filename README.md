@@ -25,7 +25,7 @@ $ sudo ./install.sh
 
 Notice: gfortran library is necessary to compile the Hicolm program.
 
-# Highliths
+# Highlighted topics
 
 * Velocity Verlet integrator.
 * Emulation of NVT, NPT and NVE ensemble by Berendsen or Nosè-Hoover barostat and thermostat.
