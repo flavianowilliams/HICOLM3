@@ -2,7 +2,7 @@
 
 # HICOLM Multi-Methods for Molecules and Condensed Systems
 
-Hicolm is an open source package focused in molecular modelling of condensed systems by using multi-methods in computational chemistry
+Hicolm is an open source package focused in molecular modelling of condensed systems.
 
 ![xxx](DOCS/pictures/input_file.png)
 
