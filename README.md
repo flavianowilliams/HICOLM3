@@ -21,4 +21,6 @@ $ sudo ./install.sh
 
 Notice: gfortran libraries is necessary to compile the Hicolm program.
 
-# Usage :stat2:
+# Usage
+
+* Amber Force Field :stat2:
