@@ -25,10 +25,10 @@ $ sudo ./install.sh
 
 Notice: gfortran libraries is necessary to compile the Hicolm program.
 
-# What's new?<sup>:star2:</sup>
+# highliths
 
-* Amber Protocol available in Force Field section.
-* Optimization method by steepest descent algorithm.
+* Amber Protocol available in Force Field section <sup>:star2:</sup>.
+* Optimization method by steepest descent algorithm <sup>:star2:</sup>.
 
 # Usage
 
