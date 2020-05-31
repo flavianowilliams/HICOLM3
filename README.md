@@ -27,7 +27,7 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 # Highliths
 
-* Velocity verlet integrator.
+* Velocity Verlet integrator.
 * Emulation of NVT, NPT and NVE ensemble by Berendsen or Nosè-Hoover barostat and thermostat.
 * Amber Protocol available in Force Field section. <sup>:star2:</sup>
 * Optimization method by steepest descent algorithm. <sup>:star2:</sup>
