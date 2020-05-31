@@ -23,5 +23,5 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 # Usage
 
-* Amber Protocol available in Force Field section :star2:
-* Optimization method by steepest descent algorithm :star2:
+* Amber Protocol available in Force Field section. :star2:
+* Optimization method by steepest descent algorithm. :star2:
