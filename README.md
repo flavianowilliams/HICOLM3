@@ -19,6 +19,6 @@ To install just run "as a superuser" the script install.sh in the SRC directory,
 $ sudo ./install.sh
 ```
 
-Notice: gfortran libraries is necessary to install Hicolm program.
+Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 # Usage
