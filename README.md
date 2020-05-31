@@ -22,5 +22,3 @@ $ sudo ./install.sh
 Notice: gfortran libraries is necessary to install Hicolm program.
 
 # Usage
-
-# License
