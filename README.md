@@ -41,8 +41,8 @@ After install the user must create in working directory the following input file
 After that, run the command `hicolm` in your working directory. Four output files will be create:
 
 1. **Hicolm.out**: Which contains relevant information about the simulation;
-2. **Hicolm.md**: With informations about energy, force, velocity and positions of each atom at each MD cycle;
+2. **Hicolm.md**: With values of energy, force, velocity and positions of each atom at each MD cycle;
 3. **Hicolm.XSF**: The latest force, velocity and positions of each atom in XSF format (see [XCrysDen format](http://www.xcrysden.org/doc/XSF.html));
-4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions.
+4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions in AXSF format.
 
 For more information, you can run some examples in EXAMPLE directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
