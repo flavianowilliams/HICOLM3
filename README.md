@@ -2,7 +2,7 @@
 [![latest](https://img.shields.io/github/v/release/flavianowilliams/HICOLM?style=plastic)](https://github.com/flavianowilliams/HICOLM/releases/latest)
 ![downloads](https://img.shields.io/github/downloads/flavianowilliams/HICOLM/total?style=plastic)
 ![size](https://img.shields.io/github/repo-size/flavianowilliams/HICOLM?color=yellow&style=plastic)
-![releasedate](https://img.shields.io/github/release-date-pre/flavianowilliams/HICOLM?color=orange&style=plastic)
+![releasedate](https://img.shields.io/github/release-date-pre/flavianowilliams/HICOLM?color=brown&style=plastic)
 
 # HICOLM Multi-Methods for Molecules and Condensed Systems
 
