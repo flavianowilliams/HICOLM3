@@ -34,7 +34,7 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 After install the user must create in working directory the following input files:
 
-* Hicolm.in, with relevant informations of structure, MD parameters and force field.
+* Hicolm.in, with relevant informations of structure, MD parameters and force field:
 
 ```
  # direct molecular dynamics
@@ -66,7 +66,16 @@ After install the user must create in working directory the following input file
 &END
 ```
 
-* Hicolm.str, with coordinates and species identification of each atom.
+* Hicolm.str, with coordinates and species identification of each atom:
+
+```
+    6    0.00632000    0.00000000    0.00000000        1      1
+    6    1.34000000    0.00000000    0.00000000        2      1
+    1   -0.53868000   -0.94397000    0.00000000        3      1
+    1   -0.53868000    0.94397000    0.00000000        4      1
+    1    1.88500000    0.94397000    0.00000000        5      1
+    1    1.88500000   -0.94397000    0.00000000        6      1
+```
 
 After that, run the command `hicolm` in your working directory. Four output files will be create:
 
