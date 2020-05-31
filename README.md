@@ -23,4 +23,4 @@ Notice: gfortran libraries is necessary to compile the Hicolm program.
 
 # Usage
 
-* Amber Force Field :stat2:
+* Amber Force Field :star2:
