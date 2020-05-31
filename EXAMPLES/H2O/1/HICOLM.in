@@ -1,4 +1,4 @@
-# Start MD method
+# Start molecular dynamics
 
 @MDRUNNING # direct molecular dynamics
 
@@ -14,7 +14,7 @@
   reuse 1
 &END
 
-# Molecular dynamics variables
+# Molecular dynamics parameters
 
 &MD
  nhist 10
@@ -27,7 +27,7 @@
  rcutoff 6.9 0.1
 &END
 
-# Force field variables
+# Force field parameters
 
 &FORCE
  $AMBER
