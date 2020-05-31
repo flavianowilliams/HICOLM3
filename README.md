@@ -44,3 +44,5 @@ After that, run the command `hicolm` in your working directory. Four output file
 2. **Hicolm.md**: With informations about energy, force, velocity and positions of each atom at each MD cycle;
 3. **Hicolm.XSF**: The latest force, velocity and positions of each atom;
 4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions.
+
+For more information, you can run some examples in EXAMPLE directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
