@@ -1,5 +1,5 @@
 [![license](https://img.shields.io/github/license/flavianowilliams/HICOLM?style=plastic)](https://github.com/flavianowilliams/HICOLM/blob/master/LICENSE)
-[![latest](https://img.shields.io/github/v/release/flavianowilliams/HICOLM?color=blue&include_prereleases&style=plastic)](https://github.com/flavianowilliams/HICOLM/releases/latest)
+[![latest](https://img.shields.io/github/v/release/flavianowilliams/HICOLM?color=blue&include_prereleases&style=plastic)](https://github.com/flavianowilliams/HICOLM/tree/v2.0.0)
 ![downloads](https://img.shields.io/github/downloads/flavianowilliams/HICOLM/total?style=plastic)
 ![size](https://img.shields.io/github/repo-size/flavianowilliams/HICOLM?color=yellow&style=plastic)
 ![releasedate](https://img.shields.io/github/release-date-pre/flavianowilliams/HICOLM?color=brown&style=plastic)
