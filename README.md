@@ -70,7 +70,7 @@ After install the user must create in the working directory the following input 
 
 The detailed description of each directive can be seen in <a href="https://seer.ufrgs.br/rita/article/view/RITA_VOL26_NR3_90">doi: 10.22456/2175-2745.92486.</a></p>
 
-* Hicolm.str, with coordinates and species identification of each atom. Below is an example of C2H4 molecule, the first collumn in the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie identification and the last one is the freeze option of each atom (0 freeze, 1 free).
+* Hicolm.str, with coordinates and species id of each atom. Below is an example of C2H4 molecule, the first collumn is the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie id and the last one is the freeze option of each atom (0 freeze, 1 free).
 
 ```
     6    0.00632000    0.00000000    0.00000000        1      1
