@@ -9,7 +9,7 @@
 Hicolm is an open source package focused in molecular modelling of condensed systems.
 
 <p align="center">
-    <img width=500 height=auto src=DOCS/pictures/input_file.png>
+    <img width=500 height=auto src=DOCS/pictures/infrared.png>
 </p>
 
 Below is a list of publications involving the HICOLM program:
