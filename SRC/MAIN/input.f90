@@ -604,7 +604,7 @@ contains
 
     implicit none
 
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
+    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt,spcttt
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
@@ -617,7 +617,7 @@ contains
 
     if(in.ne.'&FORCE')goto 1
 
-    do i=1,100
+    do i=1,1000
        read(5,*)key
        if(key.eq.'&END')exit
        if(key.eq.'$AMBER')then
@@ -627,20 +627,25 @@ contains
              read(5,*)key,zmatrix_tol
           end if
           spctt=0
+          spcttt=0
           do j=1,nmolec
+             read(5,*)key
+             backspace(5)
              if(key.eq.'$END')goto 433
              read(5,*)key,lxmol
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
-                   read(5,*)(atsp(k+spctt),k=1,nxmolec(g))
-                   read(5,*)(parcoul(k+spctt,1),k=1,nxmolec(g))
+                   read(5,*)(atsp(k+spcttt),k=1,nxmolec(g))
+                   read(5,*)(parcoul(k+spcttt,1),k=1,nxmolec(g))
                    ff_model(g)='(AMBER)'
                    spctt=spctt+nxmolec(g)
                    nx=g
                 end if
+                ff_model(g)=''
+                spcttt=spcttt+nxmolec(g)
              end do
              call zmatrix(nx)
-             jj=spctt-nxmolec(nx)
+             jj=spcttt-nxmolec(nx)
              do k=1,bondscnt(nx)
                 ii=jj+molbond(nx,k,1)
                 iii=jj+molbond(nx,k,2)
