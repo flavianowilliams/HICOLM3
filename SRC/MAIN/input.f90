@@ -280,7 +280,7 @@ contains
     real(8) dr,rca,rcb
 
     nx=0
-    do i=2,imol
+    do i=1,imol-1
        nx=nx+nxmolec(i)*ntmolec(i)
     end do
 
@@ -626,13 +626,14 @@ contains
           if(key.eq.'zmatrix')then
              read(5,*)key,zmatrix_tol
           end if
-          spctt=0
-          spcttt=0
+          nx=0
           do j=1,nmolec
              read(5,*)key
              backspace(5)
              if(key.eq.'$END')goto 433
              read(5,*)key,lxmol
+             spcttt=0
+             spctt=0
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+spcttt),k=1,nxmolec(g))
@@ -640,12 +641,12 @@ contains
                    ff_model(g)='(AMBER)'
                    spctt=spctt+nxmolec(g)
                    nx=g
+                   goto 648
                 end if
-                ff_model(g)=''
                 spcttt=spcttt+nxmolec(g)
              end do
-             call zmatrix(nx)
-             jj=spcttt-nxmolec(nx)
+648          if(nx.ne.0)call zmatrix(nx)
+             jj=spcttt!-nxmolec(nx)
              do k=1,bondscnt(nx)
                 ii=jj+molbond(nx,k,1)
                 iii=jj+molbond(nx,k,2)
@@ -677,9 +678,9 @@ contains
                 tors(nx,k)=4
              end do
           end do
-433       do j=1,spctt
-             do jj=j,spctt
-                call amber_vdw(atsp(j),atsp(jj),val)
+433       do j=1,spctot
+             do jj=j,spctot
+                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
                 do k=1,2
                    parvdw(j,jj,k)=val(k)
                    parvdw(jj,j,k)=val(k)
