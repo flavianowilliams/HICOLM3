@@ -145,18 +145,18 @@ contains
        write(6,*)
        write(6,'(2x,a6,1x,i5)')'Bonds:',bondscnt(i)
        write(6,'(2x,111a1)')('-',j=1,52)
-       write(6,'(2x,a4,2x,a4,2x,a4,3x,a10)')'Site','Site','Type','Parameters'
+       write(6,'(2x,3(a4,2x),a4,3x,a10)')' i ','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,bondscnt(i)
           select case(bonds(i,j))
           case(1)
-             write(6,'(2x,2(i3,3x),a4,1x,3f9.2)')(molbond(i,j,l),l=1,2),&
+             write(6,'(2x,3(i3,3x),a4,1x,3f9.2)')j,(molbond(i,j,l),l=1,2),&
                   'mors',parbnd(i,j,1)*econv,parbnd(i,j,2)*kconv,parbnd(i,j,3)*rconv
           case(2)
-             write(6,'(2x,2(i3,3x),a4,1x,2f9.2)')(molbond(i,j,l),l=1,2),&
+             write(6,'(2x,3(i3,3x),a4,1x,2f9.2)')j,(molbond(i,j,l),l=1,2),&
                   'harm',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
           case(3)
-             write(6,'(2x,2(i3,3x),a5,2f9.2)')(molbond(i,j,l),l=1,2),&
+             write(6,'(2x,3(i3,3x),a5,2f9.2)')j,(molbond(i,j,l),l=1,2),&
                   'amber',parbnd(i,j,1)*(econv/rconv**2.d0),parbnd(i,j,2)*rconv
           end select
        end do

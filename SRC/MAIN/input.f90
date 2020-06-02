@@ -604,10 +604,16 @@ contains
 
     implicit none
 
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt,spcttt
+    integer, allocatable :: itval(:)
+
+    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
+
+    !-alocando memoria temporaria
+
+    allocate(itval(spctot))
 
     !-Parametros do campo de Forca
 
@@ -627,26 +633,31 @@ contains
              read(5,*)key,zmatrix_tol
           end if
           nx=0
+          spctt=1
           do j=1,nmolec
              read(5,*)key
              backspace(5)
              if(key.eq.'$END')goto 433
              read(5,*)key,lxmol
-             spcttt=0
-             spctt=0
+             !             spcttt=0
+             jj=0
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
-                   read(5,*)(atsp(k+spcttt),k=1,nxmolec(g))
-                   read(5,*)(parcoul(k+spcttt,1),k=1,nxmolec(g))
+                   read(5,*)(atsp(k+jj),k=1,nxmolec(g))
+                   read(5,*)(parcoul(k+jj,1),k=1,nxmolec(g))
+                   do k=1,nxmolec(g)
+                      itval(spctt)=k+jj
+                      spctt=spctt+1
+                   end do
                    ff_model(g)='(AMBER)'
-                   spctt=spctt+nxmolec(g)
                    nx=g
                    goto 648
                 end if
-                spcttt=spcttt+nxmolec(g)
+!                spcttt=spcttt+nxmolec(g)
+                jj=jj+nxmolec(g)
              end do
 648          if(nx.ne.0)call zmatrix(nx)
-             jj=spcttt!-nxmolec(nx)
+!             jj=spcttt!-nxmolec(nx)
              do k=1,bondscnt(nx)
                 ii=jj+molbond(nx,k,1)
                 iii=jj+molbond(nx,k,2)
@@ -678,9 +689,11 @@ contains
                 tors(nx,k)=4
              end do
           end do
-433       do j=1,spctot
-             do jj=j,spctot
-                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
+433       spctt=spctt-1
+          do j=1,spctt
+             do jj=j,spctt
+                !                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
+                call amber_vdw(atsp(itval(j)),atsp(itval(jj)),val)
                 do k=1,2
                    parvdw(j,jj,k)=val(k)
                    parvdw(jj,j,k)=val(k)
@@ -805,7 +818,7 @@ contains
              end do
           end do
        elseif(key.eq.'$INTER')then
-          do ii=1,100
+          do ii=1,1000
              read(5,*)key
              backspace(5)
              if(key.eq.'$END')goto 523
@@ -851,6 +864,10 @@ contains
           ntors=ntors+(torscnt(i)+itorscnt(i))
        end do
     end do
+
+    !-limpando memoria
+
+    deallocate(itval)
 
     return
 
