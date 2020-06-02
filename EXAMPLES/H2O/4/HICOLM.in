@@ -12,7 +12,7 @@ cell
 molecs 2
 H2O1 50 3
 H2O2 50 3
-reuse 0
+reuse 3
 &END
 
 # Molecular dynamics variables
@@ -40,7 +40,7 @@ rcutoff 7.0 0.1
   elect 3 2
   1 -0.82
   2 +0.41
-  3 +0.42
+  3 +0.41
   vdw 2
   1 4 lj 0.155425 3.165492
   1 1 lj 0.155425 3.165492
