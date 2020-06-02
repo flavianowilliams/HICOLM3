@@ -7,21 +7,23 @@
 
 &STRUCT
 cell
-19.0 0.0  0.0
-0.0 19.0  0.0
-0.0  0.0 19.0
-molecs 1
+15.0 0.0  0.0
+0.0 15.0  0.0
+0.0  0.0 15.0
+molecs 2
 C2H4 1 6
+H2O 100 3
 reuse 0
 &END
 
 # Optimization options
 
 &OPT
- dfmax 1.e-4
- gamma 1.e-5
- nhist 1000
- ntrialmax 0 100000
+ dfmax 1.e-2
+ gamma 1.e-9
+ nhist 10
+ ntrialmax 1000 1000
+ rcutoff 7.0 0.1
 &END
 
 # Molecular dynamics variables
@@ -44,6 +46,9 @@ rcutoff 7.0 0.1
   molecule C2H4
   CA CA HA HA HA HA
   -0.35498 -0.35498 0.177749 0.177749 0.177749 0.177749
+  molecule H2O
+  OW HW HW
+  -0.834 0.417 0.417
  $END
  $INTRA
   molecule C2H4
