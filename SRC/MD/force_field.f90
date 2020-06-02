@@ -131,11 +131,11 @@ contains
     do i=1,nmolec
        write(6,'(42x,a6,1x,a7)')namemol(i),ff_model(i)
        write(6,'(20x,111a1)')('*',j=1,52)
-       if(nxmolec(i).le.10)then
-          write(6,'(20x,a6,10(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
+       if(nxmolec(i).le.15)then
+          write(6,'(20x,a6,15(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
        else
-          write(6,'(20x,a6,10(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
-          write(6,'(26x,10(1x,a2))')(atsp(j+k),j=1,nxmolec(i))
+          write(6,'(20x,a6,15(1x,a2))')'Sites:',(atsp(j+k),j=1,15)
+          write(6,'(26x,15(1x,a2))')(atsp(j+k),j=16,nxmolec(i))
        end if
        if(ff_model(i).eq.'(AMBER)')then
           write(6,*)
