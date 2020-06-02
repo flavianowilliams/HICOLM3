@@ -211,7 +211,8 @@ contains
        write(6,*)
        write(6,'(2x,a19,1x,i5)')'Improper dihedrals:',itorscnt(i)
        write(6,'(2x,111a1)')('-',j=1,90)
-       write(6,'(2x,4(a4,2x),a4,4x,a10)')'Site','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
+            ' i ','Site','Site','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,90)
        do j=torscnt(i)+1,(torscnt(i)+itorscnt(i))
           select case(tors(i,j))
