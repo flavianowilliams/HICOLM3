@@ -48,7 +48,7 @@ contains
     implicit none
 
     integer i,j,k,l,i1,i2
-    real(8) chqtot,f1,f2
+    real(8) chqtot,f1,f2,f3,f4,f5,f6,f7
 
     !-valores iniciais
 
@@ -187,6 +187,16 @@ contains
           case(1)
              write(6,'(20x,4(i3,3x),a4,1x,2f8.1)')(moltors(i,j,l),l=1,4),&
                   'harm',partors(i,j,1)*econv,partors(i,j,2)*aconv
+          case(3)
+             f1=partors(i,j,1)*econv
+             f2=partors(i,j,2)*econv
+             f3=partors(i,j,3)*econv
+             f4=partors(i,j,4)*econv
+             f5=partors(i,j,5)*econv
+             f6=partors(i,j,6)*econv
+             f7=partors(i,j,7)*aconv
+             write(6,'(20x,4(i3,3x),a5,2x,i2,f8.2,f8.1,i2)')&
+                  (moltors(i,j,l),l=1,4),'ryck',f1,f2,f3,f4,f5,f6,f7
           case(4)
              i1=nint(partors(i,j,1))
              f1=partors(i,j,2)*econv
