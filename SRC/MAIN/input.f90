@@ -604,22 +604,16 @@ contains
 
     implicit none
 
-    integer, allocatable :: itval(:)
-
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20),spctt
+    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
-
-    !-alocando memoria temporaria
-
-    allocate(itval(spctot))
 
     !-Parametros do campo de Forca
 
     rewind(5)
 
-1   read(5,*,end=11)in
+1  read(5,*,end=2)in
 
     if(in.ne.'&FORCE')goto 1
 
@@ -633,31 +627,23 @@ contains
              read(5,*)key,zmatrix_tol
           end if
           nx=0
-          spctt=1
           do j=1,nmolec
              read(5,*)key
              backspace(5)
-             if(key.eq.'$END')goto 433
+             if(key.eq.'$END')goto 12
              read(5,*)key,lxmol
-             !             spcttt=0
              jj=0
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+jj),k=1,nxmolec(g))
                    read(5,*)(parcoul(k+jj,1),k=1,nxmolec(g))
-                   do k=1,nxmolec(g)
-                      itval(spctt)=k+jj
-                      spctt=spctt+1
-                   end do
                    ff_model(g)='(AMBER)'
                    nx=g
-                   goto 648
+                   goto 13
                 end if
-!                spcttt=spcttt+nxmolec(g)
                 jj=jj+nxmolec(g)
              end do
-648          if(nx.ne.0)call zmatrix(nx)
-!             jj=spcttt!-nxmolec(nx)
+13           if(nx.ne.0)call zmatrix(nx)
              do k=1,bondscnt(nx)
                 ii=jj+molbond(nx,k,1)
                 iii=jj+molbond(nx,k,2)
@@ -689,11 +675,9 @@ contains
                 tors(nx,k)=4
              end do
           end do
-433       spctt=spctt-1
-          do j=1,spctt
-             do jj=j,spctt
-                !                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
-                call amber_vdw(atsp(itval(j)),atsp(itval(jj)),val)
+12          do j=1,spctot
+             do jj=j,spctot
+                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
                 do k=1,2
                    parvdw(j,jj,k)=val(k)
                    parvdw(jj,j,k)=val(k)
@@ -703,17 +687,29 @@ contains
              end do
           end do
           coulop=2
-       elseif(key.eq.'$INTRA')then
+       end if
+    end do
+
+    rewind(5)
+
+2  read(5,*,end=3)in
+
+    if(in.ne.'&FORCE')goto 2
+
+    do i=1,1000
+       read(5,*)key
+       if(key.eq.'&END')exit
+       if(key.eq.'$INTRA')then
           do j=1,nmolec
              read(5,*)key,lxmol
              do g=1,molecmax
                 if(lxmol.eq.namemol(g))nx=g
              end do
-             do g=1,100
+             do g=1,1000
                 read(5,*)key
                 backspace(5)
                 if(key.eq.'molecule')exit
-                if(key.eq.'$END')goto 523
+                if(key.eq.'$END')goto 21
                 if(key.eq.'bends#')then
                    read(5,*)key,bendscnt(nx)
                    do k=1,bendscnt(nx)
@@ -821,7 +817,7 @@ contains
           do ii=1,1000
              read(5,*)key
              backspace(5)
-             if(key.eq.'$END')goto 523
+             if(key.eq.'$END')goto 21
              if(key.eq.'vdw')then
                 read(5,*)key,nx
                 do j=1,nx
@@ -849,12 +845,12 @@ contains
              end if
           end do
        end if
-523    continue
+21     continue
     end do
 
     !-calculando parametros intramoleculares totais
 
-11  nbends=0
+3   nbends=0
     nbonds=0
     ntors=0
     do i=1,nmolec
@@ -864,10 +860,6 @@ contains
           ntors=ntors+(torscnt(i)+itorscnt(i))
        end do
     end do
-
-    !-limpando memoria
-
-    deallocate(itval)
 
     return
 

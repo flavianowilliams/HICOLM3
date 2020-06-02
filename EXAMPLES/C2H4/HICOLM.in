@@ -22,7 +22,7 @@ reuse 0
  dfmax 1.e-2
  gamma 1.e-9
  nhist 10
- ntrialmax 1000 1000
+ ntrialmax 100 100
  rcutoff 7.0 0.1
 &END
 
@@ -53,11 +53,11 @@ rcutoff 7.0 0.1
   4 1 2 6 amber 1.0 1.1 180.0 2.0
  $END
  $AMBER
-  molecule C2H4
-  CA CA HA HA HA HA
-  -0.35498 -0.35498 0.177749 0.177749 0.177749 0.177749
   molecule H2O
   OW HW HW
   -0.834 0.417 0.417
+  molecule C2H4
+  CA CA HA HA HA HA
+  -0.35498 -0.35498 0.177749 0.177749 0.177749 0.177749
  $END
 &END
