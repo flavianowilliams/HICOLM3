@@ -195,7 +195,7 @@ contains
              f5=partors(i,j,5)*econv
              f6=partors(i,j,6)*econv
              f7=partors(i,j,7)*aconv
-             write(6,'(20x,4(i3,3x),a5,2x,i2,7f8.3)')&
+             write(6,'(20x,4(i3,3x),a5,2x,7f8.3)')&
                   (moltors(i,j,l),l=1,4),'ryck',f1,f2,f3,f4,f5,f6,f7
           case(4)
              i1=nint(partors(i,j,1))
