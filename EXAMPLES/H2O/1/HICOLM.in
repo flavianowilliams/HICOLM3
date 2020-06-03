@@ -10,8 +10,8 @@
   0.0 14.0  0.0
   0.0  0.0 14.0
  molecs 1
-  H2O1 100 1
-  reuse 1
+  H2O1 100 3
+  reuse 3
 &END
 
 # Molecular dynamics parameters
