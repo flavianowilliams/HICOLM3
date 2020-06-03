@@ -32,7 +32,6 @@ contains
     character(2) p1,p2,pa,px
 
     open(4,file='/usr/local/share/HICOLM/amber/amber_vdw.prm',status='old')
-!    open(4,file=TRIM(ADJUSTL(fileplace))//'/amber_vdw.prm',status='old')
 
     !-atribuindo valores iniciais
 
