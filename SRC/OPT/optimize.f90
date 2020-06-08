@@ -213,7 +213,7 @@ contains
        xa(i)=xa(i)+opt_gamma*fax(i)
        ya(i)=ya(i)+opt_gamma*fay(i)
        za(i)=za(i)+opt_gamma*faz(i)
-       end do
+    end do
 
     return
 
@@ -225,6 +225,10 @@ contains
 
     integer i,j,k,nx
     real(8) mtotal,fcm(3)
+    real(8) opt_range
+
+    opt_range=0.5d0
+    opt_range=0.333d0*sqrt(3.d0)*opt_range
 
     nx=1
     do i=1,nmolec
@@ -240,9 +244,9 @@ contains
              mtotal=mtotal+mass(nx)
           end do
           do k=1,nxmolec(i)
-             xa(nx)=xa(nx)+opt_gamma*fcm(1)/mtotal
-             ya(nx)=ya(nx)+opt_gamma*fcm(2)/mtotal
-             za(nx)=za(nx)+opt_gamma*fcm(3)/mtotal
+             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_range)
+             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_range)
+             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_range)
              nx=nx+1
           end do
        end do
