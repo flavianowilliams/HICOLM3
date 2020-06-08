@@ -210,9 +210,9 @@ contains
     integer i
 
     do i=1,natom
-       xa(i)=xa(i)+opt_gamma*fax(i)
-       ya(i)=ya(i)+opt_gamma*fay(i)
-       za(i)=za(i)+opt_gamma*faz(i)
+       xa(i)=xa(i)+min(opt_gamma*fax(i),opt_rshift)
+       ya(i)=ya(i)+min(opt_gamma*fay(i),opt_rshift)
+       za(i)=za(i)+min(opt_gamma*faz(i),opt_rshift)
     end do
 
     return
@@ -225,10 +225,6 @@ contains
 
     integer i,j,k,nx
     real(8) mtotal,fcm(3)
-    real(8) opt_range
-
-    opt_range=0.5d0
-    opt_range=0.333d0*sqrt(3.d0)*opt_range
 
     nx=1
     do i=1,nmolec
@@ -244,9 +240,9 @@ contains
              mtotal=mtotal+mass(nx)
           end do
           do k=1,nxmolec(i)
-             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_range)
-             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_range)
-             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_range)
+             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
+             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_rshift)
+             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_rshift)
              nx=nx+1
           end do
        end do
@@ -301,6 +297,7 @@ contains
     write(6,'(28x,a12,1x,es10.2,1x,a10)')'dfmax:',opt_dfmax*econv/rconv,'kcal/mol*A'
     write(6,'(28x,a12,1x,es10.2,1x,a12)')'gamma:',opt_gamma*rconv**2/econv,'A^2*mol/kcal'
     write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
+    write(6,'(28x,a12,8x,f6.2,1x,a1)')' rshift:',sqrt(3.d0*opt_rshift**2)*rconv,'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
 
