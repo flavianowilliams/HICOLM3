@@ -43,10 +43,10 @@ module input
   !-variaveis de estrutura
   integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax),atp(natmax),fztp(natmax)
   !
-  real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume
+  real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume,qat(natmax)
   real(8) vax(natmax),vay(natmax),vaz(natmax),fax(natmax),fay(natmax),faz(natmax)
   !
-  save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna,atp,fztp
+  save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna,atp,fztp,qat
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
   integer nhist,ntrialmax,nrelax,bendscnt(molecmax),bondscnt(molecmax),nzmolec(molecmax)
@@ -866,6 +866,10 @@ contains
           nbonds=nbonds+bondscnt(i)
           ntors=ntors+(torscnt(i)+itorscnt(i))
        end do
+    end do
+
+    do i=1,natmax
+       qat(i)=parcoul(atp(i),1)
     end do
 
     return
