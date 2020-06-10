@@ -644,6 +644,7 @@ contains
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+jj),k=1,nxmolec(g))
                    read(5,*)(parcoul(k+jj,1),k=1,nxmolec(g))
+                   write(*,*)(atnp(k+jj),k=1,nxmolec(g))
                    ff_model(g)='(AMBER)'
                    nx=g
                    goto 13
