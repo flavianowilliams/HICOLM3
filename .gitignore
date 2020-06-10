@@ -6,6 +6,7 @@
 *.o
 *.mod
 *.old
+*.dia
 HICOLM
 x2x
 properties
