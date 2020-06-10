@@ -11,7 +11,7 @@
   0.0  0.0 14.0
  molecs 1
   H2O1 100 3
-  reuse 3
+  reuse 0
 &END
 
 # Molecular dynamics parameters
@@ -20,7 +20,7 @@
  nhist 10
  preext 1.0d0
  text 298.0
- ntrialmax 1000
+ ntrialmax 10
  nrelax 1
  timestep 0.001
  ensemble npt berendsen 0.5 0.5 4.9e-5

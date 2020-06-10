@@ -868,7 +868,7 @@ contains
        end do
     end do
 
-    do i=1,natmax
+    do i=1,natom
        qat(i)=parcoul(atp(i),1)
     end do
 
@@ -954,7 +954,7 @@ contains
     a=0.d0
     b=0.d0
     c=0.d0
-    att='C'
+    att='C '
 
     do i=1,natmax
        xa(i)=0.d0
@@ -962,6 +962,7 @@ contains
        za(i)=0.d0
        atp(i)=0
        fztp(i)=1
+       qat(i)=0.d0
     end do
 
     nfree=0
@@ -1069,6 +1070,12 @@ contains
        fax(i)=fax(i)/(econv/rconv)
        fay(i)=fay(i)/(econv/rconv)
        faz(i)=faz(i)/(econv/rconv)
+    end do
+
+    !-cargas parciais
+
+    do i=1,natom
+       qat(i)=qat(i)/elconv
     end do
 
     !-parametros de otimizacao

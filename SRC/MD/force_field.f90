@@ -256,7 +256,7 @@ contains
 
     chqtot=0
     do i=1,natom
-       chqtot=chqtot+parcoul(atp(i),1)
+       chqtot=chqtot+qat(i)
     end do
 
     select case(coulop)
@@ -273,9 +273,9 @@ contains
             'Total of species:',spctot,'->',(atsp(i),i=1,spctot)
        write(6,*)
        write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
-            'Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,spctot)
+            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,spctot)
        write(*,*)
-       write(6,82)' Total charge:',chqtot
+       write(6,82)' Total charge:',chqtot*elconv
        write(6,*)
        write(6,70)'       Maximum coulomb interaction:',ncoulstp
        write(6,*)
@@ -285,10 +285,10 @@ contains
        write(6,'(27x,10(1x,a2))')(atsp(i),i=11,spctot)
        write(*,*)
        write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
-            'Partial charges:',spctot,'->',(parcoul(atnp(i),1),i=1,10)
-       write(6,'(27x,10f7.3)')(parcoul(atnp(i),1),i=11,spctot)
+            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,10)
+       write(6,'(27x,10f7.3)')(parcoul(atnp(i),1)*elconv,i=11,spctot)
        write(6,*)
-       write(6,82)' Total charge:',chqtot
+       write(6,82)' Total charge:',chqtot*elconv
        write(6,*)
        write(6,70)'       Maximum coulomb interaction:',ncoulstp
        write(6,*)

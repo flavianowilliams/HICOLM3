@@ -112,7 +112,7 @@ contains
     real(8) xvz,yvz,zvz,fr,pot
     real(8) encoul,vircoul
 
-    call coulomb_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
+    call coulomb_flags(ni,nj,xvz,yvz,zvz,pot,fr)
     call coulomb_force(ni,nj,xvz,yvz,zvz,fr)
 
     vircoul=vircoul+fr*(xvz**2+yvz**2+zvz**2)
@@ -137,7 +137,7 @@ contains
 
        call mic(ni,nj,xvz,yvz,zvz)
 
-       call coulomb_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
+       call coulomb_flags(ni,nj,xvz,yvz,zvz,pot,fr)
 
        pot=pot*sf_coul
        fr=fr*sf_coul
@@ -161,7 +161,7 @@ contains
     implicit none
 
     integer i,j
-    real(8) pot,fr,xvz,yvz,zvz,dr,prm(2),alcoul,xij,lambda
+    real(8) pot,fr,xvz,yvz,zvz,dr,alcoul,xij,lambda
 
     !-atribuindo valores iniciais
 
@@ -172,15 +172,12 @@ contains
 
     dr=sqrt(xvz**2+yvz**2+zvz**2)
 
-    prm(1)=parcoul(i,1)
-    prm(2)=parcoul(j,1)
-    !
     select case(coulop)
     case(1)
 
-       pot=prm(1)*prm(2)/dr
+       pot=qat(i)*qat(j)/dr
 
-       fr=-prm(1)*prm(2)/dr**2
+       fr=-qat(i)*qat(j)/dr**2
 
        fr=-fr/dr ! -(1/r)*dU/dr
 
@@ -188,11 +185,11 @@ contains
 
        alcoul=1.d-1/kconv
 
-       pot=prm(1)*prm(2)*(erfc(alcoul*dr)/dr-erfc(alcoul*rcutoff)/rcutoff &
+       pot=qat(i)*qat(j)*(erfc(alcoul*dr)/dr-erfc(alcoul*rcutoff)/rcutoff &
             +(erfc(alcoul*rcutoff)/rcutoff**2+(2.d0*alcoul) &
             *exp(-(alcoul*rcutoff)**2)/(sqrt(pi)*rcutoff))*(dr-rcutoff))
 
-       fr=-prm(1)*prm(2)*(erfc(alcoul*dr)/dr**2+(2.d0*alcoul) &
+       fr=-qat(i)*qat(j)*(erfc(alcoul*dr)/dr**2+(2.d0*alcoul) &
             *exp(-(alcoul*dr)**2)/(sqrt(pi)*dr) &
             -(erfc(alcoul*rcutoff)/rcutoff**2 &
             +(2.d0*alcoul)*exp(-(alcoul*rcutoff)**2)/(sqrt(pi)*rcutoff)))
@@ -205,9 +202,9 @@ contains
 
        xij=sqrt(2.d0*(1.d0-lambda)**2+dr**2)
 
-       pot=prm(1)*prm(2)*lambda*(1.d0/xij+xij/rcutoff**2-2.d0/rcutoff)
+       pot=qat(i)*qat(j)*lambda*(1.d0/xij+xij/rcutoff**2-2.d0/rcutoff)
 
-       fr=prm(1)*prm(2)*lambda*(1.d0/xij**2-1.d0/rcutoff**2)/xij
+       fr=qat(i)*qat(j)*lambda*(1.d0/xij**2-1.d0/rcutoff**2)/xij
 
     end select
 !
