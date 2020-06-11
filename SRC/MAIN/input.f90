@@ -45,6 +45,7 @@ module input
   !
   real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume,qat(natmax)
   real(8) vax(natmax),vay(natmax),vaz(natmax),fax(natmax),fay(natmax),faz(natmax)
+  real(8) sys_shift(3)
   !
   save rxmx,rymx,rzmx,gsymopt,natom,reuse,idna,atp,fztp,qat
   !----------------------------------------------------------------------------
@@ -74,7 +75,7 @@ module input
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
   save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,moltors
-  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp
+  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp,sys_shift
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
   !----------------------------------------------------------------------------
@@ -164,7 +165,7 @@ contains
 
     if(in.ne.'&STRUCT')goto 1
 
-    do i=1,100
+    do i=1,1000
        read(5,*)key
        if(key.eq.'&END')exit
        if(key.eq.'cell')then
@@ -186,6 +187,10 @@ contains
           backspace(5)
           read(5,*)key,ival(1)
           reuse=ival(1)
+       end if
+       if(key.eq.'translate')then
+          backspace(5)
+          read(5,*)key,sys_shift(1),sys_shift(2),sys_shift(3)
        end if
     end do
 
@@ -259,9 +264,9 @@ contains
     !-deslocando sistema para o centro da supercelula
 
     do i=1,natom
-       xa(i)=xa(i)+0.5d0*(v(1,1)+v(2,1)+v(3,1))
-       ya(i)=ya(i)+0.5d0*(v(1,2)+v(2,2)+v(3,2))
-       za(i)=za(i)+0.5d0*(v(1,3)+v(2,3)+v(3,3))
+       xa(i)=xa(i)+sys_shift(1)*(v(1,1)+v(2,1)+v(3,1))
+       ya(i)=ya(i)+sys_shift(2)*(v(1,2)+v(2,2)+v(3,2))
+       za(i)=za(i)+sys_shift(3)*(v(1,3)+v(2,3)+v(3,3))
     end do
 
     !-definindo massa atomica
@@ -969,6 +974,12 @@ contains
 
     do i=1,6
        fzstr(i)=1.d0
+    end do
+
+    !-parametros de estrutura
+
+    do i=1,3
+       sys_shift(i)=0.d0
     end do
 
     !-parametros da Dinâmica Molecular
