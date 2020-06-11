@@ -59,8 +59,7 @@ module input
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
-  real(8) parbend(molecmax,bendmax,4),parcoul(ntpmax,1)
-  real(8) partors(molecmax,torsmax,7)
+  real(8) parbend(molecmax,bendmax,4),qmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
   character(2) att
@@ -74,7 +73,7 @@ module input
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,parcoul,lambdain,lambdafi,partors,moltors
+  save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qmolec
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp,sys_shift
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
@@ -648,7 +647,7 @@ contains
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+jj),k=1,nxmolec(g))
-                   read(5,*)(parcoul(atnp(k+jj),1),k=1,nxmolec(g))
+                   read(5,*)(qmolec(g,1),k=1,nxmolec(g))
                    ff_model(g)='(AMBER)'
                    nx=g
                    goto 13
@@ -846,13 +845,21 @@ contains
                 end do
              elseif(key.eq.'elect')then
                 read(5,*)key,ncoul,m
-                do j=1,ncoul
-                   call coul_opt(m,numt)
-                   read(5,*)ival(1),(val(k),k=1,numt)
+                do j=1,nmolec
+                   read(5,*)key,lxmol
+                   do g=1,molecmax
+                      if(lxmol.eq.namemol(g))nx=g
+                   end do
+                   do g=1,1000
+                      read(5,*)key
+                      backspace(5)
+                      if(key.eq.'molecule')exit
+                      if(key.eq.'$END')goto 21
+                call coul_opt(m,numt)
+                read(5,*)ival(1),(val(k),k=1,numt)
                    do k=1,numt
                       parcoul(ival(1),k)=val(k)
                    end do
-                end do
                 coulop=m
              end if
           end do

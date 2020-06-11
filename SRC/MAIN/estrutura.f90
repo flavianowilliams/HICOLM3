@@ -26,7 +26,7 @@ module estrutura
   ! - Condicoes de contorno periódicas;                                                     *
   ! - Condicoes de contorno inversa;                                                        *
   ! - Convencao de minima imagem.                                                           *
-  ! - Impressao de variaveis canonicas em HICOLM.XSF e HICOLM.AXSF                              *
+  ! - Impressao de variaveis canonicas em HICOLM.XSF e HICOLM.AXSF                          *
   !                                                                                         *
   ! Flaviano Williams Fernandes, 05 de dezembro de 2018                                     *
   !******************************************************************************************
