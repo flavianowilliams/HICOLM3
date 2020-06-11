@@ -45,11 +45,7 @@ contains
 
     implicit none
 
-    integer, allocatable :: chk(:,:)
-
-    integer i,j,ix,nx,ii,jj,ixx
-
-    allocate(chk(spctot,spctot))
+    integer i,j
 
     !-convertendo unidades de medida
 
@@ -57,42 +53,12 @@ contains
        parcoul(i,1)=parcoul(i,1)/elconv
     end do
 
-    !-checando viabilidade de interacoes intermoleculares
-
-    do i=1,spctot
-       do j=1,spctot
-          chk(i,j)=1
-          if(parcoul(i,1).eq.0.d0.or.parcoul(j,1).eq.0.d0)chk(i,j)=0
-       end do
-    end do
-
-    !-calculando qde de interacoes coulombianas
-
-    ncoul=0
-    do i=1,spctot
-       do j=i,spctot
-          if(chk(i,j).eq.1)ncoul=ncoul+1
-       end do
-    end do
-
-    ix=1
-    nx=1
     ncoulstp=0
-    do i=1,moltot-1
-       do ii=1,nzmolec(i)
-          ixx=nx+nzmolec(i)
-          do j=i+1,moltot
-             do jj=1,nzmolec(j)
-                if(chk(atp(ix),atp(ixx)).eq.1)ncoulstp=ncoulstp+1
-                ixx=ixx+1
-             end do
-          end do
-          ix=ix+1
+    do i=1,natom
+       do j=i+1,natom
+          if(abs(qat(i)*qat(j)).gt.1.d-8)ncoulstp=ncoulstp+1
        end do
-       nx=nx+nzmolec(i)
     end do
-
-    deallocate(chk)
 
     return
 
