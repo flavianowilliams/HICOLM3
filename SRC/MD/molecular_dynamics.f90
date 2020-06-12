@@ -263,7 +263,7 @@ contains
        end do
        write(2,*)
        do i=1,natom
-          write(2,30)idna(i),atp(i),mass(i)*mconv,parcoul(atp(i),1),xa(i)*rconv, &
+          write(2,30)idna(i),atp(i),mass(i)*mconv,qat(i),xa(i)*rconv, &
                ya(i)*rconv,za(i)*rconv
           write(2,40)vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
           write(2,40)fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv

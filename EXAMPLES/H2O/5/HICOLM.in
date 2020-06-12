@@ -13,7 +13,7 @@ molecs 3
 H2O1 50 3
 H2O2 30 3
 H2O3 20 3
-reuse 3
+reuse 1
 &END
 
 # Molecular dynamics variables
@@ -22,11 +22,11 @@ reuse 3
 nhist 10
 preext 1.0d0
 text 298.0
-ntrialmax 100
+ntrialmax 10000
 nrelax 1
 timestep 0.001
 ensemble npt berendsen 0.5 0.5 4.9e-5
-rcutoff 7.0 0.1
+rcutoff 7 0.1
 &END
 
 # Force field variables
@@ -41,10 +41,9 @@ rcutoff 7.0 0.1
  -0.834 0.417 0.417
  $END
  $INTER
-  elect 3 2
-  4 -0.834
-  5 +0.417
-  6 +0.417
+  elect fscs 1
+  molecule H2O2
+  -0.834 +0.417 +0.417
   vdw 3
   4 4 lj 0.155425 3.165492
   1 4 lj 0.155425 3.165492

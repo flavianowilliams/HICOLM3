@@ -133,9 +133,12 @@ contains
        write(6,'(2x,111a1)')('*',j=1,90)
        if(nxmolec(i).le.25)then
           write(6,'(2x,a6,25(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
+          write(6,'(2x,a8,25(1x,f6.3))')'Charges:',(qmolec(i,j)*elconv,j=1,nxmolec(i))
        else
           write(6,'(2x,a6,25(1x,a2))')'Sites:',(atsp(j+k),j=1,25)
           write(6,'(8x,25(1x,a2))')(atsp(j+k),j=26,nxmolec(i))
+          write(6,'(10x,25(1x,f6.3))')'Charges:',(qmolec(i,j)*elconv,j=1,25)
+          write(6,'(10x,25(1x,f6.3))')(qmolec(i,j)*elconv,j=26,nxmolec(i))
        end if
        if(ff_model(i).eq.'(AMBER)')then
           write(6,*)
@@ -260,39 +263,42 @@ contains
     end do
 
     select case(coulop)
-    case(1)
+    case('coul')
        write(6,90)'Electrostatic interaction: Direct Coulomb Sum'
        write(6,*)
-    case(2)
+    case('fscs')
        write(6,90)'Electrostatic interaction: Force-Shifted Coulomb Sum'
+       write(6,*)
+    case('escl')
+       write(6,90)'Electrostatic interaction: Coulomb scaled potencial'
        write(6,*)
     end select
 
-    if(spctot.le.10)then
-       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
-            'Total of species:',spctot,'->',(atsp(i),i=1,spctot)
+!    if(spctot.le.10)then
+!       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+!            'Total of species:',spctot,'->',(atsp(i),i=1,spctot)
+!       write(6,*)
+!       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
+!            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,spctot)
+!       write(*,*)
+!       write(6,82)' Total charge:',chqtot*elconv
+!       write(6,*)
+!       write(6,70)'       Maximum coulomb interaction:',ncoulstp
+!       write(6,*)
+!    else
+!       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+!            'Total of species:',spctot,'->',(atsp(i),i=1,10)
+!       write(6,'(27x,10(1x,a2))')(atsp(i),i=11,spctot)
+!       write(*,*)
+!       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
+!            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,10)
+!       write(6,'(27x,10f7.3)')(parcoul(atnp(i),1)*elconv,i=11,spctot)
        write(6,*)
-       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
-            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,spctot)
-       write(*,*)
        write(6,82)' Total charge:',chqtot*elconv
        write(6,*)
-       write(6,70)'       Maximum coulomb interaction:',ncoulstp
+       write(6,70)'      Number of coulomb interaction:',ncoulstp
        write(6,*)
-    else
-       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
-            'Total of species:',spctot,'->',(atsp(i),i=1,10)
-       write(6,'(27x,10(1x,a2))')(atsp(i),i=11,spctot)
-       write(*,*)
-       write(6,'(2x,a18,i3,2x,a2,10f7.3)')&
-            'Partial charges:',spctot,'->',(parcoul(atnp(i),1)*elconv,i=1,10)
-       write(6,'(27x,10f7.3)')(parcoul(atnp(i),1)*elconv,i=11,spctot)
-       write(6,*)
-       write(6,82)' Total charge:',chqtot*elconv
-       write(6,*)
-       write(6,70)'       Maximum coulomb interaction:',ncoulstp
-       write(6,*)
-    end if
+!    end if
 
     write(6,'(20x,a15,i5)')'Van der Waals:',nvdw
     write(6,'(20x,111a1)')('-',i=1,52)
@@ -321,7 +327,7 @@ contains
     end do
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,*)
-    write(6,70)' Maximum Van der Waals interaction:',nvdwstp
+    write(6,70)'Number of Van der Waals interaction:',nvdwstp
     write(6,*)
 
     !-limpando memoria
@@ -455,11 +461,7 @@ contains
           nj=ilist(i,j)
           call mic(ni,nj,xvz,yvz,zvz)
           if(parvdw(atp(ni),atp(nj),1).gt.1.d-8)call vdw_calc(envdw,virvdw,ni,nj,xvz,yvz,zvz)
-          if(abs(parcoul(atp(ni),1)).gt.1.e-8)then
-             if(abs(parcoul(atp(nj),1)).gt.1.e-8)then
-                call coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
-             end if
-          end if
+          if(abs(qat(ni)*qat(nj)).gt.1.0e-8)call coulomb_calc(encoul,vircoul,ni,nj,xvz,yvz,zvz)
        end do
     end do
 

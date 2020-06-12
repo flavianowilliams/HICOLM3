@@ -49,8 +49,10 @@ contains
 
     !-convertendo unidades de medida
 
-    do i=1,ntpmax
-       parcoul(i,1)=parcoul(i,1)/elconv
+    do i=1,nmolec
+       do j=1,nxmolec(i)
+          qmolec(i,j)=qmolec(i,j)/elconv
+       end do
     end do
 
     ncoulstp=0
@@ -139,7 +141,8 @@ contains
     dr=sqrt(xvz**2+yvz**2+zvz**2)
 
     select case(coulop)
-    case(1)
+
+    case('coul')
 
        pot=qat(i)*qat(j)/dr
 
@@ -147,7 +150,7 @@ contains
 
        fr=-fr/dr ! -(1/r)*dU/dr
 
-    case(2)
+    case('fscs')
 
        alcoul=1.d-1/kconv
 
@@ -162,7 +165,7 @@ contains
 
        fr=-fr/dr ! -(1/r)*dU/dr
 
-    case(3)
+    case('escl')
 
        lambda=lambdafi
 

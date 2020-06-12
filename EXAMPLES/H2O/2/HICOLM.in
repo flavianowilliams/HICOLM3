@@ -31,10 +31,9 @@ rcutoff 7.0 0.1
 
 &FORCE
  $INTER
-  elect 3 2
-  1 -0.82
-  2 +0.41
-  3 +0.41
+  elect fscs 1
+  molecule H2O
+  -0.82 0.41 0.41  
   vdw 1
   1 1 lj 0.155425 3.165492
  $END

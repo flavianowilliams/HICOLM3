@@ -52,7 +52,7 @@ module input
   !-variaveis da mecanica molecular
   integer nhist,ntrialmax,nrelax,bendscnt(molecmax),bondscnt(molecmax),nzmolec(molecmax)
   integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax),nxmolec(molecmax),ntmolec(molecmax)
-  integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff,coulop
+  integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
   integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4),itorscnt(molecmax)
@@ -63,6 +63,7 @@ module input
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
   character(2) att
+  character(4) coulop
   character(2) atsp(ntpmax)
   character(7) prop,ensble
   character(9) ensble_mt
@@ -647,7 +648,7 @@ contains
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+jj),k=1,nxmolec(g))
-                   read(5,*)(qmolec(g,1),k=1,nxmolec(g))
+                   read(5,*)(qmolec(g,k),k=1,nxmolec(g))
                    ff_model(g)='(AMBER)'
                    nx=g
                    goto 13
@@ -697,7 +698,7 @@ contains
                 vdw(jj,j)=3
              end do
           end do
-          coulop=2
+          coulop='fscs'
        end if
     end do
 
@@ -844,23 +845,14 @@ contains
                    vdw(ival(2),ival(1))=m
                 end do
              elseif(key.eq.'elect')then
-                read(5,*)key,ncoul,m
-                do j=1,nmolec
+                read(5,*)key,coulop,ncoul
+                do j=1,ncoul
                    read(5,*)key,lxmol
-                   do g=1,molecmax
+                   do g=1,nmolec
                       if(lxmol.eq.namemol(g))nx=g
                    end do
-                   do g=1,1000
-                      read(5,*)key
-                      backspace(5)
-                      if(key.eq.'molecule')exit
-                      if(key.eq.'$END')goto 21
-                call coul_opt(m,numt)
-                read(5,*)ival(1),(val(k),k=1,numt)
-                   do k=1,numt
-                      parcoul(ival(1),k)=val(k)
-                   end do
-                coulop=m
+                   read(5,*)(qmolec(nx,k),k=1,nxmolec(nx))
+                end do
              end if
           end do
        end if
@@ -880,8 +872,14 @@ contains
        end do
     end do
 
-    do i=1,natom
-       qat(i)=parcoul(atp(i),1)
+    nx=1
+    do i=1,nmolec
+       do j=1,ntmolec(i)
+          do k=1,nxmolec(i)
+             qat(nx)=qmolec(i,k)
+             nx=nx+1
+          end do
+       end do
     end do
 
     return
@@ -907,7 +905,7 @@ contains
 
     nhist=1
 
-    coulop=1
+    coulop='coul'
 
     nmolec=0
     natom=0
@@ -959,7 +957,6 @@ contains
              parvdw(i,j,k)=0.d0
           end do
        end do
-       parcoul(i,1)=0.d0
        atsp(i)='X '
     end do
 
@@ -967,6 +964,12 @@ contains
     b=0.d0
     c=0.d0
     att='C '
+
+    do i=1,molecmax
+       do j=1,ntpmax
+          qmolec(i,j)=0.0d0
+       end do
+    end do
 
     do i=1,natmax
        xa(i)=0.d0
@@ -1173,27 +1176,6 @@ contains
     return
 
   end subroutine vdw_opt
-
-  subroutine coul_opt(m,nprcoul)
-    !***************************************************************************************
-    ! Flags do potencial eletrostatico                                                     *
-    !***************************************************************************************
-    implicit none
-
-    integer nprcoul,m
-
-    select case(m)
-    case(1)
-       nprcoul=1
-    case(2)
-       nprcoul=1
-    case(3)
-       nprcoul=1
-    end select
-
-    return
-
-  end subroutine coul_opt
 
   subroutine dihedral_opt(char,m,nprtors)
     !***************************************************************************************
