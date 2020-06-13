@@ -22,7 +22,7 @@ reuse 1
 nhist 10
 preext 1.0d0
 text 298.0
-ntrialmax 10000
+ntrialmax 1000
 nrelax 1
 timestep 0.001
 ensemble npt berendsen 0.5 0.5 4.9e-5
@@ -45,9 +45,9 @@ rcutoff 7 0.1
   molecule H2O2
   -0.834 +0.417 +0.417
   vdw 3
-  4 4 lj 0.155425 3.165492
-  1 4 lj 0.155425 3.165492
-  4 7 lj 0.155425 3.165492
+  3 3 lj 0.155425 3.165492
+  3 1 lj 0.155425 3.165492
+  3 5 lj 0.155425 3.165492
  $END
   $INTRA
   molecule H2O2
