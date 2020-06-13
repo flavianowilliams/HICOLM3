@@ -625,7 +625,7 @@ contains
 
     rewind(5)
 
-1  read(5,*,end=2)in
+1   read(5,*,end=2)in
 
     if(in.ne.'&FORCE')goto 1
 
