@@ -687,7 +687,7 @@ contains
                 tors(nx,k)=4
              end do
           end do
-12          do j=1,spctot
+12        do j=1,spctot
              do jj=j,spctot
                 call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
                 do k=1,2
