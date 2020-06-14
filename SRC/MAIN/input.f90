@@ -192,6 +192,9 @@ contains
           backspace(5)
           read(5,*)key,sys_shift(1),sys_shift(2),sys_shift(3)
        end if
+       if(key.eq.'zmatrix')then
+          read(5,*)key,zmatrix_tol
+       end if
     end do
 
     !-calculando moleculas e atomos totais
@@ -262,7 +265,7 @@ contains
     do i=1,nmolec
        do j=1,nxmolec(i)
           do k=1,spctot
-             if(atpmolec(i,j).eq.atsp(spctot))goto 12
+             if(atpmolec(i,j).eq.atsp(k))goto 12
           end do
           atsp(spctot+1)=atpmolec(i,j)
           atnp(spctot+1)=spctot+1
@@ -651,97 +654,54 @@ contains
 
     implicit none
 
-    integer i,ii,iii,iv,v,j,jj,k,g,p,m,numt,nx,ival(20)
+    integer i,i1,i2,i3,i4,j,jj,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
 
-    !-Parametros do campo de Forca
+    do i=1,nmolec
+       call zmatrix(i)
+       do j=1,bondscnt(i)
+          i1=molbond(i,j,1)
+          i2=molbond(i,j,2)
+          call amber_bonds(atsp(i1),atsp(i2),val)
+          do p=1,2
+             parbnd(i,j,p)=val(p)
+          end do
+          bonds(i,j)=3
+       end do
+       do j=1,bendscnt(i)
+          i1=molbend(i,j,1)
+          i2=molbend(i,j,2)
+          i3=molbend(i,j,3)
+          call amber_bends(atsp(i1),atsp(i2),atsp(i3),val)
+          do p=1,2
+             parbend(i,j,p)=val(p)
+          end do
+          bends(i,j)=2
+       end do
+       do j=1,torscnt(i)
+          i1=moltors(i,j,1)
+          i2=moltors(i,j,2)
+          i3=moltors(i,j,3)
+          i4=moltors(i,j,4)
+          call amber_dihedrals(atsp(i1),atsp(i2),atsp(i3),atsp(i4),val)
+          do p=1,4
+             partors(i,j,p)=val(p)
+          end do
+          tors(i,j)=4
+       end do
+    end do
+
+    stop
+
+    !-Parametros adicionais fora do modelo AMBER
 
     rewind(5)
 
 1   read(5,*,end=2)in
 
     if(in.ne.'&FORCE')goto 1
-
-    do i=1,1000
-       read(5,*)key
-       if(key.eq.'&END')exit
-       if(key.eq.'$AMBER')then
-          read(5,*)key
-          backspace(5)
-          if(key.eq.'zmatrix')then
-             read(5,*)key,zmatrix_tol
-          end if
-          nx=0
-          do j=1,nmolec
-             read(5,*)key
-             backspace(5)
-             if(key.eq.'$END')goto 12
-             read(5,*)key,lxmol
-             jj=0
-             do g=1,nmolec
-                if(lxmol.eq.namemol(g))then
-                   read(5,*)(atsp(k+jj),k=1,nxmolec(g))
-                   read(5,*)(qatmolec(g,k),k=1,nxmolec(g))
-                   ff_model(g)='(AMBER)'
-                   nx=g
-                   goto 13
-                end if
-                jj=jj+nxmolec(g)
-             end do
-13           if(nx.ne.0)call zmatrix(nx)
-             do k=1,bondscnt(nx)
-                ii=jj+molbond(nx,k,1)
-                iii=jj+molbond(nx,k,2)
-                call amber_bonds(atsp(ii),atsp(iii),val)
-                do p=1,2
-                   parbnd(nx,k,p)=val(p)
-                end do
-                bonds(nx,k)=3
-             end do
-             do k=1,bendscnt(nx)
-                ii=jj+molbend(nx,k,1)
-                iii=jj+molbend(nx,k,2)
-                iv=jj+molbend(nx,k,3)
-                call amber_bends(atsp(ii),atsp(iii),atsp(iv),val)
-                do p=1,2
-                   parbend(nx,k,p)=val(p)
-                end do
-                bends(nx,k)=2
-             end do
-             do k=1,torscnt(nx)
-                ii=jj+moltors(nx,k,1)
-                iii=jj+moltors(nx,k,2)
-                iv=jj+moltors(nx,k,3)
-                v=jj+moltors(nx,k,4)
-                call amber_dihedrals(atsp(ii),atsp(iii),atsp(iv),atsp(v),val)
-                do p=1,4
-                   partors(nx,k,p)=val(p)
-                end do
-                tors(nx,k)=4
-             end do
-          end do
-12        do j=1,spctot
-             do jj=j,spctot
-                call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
-                do k=1,2
-                   parvdw(j,jj,k)=val(k)
-                   parvdw(jj,j,k)=val(k)
-                end do
-                vdw(j,jj)=3
-                vdw(jj,j)=3
-             end do
-          end do
-          coulop='fscs'
-       end if
-    end do
-
-    rewind(5)
-
-2  read(5,*,end=3)in
-
-    if(in.ne.'&FORCE')goto 2
 
     do i=1,1000
        read(5,*)key
@@ -756,7 +716,7 @@ contains
                 read(5,*)key
                 backspace(5)
                 if(key.eq.'molecule')exit
-                if(key.eq.'$END')goto 21
+                if(key.eq.'$END')goto 11
                 if(key.eq.'bends#')then
                    read(5,*)key,bendscnt(nx)
                    do k=1,bendscnt(nx)
@@ -773,18 +733,18 @@ contains
                       molbend(nx,k,3)=ival(3)
                    end do
                 elseif(key.eq.'bends*')then
-                   read(5,*)key,ii
+                   read(5,*)key,i1
                    read(5,*)ival(1),ival(2),ival(3),char
                    call bend_opt(char,m,numt)
                    backspace(5)
                    read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
                    do p=1,numt
-                      parbend(nx,ii,p)=val(p)
+                      parbend(nx,i1,p)=val(p)
                    end do
-                   bends(nx,ii)=m
-                   molbend(nx,ii,1)=ival(1)
-                   molbend(nx,ii,2)=ival(2)
-                   molbend(nx,ii,3)=ival(3)
+                   bends(nx,i1)=m
+                   molbend(nx,i1,1)=ival(1)
+                   molbend(nx,i1,2)=ival(2)
+                   molbend(nx,i1,3)=ival(3)
                 elseif(key.eq.'bonds#')then
                    read(5,*)key,bondscnt(nx)
                    do k=1,bondscnt(nx)
@@ -800,17 +760,17 @@ contains
                       molbond(nx,k,2)=ival(2)
                    end do
                 elseif(key.eq.'bonds*')then
-                   read(5,*)key,ii
+                   read(5,*)key,i1
                    read(5,*)ival(1),ival(2),char
                    call bonds_opt(char,m,numt)
                    backspace(5)
                    read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
                    do p=1,numt
-                      parbnd(nx,ii,p)=val(p)
+                      parbnd(nx,i1,p)=val(p)
                    end do
-                   bonds(nx,ii)=m
-                   molbond(nx,ii,1)=ival(1)
-                   molbond(nx,ii,2)=ival(2)
+                   bonds(nx,i1)=m
+                   molbond(nx,i1,1)=ival(1)
+                   molbond(nx,i1,2)=ival(2)
                 elseif(key.eq.'dihedrals!')then
                    read(5,*)key,itorscnt(nx)
                    do k=1,itorscnt(nx)
@@ -844,27 +804,27 @@ contains
                       moltors(nx,k,4)=ival(4)
                    end do
                 elseif(key.eq.'dihedrals*')then
-                   read(5,*)key,ii
+                   read(5,*)key,i1
                    read(5,*)ival(1),ival(2),ival(3),ival(4),char
                    call dihedral_opt(char,m,numt)
                    backspace(5)
                    read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
                    do p=1,numt
-                      partors(nx,ii,p)=val(p)
+                      partors(nx,i1,p)=val(p)
                    end do
-                   tors(nx,ii)=m
-                   moltors(nx,ii,1)=ival(1)
-                   moltors(nx,ii,2)=ival(2)
-                   moltors(nx,ii,3)=ival(3)
-                   moltors(nx,ii,4)=ival(4)
+                   tors(nx,i1)=m
+                   moltors(nx,i1,1)=ival(1)
+                   moltors(nx,i1,2)=ival(2)
+                   moltors(nx,i1,3)=ival(3)
+                   moltors(nx,i1,4)=ival(4)
                 end if
              end do
           end do
        elseif(key.eq.'$INTER')then
-          do ii=1,1000
+          do i1=1,1000
              read(5,*)key
              backspace(5)
-             if(key.eq.'$END')goto 21
+             if(key.eq.'$END')goto 11
              if(key.eq.'vdw')then
                 read(5,*)key,nx
                 do j=1,nx
@@ -891,12 +851,12 @@ contains
              end if
           end do
        end if
-21     continue
+11     continue
     end do
 
     !-calculando parametros intramoleculares totais
 
-3   nbends=0
+2   nbends=0
     nbonds=0
     ntors=0
     do i=1,nmolec
@@ -907,13 +867,15 @@ contains
        end do
     end do
 
-    nx=1
-    do i=1,nmolec
-       do j=1,ntmolec(i)
-          do k=1,nxmolec(i)
-             qat(nx)=qatmolec(i,k)
-             nx=nx+1
+    do j=1,spctot
+       do jj=j,spctot
+          call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
+          do k=1,2
+             parvdw(j,jj,k)=val(k)
+             parvdw(jj,j,k)=val(k)
           end do
+          vdw(j,jj)=3
+          vdw(jj,j)=3
        end do
     end do
 
