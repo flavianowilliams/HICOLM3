@@ -218,26 +218,33 @@ contains
        read(10,*)(idnamolec(i,j),j=1,nxmolec(i))
        read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
        read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
+       do j=1,ntmolec(i)
+          do k=1,nxmolec(i)
+             read(10,*)xa(i),ya(i),za(i)
+          end do
+       end do
     end do
 
     !-lendo estrutura inicial
 
     !    do i=1,natom
-!       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
-!    end do
+    !       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
+    !    end do
 
     !-definindo especies e total de especies
 
-!    nx=1
-!    do i=1,nmolec
-!       do j=1,ntmolec(i)
-!          do k=1,nxmolec(i)
-!             atp(nx)=k+nxx
-!             nx=nx+1
-!          end do
-!       end do
-!       nxx=nxx+nxmolec(i)
-!    end do
+    nx=1
+    do i=1,nmolec
+       do j=1,ntmolec(i)
+          do k=1,nxmolec(i)
+             atp(nx)=atpmolec(i,k)
+             idna(nx)=idnamolec(i,k)
+             qat(nx)=qatmolec(i,k)
+             nx=nx+1
+          end do
+       end do
+       nxx=nxx+nxmolec(i)
+    end do
 
     atnp(1)=atp(1)
 
