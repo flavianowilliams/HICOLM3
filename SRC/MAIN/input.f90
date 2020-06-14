@@ -660,7 +660,7 @@ contains
 
     integer i,i1,i2,i3,i4,j,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
-    character(7) in,char
+    character(7) in,cval(3)
     character(10) lxmol,key
 
     do i=1,nmolec
@@ -689,7 +689,8 @@ contains
           i2=moltors(i,j,2)
           i3=moltors(i,j,3)
           i4=moltors(i,j,4)
-          call amber_dihedrals(atpmolec(i,i1),atpmolec(i,i2),atpmolec(i,i3),atpmolec(i,i4),val)
+          call amber_dihedrals&
+               (atpmolec(i,i1),atpmolec(i,i2),atpmolec(i,i3),atpmolec(i,i4),val)
           do p=1,4
              partors(i,j,p)=val(p)
           end do
@@ -734,10 +735,10 @@ contains
                 if(key.eq.'bends#')then
                    read(5,*)key,bendscnt(nx)
                    do k=1,bendscnt(nx)
-                      read(5,*)ival(1),ival(2),ival(3),char
-                      call bend_opt(char,m,numt)
+                      read(5,*)ival(1),ival(2),ival(3),cval(1)
+                      call bend_opt(cval(1),m,numt)
                       backspace(5)
-                      read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
+                      read(5,*)ival(1),ival(2),ival(3),cval(1),(val(p),p=1,numt)
                       do p=1,numt
                          parbend(nx,k,p)=val(p)
                       end do
@@ -748,10 +749,10 @@ contains
                    end do
                 elseif(key.eq.'bends*')then
                    read(5,*)key,i1
-                   read(5,*)ival(1),ival(2),ival(3),char
-                   call bend_opt(char,m,numt)
+                   read(5,*)ival(1),ival(2),ival(3),cval(1)
+                   call bend_opt(cval(1),m,numt)
                    backspace(5)
-                   read(5,*)ival(1),ival(2),ival(3),char,(val(p),p=1,numt)
+                   read(5,*)ival(1),ival(2),ival(3),cval(1),(val(p),p=1,numt)
                    do p=1,numt
                       parbend(nx,i1,p)=val(p)
                    end do
@@ -762,10 +763,10 @@ contains
                 elseif(key.eq.'bonds#')then
                    read(5,*)key,bondscnt(nx)
                    do k=1,bondscnt(nx)
-                      read(5,*)ival(1),ival(2),char
-                      call bonds_opt(char,m,numt)
+                      read(5,*)ival(1),ival(2),cval(1)
+                      call bonds_opt(cval(1),m,numt)
                       backspace(5)
-                      read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
+                      read(5,*)ival(1),ival(2),cval(1),(val(p),p=1,numt)
                       do p=1,numt
                          parbnd(nx,k,p)=val(p)
                       end do
@@ -775,10 +776,10 @@ contains
                    end do
                 elseif(key.eq.'bonds*')then
                    read(5,*)key,i1
-                   read(5,*)ival(1),ival(2),char
-                   call bonds_opt(char,m,numt)
+                   read(5,*)ival(1),ival(2),cval(1)
+                   call bonds_opt(cval(1),m,numt)
                    backspace(5)
-                   read(5,*)ival(1),ival(2),char,(val(p),p=1,numt)
+                   read(5,*)ival(1),ival(2),cval(1),(val(p),p=1,numt)
                    do p=1,numt
                       parbnd(nx,i1,p)=val(p)
                    end do
@@ -788,10 +789,10 @@ contains
                 elseif(key.eq.'dihedrals!')then
                    read(5,*)key,itorscnt(nx)
                    do k=1,itorscnt(nx)
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
-                      call dihedral_opt(char,m,numt)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1)
+                      call dihedral_opt(cval(1),m,numt)
                       backspace(5)
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1),(val(p),p=1,numt)
                       do p=1,numt
                          partors(nx,k+torscnt(nx),p)=val(p)
                       end do
@@ -804,10 +805,10 @@ contains
                 elseif(key.eq.'dihedrals#')then
                    read(5,*)key,torscnt(nx)
                    do k=1,torscnt(nx)
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char
-                      call dihedral_opt(char,m,numt)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1)
+                      call dihedral_opt(cval(1),m,numt)
                       backspace(5)
-                      read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                      read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1),(val(p),p=1,numt)
                       do p=1,numt
                          partors(nx,k,p)=val(p)
                       end do
@@ -819,10 +820,10 @@ contains
                    end do
                 elseif(key.eq.'dihedrals*')then
                    read(5,*)key,i1
-                   read(5,*)ival(1),ival(2),ival(3),ival(4),char
-                   call dihedral_opt(char,m,numt)
+                   read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1)
+                   call dihedral_opt(cval(1),m,numt)
                    backspace(5)
-                   read(5,*)ival(1),ival(2),ival(3),ival(4),char,(val(p),p=1,numt)
+                   read(5,*)ival(1),ival(2),ival(3),ival(4),cval(1),(val(p),p=1,numt)
                    do p=1,numt
                       partors(nx,i1,p)=val(p)
                    end do
@@ -842,10 +843,14 @@ contains
              if(key.eq.'vdw')then
                 read(5,*)key,nx
                 do j=1,nx
-                   read(5,*)ival(1),ival(2),char
-                   call vdw_opt(char,m,numt)
+                   read(5,*)cval(1),cval(2),cval(3)
+                   call vdw_opt(cval(3),m,numt)
                    backspace(5)
-                   read(5,*)ival(1),ival(2),char,(val(k),k=1,numt)
+                   read(5,*)cval(1),cval(2),cval(3),(val(k),k=1,numt)
+                   do k=1,spctot
+                      if(cval(1).eq.atsp(k))ival(1)=atnp(k)
+                      if(cval(2).eq.atsp(k))ival(2)=atnp(k)
+                   end do
                    do k=1,numt
                       parvdw(ival(1),ival(2),k)=val(k)
                       parvdw(ival(2),ival(1),k)=val(k)
@@ -855,13 +860,6 @@ contains
                 end do
              elseif(key.eq.'elect')then
                 read(5,*)key,coulop,ncoul
-                do j=1,ncoul
-                   read(5,*)key,lxmol
-                   do g=1,nmolec
-                      if(lxmol.eq.namemol(g))nx=g
-                   end do
-                   read(5,*)(qatmolec(nx,k),k=1,nxmolec(nx))
-                end do
              end if
           end do
        end if

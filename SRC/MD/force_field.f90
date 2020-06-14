@@ -300,21 +300,23 @@ contains
     write(6,'(20x,111a1)')('-',i=1,52)
     do i=1,spctot
        do j=i,spctot
-          select case(vdw(i,j))
+          select case(vdw(atnp(i),atnp(j)))
           case(1)
-             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0.and.parvdw(i,j,3).ne.0.d0)then
-                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                     i,j,'mors',parvdw(i,j,1)*econv,parvdw(i,j,2)*kconv,parvdw(i,j,3)*rconv
+             if(parvdw(atnp(i),atnp(j),1).ne.0.d0.and.parvdw(atnp(i),atnp(j),2).ne.0.d0&
+                  .and.parvdw(atnp(i),atnp(j),3).ne.0.d0)then
+                write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')atsp(i),atsp(j),'mors',&
+                     parvdw(atnp(i),atnp(j),1)*econv,parvdw(atnp(i),atnp(j),2)*kconv,&
+                     parvdw(atnp(i),atnp(j),3)*rconv
              end if
           case(2)
-             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
-                write(6,'(20x,i3,3x,i3,2x,a5,2x,3f7.4)')&
-                     i,j,'lj',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             if(parvdw(atnp(i),atnp(j),1).ne.0.d0.and.parvdw(atnp(i),atnp(j),2).ne.0.d0)then
+                write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')atsp(i),atsp(j),'lj',&
+                     parvdw(atnp(i),atnp(j),1)*econv,parvdw(atnp(i),atnp(j),2)*rconv
              end if
           case(3)
-             if(parvdw(i,j,1).ne.0.d0.and.parvdw(i,j,2).ne.0.d0)then
-                write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')&
-                     atsp(i),atsp(j),'amber',parvdw(i,j,1)*econv,parvdw(i,j,2)*rconv
+             if(parvdw(atnp(i),atnp(j),1).ne.0.d0.and.parvdw(atnp(i),atnp(j),2).ne.0.d0)then
+                write(6,'(20x,a3,3x,a3,2x,a5,2x,3f7.4)')atsp(i),atsp(j),'amber',&
+                     parvdw(atnp(i),atnp(j),1)*econv,parvdw(atnp(i),atnp(j),2)*rconv
              end if
           end select
        end do
