@@ -51,7 +51,7 @@ contains
 
     do i=1,nmolec
        do j=1,nxmolec(i)
-          qmolec(i,j)=qmolec(i,j)/elconv
+          qatmolec(i,j)=qatmolec(i,j)/elconv
        end do
     end do
 

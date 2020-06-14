@@ -41,7 +41,8 @@ module input
   save kb,pi,img,n0
   !----------------------------------------------------------------------------
   !-variaveis de estrutura
-  integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax),atp(natmax),fztp(natmax)
+  integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax),fztp(natmax)
+  integer atp(natmax),atnp(ntpmax),idnamolec(molecmax,ntpmax)
   !
   real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume,qat(natmax)
   real(8) vax(natmax),vay(natmax),vaz(natmax),fax(natmax),fay(natmax),faz(natmax)
@@ -51,7 +52,7 @@ module input
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
   integer nhist,ntrialmax,nrelax,bendscnt(molecmax),bondscnt(molecmax),nzmolec(molecmax)
-  integer ato(natmax),nrl,atnp(ntpmax),natnp(ntpmax),nxmolec(molecmax),ntmolec(molecmax)
+  integer nrl,natnp(ntpmax),nxmolec(molecmax),ntmolec(molecmax)
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
@@ -59,12 +60,11 @@ module input
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
-  real(8) parbend(molecmax,bendmax,4),qmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
+  real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
-  character(2) att
   character(4) coulop
-  character(2) atsp(ntpmax)
+  character(2) atpmolec(molecmax,ntpmax),atsp(ntpmax)
   character(7) prop,ensble
   character(9) ensble_mt
   character(10) method,namemol(molecmax)
@@ -73,9 +73,9 @@ module input
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
-  save att,ato,nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qmolec
-  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atsp,sys_shift
+  save nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
+  save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec
+  save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atpmolec,sys_shift,atsp
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
   !
   !----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ contains
     logical lval
 
     open(5,file='HICOLM.in',status='old')
-    open(10,file='HICOLM.str',status='old')
+    open(10,file='HICOLM.sys',status='old')
 
     !-contagem de tempo
 
@@ -153,7 +153,7 @@ contains
     !***************************************************************************************
     implicit none
 
-    integer i,j,k,natfx,ival(20)
+    integer i,j,k,l,natfx,ival(20),nx
     character(7) in
     character(9) key
 
@@ -233,38 +233,57 @@ contains
 
     !-definindo especies e total de especies
 
+!    atnp(1)=atp(1)
+
+!    spctot=1
+!    do i=2,natom
+!       do j=1,spctot
+!          if(atp(i).eq.atnp(j))goto 553
+!       end do
+!       atnp(spctot+1)=atp(i)
+!       spctot=spctot+1
+!553    continue
+!    end do
+
+!    do j=1,spctot
+!       natnp(j)=0
+!    end do
+
+!    do i=1,natom
+!       do j=1,spctot
+!          if(atp(i).eq.atnp(j))natnp(j)=natnp(j)+1
+!       end do
+!    end do
+
+    atsp(1)=atpmolec(1,1)
+    atnp(1)=1
+
+    spctot=1
+    do i=1,nmolec
+       do j=1,nxmolec(i)
+          do k=1,spctot
+             if(atpmolec(i,j).eq.atsp(spctot))goto 12
+          end do
+          atsp(spctot+1)=atpmolec(i,j)
+          atnp(spctot+1)=spctot+1
+          spctot=spctot+1
+12        continue
+       end do
+    end do
+
+    !-definindo caracteristicas atomicas (tipo, numero atomico)
+
     nx=1
     do i=1,nmolec
        do j=1,ntmolec(i)
           do k=1,nxmolec(i)
-             atp(nx)=atpmolec(i,k)
+             do l=1,spctot
+                if(atpmolec(i,k).eq.atsp(l))atp(nx)=atnp(l)
+             end do
              idna(nx)=idnamolec(i,k)
              qat(nx)=qatmolec(i,k)
              nx=nx+1
           end do
-       end do
-       nxx=nxx+nxmolec(i)
-    end do
-
-    atnp(1)=atp(1)
-
-    spctot=1
-    do i=2,natom
-       do j=1,spctot
-          if(atp(i).eq.atnp(j))goto 553
-       end do
-       atnp(spctot+1)=atp(i)
-       spctot=spctot+1
-553    continue
-    end do
-
-    do j=1,spctot
-       natnp(j)=0
-    end do
-
-    do i=1,natom
-       do j=1,spctot
-          if(atp(i).eq.atnp(j))natnp(j)=natnp(j)+1
        end do
     end do
 
@@ -664,7 +683,7 @@ contains
              do g=1,nmolec
                 if(lxmol.eq.namemol(g))then
                    read(5,*)(atsp(k+jj),k=1,nxmolec(g))
-                   read(5,*)(qmolec(g,k),k=1,nxmolec(g))
+                   read(5,*)(qatmolec(g,k),k=1,nxmolec(g))
                    ff_model(g)='(AMBER)'
                    nx=g
                    goto 13
@@ -867,7 +886,7 @@ contains
                    do g=1,nmolec
                       if(lxmol.eq.namemol(g))nx=g
                    end do
-                   read(5,*)(qmolec(nx,k),k=1,nxmolec(nx))
+                   read(5,*)(qatmolec(nx,k),k=1,nxmolec(nx))
                 end do
              end if
           end do
@@ -892,7 +911,7 @@ contains
     do i=1,nmolec
        do j=1,ntmolec(i)
           do k=1,nxmolec(i)
-             qat(nx)=qmolec(i,k)
+             qat(nx)=qatmolec(i,k)
              nx=nx+1
           end do
        end do
@@ -979,11 +998,10 @@ contains
     a=0.d0
     b=0.d0
     c=0.d0
-    att='C '
 
     do i=1,molecmax
        do j=1,ntpmax
-          qmolec(i,j)=0.0d0
+          qatmolec(i,j)=0.0d0
        end do
     end do
 
