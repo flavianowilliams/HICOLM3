@@ -193,13 +193,32 @@ contains
           read(5,*)key,sys_shift(1),sys_shift(2),sys_shift(3)
        end if
        if(key.eq.'zmatrix')then
+          backspace(5)
           read(5,*)key,zmatrix_tol
        end if
     end do
 
+    !-lendo estrutura inicial
+
+11  read(10,*)nmolec
+
+    nx=1
+    do i=1,nmolec
+       read(10,*)namemol(i),ntmolec(i),nxmolec(i)
+       read(10,*)(idnamolec(i,j),j=1,nxmolec(i))
+       read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
+       read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
+       do j=1,ntmolec(i)
+          do k=1,nxmolec(i)
+             read(10,*)xa(nx),ya(nx),za(nx)
+             nx=nx+1
+          end do
+       end do
+    end do
+
     !-calculando moleculas e atomos totais
 
-11  moltot=1
+    moltot=1
     natom=0
     do i=1,nmolec
        do j=1,ntmolec(i)
@@ -212,21 +231,6 @@ contains
     end do
 
     moltot=moltot-1
-
-    !-lendo estrutura inicial
-
-    read(10,*)nmolec
-    do i=1,nmolec
-       read(10,*)namemol(i),ntmolec(i),nxmolec(i)
-       read(10,*)(idnamolec(i,j),j=1,nxmolec(i))
-       read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
-       read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
-       do j=1,ntmolec(i)
-          do k=1,nxmolec(i)
-             read(10,*)xa(i),ya(i),za(i)
-          end do
-       end do
-    end do
 
     !-lendo estrutura inicial
 
@@ -654,7 +658,7 @@ contains
 
     implicit none
 
-    integer i,i1,i2,i3,i4,j,jj,k,g,p,m,numt,nx,ival(20)
+    integer i,i1,i2,i3,i4,j,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
     character(7) in,char
     character(10) lxmol,key
@@ -664,7 +668,7 @@ contains
        do j=1,bondscnt(i)
           i1=molbond(i,j,1)
           i2=molbond(i,j,2)
-          call amber_bonds(atsp(i1),atsp(i2),val)
+          call amber_bonds(atpmolec(i,i1),atpmolec(i,i2),val)
           do p=1,2
              parbnd(i,j,p)=val(p)
           end do
@@ -674,7 +678,7 @@ contains
           i1=molbend(i,j,1)
           i2=molbend(i,j,2)
           i3=molbend(i,j,3)
-          call amber_bends(atsp(i1),atsp(i2),atsp(i3),val)
+          call amber_bends(atpmolec(i,i1),atpmolec(i,i2),atpmolec(i,i3),val)
           do p=1,2
              parbend(i,j,p)=val(p)
           end do
@@ -685,7 +689,7 @@ contains
           i2=moltors(i,j,2)
           i3=moltors(i,j,3)
           i4=moltors(i,j,4)
-          call amber_dihedrals(atsp(i1),atsp(i2),atsp(i3),atsp(i4),val)
+          call amber_dihedrals(atpmolec(i,i1),atpmolec(i,i2),atpmolec(i,i3),atpmolec(i,i4),val)
           do p=1,4
              partors(i,j,p)=val(p)
           end do
@@ -693,7 +697,17 @@ contains
        end do
     end do
 
-    stop
+    do i=1,spctot
+       do j=i,spctot
+          call amber_vdw(atsp(i),atsp(j),val)
+          do k=1,2
+             parvdw(i,j,k)=val(k)
+             parvdw(j,i,k)=val(k)
+          end do
+          vdw(i,j)=3
+          vdw(j,i)=3
+       end do
+    end do
 
     !-Parametros adicionais fora do modelo AMBER
 
@@ -864,18 +878,6 @@ contains
           nbends=nbends+bendscnt(i)
           nbonds=nbonds+bondscnt(i)
           ntors=ntors+(torscnt(i)+itorscnt(i))
-       end do
-    end do
-
-    do j=1,spctot
-       do jj=j,spctot
-          call amber_vdw(atsp(atnp(j)),atsp(atnp(jj)),val)
-          do k=1,2
-             parvdw(j,jj,k)=val(k)
-             parvdw(jj,j,k)=val(k)
-          end do
-          vdw(j,jj)=3
-          vdw(jj,j)=3
        end do
     end do
 

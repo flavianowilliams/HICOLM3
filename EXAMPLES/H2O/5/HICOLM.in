@@ -9,11 +9,8 @@ cell
 19.0 0.0  0.0
 0.0 19.0  0.0
 0.0  0.0 19.0
-molecs 3
-H2O1 50 3
-H2O2 30 3
-H2O3 20 3
 reuse 1
+zmatrix 0.5
 &END
 
 # Molecular dynamics variables

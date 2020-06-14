@@ -47,7 +47,7 @@ contains
 
     implicit none
 
-    integer i,j,k,l,i1,i2
+    integer i,j,l,i1,i2
     real(8) chqtot,f1,f2,f3,f4,f5,f6,f7
 
     !-valores iniciais
@@ -127,16 +127,15 @@ contains
     write(6,*)
     write(6,*)
 
-    k=0
     do i=1,nmolec
        write(6,'(42x,a6,1x,a7)')namemol(i),ff_model(i)
        write(6,'(2x,111a1)')('*',j=1,90)
        if(nxmolec(i).le.25)then
-          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atsp(j+k),j=1,nxmolec(i))
+          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atpmolec(i,j),j=1,nxmolec(i))
           write(6,'(2x,a8,25(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,nxmolec(i))
        else
-          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atsp(j+k),j=1,25)
-          write(6,'(8x,25(1x,a2))')(atsp(j+k),j=26,nxmolec(i))
+          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atpmolec(i,j),j=1,25)
+          write(6,'(8x,25(1x,a2))')(atpmolec(i,j),j=26,nxmolec(i))
           write(6,'(10x,25(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,25)
           write(6,'(10x,25(1x,f6.3))')(qatmolec(i,j)*elconv,j=26,nxmolec(i))
        end if
@@ -246,7 +245,6 @@ contains
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
        write(6,*)
-       k=k+nxmolec(i)
     end do
     write(6,*)
     write(6,*)
@@ -283,6 +281,7 @@ contains
 
     write(6,*)
     write(6,70)'Number of Van der Waals interaction:',nvdwstp
+    write(6,*)
 
     if(spctot.le.10)then
        write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
