@@ -56,7 +56,7 @@ module input
   integer vdw(ntpmax,ntpmax),bonds(molecmax,bondmax),bends(molecmax,bendmax),tersoff
   integer tors(molecmax,torsmax),molbend(molecmax,bendmax,3),torscnt(molecmax)
   integer dstp,ndstp,xstp,nmolec,moltot,nfree,spctot,molbond(molecmax,bondmax,2)
-  integer nvdw,ncoul,nbonds,nbends,ntors,moltors(molecmax,torsmax,4),itorscnt(molecmax)
+  integer nvdw,nbonds,nbends,ntors,moltors(molecmax,torsmax,4),itorscnt(molecmax)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
@@ -859,7 +859,7 @@ contains
                    vdw(ival(2),ival(1))=m
                 end do
              elseif(key.eq.'elect')then
-                read(5,*)key,coulop,ncoul
+                read(5,*)key,coulop
              end if
           end do
        end if
