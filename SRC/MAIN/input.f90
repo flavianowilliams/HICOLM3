@@ -176,13 +176,13 @@ contains
           b=sqrt(v(2,1)**2+v(2,2)**2+v(2,3)**2)
           c=sqrt(v(3,1)**2+v(3,2)**2+v(3,3)**2)
        end if
-       if(key.eq.'molecs')then
-          backspace(5)
-          read(5,*)key,nmolec
-          do j=1,nmolec
-             read(5,*)namemol(j),ntmolec(j),nxmolec(j)
-          end do
-       end if
+!       if(key.eq.'molecs')then
+!          backspace(5)
+!          read(5,*)key,nmolec
+!          do j=1,nmolec
+       !             read(5,*)namemol(j),ntmolec(j),nxmolec(j)
+       !          end do
+!       end if
        if(key.eq.'reuse')then
           backspace(5)
           read(5,*)key,ival(1)
@@ -212,14 +212,23 @@ contains
 
     !-lendo estrutura inicial
 
-    do i=1,natom
-       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
+    read(10,*)nmolec
+    do i=1,nmolec
+       read(10,*)namemol(i),ntmolec(i),nxmolec(i)
+       read(10,*)(idnamolec(i,j),j=1,nxmolec(i))
+       read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
+       read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
     end do
+
+    !-lendo estrutura inicial
+
+    !    do i=1,natom
+!       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
+!    end do
 
     !-definindo especies e total de especies
 
 !    nx=1
-!    nxx=0
 !    do i=1,nmolec
 !       do j=1,ntmolec(i)
 !          do k=1,nxmolec(i)
