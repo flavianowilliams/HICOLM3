@@ -126,9 +126,13 @@ contains
 
     write(6,*)
     write(6,*)
+    write(6,'(2x,a24,2x,f7.4)')'1-4 scale factor (elet):',sf_coul
+    write(6,'(2x,a23,3x,f7.4)')'1-4 scale factor (VdW):',sf_vdw
+    write(6,*)
+    write(6,*)
 
     do i=1,nmolec
-       write(6,'(42x,a6,1x,a7)')namemol(i),ff_model(i)
+       write(6,'(42x,a6)')namemol(i)
        write(6,'(2x,111a1)')('*',j=1,90)
        if(nxmolec(i).le.25)then
           write(6,'(2x,a6,25(1x,a2))')'Sites:',(atpmolec(i,j),j=1,nxmolec(i))
@@ -138,11 +142,6 @@ contains
           write(6,'(8x,25(1x,a2))')(atpmolec(i,j),j=26,nxmolec(i))
           write(6,'(10x,25(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,25)
           write(6,'(10x,25(1x,f6.3))')(qatmolec(i,j)*elconv,j=26,nxmolec(i))
-       end if
-       if(ff_model(i).eq.'(AMBER)')then
-          write(6,*)
-          write(6,'(2x,a24,2x,f7.4)')'1-4 scale factor (elet):',sf_coul
-          write(6,'(2x,a23,3x,f7.4)')'1-4 scale factor (VdW):',sf_vdw
        end if
        write(6,*)
        write(6,'(2x,a6,1x,i5)')'Bonds:',bondscnt(i)

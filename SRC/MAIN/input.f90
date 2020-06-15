@@ -68,7 +68,6 @@ module input
   character(7) prop,ensble
   character(9) ensble_mt
   character(10) method,namemol(molecmax)
-  character(7) ff_model(molecmax)
   character(100) PATH
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
@@ -76,7 +75,7 @@ module input
   save nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
   save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atpmolec,sys_shift,atsp
-  save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,ff_model,itorscnt
+  save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,itorscnt
   !
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
@@ -914,7 +913,6 @@ contains
     tersoff=0
 
     do i=1,molecmax
-       ff_model(i)=''
        do j=1,torsmax
           do k=1,7
              partors(i,j,k)=0.d0
