@@ -46,7 +46,7 @@ module sistema
   !----------------------------------------------------------------
   !
   parameter (natmax=3000)
-  parameter (ntpmax=25)
+  parameter (ntpmax=40)
   parameter (nkmax=15)
   parameter (nprllmmax=4)
   parameter (nparammax=10)

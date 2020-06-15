@@ -21,10 +21,10 @@ OBJ_OPT = optimize.o
 #
 OBJ_MAIN = outfile.o main.o
 #=====================================================================================
-ODIR1=$(ROOT)/MAIN
-ODIR2=$(ROOT)/MD
-ODIR3=$(ROOT)/OPT
-ODIR4=$(ROOT)/MAIN
+ODIR1=$(ROOT)/main
+ODIR2=$(ROOT)/md
+ODIR3=$(ROOT)/opt
+ODIR4=$(ROOT)/main
 #
 OBJ1 = $(patsubst %,$(ODIR1)/%,$(OBJ_SYS))
 OBJ2 = $(patsubst %,$(ODIR2)/%,$(OBJ_MD))

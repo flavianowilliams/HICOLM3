@@ -33,22 +33,35 @@ mkdir $aux_dir/HICOLM/amber
 #
 # --compilling HICOLM--
 #
-cd $path/SRC
+cd $path/src
 #
 make clean
 make
 #
+mv $path/src/HICOLM $exe_dir/hicolm
+#
+make clean
+#
 # --compilling x2x--
 #
-cd $path/UTILS/x2x
+cd $path/contrib/x2x
 #
 gfortran x2x.f90 -o x2x
 #
-# --copying files--
+mv $path/contrib/x2x/x2x $exe_dir/x2x
 #
-cp $path/CONTRIB/AMBER/*.prm $aux_dir/HICOLM/amber/.
-cp $path/SRC/HICOLM $exe_dir/hicolm
-cp $path/CONTRIB/x2x/x2x $exe_dir/x2x
+# --compilling properties--
 #
-# --cleaning directories
+cd $path/contrib/properties
+#
+make clean
+make
+#
+mv $path/contrib/properties/properties $exe_dir/properties
+#
+make clean
+#
+# --copying auxiliary files--
+#
+cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
