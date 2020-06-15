@@ -63,6 +63,7 @@ module input
   real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
   real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
+  character(1) chck_amber(3,molecmax,ntpmax)
   character(4) coulop
   character(2) atpmolec(molecmax,ntpmax),atsp(ntpmax)
   character(7) prop,ensble
@@ -73,7 +74,7 @@ module input
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
-  save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec
+  save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec,chck_amber
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atpmolec,sys_shift,atsp
   save bendscnt,molbend,bondscnt,molbond,torscnt,ntmolec,nzmolec,nxmolec,itorscnt
   !
@@ -660,7 +661,8 @@ contains
     integer i,i1,i2,i3,i4,j,k,g,p,m,numt,nx,ival(20)
     real(8) val(20)
     character(7) in,cval(3)
-    character(10) lxmol,key
+    character(10) lxmol
+    character(13) key
 
     do i=1,nmolec
        call zmatrix(i)
@@ -745,6 +747,7 @@ contains
                       molbend(nx,k,1)=ival(1)
                       molbend(nx,k,2)=ival(2)
                       molbend(nx,k,3)=ival(3)
+                      chck_amber(2,nx,k)='*'
                    end do
                 elseif(key.eq.'bends*')then
                    read(5,*)key,i1
@@ -759,6 +762,7 @@ contains
                    molbend(nx,i1,1)=ival(1)
                    molbend(nx,i1,2)=ival(2)
                    molbend(nx,i1,3)=ival(3)
+                   chck_amber(2,nx,i1)='*'
                 elseif(key.eq.'bonds#')then
                    read(5,*)key,bondscnt(nx)
                    do k=1,bondscnt(nx)
@@ -772,6 +776,7 @@ contains
                       bonds(nx,k)=m
                       molbond(nx,k,1)=ival(1)
                       molbond(nx,k,2)=ival(2)
+                      chck_amber(1,nx,k)='*'
                    end do
                 elseif(key.eq.'bonds*')then
                    read(5,*)key,i1
@@ -785,6 +790,7 @@ contains
                    bonds(nx,i1)=m
                    molbond(nx,i1,1)=ival(1)
                    molbond(nx,i1,2)=ival(2)
+                   chck_amber(1,nx,i1)='*'
                 elseif(key.eq.'dihedrals!')then
                    read(5,*)key,itorscnt(nx)
                    do k=1,itorscnt(nx)
@@ -816,6 +822,7 @@ contains
                       moltors(nx,k,2)=ival(2)
                       moltors(nx,k,3)=ival(3)
                       moltors(nx,k,4)=ival(4)
+                      chck_amber(3,nx,k)='*'
                    end do
                 elseif(key.eq.'dihedrals*')then
                    read(5,*)key,i1
@@ -831,6 +838,7 @@ contains
                    moltors(nx,i1,2)=ival(2)
                    moltors(nx,i1,3)=ival(3)
                    moltors(nx,i1,4)=ival(4)
+                   chck_amber(3,nx,i1)='*'
                 end if
              end do
           end do
@@ -857,7 +865,7 @@ contains
                    vdw(ival(1),ival(2))=m
                    vdw(ival(2),ival(1))=m
                 end do
-             elseif(key.eq.'elect')then
+             elseif(key.eq.'electrostatic')then
                 read(5,*)key,coulop
              end if
           end do
@@ -962,6 +970,9 @@ contains
     do i=1,molecmax
        do j=1,ntpmax
           qatmolec(i,j)=0.0d0
+          do k=1,3
+             chck_amber(k,i,j)=' '
+          end do
        end do
     end do
 

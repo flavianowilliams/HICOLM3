@@ -51,6 +51,6 @@ rcutoff 7.0 0.1
   4 1 2 6 amber 1.0 1.1 180.0 2.0
  $END
  $INTER
-  elect fnsc
+  electrostatic fscs
  $END
 &END

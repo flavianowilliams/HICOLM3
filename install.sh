@@ -1,14 +1,12 @@
 #!/bin/sh
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
-# describe: Installation of HICOLM package
-#  version: 2.0.0
+# describe: Installation of HICOLM package and utilitaries
+#  version: 2.1.0
 #  license: MIT license
 #
-# --compiling codes--
 #
-make clean
-make
+path=`pwd`
 #
 # -- definind installation directory --
 #
@@ -20,6 +18,7 @@ aux_dir="/usr/local/share"
 if [ -f "$exe_dir/hicolm" ]
 then
     rm $exe_dir/hicolm
+    rm $exe_dir/x2x
 fi
 #
 if [ -d "$aux_dir/HICOLM" ]
@@ -32,9 +31,24 @@ fi
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
 #
-# --copying files--
+# --compilling HICOLM--
 #
-cp AMBER/*.prm $aux_dir/HICOLM/amber/.
-cp HICOLM $exe_dir/hicolm
+cd $path/SRC
 #
 make clean
+make
+#
+# --compilling x2x--
+#
+cd $path/UTILS/x2x
+#
+gfortran x2x.f90 -o x2x
+#
+# --copying files--
+#
+cp $path/CONTRIB/AMBER/*.prm $aux_dir/HICOLM/amber/.
+cp $path/SRC/HICOLM $exe_dir/hicolm
+cp $path/CONTRIB/x2x/x2x $exe_dir/x2x
+#
+# --cleaning directories
+#
