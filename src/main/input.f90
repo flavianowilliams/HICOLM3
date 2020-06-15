@@ -42,7 +42,7 @@ module input
   !----------------------------------------------------------------------------
   !-variaveis de estrutura
   integer rxmx,rymx,rzmx,gsymopt,natom,reuse,idna(natmax),fztp(natmax)
-  integer atp(natmax),atnp(ntpmax),idnamolec(molecmax,ntpmax)
+  integer atp(natmax),atnp(ntpmax)
   !
   real(8) a,b,c,xa(natmax),ya(natmax),za(natmax),v(3,3),volume,qat(natmax)
   real(8) vax(natmax),vay(natmax),vaz(natmax),fax(natmax),fay(natmax),faz(natmax)
@@ -176,13 +176,6 @@ contains
           b=sqrt(v(2,1)**2+v(2,2)**2+v(2,3)**2)
           c=sqrt(v(3,1)**2+v(3,2)**2+v(3,3)**2)
        end if
-!       if(key.eq.'molecs')then
-!          backspace(5)
-!          read(5,*)key,nmolec
-!          do j=1,nmolec
-       !             read(5,*)namemol(j),ntmolec(j),nxmolec(j)
-       !          end do
-!       end if
        if(key.eq.'reuse')then
           backspace(5)
           read(5,*)key,ival(1)
@@ -205,12 +198,11 @@ contains
     nx=1
     do i=1,nmolec
        read(10,*)namemol(i),ntmolec(i),nxmolec(i)
-       read(10,*)(idnamolec(i,j),j=1,nxmolec(i))
        read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
        read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
        do j=1,ntmolec(i)
           do k=1,nxmolec(i)
-             read(10,*)xa(nx),ya(nx),za(nx)
+             read(10,*)idna(nx),xa(nx),ya(nx),za(nx)
              nx=nx+1
           end do
        end do
@@ -231,36 +223,6 @@ contains
     end do
 
     moltot=moltot-1
-
-    !-lendo estrutura inicial
-
-    !    do i=1,natom
-    !       read(10,*)idna(i),xa(i),ya(i),za(i),atp(i),fztp(i)
-    !    end do
-
-    !-definindo especies e total de especies
-
-!    atnp(1)=atp(1)
-
-!    spctot=1
-!    do i=2,natom
-!       do j=1,spctot
-!          if(atp(i).eq.atnp(j))goto 553
-!       end do
-!       atnp(spctot+1)=atp(i)
-!       spctot=spctot+1
-!553    continue
-!    end do
-
-!    do j=1,spctot
-!       natnp(j)=0
-!    end do
-
-!    do i=1,natom
-!       do j=1,spctot
-!          if(atp(i).eq.atnp(j))natnp(j)=natnp(j)+1
-!       end do
-!    end do
 
     atsp(1)=atpmolec(1,1)
     atnp(1)=1
@@ -287,7 +249,6 @@ contains
              do l=1,spctot
                 if(atpmolec(i,k).eq.atsp(l))atp(nx)=atnp(l)
              end do
-             idna(nx)=idnamolec(i,k)
              qat(nx)=qatmolec(i,k)
              nx=nx+1
           end do

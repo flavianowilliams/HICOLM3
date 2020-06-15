@@ -1,4 +1,4 @@
-EX = ftirclass
+EX = hftir
 TYPE = seq
 SHELL=/bin/bash
 #===============================================================

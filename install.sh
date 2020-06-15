@@ -18,7 +18,21 @@ aux_dir="/usr/local/share"
 if [ -f "$exe_dir/hicolm" ]
 then
     rm $exe_dir/hicolm
-    rm $exe_dir/x2x
+fi
+#
+if [ -f "$exe_dir/hsystem" ]
+then
+    rm $exe_dir/hsystem
+fi
+#
+if [ -f "$exe_dir/hproperties" ]
+then
+    rm $exe_dir/hproperties
+fi
+#
+if [ -f "$exe_dir/hftir" ]
+then
+    rm $exe_dir/hftir
 fi
 #
 if [ -d "$aux_dir/HICOLM" ]
@@ -42,13 +56,13 @@ mv $path/src/HICOLM $exe_dir/hicolm
 #
 make clean
 #
-# --compilling x2x--
+# --compilling system--
 #
-cd $path/contrib/x2x
+cd $path/contrib/system
 #
-gfortran x2x.f90 -o x2x
+gfortran system.f90 -o hsystem
 #
-mv $path/contrib/x2x/x2x $exe_dir/x2x
+mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --compilling properties--
 #
@@ -57,7 +71,18 @@ cd $path/contrib/properties
 make clean
 make
 #
-mv $path/contrib/properties/properties $exe_dir/properties
+mv $path/contrib/properties/hproperties $exe_dir/hproperties
+#
+make clean
+#
+# --compilling ftir--
+#
+cd $path/contrib/ftir
+#
+make clean
+make
+#
+mv $path/contrib/ftir/hftir $exe_dir/hftir
 #
 make clean
 #
