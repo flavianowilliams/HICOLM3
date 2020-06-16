@@ -971,7 +971,7 @@ contains
     opt_ninter=95000
     opt_ntotal=100000
     opt_dfmax=1.0d-4
-    opt_gamma=1.0d-7
+    opt_gamma=5.0d-8
     opt_rshift=0.5d0
 
     !-variaveis canonicas
