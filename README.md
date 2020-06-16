@@ -40,7 +40,7 @@ After install the user must create in the working directory the following input 
 ```
  # direct molecular dynamics
  
- @MDRUNNING
+ @MDRUNNING or @MDPREPARE
 
 # System information
 
