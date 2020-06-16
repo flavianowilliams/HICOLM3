@@ -142,6 +142,7 @@ contains
        if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           call steepest_descent_CM
+          call steepest_descent_curl
           einter=envdw+encoul+envdw_corr
        else
           call ff_modules_intra&
@@ -223,7 +224,7 @@ contains
 
     implicit none
 
-    integer i,j,k,nx
+    integer i,j,k,nx,nxx
     real(8) mtotal,fcm(3)
 
     nx=1
@@ -233,11 +234,13 @@ contains
           fcm(2)=0.d0
           fcm(3)=0.d0
           mtotal=0.d0
+          nxx=nx
           do k=1,nxmolec(i)
-             fcm(1)=fcm(1)+mass(nx)*fax(nx)
-             fcm(2)=fcm(2)+mass(nx)*fay(nx)
-             fcm(3)=fcm(3)+mass(nx)*faz(nx)
-             mtotal=mtotal+mass(nx)
+             fcm(1)=fcm(1)+mass(nxx)*fax(nxx)
+             fcm(2)=fcm(2)+mass(nxx)*fay(nxx)
+             fcm(3)=fcm(3)+mass(nxx)*faz(nxx)
+             mtotal=mtotal+mass(nxx)
+             nxx=nxx+1
           end do
           do k=1,nxmolec(i)
              xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
@@ -251,6 +254,36 @@ contains
     return
 
   end subroutine steepest_descent_CM
+
+  subroutine steepest_descent_curl
+
+    implicit none
+
+!    nx=1
+!    do i=1,nmolec
+!       do j=1,ntmolec(i)
+!          xcm(1)=0.d0
+!          xcm(2)=0.d0
+!          xcm(3)=0.d0
+!          mtotal=0.d0
+!          do k=1,nxmolec(i)
+!             xcm(1)=xcm(1)+mass(nx)*xa(nx)
+!             xcm(2)=xcm(2)+mass(nx)*ya(nx)
+!             xcm(3)=xcm(3)+mass(nx)*za(nx)
+!             mtotal=mtotal+mass(nx)
+!          end do
+!          do k=1,nxmolec(i)
+!             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
+!             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_rshift)
+!             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_rshift)
+!             nx=nx+1
+!          end do
+!       end do
+!    end do
+
+    return
+
+  end subroutine steepest_descent_curl
 
   subroutine opt_check(gax,gay,gaz,dfmax)
 
