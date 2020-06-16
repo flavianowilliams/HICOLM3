@@ -69,15 +69,17 @@ After install the user must create in the working directory the following input 
 
 The detailed description of each directive can be seen in <a href="https://seer.ufrgs.br/rita/article/view/RITA_VOL26_NR3_90">doi: 10.22456/2175-2745.92486.</a></p>
 
-* Hicolm.str, with coordinates and species id of each atom. Below is an example of C2H4 molecule, the first collumn is the atomic number, from the second to fourth collumns are the atomic coordinates. Next are the specie id and the last one is the freeze option of each atom (0 freeze, 1 free).
+* Hicolm.sys, with coordinates and other information about each molecular type. Below is an example of H_2O condensed system, the first line shows the quantity of molecular types, the second shows the molecular name, quantity of molecules and quantity of atoms of each molecule, respectively. Next shows types of each site followed by the partial charges. After that, the atomic number followed by atomic coordinates of each atom are represented in the next lines.
 
 ```
-    6    0.00632000    0.00000000    0.00000000        1      1
-    6    1.34000000    0.00000000    0.00000000        2      1
-    1   -0.53868000   -0.94397000    0.00000000        3      1
-    1   -0.53868000    0.94397000    0.00000000        4      1
-    1    1.88500000    0.94397000    0.00000000        5      1
-    1    1.88500000   -0.94397000    0.00000000        6      1
+    1
+H2O         100    3
+ OW HW HW
+-0.8340 0.4170 0.4170
+    8      5.29770100     12.22297800     19.92931800
+    1      4.72481900     13.03438700     19.81360300
+    1      5.30418400     11.42751000     20.53525100
+    ...
 ```
 
 After that, run the command `hicolm` in your working directory. Four output files will be create:
@@ -87,4 +89,4 @@ After that, run the command `hicolm` in your working directory. Four output file
 3. **Hicolm.XSF**: The latest force, velocity and positions of each atom in XSF format (see [XCrysDen format](http://www.xcrysden.org/doc/XSF.html));
 4. **Hicolm.AXSF**: Conjunction of frames containing force, velocity and positions in AXSF format.
 
-For more information, you can run the examples in the EXAMPLES directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
+For more information, you can run the examples in the examples directory, or send an issue in [Issues page](https://github.com/flavianowilliams/HICOLM/issues).
