@@ -69,7 +69,7 @@ After install the user must create in the working directory the following input 
 
 The detailed description of each directive can be seen in <a href="https://seer.ufrgs.br/rita/article/view/RITA_VOL26_NR3_90">doi: 10.22456/2175-2745.92486.</a></p>
 
-* Hicolm.sys, with coordinates and other information about each molecular type. Below is an example of H_2O condensed system, the first line shows the quantity of molecular types, the second shows the molecular name, quantity of molecules and quantity of atoms of each molecule, respectively. Next shows types of each site followed by the partial charges. After that, the atomic number followed by atomic coordinates of each atom are represented in the next lines.
+* Hicolm.sys, with coordinates and other information about each molecular type. Below is an example of H_2O condensed system, the first line shows the quantity of molecular types, the second shows the molecular name, quantity of molecules and quantity of atoms of each molecule, respectively. Next shows types of each site followed by the partial charges. After that, the atomic number followed by atomic coordinates of each atom are represented in next lines.
 
 ```
     1
