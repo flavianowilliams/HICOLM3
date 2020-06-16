@@ -16,7 +16,7 @@
 
 &OPT
  dfmax 1.0e-2             # intra and intermolecular gradient force tolerance (default: 1.e-2)
- gamma 1.e-7             # ... (default: 1.e-7)
+ gamma 1.e-8             # ... (default: 1.e-7)
  ntrialmax 1000 1000          # limit of inter and intramolecular steps (default: 95000 100000)
  nhist 1000
  rcutoff 9.0 0.1          # cutoff radius and width (default: 10 A 0.1 A)

@@ -259,27 +259,36 @@ contains
 
     implicit none
 
-!    nx=1
-!    do i=1,nmolec
-!       do j=1,ntmolec(i)
-!          xcm(1)=0.d0
-!          xcm(2)=0.d0
-!          xcm(3)=0.d0
-!          mtotal=0.d0
-!          do k=1,nxmolec(i)
-!             xcm(1)=xcm(1)+mass(nx)*xa(nx)
-!             xcm(2)=xcm(2)+mass(nx)*ya(nx)
-!             xcm(3)=xcm(3)+mass(nx)*za(nx)
-!             mtotal=mtotal+mass(nx)
-!          end do
-!          do k=1,nxmolec(i)
-!             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
-!             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_rshift)
-!             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_rshift)
-!             nx=nx+1
-!          end do
-!       end do
-!    end do
+    integer i,j,k,nx,nxx
+    real(8) rcm(3),dr,mtotal
+
+    nx=1
+    do i=1,nmolec
+       do j=1,ntmolec(i)
+          rcm(1)=0.d0
+          rcm(2)=0.d0
+          rcm(3)=0.d0
+          mtotal=0.d0
+          nxx=nx
+          do k=1,nxmolec(i)
+             rcm(1)=rcm(1)+mass(nxx)*xa(nxx)
+             rcm(2)=rcm(2)+mass(nxx)*ya(nxx)
+             rcm(3)=rcm(3)+mass(nxx)*za(nxx)
+             mtotal=mtotal+mass(nxx)
+             nxx=nxx+1
+          end do
+          rcm(1)=rcm(1)/mtotal
+          rcm(2)=rcm(2)/mtotal
+          rcm(3)=rcm(3)/mtotal
+          do k=1,nxmolec(i)
+             dr=sqrt((xa(nx)-rcm(1))**2+(ya(nx)-rcm(2))**2+(za(nx)-rcm(3))**2)
+             xa(nx)=xa(nx)+min(opt_gamma*dr*(ya(nx)*faz(nx)-za(nx)*fay(nx)),opt_rshift)
+             ya(nx)=ya(nx)+min(opt_gamma*dr*(za(nx)*fax(nx)-xa(nx)*faz(nx)),opt_rshift)
+             za(nx)=za(nx)+min(opt_gamma*dr*(xa(nx)*fay(nx)-ya(nx)*fax(nx)),opt_rshift)
+             nx=nx+1
+          end do
+       end do
+    end do
 
     return
 
