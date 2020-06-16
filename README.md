@@ -16,11 +16,13 @@ Below is a list of publications involving the HICOLM program:
 
 # Installation
 
-To install just run "as a superuser" the script install.sh in the SRC directory,
+To install just run "as a superuser" the script install.sh,
 
 ```
 $ sudo ./install.sh
 ```
+
+After that, HICOLM and auxiliary programs will be installed in the default PATH (/usr/local).
 
 Notice: gfortran library is necessary to compile the Hicolm program.
 
