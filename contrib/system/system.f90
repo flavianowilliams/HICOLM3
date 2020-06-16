@@ -43,7 +43,7 @@ program x2x
   do i=1,ntmolecs
      write(2,'(a10,2i5)')nomemolec(i),nmolec(i),namolec(i)
      write(2,'(20a3)')(tpmolec(i,j),j=1,namolec(i))
-     write(2,'(20f12.8)')(qmolec(i,j),j=1,namolec(i))
+     write(2,'(20f8.4)')(qmolec(i,j),j=1,namolec(i))
      do j=1,nmolec(i)
         do k=1,namolec(i)
            read(1,*)at,x,y,z
