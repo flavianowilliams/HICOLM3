@@ -9,17 +9,15 @@
   19.0 0.0  0.0
   0.0 19.0  0.0
   0.0  0.0 19.0
- molecs 1
-  H2O 267 3
- reuse 0
+  reuse 1
 &END
 
 # Molecular dynamics variables
 
 &OPT
  dfmax 1.0e-4             # intra and intermolecular gradient force tolerance (default: 1.e-2)
- gamma 1.e-7              # ... (default: 1.e-7)
- ntrialmax 10000 10000          # limit of inter and intramolecular steps (default: 95000 100000)
+ gamma 1.e-8              # ... (default: 1.e-7)
+ ntrialmax 1000 1000          # limit of inter and intramolecular steps (default: 95000 100000)
  nhist 1000
  rcutoff 7.0 0.1          # cutoff radius and width (default: 10 A 0.1 A)
 &END
@@ -32,12 +30,7 @@
 # Force field variables
 
 &FORCE
- $AMBER
-  molecule H2O
-  OW HW HW
-  -0.834 0.417 0.417
- $END
  $INTER
-  elect coul 0
+  electrostatic coul
  $END
 &END
