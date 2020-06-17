@@ -109,5 +109,7 @@ echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
+echo "\e[32mSUCSSES!\e[0m"
+echo
 echo "\e[32mThe HICOLM was installed in the $exe_dir directory. To use it, just type hicolm in the terminal.\e[0m"
 echo
