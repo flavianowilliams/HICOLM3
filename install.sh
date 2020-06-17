@@ -8,10 +8,23 @@
 #
 path=`pwd`
 #
-# -- definind installation directory --
+# -- definind installation and auxiliary directory --
 #
+echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
+read exe_dir
+#
+if [ -z $exe_dir ]
+then
 exe_dir="/usr/local/bin"
+fi
+#
+echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/share)"
+read aux_dir
+#
+if [ -z $aux_dir ]
+then
 aux_dir="/usr/local/share"
+fi
 #
 # --creation directories
 #
@@ -26,7 +39,7 @@ mkdir $aux_dir/HICOLM/amber
 # -- installing HICOLM --
 #
 echo
-echo "\e[33mInstalling HICOLM\e[0m"
+echo "\e[33mInstalling HICOLM in $exe_dir\e[0m"
 echo
 #
 if [ -f "$exe_dir/hicolm" ]
@@ -48,7 +61,7 @@ make clean
 # -- installing hsystem --
 #
 echo
-echo "\e[33mInstalling utilitaries\e[0m"
+echo "\e[33mInstalling utilitaries in $exe_dir\e[0m"
 echo
 #
 if [ -f "$exe_dir/hsystem" ]
@@ -104,12 +117,12 @@ make clean
 # --copying auxiliary files--
 #
 echo
-echo "\e[33mCopying auxiliary files\e[0m"
+echo "\e[33mCopying auxiliary files to $aux_dir\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
 echo "\e[32mSUCCESS!\e[0m"
 echo
-echo "\e[32mThe HICOLM was installed in the $exe_dir directory. To start, just type \e[31mhicolm\e[32m in the terminal.\e[0m"
+echo "\e[32mTo start, just type \e[31mhicolm\e[32m in the terminal.\e[0m"
 echo
