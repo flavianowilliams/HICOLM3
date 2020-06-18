@@ -10,20 +10,21 @@ path=`pwd`
 #
 # -- definind installation and auxiliary directory --
 #
-echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
-read exe_dir
+#echo
+#echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
+#read exe_dir
 #
 if [ -z $exe_dir ]
 then
-exe_dir="/usr/local/bin"
+    exe_dir="/usr/local/bin"
 fi
 #
-echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/share)"
-read aux_dir
+#echo "Please, type the installation directory or presse ENTER to accept the default option (/usr/local/share)"
+#read aux_dir
 #
 if [ -z $aux_dir ]
 then
-aux_dir="/usr/local/share"
+    aux_dir="/usr/local/share"
 fi
 #
 # --creation directories

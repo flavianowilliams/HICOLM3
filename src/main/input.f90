@@ -69,7 +69,6 @@ module input
   character(7) prop,ensble
   character(9) ensble_mt
   character(10) method,namemol(molecmax)
-  character(100) PATH
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
   save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
