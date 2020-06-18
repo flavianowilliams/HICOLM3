@@ -155,7 +155,7 @@ contains
                   'mors',chck_amber(1,i,j),parbnd(i,j,1)*econv,parbnd(i,j,2)*kconv,&
                   parbnd(i,j,3)*rconv
           case(2)
-             write(6,'(2x,3(i3,3x),a4,a5,2f9.2)')j,(molbond(i,j,l),l=1,2),&
+             write(6,'(2x,3(i3,3x),a4,a1,1x,2f9.2)')j,(molbond(i,j,l),l=1,2),&
                   'harm',chck_amber(1,i,j),parbnd(i,j,1)*(econv/rconv**2.d0),&
                   parbnd(i,j,2)*rconv
           case(3)

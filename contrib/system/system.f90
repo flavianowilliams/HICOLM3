@@ -56,8 +56,8 @@ program x2x
 
   natom=natom-1
 
-  write(2,*)
-  write(2,*)natom,'atomos.'
+  write(*,*)
+  write(*,*)natom,'atomos.'
 
   return
 

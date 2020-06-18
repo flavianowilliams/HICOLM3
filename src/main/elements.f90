@@ -34,6 +34,10 @@ contains
        rc=0.37d0
     case(6)
        rc=0.77d0
+    case(7)
+       rc=0.75d0
+    case(15)
+       rc=1.06d0
     case(8)
        rc=0.73d0
     end select
