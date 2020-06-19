@@ -84,6 +84,60 @@ contains
        rc=1.25d0
     case(27)
        rc=1.26d0
+    case(28)
+       rc=1.21d0
+    case(29)
+       rc=1.38d0
+    case(30)
+       rc=1.31d0
+    case(31)
+       rc=1.26d0
+    case(32)
+       rc=1.22d0
+    case(33)
+       rc=1.19d0
+    case(34)
+       rc=1.16d0
+    case(35)
+       rc=1.14d0
+    case(36)
+       rc=1.10d0
+    case(37)
+       rc=2.11d0
+    case(38)
+       rc=1.92d0
+    case(39)
+       rc=1.62d0
+    case(40)
+       rc=1.48d0
+    case(41)
+       rc=1.37d0
+    case(42)
+       rc=1.45d0
+    case(43)
+       rc=1.56d0
+    case(44)
+       rc=1.26d0
+    case(45)
+       rc=1.35d0
+    case(46)
+       rc=1.31d0
+    case(47)
+       rc=1.53d0
+    case(48)
+       rc=1.48d0
+    case(49)
+       rc=1.44d0
+    case(50)
+       rc=1.41d0
+    case(51)
+       rc=1.38d0
+    case(52)
+       rc=1.35d0
+    case(53)
+       rc=1.33d0
+    case(54)
+       rc=1.30d0
     end select
 
     return
