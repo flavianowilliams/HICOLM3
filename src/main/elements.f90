@@ -32,14 +32,40 @@ contains
     select case(zat)
     case(1)
        rc=0.37d0
+    case(2)
+       rc=0.32d0
+    case(3)
+       rc=1.34d0
+    case(4)
+       rc=0.90d0
+    case(5)
+       rc=0.82d0
     case(6)
        rc=0.77d0
     case(7)
        rc=0.75d0
-    case(15)
-       rc=1.06d0
     case(8)
        rc=0.73d0
+    case(9)
+       rc=0.71d0
+    case(10)
+       rc=0.69d0
+    case(11)
+       rc=1.54d0
+    case(12)
+       rc=1.30d0
+    case(13)
+       rc=1.18d0
+    case(14)
+       rc=1.11d0
+    case(15)
+       rc=1.06d0
+    case(16)
+       rc=1.02d0
+    case(17)
+       rc=0.99d0
+    case(18)
+       rc=0.97d0
     end select
 
     return
