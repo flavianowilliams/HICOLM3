@@ -66,6 +66,24 @@ contains
        rc=0.99d0
     case(18)
        rc=0.97d0
+    case(19)
+       rc=1.96d0
+    case(20)
+       rc=1.74d0
+    case(21)
+       rc=1.44d0
+    case(22)
+       rc=1.36d0
+    case(23)
+       rc=1.25d0
+    case(24)
+       rc=1.27d0
+    case(25)
+       rc=1.39d0
+    case(26)
+       rc=1.25d0
+    case(27)
+       rc=1.26d0
     end select
 
     return
