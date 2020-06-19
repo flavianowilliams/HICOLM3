@@ -61,7 +61,7 @@ module input
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
-  real(8) mass(natmax),massmin,massmax,rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
+  real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
   !
   character(1) chck_amber(3,molecmax,ntpmax)
   character(4) coulop
@@ -1216,50 +1216,5 @@ contains
     return
 
   end subroutine bonds_opt
-
-  subroutine atomic_mass
-    !***************************************************************************************
-    ! Massas atomicas                                                                      *
-    !***************************************************************************************
-    implicit none
-
-    integer i
-
-    !-definindo massa atomica
-
-    do i=1,natom
-       select case(idna(i))
-       case(1)
-          mass(i)=1.0079400d0
-       case(6)
-          mass(i)=12.010700d0
-       case(7)
-          mass(i)=14.006700d0
-       case(8)
-          mass(i)=15.999400d0
-       case(15)
-          mass(i)=30.973762d0
-       case(18)
-          mass(i)=39.948000d0
-       case(80)
-          mass(i)=200.59000d0
-       end select
-    end do
-
-    !-definindo menor e maior massa atomica
-
-    massmax=0.d0
-    do i=1,natom
-       massmax=max(massmax,mass(i))
-    end do
-
-    massmin=massmax
-    do i=1,natom
-       massmin=min(massmin,mass(i))
-    end do
-
-    return
-
-  end subroutine atomic_mass
 
 end module input

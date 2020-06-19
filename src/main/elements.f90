@@ -20,6 +20,12 @@
 !
 module elements
 
+  use sistema
+
+  real(8) mass(natmax),massmin,massmax
+
+  save mass(natmax),massmin,massmax
+
 contains
 
   subroutine covalent_radius(zat,rc)
@@ -175,5 +181,50 @@ contains
     return
 
   end subroutine covalent_radius
+
+  subroutine atomic_mass
+    !***************************************************************************************
+    ! Massas atomicas                                                                      *
+    !***************************************************************************************
+    implicit none
+
+    integer i
+
+    !-definindo massa atomica
+
+    do i=1,natom
+       select case(idna(i))
+       case(1)
+          mass(i)=1.0079400d0
+       case(6)
+          mass(i)=12.010700d0
+       case(7)
+          mass(i)=14.006700d0
+       case(8)
+          mass(i)=15.999400d0
+       case(15)
+          mass(i)=30.973762d0
+       case(18)
+          mass(i)=39.948000d0
+       case(80)
+          mass(i)=200.59000d0
+       end select
+    end do
+
+    !-definindo menor e maior massa atomica
+
+    massmax=0.d0
+    do i=1,natom
+       massmax=max(massmax,mass(i))
+    end do
+
+    massmin=massmax
+    do i=1,natom
+       massmin=min(massmin,mass(i))
+    end do
+
+    return
+
+  end subroutine atomic_mass
 
 end module elements
