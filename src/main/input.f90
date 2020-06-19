@@ -61,7 +61,7 @@ module input
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
   real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
-  real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul
+  real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul,massmin,massmax
   !
   character(1) chck_amber(3,molecmax,ntpmax)
   character(4) coulop
@@ -71,7 +71,7 @@ module input
   character(10) method,namemol(molecmax)
   !
   save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
-  save mass,massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
+  save massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
   save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec,chck_amber
   save vdw,bonds,bends,nbonds,nbends,ntors,coulop,tersoff,tors,atpmolec,sys_shift,atsp
@@ -273,7 +273,19 @@ contains
 
     !-definindo massa atomica
 
-    call atomic_mass
+    do i=1,natom
+       call atomic_mass(i,idna(i))
+    end do
+
+    massmax=0.d0
+    do i=1,natom
+       massmax=max(massmax,mass(i))
+    end do
+
+    massmin=massmax
+    do i=1,natom
+       massmin=min(massmin,mass(i))
+    end do
 
     return
 

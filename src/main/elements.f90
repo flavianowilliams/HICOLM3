@@ -22,9 +22,9 @@ module elements
 
   use sistema
 
-  real(8) mass(natmax),massmin,massmax
+  real(8) mass(natmax)
 
-  save mass(natmax),massmin,massmax
+  save mass
 
 contains
 
@@ -182,46 +182,56 @@ contains
 
   end subroutine covalent_radius
 
-  subroutine atomic_mass
+  subroutine atomic_mass(i,zat)
     !***************************************************************************************
     ! Massas atomicas                                                                      *
     !***************************************************************************************
     implicit none
 
-    integer i
+    integer zat,i
 
     !-definindo massa atomica
 
-    do i=1,natom
-       select case(idna(i))
-       case(1)
-          mass(i)=1.0079400d0
-       case(6)
-          mass(i)=12.010700d0
-       case(7)
-          mass(i)=14.006700d0
-       case(8)
-          mass(i)=15.999400d0
-       case(15)
-          mass(i)=30.973762d0
-       case(18)
-          mass(i)=39.948000d0
-       case(80)
-          mass(i)=200.59000d0
-       end select
-    end do
-
-    !-definindo menor e maior massa atomica
-
-    massmax=0.d0
-    do i=1,natom
-       massmax=max(massmax,mass(i))
-    end do
-
-    massmin=massmax
-    do i=1,natom
-       massmin=min(massmin,mass(i))
-    end do
+    select case(zat)
+    case(1)
+       mass(i)=1.007940000d0
+    case(2)
+       mass(i)=4.002602000d0
+    case(3)
+       mass(i)=6.941000000d0
+    case(4)
+       mass(i)=9.012182000d0
+    case(5)
+       mass(i)=10.81100000d0
+    case(6)
+       mass(i)=12.01070000d0
+    case(7)
+       mass(i)=14.00670000d0
+    case(8)
+       mass(i)=15.99940000d0
+    case(9)
+       mass(i)=18.99840300d0
+    case(10)
+       mass(i)=20.17970000d0
+    case(11)
+       mass(i)=22.98976928d0
+    case(12)
+       mass(i)=24.30500000d0
+    case(13)
+       mass(i)=26.98153860d0
+    case(14)
+       mass(i)=28.08550000d0
+    case(15)
+       mass(i)=30.97376200d0
+    case(16)
+       mass(i)=32.06500000d0
+    case(17)
+       mass(i)=35.45300000d0
+    case(18)
+       mass(i)=39.94800000d0
+    case(80)
+       mass(i)=200.59000d0
+    end select
 
     return
 
