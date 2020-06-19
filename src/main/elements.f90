@@ -138,6 +138,38 @@ contains
        rc=1.33d0
     case(54)
        rc=1.30d0
+    case(55)
+       rc=2.25d0
+    case(56)
+       rc=1.98d0
+    case(57)
+       rc=1.69d0
+    case(71)
+       rc=1.60d0
+    case(72)
+       rc=1.50d0
+    case(73)
+       rc=1.38d0
+    case(74)
+       rc=1.46d0
+    case(75)
+       rc=1.59d0
+    case(76)
+       rc=1.28d0
+    case(77)
+       rc=1.37d0
+    case(78)
+       rc=1.28d0
+    case(79)
+       rc=1.44d0
+    case(80)
+       rc=1.49d0
+    case(81)
+       rc=1.48d0
+    case(82)
+       rc=1.47d0
+    case(83)
+       rc=1.46d0
     end select
 
     return
