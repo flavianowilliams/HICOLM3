@@ -229,6 +229,8 @@ contains
        mass(i)=35.45300000d0
     case(18)
        mass(i)=39.94800000d0
+    case(19)
+       mass(i)=39.09830000d0
     case(80)
        mass(i)=200.59000d0
     end select
