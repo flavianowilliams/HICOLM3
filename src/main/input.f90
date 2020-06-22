@@ -59,7 +59,7 @@ module input
   integer nvdw,nbonds,nbends,ntors,moltors(molecmax,torsmax,4),itorscnt(molecmax)
   !
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
-  real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6)
+  real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6),massmol(molecmax)
   real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
   real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul,massmin,massmax
   !
@@ -70,7 +70,7 @@ module input
   character(9) ensble_mt
   character(10) method,namemol(molecmax)
   !
-  save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol
+  save dtime,drmax,nhist,ntrialmax,nrelax,fmstp,dstp,xstp,ndstp,drcutoff,zmatrix_tol,massmol
   save massmin,massmax,prop,namemol,nmolec,moltot,nfree,spctot,ensble,ensble_mt,rcutoff
   save nrl,atnp,natnp,text,preext,pstat,bfactor,tstat,lrmax,fzstr,sf_vdw,sf_coul
   save parbnd,parvdw,parbend,lambdain,lambdafi,partors,moltors,qatmolec,chck_amber
@@ -276,6 +276,17 @@ contains
     do i=1,natom
        call atomic_mass(i,idna(i))
     end do
+
+    nx=1
+    do i=1,nmolec
+       do j=1,nxmolec(i)
+          massmol(i)=massmol(i)+mass(nx)
+          nx=nx+1
+       end do
+       nx=nx+ntmolec(i)
+       write(*,*)massmol(i)
+    end do
+    stop
 
     massmax=0.d0
     do i=1,natom
@@ -946,6 +957,7 @@ contains
              chck_amber(k,i,j)=' '
           end do
        end do
+       massmol(i)=0.d0
     end do
 
     do i=1,natmax
