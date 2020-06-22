@@ -134,14 +134,19 @@ contains
     do i=1,nmolec
        write(6,'(42x,a6)')namemol(i)
        write(6,'(2x,111a1)')('*',j=1,90)
-       if(nxmolec(i).le.25)then
-          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atpmolec(i,j),j=1,nxmolec(i))
-          write(6,'(2x,a8,25(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,nxmolec(i))
+       write(6,*)
+       write(6,'(2x,a11,1x,f8.3,1x,a5)')'Molar mass:',massmol(i)*mconv,'g/mol'
+       write(6,*)
+       if(nxmolec(i).le.15)then
+          write(6,'(7x,a6,10(1x,a2))')'Sites:',(atpmolec(i,j),j=1,nxmolec(i))
+          write(6,*)
+          write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,nxmolec(i))
        else
-          write(6,'(2x,a6,25(1x,a2))')'Sites:',(atpmolec(i,j),j=1,25)
-          write(6,'(8x,25(1x,a2))')(atpmolec(i,j),j=26,nxmolec(i))
-          write(6,'(10x,25(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,25)
-          write(6,'(10x,25(1x,f6.3))')(qatmolec(i,j)*elconv,j=26,nxmolec(i))
+          write(6,'(7x,a6,10(1x,a2))')'Sites:',(atpmolec(i,j),j=1,10)
+          write(6,'(13x,10(1x,a2))')(atpmolec(i,j),j=11,nxmolec(i))
+          write(6,*)
+          write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(qatmolec(i,j)*elconv,j=1,10)
+          write(6,'(13x,10(1x,f6.3))')(qatmolec(i,j)*elconv,j=11,nxmolec(i))
        end if
        write(6,*)
        write(6,'(2x,a6,1x,i5)')'Bonds:',bondscnt(i)

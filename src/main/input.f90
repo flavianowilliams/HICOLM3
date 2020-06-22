@@ -263,12 +263,12 @@ contains
 
     nfree=3*(natom-natfx-1)
 
-    !-deslocando sistema para o centro da supercelula
+    !-transladando coordenadas atomicas
 
     do i=1,natom
-       xa(i)=xa(i)+sys_shift(1)*(v(1,1)+v(2,1)+v(3,1))
-       ya(i)=ya(i)+sys_shift(2)*(v(1,2)+v(2,2)+v(3,2))
-       za(i)=za(i)+sys_shift(3)*(v(1,3)+v(2,3)+v(3,3))
+       xa(i)=xa(i)+sys_shift(1)*a
+       ya(i)=ya(i)+sys_shift(2)*b
+       za(i)=za(i)+sys_shift(3)*c
     end do
 
     !-definindo massa atomica
@@ -284,9 +284,7 @@ contains
           nx=nx+1
        end do
        nx=nx+ntmolec(i)
-!       write(*,*)massmol(i)
     end do
-!    stop
 
     massmax=0.d0
     do i=1,natom
@@ -1114,6 +1112,10 @@ contains
     kelect=kelect/keconv
 
     !-unidades de massa atomica
+
+    do i=1,nmolec
+       massmol(i)=massmol(i)/mconv
+    end do
 
     do i=1,natom
        mass(i)=mass(i)/mconv
