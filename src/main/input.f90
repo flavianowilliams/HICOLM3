@@ -284,9 +284,9 @@ contains
           nx=nx+1
        end do
        nx=nx+ntmolec(i)
-       write(*,*)massmol(i)
+!       write(*,*)massmol(i)
     end do
-    stop
+!    stop
 
     massmax=0.d0
     do i=1,natom
