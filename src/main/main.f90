@@ -49,7 +49,8 @@ program HICOLM
 
   call date_and_time(Date=date)
   call date_and_time(TIME=time)
-  call hostnm(host)
+  !  call hostnm(host)
+  host='undefined'
 
   !-cabecalho
   !

@@ -10,24 +10,24 @@ path=`pwd`
 #
 # -- definind installation and auxiliary directory --
 #
-#echo
-#echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
-#read exe_dir
+echo
+echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
+read exe_dir
 #
 if [ -z $exe_dir ]
 then
     exe_dir="/usr/local/bin"
 fi
 #
-#echo "Please, type the installation directory or presse ENTER to accept the default option (/usr/local/share)"
-#read aux_dir
+echo "Please, type the installation directory or presse ENTER to accept the default option (/usr/local/share)"
+read aux_dir
 #
 if [ -z $aux_dir ]
 then
     aux_dir="/usr/local/share"
 fi
 #
-# --creation directories
+# --creating directories
 #
 if [ -d "$aux_dir/HICOLM" ]
 then
@@ -45,7 +45,7 @@ echo
 #
 if [ -f "$exe_dir/hicolm" ]
 then
-    rm $exe_dir/hicolm
+    rm $exe_dir/HICOLM.bin
 fi
 #
 cd $path/src
@@ -56,7 +56,7 @@ then
     echo "\e[31mError in compiling HICOLM. The installation is going to finish!"
     exit
 fi
-mv $path/src/HICOLM $exe_dir/hicolm
+mv $path/src/HICOLM $exe_dir/HICOLM.bin
 make clean
 #
 # -- installing hsystem --
@@ -122,6 +122,24 @@ echo "\e[33mCopying auxiliary files to $aux_dir\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+#
+# --creating executing script--
+#
+if [ -f "$exe_dir/hicolm" ]
+then
+    rm $exe_dir/hicolm
+fi
+#
+touch $exe_dir/hicolm
+#
+echo "#!/bin/sh
+if [ ! -d '/tmp/amber' ]
+then
+    cp -r $aux_dir/HICOLM/amber /tmp/amber
+fi
+$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
+#
+chmod +x $exe_dir/hicolm
 #
 echo "\e[32mSUCCESS!\e[0m"
 echo
