@@ -1,21 +1,29 @@
-EX = hproperties
-TYPE = comp
-#===============================================================
-OBJ_MOD = input_module.o variaveis_module.o rdf_module.o
-OBJ_SRC = main.o
-#===============================================================
-gfortran:
-	$(MAKE) LD="gfortran -o" FC="gfortran" \
-	FFLAGS="-c -fcheck=all -Wall" \
-	LDFLAGS="" \
-	EX=$(EX) $(TYPE)
+# Compiler
 #
-comp:	$(OBJ_MOD) $(OBJ_SRC)
-	$(LD) $(EX) $(OBJ_MOD) $(OBJ_SRC) $(LDFLAGS)
+FC=gfortran
+#
+# Instructions
+#
+FFLAGS=-fcheck=all -fbacktrace -Wall
+#
+# libraries
+#
+LDFLAGS=
+#=====================================================================================
+OBJ_SRC=input_module.o variaveis_module.o rdf_module.o
+#
+OBJ_MAIN=main.o
+#=====================================================================================
+#
+$(OBJ_SRC):
+	$(FC) -c $(FFLAGS) $*.f90
+#
+$(OBJ_MAIN):
+	$(FC) -c $(FFLAGS) $*.f90
+#
+all: $(OBJ_SRC) $(OBJ_MAIN)
+	$(FC) -o hproperties $(LDFLAGS) $(OBJ_SRC) $(OBJ_MAIN)
 #
 clean:
-	rm -f $(EX) *.mod *.o
-#=====================================================================
-# Declare dependencies
-%.o:
-	$(FC) $(FFLAGS) $*.f90
+	rm -f *.o *.mod hproperties
+#==========================================================================

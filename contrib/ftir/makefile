@@ -1,22 +1,30 @@
-EX = hftir
-TYPE = seq
-SHELL=/bin/bash
-#===============================================================
-MOD_MAIN = sizes.o error.o system.o utils.o cmmolec.o
-MOD_MOD = utilsrange.o dipmol.o corr.o tcf.o ftir.o printfile.o
-MOD_SRC = ftirclass.o
-#===============================================================
-intel:
-	$(MAKE) LD="gfortran -o" FC="gfortran" \
-	FFLAGS="-fcheck=all -Wall" \
-	EX=$(EX) $(TYPE)
+# Compiler
 #
-seq:	$(MOD_MAIN) $(MOD_MOD) $(MOD_SRC)
-	$(LD) $(EX) $(MOD_MAIN) $(MOD_MOD) $(MOD_SRC)
+FC=gfortran
+#
+# Instructions
+#
+FFLAGS=-fcheck=all -fbacktrace -Wall
+#
+# libraries
+#
+LDFLAGS=
+#=====================================================================================
+OBJ_SRC=sizes.o error.o system.o utils.o cmmolec.o utilsrange.o dipmol.o corr.o tcf.o \
+	ftir.o printfile.o
+#
+OBJ_MAIN=ftirclass.o
+#=====================================================================================
+#
+$(OBJ_SRC):
+	$(FC) -c $(FFLAGS) $*.f
+#
+$(OBJ_MAIN):
+	$(FC) -c $(FFLAGS) $*.f
+#
+all: $(OBJ_SRC) $(OBJ_MAIN)
+	$(FC) -o hftir $(LDFLAGS) $(OBJ_SRC) $(OBJ_MAIN)
 #
 clean:
-	rm -f $(MOD_MAIN) $(MOD_MOD) $(MOD_SRC) $(EX) *.dat *.out *.mod
-#=====================================================================
-# Declare dependencies
-.o:
-	$(SHELL) $(FC) $(FFLAGS) $*.f
+	rm -f *.o *.mod hftir
+#==========================================================================

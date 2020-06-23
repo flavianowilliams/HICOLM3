@@ -11,7 +11,26 @@ path=`pwd`
 # -- definind installation and auxiliary directory --
 #
 echo
-echo "Please, type the installation directory or presse ENTER to accept the default (/usr/local/bin)"
+echo "Please, type the compiler or presse ENTER (default: gfortran)"
+read compiler
+#
+if [ -z $compiler ]
+then
+    compiler="gfortran"
+fi
+#
+echo
+echo "Please, type the instructions of compilation or presse ENTER"
+read instructions
+#
+if [ -z $instructions ]
+then
+    instructions="-fcheck=all -fbacktrace -Wall"
+#    instructions=""
+fi
+#
+echo
+echo "Please, type the installation directory or presse ENTER (default: /usr/local/bin)"
 read exe_dir
 #
 if [ -z $exe_dir ]
@@ -19,7 +38,8 @@ then
     exe_dir="/usr/local/bin"
 fi
 #
-echo "Please, type the installation directory or presse ENTER to accept the default option (/usr/local/share)"
+echo
+echo "Please, type the auxiliary directory or presse ENTER (default: /usr/local/share)"
 read aux_dir
 #
 if [ -z $aux_dir ]
@@ -49,11 +69,15 @@ then
 fi
 #
 cd $path/src
+#
+sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
+sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
+#
 make clean
 make all
 if [ ! -f "HICOLM" ]
 then
-    echo "\e[31mError in compiling HICOLM. The installation is going to finish!"
+    echo "\e[31mError in compiling HICOLM. The installation will be finish!"
     exit
 fi
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
@@ -71,10 +95,11 @@ then
 fi
 #
 cd $path/contrib/system
-gfortran system.f90 -o hsystem
+$compiler system.f90 $instructions -o hsystem
+#
 if [ ! -f "hsystem" ]
 then
-    echo "\e[31mError in compiling hsystem. The installation is going to finish!"
+    echo "\e[31mError in compiling hsystem. The installation will be finish!"
     exit
 fi
 mv $path/contrib/system/hsystem $exe_dir/hsystem
@@ -87,15 +112,20 @@ then
 fi
 #
 cd $path/contrib/properties
+#
+sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
+sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
+#
 make clean
-make
+make all
 if [ ! -f "hproperties" ]
 then
-    echo "\e[31mError in compiling hproperties. The installation is going to finish!"
+    echo "\e[31mError in compiling hproperties. The installation will be finish!"
     exit
 fi
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 make clean
+echo
 #
 # -- installing hftir --
 #
@@ -105,8 +135,12 @@ then
 fi
 #
 cd $path/contrib/ftir
+#
+sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
+sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
+#
 make clean
-make
+make all
 if [ ! -f "hftir" ]
 then
     echo "\e[31mError in compiling hftir. The installation is going to finish!"
