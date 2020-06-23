@@ -11,7 +11,7 @@ path=`pwd`
 # -- definind installation and auxiliary directory --
 #
 echo
-echo "Please, type the compiler or presse ENTER (default: gfortran)"
+echo "Please, type the compiler or press ENTER (default: gfortran)"
 read compiler
 #
 if [ -z $compiler ]
@@ -20,7 +20,7 @@ then
 fi
 #
 echo
-echo "Please, type the instructions of compilation or presse ENTER"
+echo "Please, type the instructions of compilation or press ENTER"
 read instructions
 #
 if [ -z $instructions ]
@@ -30,7 +30,7 @@ then
 fi
 #
 echo
-echo "Please, type the installation directory or presse ENTER (default: /usr/local/bin)"
+echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
 read exe_dir
 #
 if [ -z $exe_dir ]
@@ -39,7 +39,7 @@ then
 fi
 #
 echo
-echo "Please, type the auxiliary directory or presse ENTER (default: /usr/local/share)"
+echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 read aux_dir
 #
 if [ -z $aux_dir ]
