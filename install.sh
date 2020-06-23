@@ -50,7 +50,7 @@ fi
 #
 cd $path/src
 make clean
-make
+make all
 if [ ! -f "HICOLM" ]
 then
     echo "\e[31mError in compiling HICOLM. The installation is going to finish!"
