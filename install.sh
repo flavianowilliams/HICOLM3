@@ -27,7 +27,8 @@ read instructions
 #
 if [ -z $instructions ]
 then
-    instructions="-fcheck=all -fbacktrace -Wall"
+#    instructions="-fcheck=all -fbacktrace -Wall"
+    instructions=""
 fi
 #
 export FFLAGS="$instructions"
