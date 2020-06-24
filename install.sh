@@ -21,7 +21,6 @@ fi
 #
 export FC="$compiler"
 #
-instructions=""
 echo
 echo "Please, type the instructions of compilation or press ENTER"
 read instructions
@@ -29,7 +28,6 @@ read instructions
 if [ -z $instructions ]
 then
     instructions="-fcheck=all -fbacktrace -Wall"
-#    instructions=""
 fi
 #
 export FFLAGS="$instructions"
