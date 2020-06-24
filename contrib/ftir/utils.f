@@ -129,8 +129,10 @@ c
 
       call date_and_time(Date=date)
       call date_and_time(TIME=time)
-      call hostnm(host)
+c      call hostnm(host)
       call cpu_time(tf)
+
+      host='undefined'
 
       write(iwrt,*)
       write(iwrt,*)('Host: '),host
