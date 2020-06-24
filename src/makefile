@@ -1,10 +1,10 @@
 # Compiler
 #
-FC=gfortran
+#FC=gfortran
 #
 # Instructions
 #
-FFLAGS=-fcheck=all -fbacktrace -Wall
+#FFLAGS=-fcheck=all -fbacktrace -Wall
 #
 # libraries
 #

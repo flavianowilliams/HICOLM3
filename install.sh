@@ -19,6 +19,8 @@ then
     compiler="gfortran"
 fi
 #
+export FC="$compiler"
+#
 echo
 echo "Please, type the instructions of compilation or press ENTER"
 read instructions
@@ -28,6 +30,8 @@ then
     instructions="-fcheck=all -fbacktrace -Wall"
 #    instructions=""
 fi
+#
+export FFLAGS="$instructions"
 #
 echo
 echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
@@ -70,9 +74,6 @@ fi
 #
 cd $path/src
 #
-sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
-sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
-#
 make clean
 make all
 if [ ! -f "HICOLM" ]
@@ -113,9 +114,6 @@ fi
 #
 cd $path/contrib/properties
 #
-sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
-sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
-#
 make clean
 make all
 if [ ! -f "hproperties" ]
@@ -135,9 +133,6 @@ then
 fi
 #
 cd $path/contrib/ftir
-#
-sed -i -e "s/.*FC=.*/FC=$compiler/" makefile
-sed -i -e "s/.*FFLAGS=.*/FFLAGS=$instructions/" makefile
 #
 make clean
 make all
