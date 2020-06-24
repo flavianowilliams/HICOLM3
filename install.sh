@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
 # describe: Installation of HICOLM package and utilitaries
@@ -66,7 +66,7 @@ mkdir $aux_dir/HICOLM/amber
 # -- installing HICOLM --
 #
 echo
-echo "\e[33mInstalling HICOLM in $exe_dir\e[0m"
+echo -e "\e[33mInstalling HICOLM in $exe_dir\e[0m"
 echo
 #
 if [ -f "$exe_dir/hicolm" ]
@@ -80,7 +80,7 @@ make clean
 make all
 if [ ! -f "HICOLM" ]
 then
-    echo "\e[31mError in compiling HICOLM. The installation will be finish!"
+    echo -e "\e[31mError in compiling HICOLM. The installation will be finish!"
     exit
 fi
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
@@ -89,7 +89,7 @@ make clean
 # -- installing hsystem --
 #
 echo
-echo "\e[33mInstalling utilitaries in $exe_dir\e[0m"
+echo -e "\e[33mInstalling utilitaries in $exe_dir\e[0m"
 echo
 #
 if [ -f "$exe_dir/hsystem" ]
@@ -102,7 +102,7 @@ $compiler system.f90 $instructions -o hsystem
 #
 if [ ! -f "hsystem" ]
 then
-    echo "\e[31mError in compiling hsystem. The installation will be finish!"
+    echo -e "\e[31mError in compiling hsystem. The installation will be finish!"
     exit
 fi
 mv $path/contrib/system/hsystem $exe_dir/hsystem
@@ -120,7 +120,7 @@ make clean
 make all
 if [ ! -f "hproperties" ]
 then
-    echo "\e[31mError in compiling hproperties. The installation will be finish!"
+    echo -e "\e[31mError in compiling hproperties. The installation will be finish!"
     exit
 fi
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
@@ -140,7 +140,7 @@ make clean
 make all
 if [ ! -f "hftir" ]
 then
-    echo "\e[31mError in compiling hftir. The installation is going to finish!"
+    echo -e "\e[31mError in compiling hftir. The installation is going to finish!"
     exit
 fi
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -149,7 +149,7 @@ make clean
 # --copying auxiliary files--
 #
 echo
-echo "\e[33mCopying auxiliary files to $aux_dir\e[0m"
+echo -e "\e[33mCopying auxiliary files to $aux_dir\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
@@ -172,7 +172,7 @@ $exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #
 chmod +x $exe_dir/hicolm
 #
-echo "\e[32mSUCCESS!\e[0m"
+echo -e "\e[32mSUCCESS!\e[0m"
 echo
-echo "\e[32mTo start, just type \e[31mhicolm\e[32m in the terminal.\e[0m"
+echo -e "\e[32mTo start, just type \e[31mhicolm\e[32m in the terminal.\e[0m"
 echo
