@@ -71,7 +71,7 @@ contains
     real(4) x1,x2
     character(2) p1,p2,pa,pb
 
-    open(4,file='/usr/local/share/HICOLM/amber/amber_bonds.prm',status='old')
+    open(4,file='/tmp/amber/amber_bonds.prm',status='old')
 
     !-atribuindo valores iniciais
 
@@ -104,7 +104,7 @@ contains
     real(4) x1,x2
     character(2) p1,p2,p3,pa,pb,pc
 
-    open(4,file='/usr/local/share/HICOLM/amber/amber_angles.prm',status='old')
+    open(4,file='/tmp/amber/amber_angles.prm',status='old')
 
     !-atribuindo valores iniciais
 
@@ -158,7 +158,7 @@ contains
     real(4) x2,x3
     character(2) p2,p3,pa,pb,pc,pd
 
-    open(4,file='/usr/local/share/HICOLM/amber/amber_dihedrals_general.prm',status='old')
+    open(4,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
 
     do i=1,1000
        read(4,'(a2,1x,a2,1x,a2,1x,a2,i4,f8.2,8x,f5.1,12x,i2)',end=10)pa,pb,pc,pd,x1,x2,x3,x4
@@ -190,7 +190,7 @@ contains
     real(4) x2,x3
     character(2) p1,p2,p3,p4,pa,pb,pc,pd
 
-    open(4,file='/usr/local/share/HICOLM/amber/amber_dihedrals_proper.prm',status='old')
+    open(4,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
 
     do i=1,1000
        read(4,'(a2,1x,a2,1x,a2,1x,a2,i4,f8.2,8x,f5.1,12x,i2)',end=10)pa,pb,pc,pd,x1,x2,x3,x4
