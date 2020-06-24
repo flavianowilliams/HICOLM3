@@ -5,7 +5,6 @@
 #  version: 2.1.0
 #  license: MIT license
 #
-#
 path=`pwd`
 #
 # -- definind installation and auxiliary directory --
@@ -34,6 +33,7 @@ then
 fi
 #
 export FFLAGS="$instructions"
+#
 #
 exe_dir=""
 echo

@@ -1,14 +1,3 @@
-# Compiler
-#
-#FC=gfortran
-#
-# Instructions
-#
-#FFLAGS=-fcheck=all -fbacktrace -Wall
-#
-# libraries
-#
-LDFLAGS=
 #=====================================================================================
 OBJ_SYS=sistema.o elements.o utils.o amber.o input.o alloc_arrays.o estrutura.o \
 	brillouin.o

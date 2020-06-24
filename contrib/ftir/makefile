@@ -1,14 +1,3 @@
-# Compiler
-#
-#FC=gfortran
-#
-# Instructions
-#
-#FFLAGS=-fcheck=all -fbacktrace -Wall
-#
-# libraries
-#
-LDFLAGS=
 #=====================================================================================
 OBJ_SRC=sizes.o error.o system.o utils.o cmmolec.o utilsrange.o dipmol.o corr.o tcf.o \
 	ftir.o printfile.o

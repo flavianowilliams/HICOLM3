@@ -1,14 +1,3 @@
-# Compiler
-#
-#FC=gfortran
-#
-# Instructions
-#
-#FFLAGS=-fcheck=all -fbacktrace -Wall
-#
-# libraries
-#
-LDFLAGS=
 #=====================================================================================
 OBJ_SRC=input_module.o variaveis_module.o rdf_module.o
 #
