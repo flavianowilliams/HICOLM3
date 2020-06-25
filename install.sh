@@ -32,7 +32,6 @@ fi
 #
 export FFLAGS="$instructions"
 #
-#
 #echo
 #echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
 #read exe_dir
@@ -64,7 +63,7 @@ mkdir $aux_dir/HICOLM/amber
 # -- installing HICOLM --
 #
 echo
-echo -e "\e[33mInstalling HICOLM in $exe_dir\e[0m"
+echo -e "\e[33m-> Compiling HICOLM\e[0m"
 echo
 #
 if [ -f "$exe_dir/hicolm" ]
@@ -74,20 +73,22 @@ fi
 #
 cd $path/src
 #
-make clean
-make all
+if [ -f "HICOLM" ]
+then
+    rm HICOLM
+fi
+make -s clean
+make -s all
 if [ ! -f "HICOLM" ]
 then
     echo -e "\e[31mError in compiling HICOLM. The installation will be finish!"
     exit
 fi
-mv $path/src/HICOLM $exe_dir/HICOLM.bin
-make clean
+make -s clean
 #
 # -- installing hsystem --
 #
-echo
-echo -e "\e[33mInstalling utilitaries in $exe_dir\e[0m"
+echo -e "\e[33m-> Compiling utilities\e[0m"
 echo
 #
 if [ -f "$exe_dir/hsystem" ]
@@ -96,6 +97,10 @@ then
 fi
 #
 cd $path/contrib/system
+if [ -f "hsystem" ]
+then
+    rm hsystem
+fi
 $compiler system.f90 $instructions -o hsystem
 #
 if [ ! -f "hsystem" ]
@@ -103,7 +108,6 @@ then
     echo -e "\e[31mError in compiling hsystem. The installation will be finish!"
     exit
 fi
-mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # -- installing hproperties --
 #
@@ -114,16 +118,18 @@ fi
 #
 cd $path/contrib/properties
 #
-make clean
-make all
+if [ -f "hproperties" ]
+then
+    rm hproperties
+fi
+make -s clean
+make -s all
 if [ ! -f "hproperties" ]
 then
     echo -e "\e[31mError in compiling hproperties. The installation will be finish!"
     exit
 fi
-mv $path/contrib/properties/hproperties $exe_dir/hproperties
-make clean
-echo
+make -s clean
 #
 # -- installing hftir --
 #
@@ -134,23 +140,32 @@ fi
 #
 cd $path/contrib/ftir
 #
-make clean
-make all
+if [ -f "hftir" ]
+then
+    rm hftir
+fi
+make -s clean
+make -s all
 if [ ! -f "hftir" ]
 then
     echo -e "\e[31mError in compiling hftir. The installation is going to finish!"
     exit
 fi
-mv $path/contrib/ftir/hftir $exe_dir/hftir
-make clean
+make -s clean
 #
 # --copying auxiliary files--
 #
-echo
-echo -e "\e[33mCopying auxiliary files to $aux_dir\e[0m"
+echo -e "\e[33m-> Copying auxiliary files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+#
+echo -e "\e[33m-> Preparing to install\e[0m"
+echo
+mv $path/src/HICOLM $exe_dir/HICOLM.bin
+mv $path/contrib/ftir/hftir $exe_dir/hftir
+mv $path/contrib/properties/hproperties $exe_dir/hproperties
+mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
@@ -170,7 +185,7 @@ $exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #
 chmod +x $exe_dir/hicolm
 #
-echo -e "\e[32mSUCCESS!\e[0m"
+echo -e "\e[32m-> SUCCESS!\e[0m"
 echo
-echo -e "\e[32mTo start, just type \e[31mhicolm\e[32m in the terminal.\e[0m"
+echo -e "\e[33m   To start, just type \e[31mhicolm\e[33m in the terminal.\e[0m"
 echo
