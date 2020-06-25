@@ -54,7 +54,7 @@ fi
 #
 if [ -d "$aux_dir/HICOLM" ]
 then
-    rm -r $aux_dir/HICOLM
+    rm -rf $aux_dir/HICOLM
 fi
 #
 mkdir $aux_dir/HICOLM
@@ -66,9 +66,9 @@ echo
 echo -e "\e[33m-> Compiling HICOLM\e[0m"
 echo
 #
-if [ -f "$exe_dir/hicolm" ]
+if [ -f "$exe_dir/HICOLM.bin" ]
 then
-    rm $exe_dir/HICOLM.bin
+    rm -f $exe_dir/HICOLM.bin
 fi
 #
 cd $path/src
@@ -105,7 +105,9 @@ $compiler system.f90 $instructions -o hsystem
 #
 if [ ! -f "hsystem" ]
 then
+    echo
     echo -e "\e[31mError in compiling hsystem. The installation will be finish!"
+    echo
     exit
 fi
 #
@@ -126,7 +128,9 @@ make -s clean
 make -s all
 if [ ! -f "hproperties" ]
 then
+    echo
     echo -e "\e[31mError in compiling hproperties. The installation will be finish!"
+    echo
     exit
 fi
 make -s clean
@@ -148,7 +152,9 @@ make -s clean
 make -s all
 if [ ! -f "hftir" ]
 then
-    echo -e "\e[31mError in compiling hftir. The installation is going to finish!"
+    echo
+    echo -e "\e[31mError in compiling hftir. The installation will be finish!"
+    echo
     exit
 fi
 make -s clean
