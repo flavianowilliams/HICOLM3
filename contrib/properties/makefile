@@ -14,5 +14,5 @@ all: $(OBJ_SRC) $(OBJ_MAIN)
 	$(FC) -o hproperties $(LDFLAGS) $(OBJ_SRC) $(OBJ_MAIN)
 #
 clean:
-	rm -f *.o *.mod hproperties
+	rm -f *.o *.mod
 #==========================================================================

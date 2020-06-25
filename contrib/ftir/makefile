@@ -15,5 +15,5 @@ all: $(OBJ_SRC) $(OBJ_MAIN)
 	$(FC) -o hftir $(LDFLAGS) $(OBJ_SRC) $(OBJ_MAIN)
 #
 clean:
-	rm -f *.o *.mod hftir
+	rm -f *.o *.mod
 #==========================================================================
