@@ -163,14 +163,11 @@ make -s clean
 #
 echo -e "\e[33m   Preparing to install\e[0m"
 echo
-echo -e "\e[33m-> Copying auxiliary files\e[0m"
+echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
-echo -e "\e[33m   Installation directory:\e[0m" $exe_dir
-echo -e "\e[33m   Auxiliary directory:\e[0m" $aux_dir
-echo
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
@@ -196,5 +193,12 @@ chmod +x $exe_dir/hicolm
 #
 echo -e "\e[32m-> SUCCESS!\e[0m"
 echo
-echo -e "\e[33m   To start, just type \e[31mhicolm\e[33m in the terminal.\e[0m"
+echo -e "\e[33m   Installation directory:\e[0m" $exe_dir
+echo -e "\e[33m      Auxiliary directory:\e[0m" $aux_dir
+echo -e "\e[33m          Compiling rules:\e[0m" $compiler $instructions
+echo
+echo -e "\e[33m   \"Thank you for choosing HICOLM.\e[0m"
+echo -e "\e[33m    To start, just type \e[31mhicolm\e[33m in the terminal.\e[0m"
+echo -e "\e[33m    Do not forget the input files HICOLM.in and HICOLM.sys.\"\e[0m"
+echo -e "\e[33m    HAVE A GREAT JOB!\"\e[0m"
 echo
