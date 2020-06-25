@@ -161,13 +161,13 @@ make -s clean
 #
 # --copying auxiliary files--
 #
+echo -e "\e[33m   Preparing to install\e[0m"
+echo
 echo -e "\e[33m-> Copying auxiliary files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
-echo -e "\e[33m-> Preparing to install\e[0m"
-echo
 echo -e "\e[33m   Installation directory:\e[0m" $exe_dir
 echo -e "\e[33m   Auxiliary directory:\e[0m" $aux_dir
 echo
