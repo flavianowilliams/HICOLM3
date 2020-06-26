@@ -260,7 +260,7 @@ contains
     implicit none
 
     integer i,j,k,nx,nxx
-    real(8) rcm(3),dr,mtotal
+    real(8) rcm(3),dr,mtotal,mrot(3,3)
 
     nx=1
     do i=1,nmolec
@@ -282,9 +282,15 @@ contains
           rcm(3)=rcm(3)/mtotal
           do k=1,nxmolec(i)
              dr=sqrt((xa(nx)-rcm(1))**2+(ya(nx)-rcm(2))**2+(za(nx)-rcm(3))**2)
-             xa(nx)=xa(nx)+min(opt_gamma*0.1d-1*dr*(ya(nx)*faz(nx)-za(nx)*fay(nx)),opt_rshift)
-             ya(nx)=ya(nx)+min(opt_gamma*0.1d-1*dr*(za(nx)*fax(nx)-xa(nx)*faz(nx)),opt_rshift)
-             za(nx)=za(nx)+min(opt_gamma*0.1d-1*dr*(xa(nx)*fay(nx)-ya(nx)*fax(nx)),opt_rshift)
+             tx=(ya(nx)*faz(nx)-za(nx)*fay(nx))
+             ty=(za(nx)*fax(nx)-xa(nx)*faz(nx))
+             tz=(xa(nx)*fay(nx)-ya(nx)*fax(nx))
+             xa(nx)=xa(nx)+min(,opt_rshift)
+             ya(nx)=ya(nx)+min(,opt_rshift)
+             za(nx)=za(nx)+min(,opt_rshift)
+!             xa(nx)=xa(nx)+min(opt_gamma*0.1d-1*dr*(ya(nx)*faz(nx)-za(nx)*fay(nx)),opt_rshift)
+!             ya(nx)=ya(nx)+min(opt_gamma*0.1d-1*dr*(za(nx)*fax(nx)-xa(nx)*faz(nx)),opt_rshift)
+!             za(nx)=za(nx)+min(opt_gamma*0.1d-1*dr*(xa(nx)*fay(nx)-ya(nx)*fax(nx)),opt_rshift)
              nx=nx+1
           end do
        end do
@@ -293,6 +299,26 @@ contains
     return
 
   end subroutine steepest_descent_curl
+
+  subroutine curl_matrix(theta,ta,tb,tc,mrot)
+
+    implicit none
+
+    real(8) theta,ta,tb,tc,mrot(3,3)
+
+    mrot(1,1)=cos(theta)+(1.d0-cos(theta))*ta**2
+    mrot(1,2)=(1.d0-cos(theta))*ta*tb+sin(theta)*tc
+    mrot(1,3)=(1.d0-cos(theta))*ta*tc-sin(theta)*tb
+    mrot(2,1)=(1.d0-cos(theta))*tb*ta-sin(theta)*tc
+    mrot(2,2)=cos(theta)+(1.d0-cos(theta))*tb**2
+    mrot(2,3)=(1.d0-cos(theta))*tb*tc+sin(theta)*ta
+    mrot(3,1)=(1.d0-cos(theta))*tc*ta+sin(theta)*tb
+    mrot(3,2)=(1.d0-cos(theta))*tc*tb-sin(theta)*ta
+    mrot(3,3)=cos(theta)+(1.d0-cos(theta))*tc**2
+
+    return
+
+  end subroutine curl_matrix
 
   subroutine opt_check(gax,gay,gaz,dfmax)
 
