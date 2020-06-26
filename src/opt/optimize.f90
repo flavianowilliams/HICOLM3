@@ -141,7 +141,7 @@ contains
 
        if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-          call steepest_descent_CM
+!          call steepest_descent_CM
           call steepest_descent_curl
           einter=envdw+encoul+envdw_corr
        else
@@ -259,8 +259,8 @@ contains
 
     implicit none
 
-    integer i,j,k,nx,nxx
-    real(8) rcm(3),dr,mtotal,mrot(3,3)
+    integer i,j,k,nx
+    real(8) rcm(3),mtotal,mrot(3,3),tx,ty,tz,theta,tr
 
     nx=1
     do i=1,nmolec
@@ -269,25 +269,31 @@ contains
           rcm(2)=0.d0
           rcm(3)=0.d0
           mtotal=0.d0
-          nxx=nx
-          do k=1,nxmolec(i)
-             rcm(1)=rcm(1)+mass(nxx)*xa(nxx)
-             rcm(2)=rcm(2)+mass(nxx)*ya(nxx)
-             rcm(3)=rcm(3)+mass(nxx)*za(nxx)
-             mtotal=mtotal+mass(nxx)
-             nxx=nxx+1
+          do k=0,(nxmolec(i)-1)
+             rcm(1)=rcm(1)+mass(nx+k)*xa(nx+k)
+             rcm(2)=rcm(2)+mass(nx+k)*ya(nx+k)
+             rcm(3)=rcm(3)+mass(nx+k)*za(nx+k)
+             mtotal=mtotal+mass(nx+k)
           end do
           rcm(1)=rcm(1)/mtotal
           rcm(2)=rcm(2)/mtotal
           rcm(3)=rcm(3)/mtotal
+          tx=0.d0
+          ty=0.d0
+          tz=0.d0
+          do k=0,(nxmolec(i)-1)
+             tx=tx+((ya(nx+k)-rcm(2))*faz(nx+k)-(za(nx+k)-rcm(3))*fay(nx+k))
+             ty=ty+((za(nx+k)-rcm(3))*fax(nx+k)-(xa(nx+k)-rcm(1))*faz(nx+k))
+             tz=tz+((xa(nx+k)-rcm(1))*fay(nx+k)-(ya(nx+k)-rcm(2))*fax(nx+k))
+          end do
+          tr=sqrt(tx**2+ty**2+tz**2)
+          tx=tx/tr
+          ty=ty/tr
+          tz=tz/tr
+          theta=opt_gamma*0.005*tr
           do k=1,nxmolec(i)
-             dr=sqrt((xa(nx)-rcm(1))**2+(ya(nx)-rcm(2))**2+(za(nx)-rcm(3))**2)
-             tx=(ya(nx)*faz(nx)-za(nx)*fay(nx))
-             ty=(za(nx)*fax(nx)-xa(nx)*faz(nx))
-             tz=(xa(nx)*fay(nx)-ya(nx)*fax(nx))
-             xa(nx)=xa(nx)+min(,opt_rshift)
-             ya(nx)=ya(nx)+min(,opt_rshift)
-             za(nx)=za(nx)+min(,opt_rshift)
+             call rotation_matrix(theta,tx,ty,tz,nx,mrot)
+!             dr=sqrt((xa(nx)-rcm(1))**2+(ya(nx)-rcm(2))**2+(za(nx)-rcm(3))**2)
 !             xa(nx)=xa(nx)+min(opt_gamma*0.1d-1*dr*(ya(nx)*faz(nx)-za(nx)*fay(nx)),opt_rshift)
 !             ya(nx)=ya(nx)+min(opt_gamma*0.1d-1*dr*(za(nx)*fax(nx)-xa(nx)*faz(nx)),opt_rshift)
 !             za(nx)=za(nx)+min(opt_gamma*0.1d-1*dr*(xa(nx)*fay(nx)-ya(nx)*fax(nx)),opt_rshift)
@@ -300,10 +306,11 @@ contains
 
   end subroutine steepest_descent_curl
 
-  subroutine curl_matrix(theta,ta,tb,tc,mrot)
+  subroutine rotation_matrix(theta,ta,tb,tc,nx,mrot)
 
     implicit none
 
+    integer nx
     real(8) theta,ta,tb,tc,mrot(3,3)
 
     mrot(1,1)=cos(theta)+(1.d0-cos(theta))*ta**2
@@ -316,9 +323,13 @@ contains
     mrot(3,2)=(1.d0-cos(theta))*tc*tb-sin(theta)*ta
     mrot(3,3)=cos(theta)+(1.d0-cos(theta))*tc**2
 
+    xa(nx)=mrot(1,1)*xa(nx)+mrot(1,2)*ya(nx)+mrot(1,3)*za(nx)
+    ya(nx)=mrot(2,1)*xa(nx)+mrot(2,2)*ya(nx)+mrot(2,3)*za(nx)
+    za(nx)=mrot(3,1)*xa(nx)+mrot(3,2)*ya(nx)+mrot(3,3)*za(nx)
+
     return
 
-  end subroutine curl_matrix
+  end subroutine rotation_matrix
 
   subroutine opt_check(gax,gay,gaz,dfmax)
 
