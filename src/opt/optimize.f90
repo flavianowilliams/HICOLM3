@@ -241,9 +241,9 @@ contains
              mtotal=mtotal+mass(nx+k)
           end do
           do k=1,nxmolec(i)
-             xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
-             ya(nx)=ya(nx)+min(opt_gamma*fcm(2)/mtotal,opt_rshift)
-             za(nx)=za(nx)+min(opt_gamma*fcm(3)/mtotal,opt_rshift)
+             xa(nx)=xa(nx)+min(opt_gamma*fcm(1),opt_rshift)
+             ya(nx)=ya(nx)+min(opt_gamma*fcm(2),opt_rshift)
+             za(nx)=za(nx)+min(opt_gamma*fcm(3),opt_rshift)
              nx=nx+1
           end do
        end do
@@ -290,7 +290,7 @@ contains
           tx=tx/tr
           ty=ty/tr
           tz=tz/tr
-          theta=opt_gamma*tr/mi
+          theta=opt_gamma*tr
           do k=1,nxmolec(i)
              call rotation_matrix(theta,tx,ty,tz,nx,mrot)
              nx=nx+1
