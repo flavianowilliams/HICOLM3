@@ -293,10 +293,6 @@ contains
           theta=opt_gamma*0.005*tr
           do k=1,nxmolec(i)
              call rotation_matrix(theta,tx,ty,tz,nx,mrot)
-!             dr=sqrt((xa(nx)-rcm(1))**2+(ya(nx)-rcm(2))**2+(za(nx)-rcm(3))**2)
-!             xa(nx)=xa(nx)+min(opt_gamma*0.1d-1*dr*(ya(nx)*faz(nx)-za(nx)*fay(nx)),opt_rshift)
-!             ya(nx)=ya(nx)+min(opt_gamma*0.1d-1*dr*(za(nx)*fax(nx)-xa(nx)*faz(nx)),opt_rshift)
-!             za(nx)=za(nx)+min(opt_gamma*0.1d-1*dr*(xa(nx)*fay(nx)-ya(nx)*fax(nx)),opt_rshift)
              nx=nx+1
           end do
        end do
