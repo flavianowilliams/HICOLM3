@@ -290,7 +290,7 @@ contains
           tx=tx/tr
           ty=ty/tr
           tz=tz/tr
-          theta=opt_gamma*tr
+          theta=opt_gamma*tr/mi
           do k=1,nxmolec(i)
              call rotation_matrix(theta,tx,ty,tz,nx,mrot)
              nx=nx+1
