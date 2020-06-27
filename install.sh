@@ -199,6 +199,6 @@ echo -e "\e[33m          Compiling rules:\e[0m" $compiler $instructions
 echo
 echo -e "\e[33m   \"Thank you for choosing HICOLM.\e[0m"
 echo -e "\e[33m    To start, just type \e[31mhicolm\e[33m in the terminal.\e[0m"
-echo -e "\e[33m    Do not forget the input files HICOLM.in and HICOLM.sys.\"\e[0m"
+echo -e "\e[33m    Do not forget the input files HICOLM.in and HICOLM.sys.\\e[0m"
 echo -e "\e[33m    HAVE A GREAT JOB!\"\e[0m"
 echo
