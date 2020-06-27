@@ -141,7 +141,7 @@ contains
 
        if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-!          call steepest_descent_CM
+          call steepest_descent_CM
           call steepest_descent_curl
           einter=envdw+encoul+envdw_corr
        else
@@ -224,7 +224,7 @@ contains
 
     implicit none
 
-    integer i,j,k,nx,nxx
+    integer i,j,k,nx
     real(8) mtotal,fcm(3)
 
     nx=1
@@ -234,13 +234,11 @@ contains
           fcm(2)=0.d0
           fcm(3)=0.d0
           mtotal=0.d0
-          nxx=nx
-          do k=1,nxmolec(i)
-             fcm(1)=fcm(1)+mass(nxx)*fax(nxx)
-             fcm(2)=fcm(2)+mass(nxx)*fay(nxx)
-             fcm(3)=fcm(3)+mass(nxx)*faz(nxx)
-             mtotal=mtotal+mass(nxx)
-             nxx=nxx+1
+          do k=0,(nxmolec(i)-1)
+             fcm(1)=fcm(1)+fax(nx+k)
+             fcm(2)=fcm(2)+fay(nx+k)
+             fcm(3)=fcm(3)+faz(nx+k)
+             mtotal=mtotal+mass(nx+k)
           end do
           do k=1,nxmolec(i)
              xa(nx)=xa(nx)+min(opt_gamma*fcm(1)/mtotal,opt_rshift)
@@ -260,7 +258,7 @@ contains
     implicit none
 
     integer i,j,k,nx
-    real(8) rcm(3),mtotal,mrot(3,3),tx,ty,tz,theta,tr
+    real(8) rcm(3),mtotal,mrot(3,3),tx,ty,tz,theta,tr,mi
 
     nx=1
     do i=1,nmolec
@@ -281,16 +279,18 @@ contains
           tx=0.d0
           ty=0.d0
           tz=0.d0
+          mi=0.d0
           do k=0,(nxmolec(i)-1)
              tx=tx+((ya(nx+k)-rcm(2))*faz(nx+k)-(za(nx+k)-rcm(3))*fay(nx+k))
              ty=ty+((za(nx+k)-rcm(3))*fax(nx+k)-(xa(nx+k)-rcm(1))*faz(nx+k))
              tz=tz+((xa(nx+k)-rcm(1))*fay(nx+k)-(ya(nx+k)-rcm(2))*fax(nx+k))
+             mi=mi+mass(nx+k)*((xa(nx+k)-rcm(1))**2+(ya(nx+k)-rcm(2))**2+(za(nx+k)-rcm(3))**2)
           end do
           tr=sqrt(tx**2+ty**2+tz**2)
           tx=tx/tr
           ty=ty/tr
           tz=tz/tr
-          theta=opt_gamma*0.005*tr
+          theta=opt_gamma*tr/mi
           do k=1,nxmolec(i)
              call rotation_matrix(theta,tx,ty,tz,nx,mrot)
              nx=nx+1
