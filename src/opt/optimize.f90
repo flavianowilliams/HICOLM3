@@ -142,7 +142,7 @@ contains
        if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           call steepest_descent_CM(gax,gay,gaz)
-!          call steepest_descent_curl
+          call steepest_descent_rotation
           einter=envdw+encoul+envdw_corr
        else
           if(mod(i,2).eq.0)then
@@ -268,7 +268,7 @@ contains
 
   end subroutine steepest_descent_CM
 
-  subroutine steepest_descent_curl
+  subroutine steepest_descent_rotation
 
     implicit none
 
@@ -305,7 +305,7 @@ contains
           tx=tx/tr
           ty=ty/tr
           tz=tz/tr
-          theta=opt_gamma*tr/mi
+          theta=opt_beta*tr/mi
           do k=1,nxmolec(i)
              call rotation_matrix(theta,tx,ty,tz,nx,mrot)
              nx=nx+1
@@ -315,7 +315,7 @@ contains
 
     return
 
-  end subroutine steepest_descent_curl
+  end subroutine steepest_descent_rotation
 
   subroutine rotation_matrix(theta,ta,tb,tc,nx,mrot)
 

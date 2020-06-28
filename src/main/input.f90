@@ -80,9 +80,9 @@ module input
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
   integer opt_ntotal,opt_ninter
-  real(8) opt_dfmax,opt_gamma,opt_alpha,opt_rshift
+  real(8) opt_dfmax,opt_gamma,opt_alpha,opt_beta,opt_rshift
   !
-  save opt_ntotal,opt_ninter,opt_dfmax,opt_gamma,opt_alpha,opt_rshift
+  save opt_ntotal,opt_ninter,opt_dfmax,opt_gamma,opt_alpha,opt_beta,opt_rshift
   !
 contains
 
@@ -493,6 +493,8 @@ contains
     nrelax=0
 
     opt_rshift=0.333d0*sqrt(3.d0)*opt_rshift
+
+    opt_beta=opt_gamma
 
     return
 
@@ -1097,6 +1099,7 @@ contains
     opt_dfmax=opt_dfmax/(econv/rconv)
     opt_gamma=opt_gamma/(rconv**2/econv)
     opt_alpha=opt_alpha/(rconv**2/econv)
+    opt_beta=opt_beta/(rconv/econv)
     opt_rshift=opt_rshift/rconv
 
     !-parametros da Dinâmica Molecular
