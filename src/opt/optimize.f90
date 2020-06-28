@@ -139,16 +139,16 @@ contains
 
        call verlet_list_inter
 
-       if(i.le.opt_ninter)then
+       if(mod(i,2).eq.0)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-          call steepest_descent_CM
+          call steepest_descent_CM(gax,gay,gaz)
           call steepest_descent_curl
           einter=envdw+encoul+envdw_corr
        else
           call ff_modules_intra&
                (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-          call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-          call steepest_descent
+!          call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+          call steepest_descent(gax,gay,gaz)
           eintra=enbond+enbend+entors+envdw+encoul
           einter=envdw+encoul+envdw_corr
        end if
@@ -204,28 +204,33 @@ contains
 
   end subroutine opt
 
-  subroutine steepest_descent
+  subroutine steepest_descent(gax,gay,gaz)
 
     implicit none
 
     integer i
+    real(8) gax(natom),gay(natom),gaz(natom),dfx,dfy,dfz
 
     do i=1,natom
-       xa(i)=xa(i)+min(opt_gamma*fax(i),opt_rshift)
-       ya(i)=ya(i)+min(opt_gamma*fay(i),opt_rshift)
-       za(i)=za(i)+min(opt_gamma*faz(i),opt_rshift)
+       dfx=opt_gamma*fax(i)+opt_alpha*(fax(i)-gax(i))
+       dfy=opt_gamma*fay(i)+opt_alpha*(fay(i)-gay(i))
+       dfz=opt_gamma*faz(i)+opt_alpha*(faz(i)-gaz(i))
+       xa(i)=xa(i)+min(dfx,opt_rshift)
+       ya(i)=ya(i)+min(dfy,opt_rshift)
+       za(i)=za(i)+min(dfz,opt_rshift)
     end do
 
     return
 
   end subroutine steepest_descent
 
-  subroutine steepest_descent_CM
+  subroutine steepest_descent_CM(gax,gay,gaz)
 
     implicit none
 
     integer i,j,k,nx
-    real(8) mtotal,fcm(3)
+    real(8) mtotal,fcm(3),dfx,dfy,dfz
+    real(8) gax(natom),gay(natom),gaz(natom)
 
     nx=1
     do i=1,nmolec
@@ -241,9 +246,12 @@ contains
              mtotal=mtotal+mass(nx+k)
           end do
           do k=1,nxmolec(i)
-             xa(nx)=xa(nx)+min(opt_gamma*fcm(1),opt_rshift)
-             ya(nx)=ya(nx)+min(opt_gamma*fcm(2),opt_rshift)
-             za(nx)=za(nx)+min(opt_gamma*fcm(3),opt_rshift)
+             dfx=opt_gamma*fcm(1)+opt_alpha*(fax(nx)-gax(nx))
+             dfy=opt_gamma*fcm(2)+opt_alpha*(fay(nx)-gay(nx))
+             dfz=opt_gamma*fcm(3)+opt_alpha*(faz(nx)-gaz(nx))
+             xa(nx)=xa(nx)+min(dfx,opt_rshift)
+             ya(nx)=ya(nx)+min(dfy,opt_rshift)
+             za(nx)=za(nx)+min(dfz,opt_rshift)
              nx=nx+1
           end do
        end do
@@ -371,6 +379,7 @@ contains
     write(6,'(28x,a12,6x,i10)')'    nhist:',nhist
     write(6,'(28x,a12,1x,es10.2,1x,a10)')'dfmax:',opt_dfmax*econv/rconv,'kcal/mol*A'
     write(6,'(28x,a12,1x,es10.2,1x,a12)')'gamma:',opt_gamma*rconv**2/econv,'A^2*mol/kcal'
+    write(6,'(28x,a12,1x,es10.2,1x,a12)')'alpha:',opt_alpha*rconv**2/econv,'A^2*mol/kcal'
     write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
     write(6,'(28x,a12,8x,f6.2,1x,a1)')' rshift:',sqrt(3.d0*opt_rshift**2)*rconv,'A'
     write(6,'(28x,36a1)')('-',j=1,36)
