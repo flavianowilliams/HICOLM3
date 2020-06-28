@@ -139,18 +139,25 @@ contains
 
        call verlet_list_inter
 
-       if(mod(i,2).eq.0)then
+       if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           call steepest_descent_CM(gax,gay,gaz)
-          call steepest_descent_curl
+!          call steepest_descent_curl
           einter=envdw+encoul+envdw_corr
        else
-          call ff_modules_intra&
-               (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-!          call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-          call steepest_descent(gax,gay,gaz)
-          eintra=enbond+enbend+entors+envdw+encoul
-          einter=envdw+encoul+envdw_corr
+          if(mod(i,2).eq.0)then
+             call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+             call steepest_descent_CM(gax,gay,gaz)
+!             call steepest_descent_curl
+             einter=envdw+encoul+envdw_corr
+          else
+             call ff_modules_intra&
+                  (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+             !          call ff_modules_inter(envdw,encoul,virvdw,vircoul)
+             call steepest_descent(gax,gay,gaz)
+             eintra=enbond+enbend+entors+envdw+encoul
+!             einter=envdw+encoul+envdw_corr
+          end if
        end if
 
        enpot=eintra+einter
