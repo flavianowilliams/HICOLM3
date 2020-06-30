@@ -148,15 +148,12 @@ contains
           if(mod(i,2).eq.0)then
              call ff_modules_inter(envdw,encoul,virvdw,vircoul)
              call steepest_descent_CM(gax,gay,gaz)
-!             call steepest_descent_curl
              einter=envdw+encoul+envdw_corr
           else
              call ff_modules_intra&
                   (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-             !          call ff_modules_inter(envdw,encoul,virvdw,vircoul)
              call steepest_descent(gax,gay,gaz)
              eintra=enbond+enbend+entors+envdw+encoul
-!             einter=envdw+encoul+envdw_corr
           end if
        end if
 
@@ -216,15 +213,17 @@ contains
     implicit none
 
     integer i
-    real(8) gax(natom),gay(natom),gaz(natom),dfx,dfy,dfz
+    real(8) gax(natom),gay(natom),gaz(natom),dfx,dfy,dfz,dr,df
 
     do i=1,natom
        dfx=opt_gamma*fax(i)+opt_alpha*(fax(i)-gax(i))
        dfy=opt_gamma*fay(i)+opt_alpha*(fay(i)-gay(i))
        dfz=opt_gamma*faz(i)+opt_alpha*(faz(i)-gaz(i))
-       xa(i)=xa(i)+min(dfx,opt_rshift)
-       ya(i)=ya(i)+min(dfy,opt_rshift)
-       za(i)=za(i)+min(dfz,opt_rshift)
+       df=sqrt(dfx**2+dfy**2+dfz**2)
+       dr=max(1.d-8,min(df,opt_rshift))
+       xa(i)=xa(i)+dfx*dr/df
+       ya(i)=ya(i)+dfy*dr/df
+       za(i)=za(i)+dfz*dr/df
     end do
 
     return
@@ -237,7 +236,7 @@ contains
 
     integer i,j,k,nx
     real(8) mtotal,fcm(3),dfx,dfy,dfz
-    real(8) gax(natom),gay(natom),gaz(natom)
+    real(8) gax(natom),gay(natom),gaz(natom),dr,df
 
     nx=1
     do i=1,nmolec
@@ -256,9 +255,11 @@ contains
              dfx=opt_gamma*fcm(1)+opt_alpha*(fax(nx)-gax(nx))
              dfy=opt_gamma*fcm(2)+opt_alpha*(fay(nx)-gay(nx))
              dfz=opt_gamma*fcm(3)+opt_alpha*(faz(nx)-gaz(nx))
-             xa(nx)=xa(nx)+min(dfx,opt_rshift)
-             ya(nx)=ya(nx)+min(dfy,opt_rshift)
-             za(nx)=za(nx)+min(dfz,opt_rshift)
+             df=sqrt(dfx**2+dfy**2+dfz**2)
+             dr=max(1.d-8,min(df,opt_rshift))
+             xa(nx)=xa(nx)+dfx*dr/df
+             ya(nx)=ya(nx)+dfy*dr/df
+             za(nx)=za(nx)+dfz*dr/df
              nx=nx+1
           end do
        end do
@@ -273,7 +274,7 @@ contains
     implicit none
 
     integer i,j,k,nx
-    real(8) rcm(3),mtotal,mrot(3,3),tx,ty,tz,theta,tr,mi
+    real(8) rcm(3),mtotal,mrot(3,3),tx,ty,tz,theta,tr,mi,xl(3),dtx,dty,dtz
 
     nx=1
     do i=1,nmolec
@@ -305,9 +306,17 @@ contains
           tx=tx/tr
           ty=ty/tr
           tz=tz/tr
-          theta=opt_beta*tr/mi
+          theta=opt_beta!*tr!/mi
           do k=1,nxmolec(i)
-             call rotation_matrix(theta,tx,ty,tz,nx,mrot)
+             call rotation_matrix(theta,tx,ty,tz,nx,mrot,xl)
+             dtx=xl(1)-xa(nx)
+             dty=xl(2)-ya(nx)
+             dtz=xl(3)-za(nx)
+!             dt=sqrt(dtx**2+dty**2+dtz**2)
+!             dr=max(1.d-8,min(dt,opt_rshift))
+             xa(nx)=xa(nx)+dtx!*dr/dt
+             ya(nx)=ya(nx)+dty!*dr/dt
+             za(nx)=za(nx)+dtz!*dr/dt
              nx=nx+1
           end do
        end do
@@ -317,12 +326,12 @@ contains
 
   end subroutine steepest_descent_rotation
 
-  subroutine rotation_matrix(theta,ta,tb,tc,nx,mrot)
+  subroutine rotation_matrix(theta,ta,tb,tc,nx,mrot,xl)
 
     implicit none
 
     integer nx
-    real(8) theta,ta,tb,tc,mrot(3,3)
+    real(8) theta,ta,tb,tc,mrot(3,3),xl(3)
 
     mrot(1,1)=cos(theta)+(1.d0-cos(theta))*ta**2
     mrot(1,2)=(1.d0-cos(theta))*ta*tb+sin(theta)*tc
@@ -334,9 +343,9 @@ contains
     mrot(3,2)=(1.d0-cos(theta))*tc*tb-sin(theta)*ta
     mrot(3,3)=cos(theta)+(1.d0-cos(theta))*tc**2
 
-    xa(nx)=mrot(1,1)*xa(nx)+mrot(1,2)*ya(nx)+mrot(1,3)*za(nx)
-    ya(nx)=mrot(2,1)*xa(nx)+mrot(2,2)*ya(nx)+mrot(2,3)*za(nx)
-    za(nx)=mrot(3,1)*xa(nx)+mrot(3,2)*ya(nx)+mrot(3,3)*za(nx)
+    xl(1)=mrot(1,1)*xa(nx)+mrot(1,2)*ya(nx)+mrot(1,3)*za(nx)
+    xl(2)=mrot(2,1)*xa(nx)+mrot(2,2)*ya(nx)+mrot(2,3)*za(nx)
+    xl(3)=mrot(3,1)*xa(nx)+mrot(3,2)*ya(nx)+mrot(3,3)*za(nx)
 
     return
 
@@ -388,7 +397,7 @@ contains
     write(6,'(28x,a12,1x,es10.2,1x,a12)')'gamma:',opt_gamma*rconv**2/econv,'A^2*mol/kcal'
     write(6,'(28x,a12,1x,es10.2,1x,a12)')'alpha:',opt_alpha*rconv**2/econv,'A^2*mol/kcal'
     write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
-    write(6,'(28x,a12,8x,f6.2,1x,a1)')' rshift:',sqrt(3.d0*opt_rshift**2)*rconv,'A'
+    write(6,'(28x,a12,8x,f6.2,1x,a1)')' rshift:',opt_rshift*rconv,'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
 

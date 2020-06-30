@@ -492,8 +492,6 @@ contains
     ntrialmax=opt_ntotal
     nrelax=0
 
-    opt_rshift=0.333d0*sqrt(3.d0)*opt_rshift
-
     opt_beta=opt_gamma
 
     return
@@ -996,12 +994,12 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ninter=95000
+    opt_ninter=1000
     opt_ntotal=100000
-    opt_dfmax=1.0d-4
+    opt_dfmax=1.0d-3
     opt_gamma=1.0d-8
-    opt_alpha=0.0d0
-    opt_rshift=0.5d0
+    opt_alpha=-1.0d-8
+    opt_rshift=0.25d0
 
     !-variaveis canonicas
 
