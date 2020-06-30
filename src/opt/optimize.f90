@@ -142,7 +142,7 @@ contains
        if(i.le.opt_ninter)then
           call ff_modules_inter(envdw,encoul,virvdw,vircoul)
           call steepest_descent_CM(gax,gay,gaz)
-          call steepest_descent_rotation
+!          call steepest_descent_rotation
           einter=envdw+encoul+envdw_corr
        else
           if(mod(i,2).eq.0)then

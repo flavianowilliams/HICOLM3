@@ -895,7 +895,7 @@ contains
 
     nhist=1
 
-    coulop='coul'
+    coulop='fscs'
 
     nmolec=0
     natom=0
@@ -994,11 +994,11 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ninter=1000
-    opt_ntotal=100000
+    opt_ninter=100000
+    opt_ntotal=200000
     opt_dfmax=1.0d-3
-    opt_gamma=1.0d-8
-    opt_alpha=-1.0d-8
+    opt_gamma=1.0d-7
+    opt_alpha=0.0d0
     opt_rshift=0.25d0
 
     !-variaveis canonicas
