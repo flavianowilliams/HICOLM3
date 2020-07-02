@@ -882,7 +882,7 @@ contains
 
     integer i,j,k
 
-    rcutoff=10.d0
+    rcutoff=9.d0
     drcutoff=0.1d0
 
     reuse=0
