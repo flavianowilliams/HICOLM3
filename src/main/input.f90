@@ -266,9 +266,9 @@ contains
     !-transladando coordenadas atomicas
 
     do i=1,natom
-       xa(i)=xa(i)+2.0d0*sys_shift(1)*a
-       ya(i)=ya(i)+2.0d0*sys_shift(2)*b
-       za(i)=za(i)+2.0d0*sys_shift(3)*c
+       xa(i)=xa(i)+sys_shift(1)*a
+       ya(i)=ya(i)+sys_shift(2)*b
+       za(i)=za(i)+sys_shift(3)*c
     end do
 
     !-definindo massa atomica
@@ -994,8 +994,8 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ninter=60000
-    opt_ntotal=60000
+    opt_ninter=100000
+    opt_ntotal=100000
     opt_dfmax=1.0d-3
     opt_gamma=1.0d-8
     opt_alpha=0.0d0
