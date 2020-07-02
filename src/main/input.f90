@@ -80,9 +80,9 @@ module input
   !----------------------------------------------------------------------------
   !-variaveis da mecanica molecular
   integer opt_ntotal,opt_ninter
-  real(8) opt_dfmax,opt_gamma,opt_rshift
+  real(8) opt_dfmax,opt_gamma,opt_alpha,opt_beta,opt_rshift
   !
-  save opt_ntotal,opt_ninter,opt_dfmax,opt_gamma,opt_rshift
+  save opt_ntotal,opt_ninter,opt_dfmax,opt_gamma,opt_alpha,opt_beta,opt_rshift
   !
 contains
 
@@ -266,9 +266,9 @@ contains
     !-transladando coordenadas atomicas
 
     do i=1,natom
-       xa(i)=xa(i)+sys_shift(1)*a
-       ya(i)=ya(i)+sys_shift(2)*b
-       za(i)=za(i)+sys_shift(3)*c
+       xa(i)=xa(i)+2.0d0*sys_shift(1)*a
+       ya(i)=ya(i)+2.0d0*sys_shift(2)*b
+       za(i)=za(i)+2.0d0*sys_shift(3)*c
     end do
 
     !-definindo massa atomica
@@ -462,6 +462,11 @@ contains
           read(5,*)key,val(1)
           opt_gamma=val(1)
        end if
+       if(key.eq.'alpha')then
+          backspace(5)
+          read(5,*)key,val(1)
+          opt_alpha=val(1)
+       end if
        if(key.eq.'dfmax')then
           backspace(5)
           read(5,*)key,val(1)
@@ -487,7 +492,7 @@ contains
     ntrialmax=opt_ntotal
     nrelax=0
 
-    opt_rshift=0.333d0*sqrt(3.d0)*opt_rshift
+    opt_beta=opt_gamma
 
     return
 
@@ -877,7 +882,7 @@ contains
 
     integer i,j,k
 
-    rcutoff=10.d0
+    rcutoff=9.d0
     drcutoff=0.1d0
 
     reuse=0
@@ -989,10 +994,11 @@ contains
 
     !-parametros de otimizacao
 
-    opt_ninter=95000
-    opt_ntotal=100000
-    opt_dfmax=1.0d-4
-    opt_gamma=5.0d-8
+    opt_ninter=60000
+    opt_ntotal=60000
+    opt_dfmax=1.0d-3
+    opt_gamma=1.0d-8
+    opt_alpha=0.0d0
     opt_rshift=0.5d0
 
     !-variaveis canonicas
@@ -1090,6 +1096,8 @@ contains
 
     opt_dfmax=opt_dfmax/(econv/rconv)
     opt_gamma=opt_gamma/(rconv**2/econv)
+    opt_alpha=opt_alpha/(rconv**2/econv)
+    opt_beta=opt_beta/(rconv/econv)
     opt_rshift=opt_rshift/rconv
 
     !-parametros da Dinâmica Molecular
