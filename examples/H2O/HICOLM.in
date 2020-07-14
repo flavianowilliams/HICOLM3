@@ -1,7 +1,7 @@
 # Start MD method
 
-@MDPREPARE # optimizing initial system
-#@MDRUNNING
+#@MDPREPARE # optimizing initial system
+@MDRUNNING
 
 # Structure variables
 
