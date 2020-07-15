@@ -244,7 +244,7 @@ contains
              f1=partors(i,j,2)*econv
              f2=partors(i,j,3)*aconv
              i2=nint(partors(i,j,4))
-             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,i2)')j,&
+             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')j,&
                   (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
        end do
