@@ -266,9 +266,9 @@ contains
     !-transladando coordenadas atomicas
 
     do i=1,natom
-       xa(i)=xa(i)+2.0d0*sys_shift(1)*a
-       ya(i)=ya(i)+2.0d0*sys_shift(2)*b
-       za(i)=za(i)+2.0d0*sys_shift(3)*c
+       xa(i)=xa(i)+1.0d0*sys_shift(1)*a
+       ya(i)=ya(i)+1.0d0*sys_shift(2)*b
+       za(i)=za(i)+1.0d0*sys_shift(3)*c
     end do
 
     !-definindo massa atomica
