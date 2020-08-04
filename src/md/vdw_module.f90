@@ -160,7 +160,7 @@ contains
 
     implicit none
 
-    integer i,ni,nj
+    integer i,ni,nj,nk
     real(8) pot,fr,xvz,yvz,zvz
     real(8) envdw,virvdw
 
@@ -168,6 +168,7 @@ contains
 
        ni=torsijkn(1,i)
        nj=torsijkn(4,i)
+       nk=torsim(i)
 
        call mic(ni,nj,xvz,yvz,zvz)
 
