@@ -7,7 +7,7 @@ program x2x
   parameter(ntmolecmax=10,atmax=1000)
   parameter(natommax=ntmolecmax*atmax)
 
-  real(8) x,y,z,qmolec(ntmolecmax,atmax)
+  real(8) x,y,z,qmolec(ntmolecmax,atmax),sfcoul(ntmolecmax),sfvdw(ntmolecmax)
 
   integer natom,i,j,k,ntmolecs,nmolec(ntmolecmax),namolec(ntmolecmax),zat
   character(2) at,tpmolec(ntmolecmax,atmax)
@@ -28,6 +28,10 @@ program x2x
      read(*,*)nmolec(i)
      write(*,*)'Quantidade de atomos por molecula:'
      read(*,*)namolec(i)
+     write(*,*)'Determine o fator de escalonamento 1-4 (eletrostatico):'
+     read(*,*)sfcoul(i)
+     write(*,*)'Determine o fator de escalonamento 1-4 (Van der Waals):'
+     read(*,*)sfvdw(i)
      write(*,*)'Classifique cada atomo por tipo:'
      read(*,*)(tpmolec(i,j),j=1,namolec(i))
      write(*,*)'Cargas parciais:'
@@ -41,7 +45,7 @@ program x2x
 
   natom=1
   do i=1,ntmolecs
-     write(2,'(a10,2i5)')nomemolec(i),nmolec(i),namolec(i)
+     write(2,'(a10,2i5,2f12.8)')nomemolec(i),nmolec(i),namolec(i),sfcoul(i),sfvdw(i)
      write(2,'(20a3)')(tpmolec(i,j),j=1,namolec(i))
      write(2,'(20f8.4)')(qmolec(i,j),j=1,namolec(i))
      do j=1,nmolec(i)
