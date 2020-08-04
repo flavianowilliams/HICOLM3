@@ -174,8 +174,8 @@ contains
 
        call vdw_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
 
-       pot=pot*sf_vdw
-       fr=fr*sf_vdw
+       pot=pot*sf_vdw(nk)
+       fr=fr*sf_vdw(nk)
 
        call vdw_force(ni,nj,xvz,yvz,zvz,fr)
 
