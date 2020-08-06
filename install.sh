@@ -186,6 +186,27 @@ echo "#!/bin/sh
 if [ ! -d '/tmp/amber' ]
 then
     cp -r $aux_dir/HICOLM/amber /tmp/amber
+else
+    if [ ! -f '/tmp/amber/amber_bonds.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_angles.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_angles.prm /tmp/amber/amber_angles.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_dihedrals_general.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_dihedrals_proper.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_vdw.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
+    fi
 fi
 $exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #
