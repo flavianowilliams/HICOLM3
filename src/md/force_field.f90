@@ -126,16 +126,18 @@ contains
 
     write(6,*)
     write(6,*)
-    write(6,'(2x,a24,2x,f7.4)')'1-4 scale factor (elet):',sf_coul
-    write(6,'(2x,a23,3x,f7.4)')'1-4 scale factor (VdW):',sf_vdw
-    write(6,*)
-    write(6,*)
+!    write(6,'(2x,a24,2x,f7.4)')'1-4 scale factor (elet):',sf_coul
+!    write(6,'(2x,a23,3x,f7.4)')'1-4 scale factor (VdW):',sf_vdw
+!    write(6,*)
+!    write(6,*)
 
     do i=1,nmolec
        write(6,'(42x,a6)')namemol(i)
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
-       write(6,'(2x,a11,1x,f8.3,1x,a5)')'Molar mass:',massmol(i)*mconv,'g/mol'
+       write(6,'(2x,a24,1x,f8.3,1x,a5)')'Molar mass:',massmol(i)*mconv,'g/mol'
+       write(6,'(2x,a24,2x,f8.4)')'1-4 sf (electrostatic):',sf_coul(i)
+       write(6,'(2x,a24,3x,f7.4)')'1-4 sf (Van der Waals):',sf_vdw(i)
        write(6,*)
        if(nxmolec(i).le.15)then
           write(6,'(7x,a6,10(1x,a2))')'Sites:',(atpmolec(i,j),j=1,nxmolec(i))
@@ -244,7 +246,7 @@ contains
              f1=partors(i,j,2)*econv
              f2=partors(i,j,3)*aconv
              i2=nint(partors(i,j,4))
-             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,i2)')j,&
+             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')j,&
                   (moltors(i,j,l),l=1,4),'amber',i1,f1,f2,i2
           end select
        end do

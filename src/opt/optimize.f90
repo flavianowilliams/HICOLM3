@@ -65,7 +65,7 @@ contains
 
     call opt_print
 
-    write(3,5)'#','INTRA','INTER','ENERGY','DENERGY','DFORCE'
+    write(3,5)'i','INTRA','INTER','ENERGY','DENERGY','DFORCE'
 
     write(6,'(4x,111a1)')('-',i=1,84)
     write(6,10)'##','STEP','INTRA','INTER','ENERGY','DENERGY','DFORCE'
@@ -205,7 +205,7 @@ contains
 
     return
 
-5   format(5x,a1,14x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
+5   format(5x,a8,6x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
 10  format(5x,a2,6x,a4,6x,a5,9x,a5,9x,a6,7x,a7,8x,a6)
 20  format(5x,a2,2x,i8,5(2x,es12.4))
 30  format(5x,i8,5(2x,es12.4))

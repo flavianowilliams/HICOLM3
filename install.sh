@@ -9,9 +9,9 @@ path=`pwd`
 #
 # -- definind installation and auxiliary directory --
 #
-#echo
-#echo "Please, type the compiler or press ENTER (default: gfortran)"
-#read compiler
+echo
+echo "Please, type the compiler or press ENTER (default: gfortran)"
+read compiler
 #
 if [ -z $compiler ]
 then
@@ -20,30 +20,30 @@ fi
 #
 export FC="$compiler"
 #
-#echo
-#echo "Please, type the instructions of compilation or press ENTER"
-#read instructions
+echo
+echo "Please, type the instructions of compilation or press ENTER"
+read instructions
 #
 if [ -z $instructions ]
 then
-    instructions="-fcheck=all -fbacktrace -Wall"
-#    instructions=""
+#    instructions="-fcheck=all -fbacktrace -Wall"
+    instructions=""
 fi
 #
 export FFLAGS="$instructions"
 #
-#echo
-#echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
-#read exe_dir
+echo
+echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
+read exe_dir
 #
 if [ -z $exe_dir ]
 then
     exe_dir="/usr/local/bin"
 fi
 #
-#echo
-#echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
-#read aux_dir
+echo
+echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
+read aux_dir
 #
 if [ -z $aux_dir ]
 then
@@ -186,6 +186,27 @@ echo "#!/bin/sh
 if [ ! -d '/tmp/amber' ]
 then
     cp -r $aux_dir/HICOLM/amber /tmp/amber
+else
+    if [ ! -f '/tmp/amber/amber_bonds.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_angles.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_angles.prm /tmp/amber/amber_angles.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_dihedrals_general.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_dihedrals_proper.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
+    fi
+    if [ ! -f '/tmp/amber/amber_vdw.prm' ]
+    then
+        cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
+    fi
 fi
 $exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #

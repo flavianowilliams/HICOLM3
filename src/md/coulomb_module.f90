@@ -94,7 +94,7 @@ contains
 
     implicit none
 
-    integer i,ni,nj
+    integer i,ni,nj,nk
     real(8) pot,fr,xvz,yvz,zvz
     real(8) encoul,vircoul
 
@@ -102,13 +102,14 @@ contains
 
        ni=torsijkn(1,i)
        nj=torsijkn(4,i)
+       nk=torsim(i)
 
        call mic(ni,nj,xvz,yvz,zvz)
 
        call coulomb_flags(ni,nj,xvz,yvz,zvz,pot,fr)
 
-       pot=pot*sf_coul
-       fr=fr*sf_coul
+       pot=pot*sf_coul(nk)
+       fr=fr*sf_coul(nk)
 
        call coulomb_force(ni,nj,xvz,yvz,zvz,fr)
 

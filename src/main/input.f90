@@ -61,7 +61,7 @@ module input
   real(8) dtime,drmax,fmstp,text,tstat,preext,pstat,bfactor,lrmax,zmatrix_tol
   real(8) parbnd(molecmax,bondmax,5),parvdw(ntpmax,ntpmax,3),fzstr(6),massmol(molecmax)
   real(8) parbend(molecmax,bendmax,4),qatmolec(molecmax,ntpmax),partors(molecmax,torsmax,7)
-  real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw,sf_coul,massmin,massmax
+  real(8) rcutoff,drcutoff,lambdain,lambdafi,sf_vdw(molecmax),sf_coul(molecmax),massmin,massmax
   !
   character(1) chck_amber(3,molecmax,ntpmax)
   character(4) coulop
@@ -196,7 +196,7 @@ contains
 
     nx=1
     do i=1,nmolec
-       read(10,*)namemol(i),ntmolec(i),nxmolec(i)
+       read(10,*)namemol(i),ntmolec(i),nxmolec(i),sf_coul(i),sf_vdw(i)
        read(10,*)(atpmolec(i,j),j=1,nxmolec(i))
        read(10,*)(qatmolec(i,j),j=1,nxmolec(i))
        do j=1,ntmolec(i)
@@ -266,9 +266,9 @@ contains
     !-transladando coordenadas atomicas
 
     do i=1,natom
-       xa(i)=xa(i)+2.0d0*sys_shift(1)*a
-       ya(i)=ya(i)+2.0d0*sys_shift(2)*b
-       za(i)=za(i)+2.0d0*sys_shift(3)*c
+       xa(i)=xa(i)+1.0d0*sys_shift(1)*a
+       ya(i)=ya(i)+1.0d0*sys_shift(2)*b
+       za(i)=za(i)+1.0d0*sys_shift(3)*c
     end do
 
     !-definindo massa atomica
@@ -989,13 +989,15 @@ contains
     dtime=0.0d0
     zmatrix_tol=0.5d0
 
-    sf_vdw=1.d0/2.d0
-    sf_coul=1.d0/1.2d0
+    do i=1,molecmax
+       sf_vdw(i)=1.d0/2.d0
+       sf_coul(i)=1.d0/1.2d0
+    end do
 
     !-parametros de otimizacao
 
-    opt_ninter=60000
-    opt_ntotal=60000
+    opt_ninter=100000
+    opt_ntotal=100000
     opt_dfmax=1.0d-3
     opt_gamma=1.0d-8
     opt_alpha=0.0d0
