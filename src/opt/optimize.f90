@@ -30,7 +30,7 @@ contains
 
     implicit none
 
-    integer i,j,ihist,nx
+    integer i,j,ihist,nx,geo_backup
     real(8) dfmax,gax(natom),gay(natom),gaz(natom)
     real(8) encoul,enbond,enbend,entors,envdw,eintra,einter,enpot0,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -100,6 +100,8 @@ contains
     virtors=0.d0   !torção
     virvdw=0.d0    !Van der waals
 
+    geo_backup=-1
+
     call ff_modules_intra&
          (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
     call ff_modules_inter(envdw,encoul,virvdw,vircoul)
@@ -110,7 +112,7 @@ contains
 
     call opt_check(gax,gay,gaz,dfmax)
 
-    call geometria
+    call geometry(geo_backup)
 
     if(mod(i,nhist).eq.0)call history(ihist)
 
@@ -122,6 +124,8 @@ contains
     enpot0=enpot
 
     !-calculando contribuição intramolecular
+
+    geo_backup=-geo_backup
 
     do i=2,opt_ntotal
 
@@ -161,7 +165,7 @@ contains
 
        call opt_check(gax,gay,gaz,dfmax)
 
-       call geometria
+       call geometry(geo_backup)
 
        if(mod(i,nhist).eq.0)call history(ihist)
 

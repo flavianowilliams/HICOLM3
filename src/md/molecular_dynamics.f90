@@ -46,7 +46,7 @@ contains
 
     implicit none
 
-    integer i,ihist
+    integer i,ihist,geo_backup
     real(8) t0,t3,time,temp,press,xhi,eta,sigma
     real(8) enpot,ekinet
 
@@ -79,9 +79,11 @@ contains
 
     !-relaxação do sistema
 
+    geo_backup=-1
+
     time=dtime
     do i=1,nrelax
-       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        time=time+dtime
@@ -91,7 +93,7 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        if(mod(i,nhist).eq.0)call history(ihist)
@@ -198,7 +200,7 @@ contains
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,xhi,eta,sigma,temp,press,ekinet,enpot)
+  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -208,7 +210,7 @@ contains
 
     implicit none
 
-    integer mdstp,i,ix
+    integer mdstp,i,ix,geo_backup
     real(8) temp,press,xhi,eta,sigma
 
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -246,7 +248,7 @@ contains
 
     !-imprimindo estrutura
 
-    call geometria
+    call geometry(geo_backup)
 
     !-escrevendo variaveis canonicas em arquivo de dados
 

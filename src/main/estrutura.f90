@@ -288,33 +288,70 @@ contains
 
  end subroutine cell_symmetry
 
- subroutine geometria()
+ subroutine geometry(geo_backup)
    !***************************************************************************************
    ! - Impressao de variaveis canonicas em HICOLM.XSF                                       *
    !***************************************************************************************
 
    implicit none
 
-   integer i,k,j
+   integer i,j,geo_backup
 
-   !-abrindo ficheiro
+   !-abrindo ficheiro de backup
 
-   open(1,file='HICOLM.XSF',status='unknown')
+   if(geo_backup.gt.0)goto 1
+
+   open(8,file='.HICOLM.XSF',status='unknown')
+
+   !-imprimindo arquivo XSF
+
+   write(8,*)'BEGIN_INFO'
+   write(8,*)'  #'
+   write(8,*)'  # This is a XCRYSDEN-Structure-File'
+   write(8,*)'  #'
+   write(8,*)'  # aimed for Visualization of geometry'
+   write(8,*)'  #'
+   write(8,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
+   write(8,*)'  #'
+   write(8,*)'  #'
+   write(8,*)'END_INFO'
+
+   write(8,*)'# estrutura final'
+   write(8,'(a7)')'CRYSTAL'
+
+   write(8,'(a7)')'PRIMVEC'
+   do i=1,3
+      write(8,'(3(3x,f14.8))')(v(i,j)*rconv,j=1,3)
+   end do
+
+   write(8,'(a9)')'PRIMCOORD'
+   write(8,'(2i5)')natom,1
+
+   do i=1,natom
+      write(8,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)') &
+           idna(i),xa(i)*rconv,ya(i)*rconv,za(i)*rconv, &
+           fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv, &
+           vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
+   end do
+
+   close(8)
+
+   !-abrindo ficheiro de escrita
+
+1  open(1,file='HICOLM.XSF',status='unknown')
 
    !-imprimindo arquivo XSF
 
    write(1,*)'BEGIN_INFO'
    write(1,*)'  #'
    write(1,*)'  # This is a XCRYSDEN-Structure-File'
-   write(1,*)'  # aimed for Visualization of Fermi Surface'
    write(1,*)'  #'
-   write(1,*)'  # Case: Tight-binding calculation'
+   write(1,*)'  # aimed for Visualization of geometry'
    write(1,*)'  #'
    write(1,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
    write(1,*)'  #'
+   write(1,*)'  #'
    write(1,*)'END_INFO'
-
-   k=1
 
    write(1,*)'# estrutura final'
    write(1,'(a7)')'CRYSTAL'
@@ -325,7 +362,7 @@ contains
    end do
 
    write(1,'(a9)')'PRIMCOORD'
-   write(1,'(2i5)')natom,k
+   write(1,'(2i5)')natom,1
 
    do i=1,natom
       write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)') &
@@ -336,9 +373,11 @@ contains
 
    close(1)
 
+   geo_backup=-geo_backup
+
     return
 
-  end subroutine geometria
+  end subroutine geometry
 
   subroutine history(ihist)
     !***************************************************************************************
