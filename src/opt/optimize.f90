@@ -201,7 +201,7 @@ contains
 
     return
 
-5   format(5x,a8,6x,a5,9x,a5,8x,a6,8x,a7,7x,a6)
+5   format(5x,a8,6x,a5,9x,a5,9x,a6,8x,a7,7x,a6)
 10  format(5x,a2,6x,a4,6x,a5,9x,a5,9x,a6,7x,a7,8x,a6)
 20  format(5x,a2,2x,i8,5(2x,es12.4))
 30  format(5x,i8,5(2x,es12.4))
