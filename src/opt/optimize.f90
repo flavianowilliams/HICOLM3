@@ -35,10 +35,6 @@ contains
     real(8) encoul,enbond,enbend,entors,envdw,eintra,einter,enpot0,enpot
     real(8) virvdw,virbond,virbend,virtors,vircoul
 
-    !-criando ficheiro de saida
-
-    open(3,file='HICOLM_opt.dat',status='unknown')
-
     !-stress
 
     do i=1,6

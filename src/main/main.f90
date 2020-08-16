@@ -38,6 +38,7 @@ program HICOLM
 
   call cpu_time(t0)
 
+  open(3,file='HICOLM.df',status='unknown')  ! print dataframe
   open(6,file='HICOLM.out',status='unknown') ! imprimindo arquivo out
 
   t1=0.d0

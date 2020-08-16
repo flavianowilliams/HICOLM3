@@ -79,6 +79,8 @@ contains
 
     !-relaxação do sistema
 
+    write(3,5)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','ENERGY'
+
     geo_backup=-1
 
     time=dtime
@@ -86,6 +88,8 @@ contains
        call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)i,time*tconv,&
+            volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        time=time+dtime
     end do
 
@@ -96,6 +100,8 @@ contains
        call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)i,time*tconv,&
+            volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        if(mod(i,nhist).eq.0)call history(ihist)
        time=time+dtime
     end do
@@ -111,8 +117,10 @@ contains
 
     return
 
+5   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+30  format(5x,i8,5(2x,es12.4))
 
   end subroutine md
 
