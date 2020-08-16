@@ -45,6 +45,10 @@ echo
 echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 read aux_dir
 #
+echo
+echo "Would you like to install HICOLM with graphical support? (default: no)"
+read supp
+#
 if [ -z $aux_dir ]
 then
     aux_dir="/usr/local/share"
@@ -59,7 +63,6 @@ fi
 #
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
-mkdir $aux_dir/HICOLM/R
 #
 # -- installing HICOLM --
 #
@@ -168,7 +171,11 @@ echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
+case "$supp" in
+    yes|YES|Yes)
+        mkdir $aux_dir/HICOLM/R
+        cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
+esac
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -209,8 +216,15 @@ else
     then
         cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
-fi
-$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
+fi" >> $exe_dir/hicolm
+echo "#" >> $exe_dir/hicolm
+case "$supp" in
+    yes|YES|Yes)
+        echo "$exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R" >> $exe_dir/hicolm
+        ;;
+    no|NO|No|"")
+        echo "$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
+esac
 #
 chmod +x $exe_dir/hicolm
 #
