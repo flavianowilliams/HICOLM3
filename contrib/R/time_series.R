@@ -1,11 +1,7 @@
-#install.packages("ggplot2","plotly")
-
-#library(ggplot2)
-#library(plotly)
-library(tibble)
-library(dplyr)
 
 x11()
+
+title(main="Evolution of Variables at each step",xlab="Step")
 
 Sys.sleep(3)
 
