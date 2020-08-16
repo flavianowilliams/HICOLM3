@@ -59,6 +59,7 @@ fi
 #
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
+mkdir $aux_dir/HICOLM/R
 #
 # -- installing HICOLM --
 #
@@ -167,6 +168,7 @@ echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
