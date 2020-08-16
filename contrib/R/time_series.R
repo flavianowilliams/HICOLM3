@@ -23,8 +23,6 @@ while(i[1]!=i0[1]) {
   plot(Optimization,main="Evolution of variables at each step",xlab="Step",col="red")
 }
 
-dev.off()
-
 cat("\n","Ending of simulation!")
 cat("\n")
 
