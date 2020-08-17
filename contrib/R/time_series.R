@@ -1,7 +1,7 @@
 
 x11()
 
-Sys.sleep(3)
+Sys.sleep(5)
 
 meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
 Optimization=ts(meusdados,frequency = 1)
