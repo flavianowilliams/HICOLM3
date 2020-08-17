@@ -1,4 +1,6 @@
 
+nt=system("awk '/n(total)/ {print $2}' HICOLM.out")
+
 x11()
 
 i0=c(0,0)
@@ -14,7 +16,7 @@ Optimization=ts(meusdados,frequency = 1)
 i=dim.data.frame(meusdados)
 plot(Optimization,main="Evolution of variables at each step",xlab="Step",col="red")
 
-while(i[1]!=i0[1]) {
+while(i[1]!=nt[1]) {
   meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
   i0=dim.data.frame(meusdados)
   Sys.sleep(4)
