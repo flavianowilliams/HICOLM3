@@ -1,11 +1,16 @@
 
 x11()
 
-Sys.sleep(3)
+#Sys.sleep(5)
 
-meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
-Optimization=ts(meusdados,frequency = 1)
-i0=dim.data.frame(meusdados)
+i0=c(0,0)
+
+while(i0[1]>1) {
+  meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
+  Optimization=ts(meusdados,frequency = 1)
+  i0=dim.data.frame(meusdados)
+}
+
 Sys.sleep(3)
 meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
 Optimization=ts(meusdados,frequency = 1)
