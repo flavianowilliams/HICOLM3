@@ -3,7 +3,7 @@ x11()
 
 i0=c(0,0)
 
-while(i0[1]>1) {
+while(i0[1]>2) {
   meusdados=read.table("HICOLM.df",sep = "",header = TRUE)
   Optimization=ts(meusdados,frequency = 1)
   i0=dim.data.frame(meusdados)
