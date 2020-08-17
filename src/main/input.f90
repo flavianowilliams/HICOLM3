@@ -277,13 +277,17 @@ contains
        call atomic_mass(i,idna(i))
     end do
 
+    do i=1,nmolec
+       massmol(i)=0.d0
+    end do
+
     nx=1
     do i=1,nmolec
-       do j=1,nxmolec(i)
+       do k=1,nxmolec(i)
           massmol(i)=massmol(i)+mass(nx)
           nx=nx+1
        end do
-       nx=nx+ntmolec(i)
+       nx=ntmolec(i)*nxmolec(i)+1
     end do
 
     massmax=0.d0
