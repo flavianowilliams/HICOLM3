@@ -45,6 +45,10 @@ contains
     eintra=0.d0
     enpot0=0.d0
 
+    !-imprimindo informacoes no ficheiro de saida
+
+    call opt_print
+
     !-preparando Campo de Força
 
     call ff_prepare
@@ -56,10 +60,6 @@ contains
     !-correcao da energia de Van der Waals de curto alcance
 
     call vdw_corr
-
-    !-imprimindo informacoes no ficheiro de saida
-
-    call opt_print
 
     write(3,5)'i','INTRA','INTER','ENERGY','DENERGY','DFORCE'
 

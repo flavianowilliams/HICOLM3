@@ -184,6 +184,15 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
+#echo -e "\e[33m-> Installing R-packages\e[0m"
+#echo
+#case "$supp" in
+#    yes|YES|Yes)
+#	Rscript $path/contrib/R/prepare.R
+#esac
+#
+# --installing R-libraries
+#
 if [ -f "$exe_dir/hicolm" ]
 then
     rm $exe_dir/hicolm
