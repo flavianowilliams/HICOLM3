@@ -6,8 +6,6 @@ library(tibble)
 library(magrittr)
 library(ggplot2)
 
-#setwd("/home/flaviano/Documentos/maria_eduarda")
-
 # carregando dataframe
 
 nx=readr::read_table2(file="HICOLM.md",col_names = FALSE,n_max=1)
