@@ -63,6 +63,7 @@ fi
 #
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
+mkdir $aux_dir/HICOLM/R
 #
 # -- installing HICOLM --
 #
@@ -171,11 +172,7 @@ echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-case "$supp" in
-    yes|YES|Yes)
-        mkdir $aux_dir/HICOLM/R
-        cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
-esac
+cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -236,6 +233,26 @@ case "$supp" in
 esac
 #
 chmod +x $exe_dir/hicolm
+#
+if [ -f "$exe_dir/hresults" ]
+then
+    rm $exe_dir/hresults
+fi
+#
+touch $exe_dir/hresults
+#
+echo "#!/bin/sh
+echo 'Select option:'
+echo '1 -> Thermodynamic variables'
+echo '2 -> RDF and coordination number (in construction)'
+echo '3 -> Vibrational analysis (in construction)'
+read option
+if [ ! -d '1' ]
+then
+    Rscript $aux_dir/HICOLM/R/variables.R
+fi" >> $exe_dir/hresults
+#
+chmod +x $exe_dir/hresults
 #
 echo -e "\e[32m-> SUCCESS!\e[0m"
 echo

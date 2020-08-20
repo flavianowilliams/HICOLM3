@@ -289,9 +289,9 @@ contains
     return
 
 10  format(1x,i5)
-20  format(6f16.5)
-30  format(1x,2i5,5f12.4)
-40  format(35x,3f12.4)
+20  format(6e16.5)
+30  format(1x,2i5,5e12.4)
+40  format(35x,3e12.4)
 
   end subroutine mdloop
 
