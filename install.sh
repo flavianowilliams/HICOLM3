@@ -188,7 +188,7 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #	Rscript $path/contrib/R/prepare.R
 #esac
 #
-# --installing R-libraries
+# --preparing script to call HICOLM executable
 #
 if [ -f "$exe_dir/hicolm" ]
 then
@@ -232,6 +232,8 @@ case "$supp" in
         echo "$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 esac
 #
+# preparing script to get results
+#
 chmod +x $exe_dir/hicolm
 #
 if [ -f "$exe_dir/hresults" ]
@@ -242,7 +244,9 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-echo 'Select option:'
+echo
+echo 'Please, choose one of the following options:'
+echo
 echo '1 -> Thermodynamic variables'
 echo '2 -> RDF and coordination number (in construction)'
 echo '3 -> Vibrational analysis (in construction)'
