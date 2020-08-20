@@ -6,11 +6,14 @@ library(tibble)
 library(magrittr)
 library(ggplot2)
 
+#setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
+setwd("/home/flaviano/Documentos/maria_eduarda")
+
 # carregando dataframe
 
 nx=readr::read_table2(file="HICOLM.md",col_names = FALSE,n_max=1)
 
-dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2)
+dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2,skip_empty_rows = T)
 dff$X7=c(seq(1,dim(dff)[1],1))
 
 n1=as.integer(nx[1,"X1"])
@@ -21,7 +24,9 @@ n5=as.integer(nx[1,"X5"])
 
 nxx=c(n1,n2,n3,n4,n5)
 
-dfn=as.integer(3*nxx[4]+7)
+dfn=as.integer(3*nxx[4]+8)
+
+dfx=dff %>% filter(mod(dff$X7,dfn)==0+2)
 
 dt=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X1") %>% rename(TIME=X1)
 dv=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X2") %>% rename(VOLUME=X2)
@@ -32,7 +37,7 @@ drho=dff %>% filter(mod(dff$X7,dfn)==0+3) %>% select("X1") %>% rename(DENSITY=X1
 
 df=data.frame(dt,dv,dtemp,dpress,de,drho)
 
-remove(nxx,nx,n1,n2,n3,n4,n5,dt,dv,dtemp,dpress,de,drho,dff,dfn)
+#remove(nxx,nx,n1,n2,n3,n4,n5,dt,dv,dtemp,dpress,de,drho,dff,dfn)
 
 # seção volume versus tempo
 
