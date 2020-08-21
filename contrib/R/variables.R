@@ -11,22 +11,15 @@ setwd("/home/flaviano/Documentos/maria_eduarda")
 
 # carregando dataframe
 
-nx=readr::read_table2(file="HICOLM.md",col_names = FALSE,n_max=1)
+dff=readr::read_table2(file="HICOLM.md",col_names = c("X1","X2","X3","X4","X5","X6"),skip_empty_rows = TRUE)
 
-n1=as.integer(nx[1,"X1"])
-n2=as.numeric(nx[1,"X2"])
-n3=as.integer(nx[1,"X3"])
-n4=as.integer(nx[1,"X4"])
-n5=as.integer(nx[1,"X5"])
+nx=list(dff[1,1:5])
+nxx=as.integer(dff[1,4])
 
-nxx=c(n1,n2,n3,n4,n5)
+dfn=as.integer(3*nxx+7)
 
-dfn=as.integer(3*nxx[4]+7)
-
-dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2,skip_empty_rows = TRUE)
-
-df1=dff[seq(2,nrow(dff),dfn),]
-df2=dff[seq(3,nrow(dff),dfn),]
+df1=dff[seq(4,nrow(dff),dfn),]
+df2=dff[seq(5,nrow(dff),dfn),]
 
 dt=df1 %>% select("X1") %>% rename(TIME=X1)
 dv=df1 %>% select("X2") %>% rename(VOLUME=X2)
@@ -37,7 +30,7 @@ drho=df2 %>% select("X1") %>% rename(DENSITY=X1)
 
 df=data.frame(dt,dv,dtemp,dpress,de,drho)
 
-remove(nxx,nx,n1,n2,n3,n4,n5,dt,dv,dtemp,dpress,de,drho,dff,dfn,df1,df2)
+remove(nxx,nx,dt,dv,dtemp,dpress,de,drho,dff,dfn,df1,df2)
 
 # seção volume versus tempo
 
