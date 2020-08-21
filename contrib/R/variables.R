@@ -11,8 +11,8 @@ setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
 
 # carregando dataframe
 
-dff=readr::read_table2(file="HICOLM.md",col_names = c("X1","X2","X3","X4","X5","X6"),skip_empty_rows = FALSE)
-dff=dff[rowSums(is.na(dff))!=ncol(dff),]
+dff=readr::read_table2(file="HICOLM.md",col_names = c("X1","X2","X3","X4","X5","X6"),skip_empty_rows = TRUE)
+#dff=dff[rowSums(is.na(dff))!=ncol(dff),]
 
 nx=list(dff[1,1:5])
 nxx=as.integer(dff[1,4])
@@ -31,7 +31,7 @@ drho=df2 %>% select("X1") %>% rename(DENSITY=X1)
 
 df=data.frame(dt,dv,dtemp,dpress,de,drho)
 
-remove(nxx,nx,dt,dv,dtemp,dpress,de,drho,dfn,df1,df2)
+remove(nxx,nx,dt,dv,dtemp,dpress,de,drho,dfn,df1,df2,dff)
 
 # seção volume versus tempo
 
