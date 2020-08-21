@@ -24,7 +24,7 @@ n5=as.integer(nx[1,"X5"])
 
 nxx=c(n1,n2,n3,n4,n5)
 
-dfn=as.integer(3*nxx[4]+8)
+dfn=as.integer(3*nxx[4]+7)
 
 dfx=dff %>% filter(mod(dff$X7,dfn)==0+2)
 
