@@ -7,13 +7,15 @@ library(magrittr)
 library(ggplot2)
 
 #setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
-setwd("/home/flaviano/Documentos/maria_eduarda")
+#setwd("/home/flaviano/Documentos/maria_eduarda")
 
 # carregando dataframe
 
 nx=readr::read_table2(file="HICOLM.md",col_names = FALSE,n_max=1)
 
-dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2,skip_empty_rows = T)
+dff=data.frame(c("A1","X2","X3","X4","X5","X6","X7"))
+
+dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2,skip_empty_rows = TRUE)
 dff$X7=c(seq(1,dim(dff)[1],1))
 
 n1=as.integer(nx[1,"X1"])
@@ -26,14 +28,12 @@ nxx=c(n1,n2,n3,n4,n5)
 
 dfn=as.integer(3*nxx[4]+7)
 
-dfx=dff %>% filter(mod(dff$X7,dfn)==0+2)
-
-dt=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X1") %>% rename(TIME=X1)
-dv=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X2") %>% rename(VOLUME=X2)
-dtemp=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X3") %>% rename(TEMPERATURE=X3)
-dpress=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X4") %>% rename(PRESSURE=X4)
-de=dff %>% filter(mod(dff$X7,dfn)==0+2) %>% select("X6") %>% rename(ENERGY=X6)
-drho=dff %>% filter(mod(dff$X7,dfn)==0+3) %>% select("X1") %>% rename(DENSITY=X1)
+dt=dff %>% filter(mod(dff$X7,dfn)==2) %>% select("X1") %>% rename(TIME=X1)
+dv=dff %>% filter(mod(dff$X7,dfn)==2) %>% select("X2") %>% rename(VOLUME=X2)
+dtemp=dff %>% filter(mod(dff$X7,dfn)==2) %>% select("X3") %>% rename(TEMPERATURE=X3)
+dpress=dff %>% filter(mod(dff$X7,dfn)==2) %>% select("X4") %>% rename(PRESSURE=X4)
+de=dff %>% filter(mod(dff$X7,dfn)==2) %>% select("X6") %>% rename(ENERGY=X6)
+drho=dff %>% filter(mod(dff$X7,dfn)==3) %>% select("X1") %>% rename(DENSITY=X1)
 
 df=data.frame(dt,dv,dtemp,dpress,de,drho)
 
