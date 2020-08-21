@@ -28,18 +28,16 @@ dff=readr::read_table2(file="HICOLM.md",col_names = FALSE,skip = 2,skip_empty_ro
 df1=dff[seq(2,nrow(dff),dfn),]
 df2=dff[seq(3,nrow(dff),dfn),]
 
-dt=df1 %>% select("X1")
-dv=df1 %>% select("X2")
-dtemp=df1 %>% select("X3")
-dpress=df1 %>% select("X4")
-de=df1 %>% select("X6")
-drho=df2 %>% select("X1") %>% rename()
+dt=df1 %>% select("X1") %>% rename(TIME=X1)
+dv=df1 %>% select("X2") %>% rename(VOLUME=X2)
+dtemp=df1 %>% select("X3") %>% rename(TEMPERATURE=X3)
+dpress=df1 %>% select("X4") %>% rename(PRESSURE=X4)
+de=df1 %>% select("X6") %>% rename(ENERGY=X6)
+drho=df2 %>% select("X1") %>% rename(DENSITY=X1)
 
 df=data.frame(dt,dv,dtemp,dpress,de,drho)
 
-head(df)
-
-#remove(nxx,nx,n1,n2,n3,n4,n5,dt,dv,dtemp,dpress,de,drho,dff,dfn)
+remove(nxx,nx,n1,n2,n3,n4,n5,dt,dv,dtemp,dpress,de,drho,dff,dfn,df1,df2)
 
 # seção volume versus tempo
 
