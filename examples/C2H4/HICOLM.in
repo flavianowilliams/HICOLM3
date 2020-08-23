@@ -1,9 +1,9 @@
-# Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization @MDPREPARE.
-# The default optin is optimization procedure.
+# Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization
+# @MDPREPARE. The default optin is optimization procedure.
 
 @MDPREPARE
 
-# Structure settings. Type the coordinating vectors of the unit cell.
+# Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &STRUCT
  cell
@@ -13,16 +13,12 @@
 &END
 
 # Optimization settings. Type variables related to the optimization procedure. Defaults:
-# dfmax 1.0e-3
-# gamma 1.0e-8
-# ntrialmax 100000 100000
 
 &OPT
- dfmax 1.e-2
- gamma 1.e-9
- nhist 10
- ntrialmax 100 100
- rcutoff 7.0 0.1
+ dfmax 1.e-2             # intra and intermolecular gradient force tolerance (default: 1.e-3)
+ gamma 1.e-9             # ... (default: 1.e-8)
+ ntrialmax 100 100       # limit of inter and intramolecular steps (default: 100000 100000)
+ rcutoff 7.0 0.1         # cutoff radius and width cutoff (default: 10 A 0.1 A)
 &END
 
 # Molecular dynamics setting. Type variables related to the MD running.
