@@ -1,19 +1,21 @@
-# Start MD
+# Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization @MDPREPARE.
+# The default optin is optimization procedure.
 
-#@MDRUNNING
 @MDPREPARE
 
-# Structure variables
+# Structure settings. Type the coordinating vectors of the unit cell.
 
 &STRUCT
  cell
   15.0 0.0  0.0
   0.0 15.0  0.0
   0.0  0.0 15.0
- reuse 0
 &END
 
-# Optimization options
+# Optimization settings. Type variables related to the optimization procedure. Defaults:
+# dfmax 1.0e-3
+# gamma 1.0e-8
+# ntrialmax 100000 100000
 
 &OPT
  dfmax 1.e-2
@@ -23,36 +25,36 @@
  rcutoff 7.0 0.1
 &END
 
-# Molecular dynamics variables
+# Molecular dynamics setting. Type variables related to the MD running.
 
 &MD
-nhist 10
-preext 1.0d0
-text 0.0
-ntrialmax 1000
-nrelax 1
-timestep 0.00000000001
-ensemble nvt berendsen 1.0 0.5 4.9e-5
-rcutoff 7.0 0.1
+nhist 10                               # Qty of frames: (ntrialmax-nrelax)/nhist
+preext 1.0d0                           # External pressure in atm unit
+text 0.0                               # External temperature in K unit
+ntrialmax 1000                         # Total qty of MD cicle
+nrelax 1                               # Qty of steps in non-equilibrium phase
+timestep 0.00000000001                 # Timestep in ps unit
+ensemble nvt berendsen 1.0 0.5 4.9e-5  # Statistical ensemble
+rcutoff 7.0 0.1                        # Cutoff radius and cutoff width
 &END
 
-# Force field variables
+# Force field settings. Type variables related to the force field description
 
 &FORCE
- $INTRA
-  molecule C2H4
-  bends* 5
-  3 1 4 harm 3.04 120.0
-  bends* 6
-  5 2 6 harm 3.04 120.0
-  dihedrals! 2
-  3 1 2 5 amber 1.0 1.1 180.0 2.0
+ $INTRA                                # Openning of the intramolecular section
+  molecule C2H4                        # Extra intramolecular description of "C2H4" molecule
+  bends* 5                             # To describe extra bonds, bends and/or dihedrals, use:
+  3 1 4 harm 3.04 120.0                # -> bends* 5: modification of the 5th bend interaction
+  bends* 6                             # -> benbs# 1: aditional interaction (1 is the qty of
+  5 2 6 harm 3.04 120.0                #              aditional "bends")
+  dihedrals! 2                         # -> bends! 6: modification of all interaction of the
+  3 1 2 5 amber 1.0 1.1 180.0 2.0      #              respective molecule.
   4 1 2 6 amber 1.0 1.1 180.0 2.0
  $END
- $INTER
-  electrostatic fscs
-  vdw 3
-  CA CA lj 1.0 1.0
+ $INTER                                # Openning of the intermolecular section(VW and coulomb)
+  electrostatic fscs                   # Choose fscs or coul. Default is fscs
+  vdw 3                                # Extra Van der Waals interaction followed by its
+  CA CA lj 1.0 1.0                     # respective qty
   CA HA lj 1.0 1.0
   CA OW lj 1.0 1.0
  $END

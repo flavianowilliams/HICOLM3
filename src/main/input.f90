@@ -638,7 +638,7 @@ contains
 
     !-escolha do metodo
 
-11  method='@MDRUNNING'
+11  method='@MDPREPARE'
 
     return
 
@@ -899,7 +899,7 @@ contains
 
     nhist=1
 
-    coulop='coul'
+    coulop='fscs'
 
     nmolec=0
     natom=0
