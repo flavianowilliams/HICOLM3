@@ -1,5 +1,5 @@
 # Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization
-# @MDPREPARE. The default optin is optimization procedure.
+# @MDPREPARE. The default option is optimization procedure.
 
 @MDPREPARE
 
@@ -15,43 +15,43 @@
 # Optimization settings. Type variables related to the optimization procedure. Defaults:
 
 &OPT
- dfmax 1.e-2             # intra and intermolecular gradient force tolerance (default: 1.e-3)
- gamma 1.e-9             # ... (default: 1.e-8)
- ntrialmax 100 100       # limit of inter and intramolecular steps (default: 100000 100000)
- rcutoff 7.0 0.1         # cutoff radius and width cutoff (default: 10 A 0.1 A)
+ dfmax 1.e-2             # intra and intermolecular gradient force tolerance (default: 1.e-3).
+ gamma 1.e-9             # ... (default: 1.e-8).
+ ntrialmax 100 100       # limit of inter and intramolecular steps (default: 100000 100000).
+ rcutoff 7.0 0.1         # cutoff radius and cutoff width (default: 10 A 0.1 A).
 &END
 
 # Molecular dynamics setting. Type variables related to the MD running.
 
 &MD
-nhist 10                               # Qty of frames: (ntrialmax-nrelax)/nhist
-preext 1.0d0                           # External pressure in atm unit
-text 0.0                               # External temperature in K unit
-ntrialmax 1000                         # Total qty of MD cicle
-nrelax 1                               # Qty of steps in non-equilibrium phase
-timestep 0.00000000001                 # Timestep in ps unit
-ensemble nvt berendsen 1.0 0.5 4.9e-5  # Statistical ensemble
-rcutoff 7.0 0.1                        # Cutoff radius and cutoff width
+nhist 10                               # Qty of frames: (ntrialmax-nrelax)/nhist.
+preext 1.0d0                           # External pressure in atm unit.
+text 0.0                               # External temperature in K unit.
+ntrialmax 1000                         # Total qty of MD cicle.
+nrelax 1                               # Qty of steps in the non-equilibrium phase.
+timestep 0.00000000001                 # Timestep in ps unit.
+ensemble nvt berendsen 1.0 0.5 4.9e-5  # Statistical ensemble.
+rcutoff 7.0 0.1                        # Cutoff radius and cutoff width.
 &END
 
 # Force field settings. Type variables related to the force field description
 
 &FORCE
- $INTRA                                # Openning of the intramolecular section
-  molecule C2H4                        # Extra intramolecular description of the"C2H4" molecule
-  bends* 5                             # To describe extra bonds, bends and/or dihedrals, use:
-  3 1 4 harm 3.04 120.0                # -> bends* 5: modification of the 5th bend interaction
-  bends* 6                             # -> benbs# 1: aditional interaction (1 is the qty of
-  5 2 6 harm 3.04 120.0                #              aditional "bends")
-  dihedrals! 2                         # -> bends! 6: modification of all interaction of the
-  3 1 2 5 amber 1.0 1.1 180.0 2.0      #              respective molecule.
+ $INTRA                           # Openning of the intramolecular section
+  molecule C2H4                   # Extra intramolecular description of the"C2H4" molecule
+  bends* 5                        # To describe extra bonds, bends and/or dihedrals, use:
+  3 1 4 harm 3.04 120.0           # ->     bends* 5: modification of the "5th bend" interact.
+  bends* 6                        # ->     benbs# 1: modification of all "bend" interaction
+  5 2 6 harm 3.04 120.0           #                  ("1" is qty of the respective interact.)
+  dihedrals! 2                    # -> dihedrals! 2: aditional interaction ("2" is the qty of
+  3 1 2 5 amber 1.0 1.1 180.0 2.0 #                  aditional interactions (dihedrals only).
   4 1 2 6 amber 1.0 1.1 180.0 2.0
- $END                                  # The $INTRA secion must be finished with the $END word
- $INTER                                # Openning of the intermolecular section(VW and coulomb)
-  electrostatic fscs                   # Choose fscs or coul. Default is fscs
-  vdw 3                                # Extra Van der Waals interaction followed by its
-  CA CA lj 1.0 1.0                     # respective qty
-  CA HA lj 1.0 1.0                     # The paired interaction is described by two kinds
-  CA OW lj 1.0 1.0                     # according HICOLM.sys site description of each molec.
- $END                                  # The $INTER secion must be finished with the $END word
+ $END                             # The $INTRA secion must be finished with the $END word
+ $INTER                           # Openning of the intermolecular section(VW and coulomb)
+  electrostatic fscs              # Choose fscs or coul. Default is fscs.
+  vdw 3                           # Extra Van der Waals interaction followed by its
+  CA CA lj 1.0 1.0                # respective qty.
+  CA HA lj 1.0 1.0                # The paired interaction is described by two kinds
+  CA OW lj 1.0 1.0                # according HICOLM.sys site description of each molec.
+ $END                             # The $INTER secion must be finished with the $END word.
 &END
