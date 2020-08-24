@@ -6,7 +6,7 @@ library(tibble)
 library(magrittr)
 library(ggplot2)
 
-setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
+#setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
 #setwd("/home/flaviano/Documentos/maria_eduarda")
 
 # carregando dataframe
