@@ -8,6 +8,11 @@
 
 #setwd("/home/flaviano/Documentos/maria_eduarda")
 
+library("magrittr")
+library("tibble")
+library("readr")
+library("dplyr")
+
 Sys.sleep(3)
 
 df=readr::read_table2(file = "HICOLM.out")
