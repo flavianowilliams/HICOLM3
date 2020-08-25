@@ -1,12 +1,12 @@
-suppressMessages(library(dplyr))
+#suppressMessages(library(dplyr))
 
-suppressMessages(library(tidyr))
+#suppressMessages(library(tidyr))
 
-suppressMessages(library(tibble))
+#suppressMessages(library(tibble))
 
-suppressMessages(library(readr))
+#suppressMessages(library(readr))
 
-setwd("/home/flaviano/Documentos/maria_eduarda")
+#setwd("/home/flaviano/Documentos/maria_eduarda")
 
 Sys.sleep(3)
 
