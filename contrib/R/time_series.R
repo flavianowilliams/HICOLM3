@@ -1,13 +1,3 @@
-#suppressMessages(library(dplyr))
-
-#suppressMessages(library(tidyr))
-
-#suppressMessages(library(tibble))
-
-#suppressMessages(library(readr))
-
-#setwd("/home/flaviano/Documentos/maria_eduarda")
-
 library("magrittr")
 library("tibble")
 library("readr")
