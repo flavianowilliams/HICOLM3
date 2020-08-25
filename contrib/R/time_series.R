@@ -11,7 +11,8 @@
 library("magrittr")
 library("tibble")
 library("readr")
-library("dplyr")
+
+suppressMessages(library("dplyr"))
 
 Sys.sleep(3)
 
