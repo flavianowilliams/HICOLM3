@@ -638,7 +638,7 @@ contains
 
     !-escolha do metodo
 
-11  method='@MDPREPARE'
+11  method='@MDRUNNING'
 
     return
 
