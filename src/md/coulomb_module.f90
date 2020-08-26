@@ -139,7 +139,7 @@ contains
 
     !-calculo do gradiente e potencial
 
-    dr=sqrt(xvz**2+yvz**2+zvz**2)
+    dr=max(1.d-4,sqrt(xvz**2+yvz**2+zvz**2))
 
     select case(coulop)
 
