@@ -248,8 +248,8 @@ echo
 echo 'Please, choose one of the following options:'
 echo
 echo '1 -> Thermodynamic variables'
-echo '2 -> RDF and coordination number (in construction)'
-echo '3 -> Vibrational analysis (in construction)'
+echo '2 -> RDF and coordination number (incomplete)'
+echo '3 -> Vibrational analysis (incomplete)'
 read option
 if [ ! -d '1' ]
 then
