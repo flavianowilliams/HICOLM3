@@ -1,37 +1,32 @@
-#carregando pacotes
+# clean up workspace
 
-library(dplyr)
-library(tidyr)
+rm(list = ls())
+
+# close all figure windows created with x11()
+
+graphics.off()
+
+# load packages
+
 library(tibble)
-library(magrittr)
 library(ggplot2)
 
-#setwd("/home/flaviano/Dropbox/Projeto/simulacoes/H2O_MD")
-#setwd("/home/flaviano/Documentos/maria_eduarda")
+setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/imidazol+H2O/simulacoes/MD/berendsen")
 
 # carregando dataframe
 
-dff=readr::read_table2(file="HICOLM.md",col_names = c("X1","X2","X3","X4","X5","X6"),skip_empty_rows = TRUE)
-#dff=dff[rowSums(is.na(dff))!=ncol(dff),]
+dff=readr::read_table2(file="HICOLM.md",col_names =
+                         c("V1","V2","V3","V4","V5","V6"),
+                       skip_empty_rows = TRUE)
 
-nx=list(dff[1,1:5])
 nxx=as.integer(dff[1,4])
 
-dfn=as.integer(3*nxx+7)
+dfn=as.integer(3*nxx+9)
 
-df1=dff[seq(4,nrow(dff),dfn),]
-df2=dff[seq(5,nrow(dff),dfn),]
+df=dff[seq(4,nrow(dff),dfn),]
+df[,7]=dff[seq(5,nrow(dff),dfn),1]
 
-dt=df1 %>% select("X1") %>% rename(TIME=X1)
-dv=df1 %>% select("X2") %>% rename(VOLUME=X2)
-dtemp=df1 %>% select("X3") %>% rename(TEMPERATURE=X3)
-dpress=df1 %>% select("X4") %>% rename(PRESSURE=X4)
-de=df1 %>% select("X6") %>% rename(ENERGY=X6)
-drho=df2 %>% select("X1") %>% rename(DENSITY=X1)
-
-df=data.frame(dt,dv,dtemp,dpress,de,drho)
-
-remove(nxx,nx,dt,dv,dtemp,dpress,de,drho,dfn,df1,df2,dff)
+names(df)[7]="V7"
 
 # seção volume versus tempo
 
@@ -40,11 +35,11 @@ cat("Linear regression of Volume versus time","\n")
 cat("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","\n")
 cat("\n")
 
-ajuste=lm(VOLUME ~ TIME,data=df)
+ajuste=lm(V2 ~ V1,data=df)
 
 # imprimindo variaveis termodinamicas
 
-  df %>% ggplot(aes(x=TIME,y=VOLUME))+
+  df %>% ggplot(aes(x=V1,y=V2))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -60,11 +55,11 @@ cat("Linear regression of Temperature versus time","\n")
 cat("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","\n")
 cat("\n")
 
-ajuste=lm(TEMPERATURE ~ TIME,data=df)
+ajuste=lm(V3 ~ V1,data=df)
 
 # imprimindo variaveis termodinamicas
 
-  df %>% ggplot(aes(x=TIME,y=TEMPERATURE))+
+  df %>% ggplot(aes(x=V1,y=V3))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -80,11 +75,11 @@ cat("Linear regression of Pressure versus time","\n")
 cat("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","\n")
 cat("\n")
 
-ajuste=lm(PRESSURE ~ TIME,data=df)
+ajuste=lm(V4 ~ V1,data=df)
 
 # imprimindo variaveis termodinamicas
 
-  df %>% ggplot(aes(x=TIME,y=as.double(PRESSURE)))+
+  df %>% ggplot(aes(x=V1,y=as.double(V4)))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -100,11 +95,11 @@ cat("Linear regression of Energy versus time","\n")
 cat("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","\n")
 cat("\n")
 
-ajuste=lm(ENERGY ~ TIME,data=df)
+ajuste=lm(V6 ~ V1,data=df)
 
 # imprimindo variaveis termodinamicas
 
-  df %>% ggplot(aes(x=TIME,y=as.double(ENERGY)))+
+  df %>% ggplot(aes(x=V1,y=as.double(V6)))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -120,11 +115,11 @@ cat("Linear regression of Density versus time","\n")
 cat("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","\n")
 cat("\n")
 
-ajuste=lm(DENSITY ~ TIME,data=df)
+ajuste=lm(V7 ~ V1,data=df)
 
 # imprimindo variaveis termodinamicas
 
-  df %>% ggplot(aes(x=TIME,y=as.double(DENSITY)))+
+  df %>% ggplot(aes(x=V1,y=as.double(V7)))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
