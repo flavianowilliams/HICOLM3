@@ -11,7 +11,7 @@ graphics.off()
 library(tibble)
 library(ggplot2)
 
-setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/imidazol+H2O/simulacoes/MD/berendsen")
+#setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/imidazol+H2O/simulacoes/MD/berendsen")
 
 # carregando dataframe
 
