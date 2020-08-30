@@ -1,5 +1,5 @@
 ---
-title: "report"
+title: "Report"
 author: ""
 date: ""
 output: pdf_document
@@ -18,7 +18,9 @@ output: pdf_document
   source("variables.R",local = knitr::knit_global())
 ```
 
-Olá alunos, o gráfico abaixo mostra a média de cada aluno (pontos azuis e vermelhos) das atividades desenvolvidas junto ao [Meliora](https://meliora.ufmg.br/pages/home.html). Os pontos azuis indicam os alunos que ficaram acima da nota de corte, enquanto que os vermelhos são aqueles que ficaram abaixo.
+This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of energy, temperature, pressure and volume. The red lines are the linear regression of the values.
+
+## Energy
 
 ```{r df, echo=FALSE}
   df %>% ggplot(aes(x=V1,y=V2))+
@@ -28,8 +30,25 @@ Olá alunos, o gráfico abaixo mostra a média de cada aluno (pontos azuis e ver
   labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))
 ```
 
-Abaixo tem uma pequena estatística a respeito da turma.
+Here is the statistical values
 
 ```{r df$V2, echo=FALSE}
   summary(df$V2)
 ```
+
+## Temperature
+
+```{r df, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=V3))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Temperature (K)")))
+```
+
+Here is the statistical values
+
+```{r df$V3, echo=FALSE}
+  summary(df$V3)
+```
+

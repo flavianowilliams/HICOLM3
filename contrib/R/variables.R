@@ -1,5 +1,3 @@
-#setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/imidazol+H2O/simulacoes/MD/berendsen")
-
 # carregando dataframe
 
 dff=readr::read_table2(file="HICOLM.md",col_names =
@@ -14,5 +12,3 @@ df=dff[seq(4,nrow(dff),dfn),]
 df[,7]=dff[seq(5,nrow(dff),dfn),1]
 
 names(df)[7]="V7"
-
-#summary(ajuste)
