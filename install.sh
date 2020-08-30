@@ -260,17 +260,17 @@ then
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md ~/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('~/.hicolm/R/report.Rmd')\"
-        mv ~/.hicolm/R/report.pdf .
-        rm ~/.hicolm/R/HICOLM.md
-        rm ~/.hicolm/R/report.tex
+        cp HICOLM.md $HOME/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
+        mv $HOME/.hicolm/R/report.pdf .
+        rm $HOME/.hicolm/R/HICOLM.md
+        rm $HOME/.hicolm/R/report.tex
     fi
     exit 0
 else
-    mkdir ~/.hicolm
-    cp -r /usr/local/share/HICOLM/R ~/.hicolm/R
-    cp -r /usr/local/share/HICOLM/amber ~/.hicolm/amber
+    mkdir $HOME/.hicolm
+    cp -r /usr/local/share/HICOLM/R $HOME/.hicolm/R
+    cp -r /usr/local/share/HICOLM/amber $HOME/.hicolm/amber
     echo
     echo 'Please, choose one of the following options:'
     echo
@@ -281,11 +281,11 @@ else
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md ~/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('~/.hicolm/R/report.Rmd')\"
-        mv ~/.hicolm/R/report.pdf .
-        rm ~/.hicolm/R/HICOLM.md
-        rm ~/.hicolm/R/report.tex
+        cp HICOLM.md $HOME/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
+        mv $HOME/.hicolm/R/report.pdf .
+        rm $HOME/.hicolm/R/HICOLM.md
+        rm $HOME/.hicolm/R/report.tex
     fi
     exit 0
 fi" >> $exe_dir/hresults
