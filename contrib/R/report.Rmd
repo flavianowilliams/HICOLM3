@@ -1,0 +1,35 @@
+---
+title: "report"
+author: ""
+date: ""
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+  knitr::opts_chunk$set(echo = TRUE)
+  rm(list = ls())
+  graphics.off()
+  library(tibble)
+  library(ggplot2)
+  setwd(getwd())
+```
+
+```{r, include=FALSE}
+  source("variables.R",local = knitr::knit_global())
+```
+
+Olá alunos, o gráfico abaixo mostra a média de cada aluno (pontos azuis e vermelhos) das atividades desenvolvidas junto ao [Meliora](https://meliora.ufmg.br/pages/home.html). Os pontos azuis indicam os alunos que ficaram acima da nota de corte, enquanto que os vermelhos são aqueles que ficaram abaixo.
+
+```{r df, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=V2))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))
+```
+
+Abaixo tem uma pequena estatística a respeito da turma.
+
+```{r df$V2, echo=FALSE}
+  summary(df$V2)
+```

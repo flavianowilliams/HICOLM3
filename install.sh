@@ -172,7 +172,7 @@ echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp $path/contrib/R/*.R $aux_dir/HICOLM/R/.
+cp $path/contrib/R/* $aux_dir/HICOLM/R/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -244,16 +244,46 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-echo
-echo 'Please, choose one of the following options:'
-echo
-echo '1 -> Thermodynamic variables'
-echo '2 -> RDF and coordination number (incomplete)'
-echo '3 -> Vibrational analysis (incomplete)'
-read option
-if [ ! -d '1' ]
+if [ -d "$HOME/.hicolm" ]
 then
-    Rscript $aux_dir/HICOLM/R/variables.R
+    echo
+    echo 'Please, choose one of the following options:'
+    echo
+    echo '1 -> Thermodynamic variables'
+    echo '2 -> RDF and coordination number (incomplete)'
+    echo '3 -> Vibrational analysis (incomplete)'
+    echo
+    read option
+    if [ ! -d '1' ]
+    then
+        cp HICOLM.md ~/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('~/.hicolm/R/report.Rmd')\"
+        mv ~/.hicolm/R/report.pdf .
+        rm ~/.hicolm/R/HICOLM.md
+        rm ~/.hicolm/R/report.tex
+    fi
+    exit 0
+else
+    mkdir ~/.hicolm
+    cp -r /usr/local/share/HICOLM/R ~/.hicolm/R
+    cp -r /usr/local/share/HICOLM/amber ~/.hicolm/amber
+    echo
+    echo 'Please, choose one of the following options:'
+    echo
+    echo '1 -> Thermodynamic variables'
+    echo '2 -> RDF and coordination number (incomplete)'
+    echo '3 -> Vibrational analysis (incomplete)'
+    echo
+    read option
+    if [ ! -d '1' ]
+    then
+        cp HICOLM.md ~/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('~/.hicolm/R/report.Rmd')\"
+        mv ~/.hicolm/R/report.pdf .
+        rm ~/.hicolm/R/HICOLM.md
+        rm ~/.hicolm/R/report.tex
+    fi
+    exit 0
 fi" >> $exe_dir/hresults
 #
 chmod +x $exe_dir/hresults
