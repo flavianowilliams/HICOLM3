@@ -2,7 +2,7 @@
 
 dff=readr::read_table2(file="HICOLM.md",col_names =
                          c("V1","V2","V3","V4","V5","V6"),
-                       skip_empty_rows = TRUE)
+                       skip_empty_rows = F)
 
 nxx=as.integer(dff[1,4])
 
