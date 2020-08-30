@@ -60,6 +60,10 @@ if [ -d "$aux_dir/HICOLM" ]
 then
     rm -rf $aux_dir/HICOLM
 fi
+if [ -d "$HOME/.hicolm" ]
+then
+    rm -rf $HOME/.hicolm
+fi
 #
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
