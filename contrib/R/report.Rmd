@@ -5,7 +5,7 @@ date: ""
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
   knitr::opts_chunk$set(echo = TRUE)
   rm(list = ls())
   graphics.off()
