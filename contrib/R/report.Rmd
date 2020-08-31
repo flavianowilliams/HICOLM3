@@ -1,0 +1,102 @@
+---
+title: "Report"
+author: ""
+date: ""
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+  knitr::opts_chunk$set(echo = TRUE)
+  rm(list = ls())
+  graphics.off()
+  library(tibble)
+  library(ggplot2)
+  setwd(getwd())
+```
+
+```{r, include=FALSE}
+  source("variables.R",local = knitr::knit_global())
+```
+
+This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and density. The red lines are the linear regression of the values.
+
+## Volume
+
+```{r, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=V2))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))
+```
+
+Here is the statistical values of the energy column.
+
+```{r df$V2, echo=FALSE}
+  summary(df$V2)
+```
+
+## Temperature
+
+```{r, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=V3))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Temperature (K)")))
+```
+
+Here is the statistical values of the temperature column.
+
+```{r df$V3, echo=FALSE}
+  summary(df$V3)
+```
+
+## Pressure
+
+```{r, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=as.double(V4)))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Pressure (atm)")))
+```
+
+Here is the statistical values of the pressure column.
+
+```{r df$V4, echo=FALSE}
+  summary(df$V4)
+```
+
+## Energy
+
+```{r, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=as.double(V6)))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Energy (kcal/mol)")))
+```
+
+Here is the statistical values of the energy column.
+
+```{r df$V6, echo=FALSE}
+  summary(df$V6)
+```
+
+## Density
+
+```{r, echo=FALSE}
+  df %>% ggplot(aes(x=V1,y=as.double(V7)))+
+  geom_line(color="black")+
+  geom_smooth(method = "lm",color="red")+
+  theme_bw()+theme(panel.grid = element_blank())+
+  labs(x="Time (ps)",y=expression(paste("Density ",(kg/m^3))))
+```
+
+Here is the statistical values of the density column.
+
+```{r df$V7, echo=FALSE}
+  summary(df$V7)
+```
+
