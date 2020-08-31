@@ -8,12 +8,12 @@ Sys.sleep(5)
 
 df=readr::read_table2(file = "HICOLM.out")
 
-mtd= df %>% slice(24)
+mtd=df %>% slice(24L)
 
 if (mtd[1]=="Steepest") {
-  nt= df %>% slice(27)
+  nt=df %>% slice(27L)
 } else {
-  nt= df %>% slice(31)
+  nt=df %>% slice(30L)
 }
 
 nt2=as.numeric(nt[2])
