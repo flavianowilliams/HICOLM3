@@ -5,7 +5,7 @@ date: ""
 output: pdf_document
 ---
 
-```{r setup, include=FALSE,}
+```{r setup, include=FALSE}
   knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
   rm(list = ls())
   graphics.off()
@@ -19,6 +19,15 @@ output: pdf_document
 ```
 
 This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and density. The red lines are the linear regression of the values.
+
+## Parameters
+
+```{r, echo=FALSE}
+  cat(paste("Ensemble:",ensemble))
+  cat(paste("Thermostat:",thermostat,"ps"))
+  cat(paste("External temperature:",temperature,"K"))
+  cat(paste("External pressure:",pressure, " atm"))
+```
 
 ## Volume
 

@@ -279,9 +279,11 @@ then
     if [ ! -d '1' ]
     then
         cp HICOLM.md $HOME/.hicolm/R/.
+        cp HICOLM.out $HOME/.hicolm/R/.
         Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
         mv $HOME/.hicolm/R/report.pdf .
         rm $HOME/.hicolm/R/HICOLM.md
+        rm $HOME/.hicolm/R/HICOLM.out
         rm $HOME/.hicolm/R/report.tex
     fi
     exit 0
@@ -300,9 +302,11 @@ else
     if [ ! -d '1' ]
     then
         cp HICOLM.md $HOME/.hicolm/R/.
+        cp HICOLM.out $HOME/.hicolm/R/.
         Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
         mv $HOME/.hicolm/R/report.pdf .
         rm $HOME/.hicolm/R/HICOLM.md
+        rm $HOME/.hicolm/R/HICOLM.out
         rm $HOME/.hicolm/R/report.tex
     fi
     exit 0
