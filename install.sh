@@ -227,13 +227,31 @@ else
         cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
 fi" >> $exe_dir/hicolm
-echo "#" >> $exe_dir/hicolm
+#
 case "$supp" in
     yes|YES|Yes)
-        echo "$exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R" >> $exe_dir/hicolm
+        echo "
+if [ -d \"$HOME/.hicolm\" ]
+then
+    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+else
+    mkdir $HOME/.hicolm
+    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
+    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+fi" >> $exe_dir/hicolm
         ;;
     no|NO|No|"")
-        echo "$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
+        echo "
+if [ -d \"$HOME/.hicolm\" ]
+then
+    $exe_dir/HICOLM.bin
+else
+    mkdir $HOME/.hicolm
+    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
+    $exe_dir/HICOLM.bin
+fi" >> $exe_dir/hicolm
 esac
 #
 # preparing script to get results
@@ -248,7 +266,7 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-if [ -d "$HOME/.hicolm" ]
+if [ -d \"$HOME/.hicolm\" ]
 then
     echo
     echo 'Please, choose one of the following options:'
@@ -269,8 +287,8 @@ then
     exit 0
 else
     mkdir $HOME/.hicolm
-    cp -r /usr/local/share/HICOLM/R $HOME/.hicolm/R
-    cp -r /usr/local/share/HICOLM/amber $HOME/.hicolm/amber
+    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
     echo
     echo 'Please, choose one of the following options:'
     echo
