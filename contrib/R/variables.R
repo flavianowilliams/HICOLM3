@@ -25,13 +25,12 @@ ensemble=as.character(paste(var1[2],var1[3]))
 
 var1=slice(df2,27L)
 
-thermostat=as.numeric(var1[2])
+#thermostat=as.numeric(var1[2])
 
-var1=slice(df2,28L)
+#var1=slice(df2,28L)
 
-temperature=as.numeric(var1[2])
+#temperature=as.numeric(var1[2])
 
-var1=slice(df2,29L)
+#var1=slice(df2,29L)
 
-pressure=as.numeric(var1[2])
-
+#pressure=as.numeric(var1[2])
