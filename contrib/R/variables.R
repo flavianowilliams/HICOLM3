@@ -13,6 +13,10 @@ df[,7]=dff[seq(5,nrow(dff),dfn),1]
 
 names(df)[7]="V7"
 
+frames=as.integer(dff[1,1])
+timestep=as.double(dff[1,2])
+natoms=as.integer(dff[1,4])
+
 #obtendo informacoes da MD
 
 library(dplyr)
