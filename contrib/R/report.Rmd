@@ -18,14 +18,16 @@ output: pdf_document
   source("variables.R",local = knitr::knit_global())
 ```
 
-This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and density. The red lines are the linear regression of the values.
+This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and density followed by the linear regression (red line).
 
 ## Parameters
 
 ```{r, echo=FALSE}
-  cat(paste("Ensemble:",ensemble))
+  cat(paste("Host:",var_host))
+  cat(paste("Date:",var_date))
   cat(paste("Number of frames:",frames))
-  cat(paste("Timestep:",timestep))
+  cat(paste("Ensemble:",ensemble))
+  cat(paste("Timestep:",timestep,"ps"))
   cat(paste("Number of atoms:",natoms))
 ```
 

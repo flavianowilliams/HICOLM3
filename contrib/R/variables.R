@@ -27,7 +27,15 @@ var1=slice(df2,26L)
 
 ensemble=as.character(paste(var1[2],var1[3]))
 
-var1=slice(df2,27L)
+var1=slice(df2,2L)
+
+var_host=as.character(var1[2])
+
+var1=slice(df2,3L)
+
+var_date=as.integer(var1[2])
+
+#var1=slice(df2,27L)
 
 #thermostat=as.numeric(var1[2])
 
