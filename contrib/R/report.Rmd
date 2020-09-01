@@ -15,6 +15,7 @@ output: pdf_document
 ```
 
 ```{r, include=FALSE}
+  id=readline(prompt = "Type your name id:")
   source("variables.R",local = knitr::knit_global())
 ```
 
@@ -23,6 +24,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Parameters
 
 ```{r, echo=FALSE}
+  cat(paste("Username:",id))
   cat(paste("Ensemble:",ensemble))
   cat(paste("Thermostat:",thermostat,"ps"))
   cat(paste("External temperature:",temperature,"K"))
