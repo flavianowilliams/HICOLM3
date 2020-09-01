@@ -24,9 +24,6 @@ This report represents a statistical analysis of the main thermodynamic variable
 
 ```{r, echo=FALSE}
   cat(paste("Ensemble:",ensemble))
-  cat(paste("Thermostat:",thermostat,"ps"))
-  cat(paste("External temperature:",temperature,"K"))
-  cat(paste("External pressure:",pressure, " atm"))
 ```
 
 ## Volume
