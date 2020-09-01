@@ -1,15 +1,16 @@
 # Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization
 # @MDPREPARE. The default option is optimization procedure.
 
-@MDPREPARE
+@MDRUNNING
 
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &STRUCT
  cell
-  15.0 0.0  0.0
-  0.0 15.0  0.0
-  0.0  0.0 15.0
+  20.0 0.0  0.0
+  0.0 20.0  0.0
+  0.0  0.0 20.0
+  reuse 0
 &END
 
 # Optimization settings. Type variables related to the optimization procedure. Defaults:
@@ -26,12 +27,12 @@
 &MD
 nhist 10                               # Qty of frames: (ntrialmax-nrelax)/nhist.
 preext 1.0d0                           # External pressure in atm unit.
-text 0.0                               # External temperature in K unit.
-ntrialmax 1000                         # Total qty of MD cicle.
+text 300.0                               # External temperature in K unit.
+ntrialmax 150000                         # Total qty of MD cicle.
 nrelax 1                               # Qty of steps in the non-equilibrium phase.
-timestep 0.00000000001                 # Timestep in ps unit.
-ensemble nvt berendsen 1.0 0.5 4.9e-5  # Statistical ensemble.
-rcutoff 7.0 0.1                        # Cutoff radius and width. Default are 10 and 0.1 A
+timestep 0.000001                 # Timestep in ps unit.
+ensemble nvt hoover 0.7 0.5 4.9e-5  # Statistical ensemble.
+rcutoff 6.5 0.1                        # Cutoff radius and width. Default are 10 and 0.1 A
 &END
 
 # Force field settings. Type variables related to the force field description
