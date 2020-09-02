@@ -24,7 +24,7 @@ $ sudo ./install.sh
 
 After that, HICOLM and auxiliary programs will be installed in the default PATH (/usr/local).
 
-Notice: gfortran library is necessary to compile the Hicolm program.
+Notice: gfortran library is necessary to compile the Hicolm program and R packages to get the graphical support and the statistical analysis.
 
 # Highlighted topics
 
