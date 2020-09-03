@@ -6,14 +6,16 @@ suppressMessages(library("dplyr"))
 
 Sys.sleep(5)
 
-df=readr::read_table2(file = "HICOLM.out")
+df=readr::read_table2(file = "HICOLM.out",col_names = c("V1","V2"))
 
-mtd=df %>% slice(24L)
+mtd=df %>% slice(25L)
 
-if (mtd[1]=="Steepest") {
+opcao=paste(mtd[1],mtd[2])
+
+if (opcao=="Steepest descent") {
   nt=df %>% slice(27L)
-} else {
-  nt=df %>% slice(30L)
+} else if (opcao=="Molecular dynamics") {
+  nt=df %>% slice(31L)
 }
 
 nt2=as.numeric(nt[2])

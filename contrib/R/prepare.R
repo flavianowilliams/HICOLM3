@@ -1,6 +1,6 @@
 # updating packages
 
-update.packages(ask = FALSE)
+#update.packages(ask = FALSE)
 
 # installing new packages
 
@@ -8,5 +8,6 @@ update.packages(ask = FALSE)
 #install.packages("tidyr")
 #install.packages("tibble")
 #install.packages("readr")
+install.packages("magrittr")
 install.packages("tidyverse")
 install.packages("rmarkdown")
