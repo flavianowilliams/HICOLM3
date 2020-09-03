@@ -13,7 +13,7 @@ mtd=df %>% slice(25L)
 opcao=paste(mtd[1],mtd[2])
 
 if (opcao=="Steepest descent") {
-  nt=df %>% slice(27L)
+  nt=df %>% slice(28L)
 } else if (opcao=="Molecular dynamics") {
   nt=df %>% slice(31L)
 }
