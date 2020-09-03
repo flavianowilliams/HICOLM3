@@ -4,7 +4,7 @@ library("readr")
 
 suppressMessages(library("dplyr"))
 
-Sys.sleep(5)
+Sys.sleep(10)
 
 df=readr::read_table2(file = "HICOLM.out",col_names = c("V1","V2"))
 
