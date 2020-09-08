@@ -39,7 +39,7 @@ This report represents a statistical analysis of the main thermodynamic variable
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
   labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))+
-  ggsave("Volume.png",width=6,height=5)
+  ggsave("volume.png",width=6,height=5)
 ```
 
 Here is the statistical values of the volume of the unit cell.
@@ -55,7 +55,8 @@ Here is the statistical values of the volume of the unit cell.
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Temperature (K)")))
+  labs(x="Time (ps)",y=expression(paste("Temperature (K)")))+
+  ggsave("temperature.png",width=6,height=5)
 ```
 
 Here is the statistical values of the temperature.
@@ -71,7 +72,8 @@ Here is the statistical values of the temperature.
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Pressure (atm)")))
+  labs(x="Time (ps)",y=expression(paste("Pressure (atm)")))+
+  ggsave("pressure.png",width=6,height=5)
 ```
 
 Here is the statistical values of the pressure.
@@ -87,7 +89,8 @@ Here is the statistical values of the pressure.
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Energy (kcal/mol)")))
+  labs(x="Time (ps)",y=expression(paste("Energy (kcal/mol)")))+
+  ggsave("energy.png",width=6,height=5)
 ```
 
 Here is the statistical values of the energy.
@@ -103,7 +106,8 @@ Here is the statistical values of the energy.
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Density ",(kg/m^3))))
+  labs(x="Time (ps)",y=expression(paste("Density ",(kg/m^3))))+
+  ggsave("density.png",width=6,height=5)
 ```
 
 Here is the statistical values of the density.
