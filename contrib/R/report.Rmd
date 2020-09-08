@@ -38,7 +38,8 @@ This report represents a statistical analysis of the main thermodynamic variable
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))
+  labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))+
+  ggsave("Volume.png",width=6,height=5)
 ```
 
 Here is the statistical values of the volume of the unit cell.
