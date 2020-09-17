@@ -1,13 +1,3 @@
-# updating packages
-
-update.packages(ask = FALSE)
-
-# installing new packages
-
-#install.packages("dplyr")
-#install.packages("tidyr")
-#install.packages("tibble")
-#install.packages("readr")
-#install.packages("magrittr")
-#install.packages("tidyverse")
-#install.packages("rmarkdown")
+install.packages("tidyverse",quiet=TRUE)
+install.packages("magrittr",quiet=TRUE)
+install.packages("rmarkdown",quiet=TRUE)
