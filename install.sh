@@ -278,11 +278,11 @@ then
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md /home/\$USER/.hicolm/R/.
+        cp HICOLM.df /home/\$USER/.hicolm/R/.
         cp HICOLM.out /home/\$USER/.hicolm/R/.
         Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
         mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.md
+        rm /home/\$USER/.hicolm/R/HICOLM.df
         rm /home/\$USER/.hicolm/R/HICOLM.out
         rm /home/\$USER/.hicolm/R/report.tex
     fi
@@ -301,11 +301,11 @@ else
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md /home/\$USER/.hicolm/R/.
+        cp HICOLM.df /home/\$USER/.hicolm/R/.
         cp HICOLM.out /home/\$USER/.hicolm/R/.
         Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
         mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.md
+        rm /home/\$USER/.hicolm/R/HICOLM.df
         rm /home/\$USER/.hicolm/R/HICOLM.out
         rm /home/\$USER/.hicolm/R/report.tex
     fi

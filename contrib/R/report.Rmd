@@ -25,7 +25,6 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r, echo=FALSE}
   cat(paste("Host:",var_host))
   cat(paste("Date:",var_date))
-  cat(paste("Number of frames:",frames))
   cat(paste("Ensemble:",ensemble))
   cat(paste("Timestep:",timestep,"ps"))
   cat(paste("Number of atoms:",natoms))
@@ -34,7 +33,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Volume
 
 ```{r, echo=FALSE}
-  df %>% ggplot(aes(x=V1,y=V2))+
+  df2 %>% ggplot(aes(x=TIME,y=VOLUME))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -43,14 +42,14 @@ This report represents a statistical analysis of the main thermodynamic variable
 
 Here is the statistical values of the volume of the unit cell.
 
-```{r df$V2, echo=FALSE}
-  summary(df$V2)
+```{r fit_volume, echo=FALSE}
+  summary(df2$VOLUME)
 ```
 
 ## Temperature
 
 ```{r, echo=FALSE}
-  df %>% ggplot(aes(x=V1,y=V3))+
+  df2 %>% ggplot(aes(x=TIME,y=TEMPERATURE))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -59,14 +58,14 @@ Here is the statistical values of the volume of the unit cell.
 
 Here is the statistical values of the temperature.
 
-```{r df$V3, echo=FALSE}
-  summary(df$V3)
+```{r FIT_TEMPERATURE, echo=FALSE}
+  summary(df2$TEMPERATURE)
 ```
 
 ## Pressure
 
 ```{r, echo=FALSE}
-  df %>% ggplot(aes(x=V1,y=as.double(V4)))+
+  df2 %>% ggplot(aes(x=TIME,y=PRESSURE))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -75,14 +74,14 @@ Here is the statistical values of the temperature.
 
 Here is the statistical values of the pressure.
 
-```{r df$V4, echo=FALSE}
-  summary(df$V4)
+```{r fit_pressure, echo=FALSE}
+  summary(df2$PRESSURE)
 ```
 
 ## Energy
 
 ```{r, echo=FALSE}
-  df %>% ggplot(aes(x=V1,y=as.double(V6)))+
+  df2 %>% ggplot(aes(x=TIME,y=ENERGY))+
   geom_line(color="black")+
   geom_smooth(method = "lm",color="red")+
   theme_bw()+theme(panel.grid = element_blank())+
@@ -91,23 +90,6 @@ Here is the statistical values of the pressure.
 
 Here is the statistical values of the energy.
 
-```{r df$V6, echo=FALSE}
-  summary(df$V6)
+```{r FIT_ENERGY, echo=FALSE}
+  summary(df2$ENERGY)
 ```
-
-## Density
-
-```{r, echo=FALSE}
-  df %>% ggplot(aes(x=V1,y=as.double(V7)))+
-  geom_line(color="black")+
-  geom_smooth(method = "lm",color="red")+
-  theme_bw()+theme(panel.grid = element_blank())+
-  labs(x="Time (ps)",y=expression(paste("Density ",(kg/m^3))))
-```
-
-Here is the statistical values of the density.
-
-```{r df$V7, echo=FALSE}
-  summary(df$V7)
-```
-
