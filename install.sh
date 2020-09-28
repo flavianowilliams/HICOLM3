@@ -231,25 +231,25 @@ fi" >> $exe_dir/hicolm
 case "$supp" in
     yes|YES|Yes)
         echo "
-if [ -d \"$HOME/.hicolm\" ]
+if [ -d \"/home/\$USER/.hicolm\" ]
 then
     $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
 else
-    mkdir $HOME/.hicolm
-    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
     $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
 fi" >> $exe_dir/hicolm
         ;;
     no|NO|No|"")
         echo "
-if [ -d \"$HOME/.hicolm\" ]
+if [ -d \"/home/\$USER/.hicolm\" ]
 then
     $exe_dir/HICOLM.bin
 else
-    mkdir $HOME/.hicolm
-    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
     $exe_dir/HICOLM.bin
 fi" >> $exe_dir/hicolm
 esac
@@ -266,7 +266,7 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-if [ -d \"$HOME/.hicolm\" ]
+if [ -d \"/home/\$USER/.hicolm\" ]
 then
     echo
     echo 'Please, choose one of the following options:'
@@ -278,19 +278,19 @@ then
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md $HOME/.hicolm/R/.
-        cp HICOLM.out $HOME/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
-        mv $HOME/.hicolm/R/report.pdf .
-        rm $HOME/.hicolm/R/HICOLM.md
-        rm $HOME/.hicolm/R/HICOLM.out
-        rm $HOME/.hicolm/R/report.tex
+        cp HICOLM.md /home/\$USER/.hicolm/R/.
+        cp HICOLM.out /home/\$USER/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
+        mv /home/\$USER/.hicolm/R/report.pdf .
+        rm /home/\$USER/.hicolm/R/HICOLM.md
+        rm /home/\$USER/.hicolm/R/HICOLM.out
+        rm /home/\$USER/.hicolm/R/report.tex
     fi
     exit 0
 else
-    mkdir $HOME/.hicolm
-    cp -r $aux_dir/HICOLM/R $HOME/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber $HOME/.hicolm/amber
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
     echo
     echo 'Please, choose one of the following options:'
     echo
@@ -301,13 +301,13 @@ else
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.md $HOME/.hicolm/R/.
-        cp HICOLM.out $HOME/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('$HOME/.hicolm/R/report.Rmd')\"
-        mv $HOME/.hicolm/R/report.pdf .
-        rm $HOME/.hicolm/R/HICOLM.md
-        rm $HOME/.hicolm/R/HICOLM.out
-        rm $HOME/.hicolm/R/report.tex
+        cp HICOLM.md /home/\$USER/.hicolm/R/.
+        cp HICOLM.out /home/\$USER/.hicolm/R/.
+        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
+        mv /home/\$USER/.hicolm/R/report.pdf .
+        rm /home/\$USER/.hicolm/R/HICOLM.md
+        rm /home/\$USER/.hicolm/R/HICOLM.out
+        rm /home/\$USER/.hicolm/R/report.tex
     fi
     exit 0
 fi" >> $exe_dir/hresults
