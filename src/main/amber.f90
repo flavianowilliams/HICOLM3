@@ -43,7 +43,7 @@ contains
     px=p1
     do i=1,2
        do j=1,1000
-          read(4,'(2x,a2,10x,f6.4,f9.7)',end=10)pa,x1,x2
+          read(4,*,end=10)pa,x1,x2
           if(pa.eq.px)then
              epsi(i)=dble(x2)
              ri(i)=dble(x1)
@@ -79,7 +79,7 @@ contains
     prms(2)=0.d0
 
     do i=1,1000
-       read(4,'(a2,1x,a2,f7.1,f9.3)',end=10)pa,pb,x1,x2
+       read(4,*,end=10)pa,pb,x1,x2
        if(pa.eq.p1.and.pb.eq.p2)then
           prms(1)=dble(x1)
           prms(2)=dble(x2)
@@ -112,7 +112,7 @@ contains
     prms(2)=0.d0
 
     do i=1,1000
-       read(4,'(a2,1x,a2,1x,a2,f8.1,f12.2)',end=10)pa,pb,pc,x1,x2
+       read(4,*,end=10)pa,pb,pc,x1,x2
        if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3)then
           prms(1)=dble(x1)
           prms(2)=dble(x2)
@@ -161,7 +161,7 @@ contains
     open(4,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
 
     do i=1,1000
-       read(4,'(a2,1x,a2,1x,a2,1x,a2,i4,f8.2,8x,f5.1,12x,i2)',end=10)pa,pb,pc,pd,x1,x2,x3,x4
+       read(4,*,end=10)pa,pb,pc,pd,x1,x2,x3,x4
        if(pb.eq.p2.and.pc.eq.p3)then
           prms(1)=dfloat(x1)
           prms(2)=dble(x2)
@@ -193,7 +193,7 @@ contains
     open(4,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
 
     do i=1,1000
-       read(4,'(a2,1x,a2,1x,a2,1x,a2,i4,f8.2,8x,f5.1,12x,i2)',end=10)pa,pb,pc,pd,x1,x2,x3,x4
+       read(4,*,end=10)pa,pb,pc,pd,x1,x2,x3,x4
        if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
           prms(1)=dfloat(x1)
           prms(2)=dble(x2)
