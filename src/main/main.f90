@@ -58,7 +58,7 @@ program HICOLM
   write(6,*)
   write(6,'(18x,a57)')'HICOLM: Multi-Methods for Molecules and Condensed Systems'
   write(6,*)
-  write(6,'(39x,a14)')'Version: 2.1.0'
+  write(6,'(39x,a14)')'Version: 2.2.1'
   write(6,*)
   write(6,'(''Host: '',2x,a10)')host
   write(6,'(''Date: '',2x,a8)')date
