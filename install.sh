@@ -1,17 +1,17 @@
 #!/bin/bash
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
-# describe: Installation of HICOLM package and utilitaries
-#  version: 2.1.0
+# describe: Installation of HICOLM package and utilities
+#  version: 2.2.1
 #  license: MIT license
 #
 path=`pwd`
 #
 # -- definind installation and auxiliary directory --
 #
-echo
-echo "Please, type the compiler or press ENTER (default: gfortran)"
-read compiler
+#echo
+#echo "Please, type the compiler or press ENTER (default: gfortran)"
+#read compiler
 #
 if [ -z $compiler ]
 then
@@ -20,9 +20,9 @@ fi
 #
 export FC="$compiler"
 #
-echo
-echo "Please, type the instructions of compilation or press ENTER"
-read instructions
+#echo
+#echo "Please, type the instructions of compilation or press ENTER"
+#read instructions
 #
 if [ -z $instructions ]
 then
@@ -32,8 +32,8 @@ fi
 #
 export FFLAGS="$instructions"
 #
-echo
-echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
+#echo
+#echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
 read exe_dir
 #
 if [ -z $exe_dir ]
@@ -41,12 +41,12 @@ then
     exe_dir="/usr/local/bin"
 fi
 #
-echo
-echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
+#echo
+#echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 read aux_dir
 #
-echo
-echo "Would you like to install HICOLM with graphical support? (default: no)"
+#echo
+#echo "Would you like to install HICOLM with graphical support? (default: no)"
 read supp
 #
 if [ -z $aux_dir ]
