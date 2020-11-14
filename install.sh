@@ -34,7 +34,7 @@ export FFLAGS="$instructions"
 #
 #echo
 #echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
-read exe_dir
+#read exe_dir
 #
 if [ -z $exe_dir ]
 then
@@ -43,11 +43,11 @@ fi
 #
 #echo
 #echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
-read aux_dir
+#read aux_dir
 #
 #echo
 #echo "Would you like to install HICOLM with graphical support? (default: no)"
-read supp
+#read supp
 #
 if [ -z $aux_dir ]
 then
@@ -185,7 +185,7 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
-echo -e "\e[33m-> Installing R-packages\e[0m"
+echo -e "\e[33m-> Preparing R environment\e[0m"
 echo
 case "$supp" in
     yes|YES|Yes)
