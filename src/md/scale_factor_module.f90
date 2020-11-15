@@ -38,7 +38,7 @@ module scale_factor_module
 
     implicit none
 
-    integer i,j,k,ni,nj
+    integer i,j,k,ni,nj,ix,ixx
     real(8) xvz,yvz,zvz
     real(8) envdw,encoul,virvdw,vircoul
 
@@ -46,19 +46,28 @@ module scale_factor_module
        do j=1,ntmolec(i)
           do ni=1,nxmolec(i)
              do nj=ni+1,nxmolec(i)
-                do k=1,bondscnt(i)
-                   if(ni.eq.molbond(i,k,1).and.nj.ne.molbond(i,k,2))then
-                      !call mic(ni,nj,xvz,yvz,zvz)
-                      !                      call vdw_sf(envdw,virvdw)
-                      !                      call coul_sf(encoul,vircoul)
-                      print*,ni,nj
-                   elseif(ni.eq.molbond(i,k,2).and.nj.ne.molbond(i,k,1))then
-                      !call mic(ni,nj,xvz,yvz,zvz)
-                      !                      call vdw_sf(envdw,virvdw)
-                      !                      call coul_sf(encoul,vircoul)
-                   end if
+                do k=1,bendscnt(i)
+                   do ix=1,2
+                      do ixx=ix+1,3
+                         if(ni.eq.molbend(i,k,ix).and.nj.eq.molbend(i,k,ixx))then
+                            !call mic(ni,nj,xvz,yvz,zvz)
+                            !                      call vdw_sf(envdw,virvdw)
+                            !                      call coul_sf(encoul,vircoul)
+                            print*,ni,nj
+                            goto 1
+                         end if
+                         if(ni.eq.molbend(i,k,ixx).and.nj.eq.molbend(i,k,ix))then
+                            !call mic(ni,nj,xvz,yvz,zvz)
+                            !                      call vdw_sf(envdw,virvdw)
+                            !                      call coul_sf(encoul,vircoul)
+                            print*,ni,nj
+                            goto 1
+                         end if
+                      end do
+                   end do
                 end do
              end do
+1            continue
           end do
        end do
     end do
