@@ -48,17 +48,26 @@ module scale_factor_module
     do i=1,nmolec
        do j=1,ntmolec(i)
           do i1=1,nxmolec(i)
+             ni=np+i1
              do i2=i1+1,nxmolec(i)
+                nj=np+i2
                 do k=1,bendscnt(i)
                    do ix=1,3
-                      ni=np+i1
                       do ixx=ix+1,3
-                         nj=np+i2
                          if(ni.eq.molbend(i,k,ix).and.nj.eq.molbend(i,k,ixx))goto 1
                          if(ni.eq.molbend(i,k,ixx).and.nj.eq.molbend(i,k,ix))goto 1
                       end do
                    end do
                 end do
+                do k=1,(torscnt(i)+itorscnt(i))
+                   do ix=1,4
+                      do ixx=ix+1,4
+                         if(i1.eq.moltors(i,k,ix).and.i2.eq.moltors(i,k,ixx))goto 1
+                         if(i1.eq.moltors(i,k,ixx).and.i2.eq.moltors(i,k,ix))goto 1
+                      end do
+                   end do
+                end do
+                print*,ni,nj
                 call mic(ni,nj,xvz,yvz,zvz)
                 call vdw_sf(ni,nj,i,xvz,yvz,zvz,envdw,virvdw)
                 call coulomb_sf(ni,nj,i,xvz,yvz,zvz,encoul,vircoul)
