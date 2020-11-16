@@ -427,16 +427,9 @@ contains
 
     !-calculo da contribuicao de diedros
 
-    if(ntors.ne.0)then
-       call tors_calc(entors,virtors)
-!       call vdw_14sf(envdw,virvdw)
-!       call coulomb_14sf(encoul,vircoul)
-    end if
-
-!    if(nitors.ne.0)call itors_calc(entors,virtors)
+    if(ntors.ne.0)call tors_calc(entors,virtors)
 
     call sf_calc(envdw,encoul,virvdw,vircoul)
-    stop
 
     return
 

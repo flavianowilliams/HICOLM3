@@ -31,6 +31,8 @@ module scale_factor_module
 
   use input
   use estrutura
+  use vdw_module
+  use coulomb_module
 
   contains
 
@@ -47,27 +49,18 @@ module scale_factor_module
           do ni=1,nxmolec(i)
              do nj=ni+1,nxmolec(i)
                 do k=1,bendscnt(i)
-                   do ix=1,2
+                   do ix=1,3
                       do ixx=ix+1,3
-                         if(ni.eq.molbend(i,k,ix).and.nj.eq.molbend(i,k,ixx))then
-                            !call mic(ni,nj,xvz,yvz,zvz)
-                            !                      call vdw_sf(envdw,virvdw)
-                            !                      call coul_sf(encoul,vircoul)
-                            print*,ni,nj
-                            goto 1
-                         end if
-                         if(ni.eq.molbend(i,k,ixx).and.nj.eq.molbend(i,k,ix))then
-                            !call mic(ni,nj,xvz,yvz,zvz)
-                            !                      call vdw_sf(envdw,virvdw)
-                            !                      call coul_sf(encoul,vircoul)
-                            print*,ni,nj
-                            goto 1
-                         end if
+                         if(ni.eq.molbend(i,k,ix).and.nj.eq.molbend(i,k,ixx))goto 1
+                         if(ni.eq.molbend(i,k,ixx).and.nj.eq.molbend(i,k,ix))goto 1
                       end do
                    end do
                 end do
+                call mic(ni,nj,xvz,yvz,zvz)
+                call vdw_sf(ni,nj,i,xvz,yvz,zvz,envdw,virvdw)
+                call coulomb_sf(ni,nj,i,xvz,yvz,zvz,encoul,vircoul)
+1               continue
              end do
-1            continue
           end do
        end do
     end do
