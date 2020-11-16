@@ -40,17 +40,20 @@ module scale_factor_module
 
     implicit none
 
-    integer i,j,k,ni,nj,ix,ixx
+    integer i,j,k,ni,nj,ix,ixx,np,i1,i2
     real(8) xvz,yvz,zvz
     real(8) envdw,encoul,virvdw,vircoul
 
+    np=0
     do i=1,nmolec
        do j=1,ntmolec(i)
-          do ni=1,nxmolec(i)
-             do nj=ni+1,nxmolec(i)
+          do i1=1,nxmolec(i)
+             do i2=i1+1,nxmolec(i)
                 do k=1,bendscnt(i)
                    do ix=1,3
+                      ni=np+i1
                       do ixx=ix+1,3
+                         nj=np+i2
                          if(ni.eq.molbend(i,k,ix).and.nj.eq.molbend(i,k,ixx))goto 1
                          if(ni.eq.molbend(i,k,ixx).and.nj.eq.molbend(i,k,ix))goto 1
                       end do
@@ -62,6 +65,7 @@ module scale_factor_module
 1               continue
              end do
           end do
+          np=np+nxmolec(i)
        end do
     end do
 
