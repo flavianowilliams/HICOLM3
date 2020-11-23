@@ -67,7 +67,6 @@ module scale_factor_module
                       end do
                    end do
                 end do
-                print*,ni,nj
                 call mic(ni,nj,xvz,yvz,zvz)
                 call vdw_sf(ni,nj,i,xvz,yvz,zvz,envdw,virvdw)
                 call coulomb_sf(ni,nj,i,xvz,yvz,zvz,encoul,vircoul)
