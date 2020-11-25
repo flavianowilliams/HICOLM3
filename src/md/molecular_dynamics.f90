@@ -86,7 +86,7 @@ contains
     time=dtime
     do i=1,nrelax
        call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
-       write(6,20)'MD',i,time*tconv,volume*rconv**3,&
+       if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)i,time*tconv,&
             volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
@@ -98,7 +98,7 @@ contains
     ihist=1
     do i=nrelax+1,ntrialmax
        call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
-       write(6,20)'MD',i,time*tconv,volume*rconv**3,&
+       if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)i,time*tconv,&
             volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
