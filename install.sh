@@ -175,8 +175,8 @@ echo
 echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
-cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp $path/contrib/R/* $aux_dir/HICOLM/R/.
+cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+cp -r $path/contrib/R/* $aux_dir/HICOLM/R/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -278,13 +278,11 @@ then
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.df /home/\$USER/.hicolm/R/.
-        cp HICOLM.out /home/\$USER/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.df
-        rm /home/\$USER/.hicolm/R/HICOLM.out
-        rm /home/\$USER/.hicolm/R/report.tex
+        cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
+        mv /home/\$USER/.hicolm/R/report/report.pdf .
+        rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
+        rm /home/\$USER/.hicolm/R/report/report.tex
     fi
     exit 0
 else
@@ -301,13 +299,11 @@ else
     read option
     if [ ! -d '1' ]
     then
-        cp HICOLM.df /home/\$USER/.hicolm/R/.
-        cp HICOLM.out /home/\$USER/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.df
-        rm /home/\$USER/.hicolm/R/HICOLM.out
-        rm /home/\$USER/.hicolm/R/report.tex
+        cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
+        mv /home/\$USER/.hicolm/R/report/report.pdf .
+        rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
+        rm /home/\$USER/.hicolm/R/report/report.tex
     fi
     exit 0
 fi" >> $exe_dir/hresults

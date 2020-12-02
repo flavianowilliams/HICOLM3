@@ -77,9 +77,16 @@ contains
     write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
     write(6,'(4x,111a1)')('-',i=1,84)
 
-    !-relaxação do sistema
+    !-relaxamento do sistema
 
-    write(3,5)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','ENERGY'
+    write(3,3)'#','Ensemble:',ensble,ensble_mt
+    write(3,4)'#','Pressure:',preext*pconv,'atm'
+    write(3,5)'#','Temperature:',text*teconv,'K'
+    write(3,6)'#','System:',natom,'atoms'
+    write(3,7)'#','Timestep:',dtime*tconv,'ps'
+    write(3,8)'#','Time-scale:',dtime*tconv*ntrialmax,'ps'
+    write(3,2)'#'
+    write(3,9)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','ENERGY'
 
     geo_backup=-1
 
@@ -117,7 +124,14 @@ contains
 
     return
 
-5   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6)
+2   format(13x,a1)
+3   format(13x,a1,1x,a9,1x,a3,1x,a9)
+4   format(13x,a1,1x,a9,f9.3,1x,a3)
+5   format(13x,a1,1x,a12,f12.3,1x,a1)
+6   format(13x,a1,1x,a7,i12,1x,a5)
+7   format(13x,a1,1x,a9,es10.3,1x,a2)
+8   format(13x,a1,1x,a11,f10.3,1x,a2)
+9   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 30  format(5x,i8,5(2x,es12.4))
