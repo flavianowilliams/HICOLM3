@@ -47,7 +47,7 @@ contains
     implicit none
 
     integer i,ihist,geo_backup
-    real(8) t0,t3,time,temp,press,xhi,eta,sigma
+    real(8) t0,t3,time,temp,press,xhi,eta,sigma,dens,mtot
     real(8) enpot,ekinet
 
     !-contagem do tempo absoluto
@@ -60,7 +60,7 @@ contains
 
     !-preparando Dinâmica molecular
 
-    call md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
+    call md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press,dens)
 
     write(6,*)('#',i=1,93)
     write(6,*)('MD RUNNING ',i=1,8)
@@ -79,24 +79,26 @@ contains
 
     !-relaxamento do sistema
 
-    write(3,3)'#','Ensemble:',ensble,ensble_mt
-    write(3,4)'#','Pressure:',preext*pconv,'atm'
-    write(3,5)'#','Temperature:',text*teconv,'K'
-    write(3,6)'#','System:',natom,'atoms'
-    write(3,7)'#','Timestep:',dtime*tconv,'ps'
-    write(3,8)'#','Time-scale:',dtime*tconv*ntrialmax,'ps'
+    write(3,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
+         dtime*ntrialmax*tconv
     write(3,2)'#'
-    write(3,9)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTEN','ENERGY'
+<<<<<<< Updated upstream
+    write(3,9)&
+         'TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY','DENSITY'
+=======
+    write(3,9)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY'
+>>>>>>> Stashed changes
 
     geo_backup=-1
 
     time=dtime
     do i=1,nrelax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,volume*rconv**3,temp*teconv,press*pconv,&
-            ekinet*econv,(enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
+            (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
+            dens*mconv/(n0*1.d-24*rconv**3)
        time=time+dtime
     end do
 
@@ -104,11 +106,12 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,volume*rconv**3,temp*teconv,press*pconv,&
-            ekinet*econv,(enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
+            (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
+            dens*mconv/(n0*1.d-24*rconv**3)
        if(mod(i,nhist).eq.0)call history(ihist)
        time=time+dtime
     end do
@@ -124,6 +127,14 @@ contains
 
     return
 
+<<<<<<< Updated upstream
+2   format(9x,a1)
+9   format(5x,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6,6x,a10,6x,a6,7x,a7)
+5   format(9x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3)
+10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
+20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+30  format(5x,8(2x,es12.4))
+=======
 2   format(13x,a1)
 3   format(13x,a1,1x,a9,1x,a3,1x,a9)
 4   format(13x,a1,1x,a9,f9.3,1x,a3)
@@ -131,14 +142,15 @@ contains
 6   format(13x,a1,1x,a7,i12,1x,a5)
 7   format(13x,a1,1x,a9,es10.3,1x,a2)
 8   format(13x,a1,1x,a11,f10.3,1x,a2)
-9   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,3(7x,a6))
+9   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6,)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
-30  format(5x,i8,5(2x,3es12.4))
+30  format(5x,i8,7(2x,es12.4))
+>>>>>>> Stashed changes
 
   end subroutine md
 
-  subroutine md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
+  subroutine md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press,dens)
     !***************************************************************************************
     ! Preparacao da dinâmica molecular:                                                    *
     ! - Preparando campo de forca;                                                         *
@@ -148,7 +160,7 @@ contains
     implicit none
 
     integer i,nwr
-    real(8) xhi,eta,sigma,ekinet,temp,press
+    real(8) xhi,eta,sigma,ekinet,temp,press,dens,mtot
     real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
     real(8) encoul,enbond,enbend,entors,envdw,enpot
 
@@ -218,11 +230,15 @@ contains
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 
+    !-valor inicial da densidade
+
+    dens=mtot/volume
+
     return
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -233,7 +249,7 @@ contains
     implicit none
 
     integer mdstp,i,ix,geo_backup
-    real(8) temp,press,xhi,eta,sigma
+    real(8) temp,press,xhi,eta,sigma,dens,mtot
 
     real(8) virvdw,virbond,virbend,virtors,vircoul
     real(8) ekinet,encoul,enbond,enbend,entors,envdw,enpot
@@ -268,6 +284,10 @@ contains
 
     enpot=encoul+enbond+enbend+entors+envdw
 
+    !-calculo da densidade
+
+    dens=mtot/volume
+
     !-imprimindo estrutura
 
     call geometry(geo_backup)
@@ -280,7 +300,7 @@ contains
        write(2,20)(str(i)*econv/rconv**3,i=1,6)
        write(2,20)(ix*dtime)*nhist*tconv,volume*rconv**3,temp*teconv,&
             press*pconv,(ekinet+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            (mtot/volume)*mconv/(6.02d-4*rconv**3)
+            dens*mconv/rconv**3
        write(2,*)
        do i=1,3
           write(2,40)v(i,1)*rconv,v(i,2)*rconv,v(i,3)*rconv
