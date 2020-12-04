@@ -85,6 +85,9 @@ contains
     write(3,9)&
          'TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY','DENSITY'
 
+    write(2,40)'step','Z','type','mass','charge','time','x','y','z','fx','fy','fz',&
+         'vx','vy','vz','ax','ay','az','bx','by','bz','cx','cy','cz'
+
     geo_backup=-1
 
     time=dtime
@@ -129,6 +132,8 @@ contains
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 30  format(5x,8(2x,es12.4))
+40  format(2x,a4,3x,a1,2x,a4,5x,a4,7x,a6,7x,a4,9x,3(a1,11x),3(a2,10x),3(a2,10x),&
+         3(a2,10x),3(a2,10x),3(a2,10x))
 
   end subroutine md
 
@@ -274,17 +279,14 @@ contains
 
     if(mdstp.gt.nrelax.and.mod(mdstp-nrelax,nhist).eq.0)then
        ix=(mdstp-nrelax)/nhist
-       write(2,10)ix
-       write(2,*)
-       do i=1,3
-          write(2,30)v(i,1)*rconv,v(i,2)*rconv,v(i,3)*rconv
-       end do
-       write(2,*)
        do i=1,natom
-          write(2,20)idna(i),atp(i),mass(i)*mconv,qat(i),ix*dtime*tconv,&
+          write(2,20)ix,idna(i),atsp(atp(i)),mass(i)*mconv,qat(i),ix*dtime*tconv,&
                xa(i)*rconv,ya(i)*rconv,za(i)*rconv,&
+               fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv,&
                vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv,&
-               fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv
+               v(1,1)*rconv,v(1,2)*rconv,v(1,3)*rconv,&
+               v(2,1)*rconv,v(2,2)*rconv,v(2,3)*rconv,&
+               v(3,1)*rconv,v(3,2)*rconv,v(3,3)*rconv
        end do
     end if
 
@@ -296,8 +298,7 @@ contains
 
     return
 
-10  format(1x,i5)
-20  format(1x,2i5,12e12.4)
+20  format(1x,2i5,a5,21e12.4)
 30  format(35x,3e12.4)
 
   end subroutine mdloop
