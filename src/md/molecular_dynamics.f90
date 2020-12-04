@@ -46,8 +46,8 @@ contains
 
     implicit none
 
-    integer i,ihist,geo_backup
-    real(8) t0,t3,time,temp,press,xhi,eta,sigma,dens,mtot
+    integer i,ihist
+    real(8) t0,t3,time,temp,press,xhi,eta,sigma,mtot
     real(8) enpot,ekinet
 
     !-contagem do tempo absoluto
@@ -60,7 +60,7 @@ contains
 
     !-preparando Dinâmica molecular
 
-    call md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press,dens)
+    call md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press)
 
     write(6,*)('#',i=1,93)
     write(6,*)('MD RUNNING ',i=1,8)
@@ -84,7 +84,7 @@ contains
          dtime*ntrialmax*tconv
     write(3,2)'#'
     write(3,9)&
-         'TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY','DENSITY'
+         'time','volume','temperature','pressure','ekinet','epotential','energy','density'
 
     write(2,2)'#'
     write(2,1)'#','This dataframe is related to the atomic data of the last simulation.'
@@ -103,16 +103,14 @@ contains
     write(9,2)'#'
     write(9,50)'ax','ay','az','bx','by','bz','cx','cy','cz','a','b','c'
 
-    geo_backup=-1
-
     time=dtime
     do i=1,nrelax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
             (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            dens*mconv/(n0*1.d-24*rconv**3)
+            (mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        time=time+dtime
     end do
 
@@ -120,12 +118,12 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
             (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            dens*mconv/(n0*1.d-24*rconv**3)
+            (mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        if(mod(i,nhist).eq.0)call history(ihist)
        time=time+dtime
     end do
@@ -153,7 +151,7 @@ contains
 
   end subroutine md
 
-  subroutine md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press,dens)
+  subroutine md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press)
     !***************************************************************************************
     ! Preparacao da dinâmica molecular:                                                    *
     ! - Preparando campo de forca;                                                         *
@@ -163,7 +161,7 @@ contains
     implicit none
 
     integer i
-    real(8) xhi,eta,sigma,ekinet,temp,press,dens,mtot
+    real(8) xhi,eta,sigma,ekinet,temp,press,mtot
     real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
     real(8) encoul,enbond,enbend,entors,envdw,enpot
 
@@ -225,15 +223,11 @@ contains
 
     press=(2.d0*ekinet+virtot+virvdw_corr)/(3.d0*volume)
 
-    !-valor inicial da densidade
-
-    dens=mtot/volume
-
     return
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+  subroutine mdloop(mdstp,xhi,eta,sigma,temp,press,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -243,7 +237,7 @@ contains
 
     implicit none
 
-    integer mdstp,i,ix,geo_backup
+    integer mdstp,i,ix
     real(8) temp,press,xhi,eta,sigma
 
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -281,7 +275,7 @@ contains
 
     !-imprimindo estrutura
 
-    call geometry(geo_backup)
+    call geometry(mdstp)
 
     !-escrevendo variaveis canonicas em arquivo de dados
 

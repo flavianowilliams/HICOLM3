@@ -18,7 +18,7 @@ output: pdf_document
   source("model.R",local = knitr::knit_global())
 ```
 
-This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and energy, followed by a smooth fitting function (red line).
+This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of volume, temperature, pressure and energy, followed by a smooth fitting function (red line).
 
 ## Parameters
 
@@ -26,68 +26,68 @@ This report represents a statistical analysis of the main thermodynamic variable
   cat("Ensemble:",head$X2,head$X3)
   cat("System:",head$X4,"atoms")
   if (head$X2=="npt") {
-    cat("Pressure:",head$X5,"atm")
+    cat("pressure:",head$X5,"atm")
   }
   if (head$X2=="nvt"|head$X2=="npt") {
-    cat("Temperature:",head$X6,"K")
+    cat("temperature:",head$X6,"K")
   }
-  cat("Timestep:",head$X7,"ps")
-  cat("Time-scale:",head$X8,"ps")
+  cat("timestep:",head$X7,"ps")
+  cat("time-scale:",head$X8,"ps")
 ```
 
-## Volume
+## volume
 
 ```{r volume, echo=FALSE}
   thermo %>%
-  filter(data=='VOLUME') %>%
-    ggplot(aes(x=TIME,y=Value))+
+  filter(data=='volume') %>%
+    ggplot(aes(x=time,y=Value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
-    labs(x="Time (ps)",y=expression(paste("Volume ",(ring(A)^3))))
+    labs(x="time (ps)",y=expression(paste("volume ",(ring(A)^3))))
 ```
 
-## Temperature
+## temperature
 
 ```{r temperature, echo=FALSE}
   thermo %>%
-  filter(data=='TEMPERATURE') %>%
-    ggplot(aes(x=TIME,y=Value))+
+  filter(data=='temperature') %>%
+    ggplot(aes(x=time,y=Value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
-    labs(x="Time (ps)",y=expression(paste("Temperature (K)")))
+    labs(x="time (ps)",y=expression(paste("temperature (K)")))
 ```
 
-## Pressure
+## pressure
 
 ```{r pressure, echo=FALSE}
   thermo %>%
-  filter(data=='PRESSURE') %>%
-    ggplot(aes(x=TIME,y=Value))+
+  filter(data=='pressure') %>%
+    ggplot(aes(x=time,y=Value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
-    labs(x="Time (ps)",y=expression(paste("Pressure (atm)")))
+    labs(x="time (ps)",y=expression(paste("pressure (atm)")))
 ```
 
-## Energy
+## energy
 
 ```{r energy, echo=FALSE}
   thermo %>%
-  filter(data=='ENERGY') %>%
-  ggplot(aes(x=TIME,y=Value))+
+  filter(data=='energy') %>%
+  ggplot(aes(x=time,y=Value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="Time (ps)",y=expression(paste("Energy (kcal/mol)")))
+  labs(x="time (ps)",y=expression(paste("energy (kcal/mol)")))
 ```
 
-## Density
+## density
 
 ```{r density, echo=FALSE}
   thermo %>%
-  filter(data=='DENSITY') %>%
-  ggplot(aes(x=TIME,y=Value))+
+  filter(data=='density') %>%
+  ggplot(aes(x=time,y=Value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="Time (ps)",y=expression(paste("Density (g/cm3)")))
+  labs(x="time (ps)",y=expression(paste("density (g/cm3)")))
 ```
 
 ## Maximum force
@@ -97,22 +97,22 @@ This report represents a statistical analysis of the main thermodynamic variable
   ggplot(aes(x=time,y=fmax))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="Time (ps)",y=expression(paste("F_max (kcal/mol.A)")))
+  labs(x="time (ps)",y=expression(paste("F_max (kcal/mol.A)")))
 ```
 
 # Gather of the thermodynamic values.
 
 ```{r facet, echo=FALSE}
   ggplot()+
-    geom_line(data=filter(thermo,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+     geom_line(data=filter(thermo,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='volume'),mapping=aes(x=time,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='volume'),mapping=aes(x=time,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='temperature'),mapping=aes(x=time,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='temperature'),mapping=aes(x=time,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='pressure'),mapping=aes(x=time,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='pressure'),mapping=aes(x=time,y=Value),color="red",se=T)+     geom_line(data=filter(thermo,data=='energy'),mapping=aes(x=time,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='energy'),mapping=aes(x=time,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='density'),mapping=aes(x=time,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='density'),mapping=aes(x=time,y=Value),color="red",se=T)+
   facet_wrap(~data,nrow = 3,scales = 'free')
 ```
 
@@ -121,6 +121,6 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r summary, echo=FALSE}
   thermo %>%
   spread(key="data",value="Value") %>%
-  select(VOLUME:DENSITY) %>%
+  select(volume:density) %>%
   summary()
 ```
