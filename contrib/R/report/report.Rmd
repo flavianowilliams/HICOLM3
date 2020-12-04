@@ -15,6 +15,7 @@ output: pdf_document
 
 ```{r, include=FALSE}
   source("import_and_clean_data.R",local = knitr::knit_global())
+  source("model.R",local = knitr::knit_global())
 ```
 
 This report represents a statistical analysis of the main thermodynamic variables. The figures below show the time evolution of Volume, temperature, pressure and energy, followed by a smooth fitting function (red line).
@@ -87,6 +88,15 @@ This report represents a statistical analysis of the main thermodynamic variable
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
   labs(x="Time (ps)",y=expression(paste("Density (g/cm3)")))
+```
+
+## Maximum force
+
+```{r force, echo=FALSE}
+  value_max %>%
+  ggplot(aes(x=time,y=fmax))+
+  geom_line(color="black")+
+  labs(x="Time (ps)",y=expression(paste("F_max (kcal/mol.A)")))
 ```
 
 # Gather of the thermodynamic values.
