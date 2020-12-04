@@ -38,8 +38,12 @@ program HICOLM
 
   call cpu_time(t0)
 
-  open(3,file='HICOLM.thermodynamics',status='unknown')  ! print dataframe
-  open(6,file='HICOLM.out',status='unknown') ! imprimindo arquivo out
+  !-abrindo ficheiro de dados
+
+  open(2,file='HICOLM.atoms',status='unknown')          ! imprimindo informacoes atomicas
+  open(3,file='HICOLM.thermodynamics',status='unknown') ! imprimindo informacoes termodinamicas
+  open(6,file='HICOLM.out',status='unknown')            ! imprimindo arquivo de log
+  open(9,file='HICOLM.lattice',status='unknown')        ! imprimindo informacoes da rede
 
   t1=0.d0
   t2=0.d0

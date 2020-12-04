@@ -22,22 +22,22 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Parameters
 
 ```{r, echo=FALSE}
-  cat("Ensemble:",df$X2,df$X3)
-  cat("System:",df$X4,"atoms")
-  if (df$X2=="npt") {
-    cat("Pressure:",df$X5,"atm")
+  cat("Ensemble:",head$X2,head$X3)
+  cat("System:",head$X4,"atoms")
+  if (head$X2=="npt") {
+    cat("Pressure:",head$X5,"atm")
   }
-  if (df$X2=="nvt"|df$X2=="npt") {
-    cat("Temperature:",df$X6,"K")
+  if (head$X2=="nvt"|head$X2=="npt") {
+    cat("Temperature:",head$X6,"K")
   }
-  cat("Timestep:",df$X7,"ps")
-  cat("Time-scale:",df$X8,"ps")
+  cat("Timestep:",head$X7,"ps")
+  cat("Time-scale:",head$X8,"ps")
 ```
 
 ## Volume
 
 ```{r volume, echo=FALSE}
-  df2 %>%
+  thermo %>%
   filter(data=='VOLUME') %>%
     ggplot(aes(x=TIME,y=Value))+
     geom_line(color="black")+
@@ -48,7 +48,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Temperature
 
 ```{r temperature, echo=FALSE}
-  df2 %>%
+  thermo %>%
   filter(data=='TEMPERATURE') %>%
     ggplot(aes(x=TIME,y=Value))+
     geom_line(color="black")+
@@ -59,7 +59,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Pressure
 
 ```{r pressure, echo=FALSE}
-  df2 %>%
+  thermo %>%
   filter(data=='PRESSURE') %>%
     ggplot(aes(x=TIME,y=Value))+
     geom_line(color="black")+
@@ -70,7 +70,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Energy
 
 ```{r energy, echo=FALSE}
-  df2 %>%
+  thermo %>%
   filter(data=='ENERGY') %>%
   ggplot(aes(x=TIME,y=Value))+
   geom_line(color="black")+
@@ -81,7 +81,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Density
 
 ```{r density, echo=FALSE}
-  df2 %>%
+  thermo %>%
   filter(data=='DENSITY') %>%
   ggplot(aes(x=TIME,y=Value))+
   geom_line(color="black")+
@@ -93,22 +93,22 @@ This report represents a statistical analysis of the main thermodynamic variable
 
 ```{r facet, echo=FALSE}
   ggplot()+
-    geom_line(data=filter(df2,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(df2,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(df2,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(df2,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(df2,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(df2,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+     geom_line(data=filter(df2,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(df2,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
-    geom_line(data=filter(df2,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="black")+
-    geom_smooth(data=filter(df2,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='VOLUME'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='TEMPERATURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='PRESSURE'),mapping=aes(x=TIME,y=Value),color="red",se=T)+     geom_line(data=filter(thermo,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='ENERGY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
+    geom_line(data=filter(thermo,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="black")+
+    geom_smooth(data=filter(thermo,data=='DENSITY'),mapping=aes(x=TIME,y=Value),color="red",se=T)+
   facet_wrap(~data,nrow = 3,scales = 'free')
 ```
 
 # Here is the summary of some thermodynamic variables.
 
 ```{r summary, echo=FALSE}
-  df2 %>%
+  thermo %>%
   spread(key="data",value="Value") %>%
   select(VOLUME:DENSITY) %>%
   summary()

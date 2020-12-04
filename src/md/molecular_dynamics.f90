@@ -77,16 +77,31 @@ contains
     write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
     write(6,'(4x,111a1)')('-',i=1,84)
 
-    !-relaxamento do sistema
-
+    write(3,2)'#'
+    write(3,1)'#','This dataframe is related to the thermodynamic data of the last simulation.'
+    write(3,2)'#'
     write(3,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
          dtime*ntrialmax*tconv
     write(3,2)'#'
     write(3,9)&
          'TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY','DENSITY'
 
-    write(2,40)'step','Z','type','mass','charge','time','x','y','z','fx','fy','fz',&
+    write(2,2)'#'
+    write(2,1)'#','This dataframe is related to the atomic data of the last simulation.'
+    write(2,2)'#'
+    write(2,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
+         dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
+    write(2,2)'#'
+    write(2,40)'step','atom','Z','type','mass','charge','time','x','y','z','fx','fy','fz',&
          'vx','vy','vz','ax','ay','az','bx','by','bz','cx','cy','cz'
+
+    write(9,2)'#'
+    write(9,1)'#','This dataframe is related to the lattice data of the last simulation.'
+    write(9,2)'#'
+    write(9,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
+         dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
+    write(9,2)'#'
+    write(9,50)'ax','ay','az','bx','by','bz','cx','cy','cz','a','b','c'
 
     geo_backup=-1
 
@@ -126,14 +141,16 @@ contains
 
     return
 
-2   format(9x,a1)
+1   format(1x,a1,1x,a73)
+2   format(1x,a1)
 9   format(5x,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6,6x,a10,6x,a6,7x,a7)
-5   format(9x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3)
+5   format(1x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3,1x,i7)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 30  format(5x,8(2x,es12.4))
-40  format(2x,a4,3x,a1,2x,a4,5x,a4,7x,a6,7x,a4,9x,3(a1,11x),3(a2,10x),3(a2,10x),&
+40  format(2x,a4,2x,a4,3x,a1,2x,a4,4x,a4,7x,a6,7x,a4,9x,3(a1,11x),3(a2,10x),3(a2,10x),&
          3(a2,10x),3(a2,10x),3(a2,10x))
+50  format(7x,3(a2,10x),3(a2,10x),3(a2,10x),3(a2,10x),2(a2,10x),a2,9x,3(a1,10x))
 
   end subroutine md
 
@@ -146,18 +163,10 @@ contains
 
     implicit none
 
-    integer i,nwr
+    integer i
     real(8) xhi,eta,sigma,ekinet,temp,press,dens,mtot
     real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
     real(8) encoul,enbond,enbend,entors,envdw,enpot
-
-    !-abrindo ficheiro de dados
-
-    open(2,file='HICOLM.md',status='unknown')
-
-    nwr=6
-
-    write(2,'(i12,e12.4,3i7)')int((ntrialmax-nrelax)/nhist),dtime*tconv,nwr,natom,spctot
 
     !-preparando Campo de Força
 
@@ -280,13 +289,18 @@ contains
     if(mdstp.gt.nrelax.and.mod(mdstp-nrelax,nhist).eq.0)then
        ix=(mdstp-nrelax)/nhist
        do i=1,natom
-          write(2,20)ix,idna(i),atsp(atp(i)),mass(i)*mconv,qat(i),ix*dtime*tconv,&
+          write(2,20)ix,i,idna(i),atsp(atp(i)),mass(i)*mconv,qat(i),ix*dtime*tconv,&
                xa(i)*rconv,ya(i)*rconv,za(i)*rconv,&
                fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv,&
                vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv,&
                v(1,1)*rconv,v(1,2)*rconv,v(1,3)*rconv,&
                v(2,1)*rconv,v(2,2)*rconv,v(2,3)*rconv,&
                v(3,1)*rconv,v(3,2)*rconv,v(3,3)*rconv
+       end do
+       do i=1,3
+          write(9,30)v(1,1)*rconv,v(1,2)*rconv,v(1,3)*rconv,&
+               v(2,1)*rconv,v(2,2)*rconv,v(2,3)*rconv,&
+               v(3,1)*rconv,v(3,2)*rconv,v(3,3)*rconv,a*rconv,b*rconv,c*rconv
        end do
     end if
 
@@ -298,8 +312,8 @@ contains
 
     return
 
-20  format(1x,2i5,a5,21e12.4)
-30  format(35x,3e12.4)
+20  format(1x,3i5,a5,21e12.4)
+30  format(1x,12e12.4)
 
   end subroutine mdloop
 
