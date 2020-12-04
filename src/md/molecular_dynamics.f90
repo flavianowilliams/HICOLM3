@@ -82,18 +82,14 @@ contains
     write(3,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
          dtime*ntrialmax*tconv
     write(3,2)'#'
-<<<<<<< Updated upstream
     write(3,9)&
          'TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY','DENSITY'
-=======
-    write(3,9)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','EKINET','EPOTENTIAL','ENERGY'
->>>>>>> Stashed changes
 
     geo_backup=-1
 
     time=dtime
     do i=1,nrelax
-       call mdloop(i,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
@@ -106,7 +102,7 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
+       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
        write(3,30)time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
@@ -127,26 +123,12 @@ contains
 
     return
 
-<<<<<<< Updated upstream
 2   format(9x,a1)
 9   format(5x,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6,6x,a10,6x,a6,7x,a7)
 5   format(9x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 30  format(5x,8(2x,es12.4))
-=======
-2   format(13x,a1)
-3   format(13x,a1,1x,a9,1x,a3,1x,a9)
-4   format(13x,a1,1x,a9,f9.3,1x,a3)
-5   format(13x,a1,1x,a12,f12.3,1x,a1)
-6   format(13x,a1,1x,a7,i12,1x,a5)
-7   format(13x,a1,1x,a9,es10.3,1x,a2)
-8   format(13x,a1,1x,a11,f10.3,1x,a2)
-9   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6,)
-10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
-20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
-30  format(5x,i8,7(2x,es12.4))
->>>>>>> Stashed changes
 
   end subroutine md
 
@@ -238,7 +220,7 @@ contains
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,mtot,temp,press,dens,ekinet,enpot)
+  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -249,7 +231,7 @@ contains
     implicit none
 
     integer mdstp,i,ix,geo_backup
-    real(8) temp,press,xhi,eta,sigma,dens,mtot
+    real(8) temp,press,xhi,eta,sigma
 
     real(8) virvdw,virbond,virbend,virtors,vircoul
     real(8) ekinet,encoul,enbond,enbend,entors,envdw,enpot
@@ -284,10 +266,6 @@ contains
 
     enpot=encoul+enbond+enbend+entors+envdw
 
-    !-calculo da densidade
-
-    dens=mtot/volume
-
     !-imprimindo estrutura
 
     call geometry(geo_backup)
@@ -297,20 +275,16 @@ contains
     if(mdstp.gt.nrelax.and.mod(mdstp-nrelax,nhist).eq.0)then
        ix=(mdstp-nrelax)/nhist
        write(2,10)ix
-       write(2,20)(str(i)*econv/rconv**3,i=1,6)
-       write(2,20)(ix*dtime)*nhist*tconv,volume*rconv**3,temp*teconv,&
-            press*pconv,(ekinet+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            dens*mconv/rconv**3
        write(2,*)
        do i=1,3
-          write(2,40)v(i,1)*rconv,v(i,2)*rconv,v(i,3)*rconv
+          write(2,30)v(i,1)*rconv,v(i,2)*rconv,v(i,3)*rconv
        end do
        write(2,*)
        do i=1,natom
-          write(2,30)idna(i),atp(i),mass(i)*mconv,qat(i),xa(i)*rconv, &
-               ya(i)*rconv,za(i)*rconv
-          write(2,40)vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
-          write(2,40)fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv
+          write(2,20)idna(i),atp(i),mass(i)*mconv,qat(i),ix*dtime*tconv,&
+               xa(i)*rconv,ya(i)*rconv,za(i)*rconv,&
+               vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv,&
+               fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv
        end do
     end if
 
@@ -323,9 +297,8 @@ contains
     return
 
 10  format(1x,i5)
-20  format(6e16.5)
-30  format(1x,2i5,5e12.4)
-40  format(35x,3e12.4)
+20  format(1x,2i5,12e12.4)
+30  format(35x,3e12.4)
 
   end subroutine mdloop
 
