@@ -96,6 +96,7 @@ This report represents a statistical analysis of the main thermodynamic variable
   value_max %>%
   ggplot(aes(x=time,y=fmax))+
   geom_line(color="black")+
+  geom_smooth(color="red",se=T)+
   labs(x="Time (ps)",y=expression(paste("F_max (kcal/mol.A)")))
 ```
 
