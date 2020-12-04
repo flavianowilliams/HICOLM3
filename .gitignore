@@ -9,3 +9,5 @@
 *.dia
 HICOLM
 x2x
+.RData
+.Rhistory

@@ -1,7 +1,5 @@
 # importanto e transformando dataframe de dados termodinamicos
 
-#setwd("/home/flaviano/Documentos/GitHub/HICOLM/contrib/R/report")
-
 head=readr::read_table(file = "HICOLM.thermodynamics",col_names = FALSE,n_max = 1,skip = 3)
 
 head$X1=NULL

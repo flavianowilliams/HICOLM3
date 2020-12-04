@@ -279,9 +279,11 @@ then
     if [ ! -d '1' ]
     then
         cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+        cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
         Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
         mv /home/\$USER/.hicolm/R/report/report.pdf .
         rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
+        rm /home/\$USER/.hicolm/R/report/HICOLM.atoms
         rm /home/\$USER/.hicolm/R/report/report.tex
     fi
     exit 0
@@ -300,9 +302,11 @@ else
     if [ ! -d '1' ]
     then
         cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+        cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
         Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
         mv /home/\$USER/.hicolm/R/report/report.pdf .
         rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
+        rm /home/\$USER/.hicolm/R/report/HICOLM.atoms
         rm /home/\$USER/.hicolm/R/report/report.tex
     fi
     exit 0
