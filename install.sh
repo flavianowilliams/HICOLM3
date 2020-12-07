@@ -191,6 +191,7 @@ fi
 touch $exe_dir/hicolm
 #
 echo "#!/bin/sh
+#
 if [ ! -d '/tmp/amber' ]
 then
     cp -r $aux_dir/HICOLM/amber /tmp/amber
@@ -215,7 +216,9 @@ else
     then
         cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
-fi" >> $exe_dir/hicolm
+fi
+#
+$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #
 #case "$supp" in
 #    yes|YES|Yes)
@@ -232,15 +235,8 @@ fi" >> $exe_dir/hicolm
 #        ;;
 #    no|NO|No|"")
 #        echo "
-#if [ -d \"/home/\$USER/.hicolm\" ]
-#then
 #    $exe_dir/HICOLM.bin
-#else
-#    mkdir /home/\$USER/.hicolm
-#    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-#    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-#    $exe_dir/HICOLM.bin
-#fi" >> $exe_dir/hicolm
+#    ">> $exe_dir/hicolm
 #esac
 #
 chmod +x $exe_dir/hicolm
