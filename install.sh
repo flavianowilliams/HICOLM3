@@ -45,16 +45,12 @@ fi
 #echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 #read aux_dir
 #
-#echo
-#echo "Would you like to install HICOLM with graphical support? (default: no)"
-#read supp
-#
 if [ -z $aux_dir ]
 then
     aux_dir="/usr/local/share"
 fi
 #
-# --creating directories
+# -- removing old directories and files
 #
 if [ -d "$aux_dir/HICOLM" ]
 then
@@ -64,10 +60,10 @@ if [ -d "$HOME/.hicolm" ]
 then
     rm -rf $HOME/.hicolm
 fi
-#
 mkdir $aux_dir/HICOLM
-mkdir $aux_dir/HICOLM/amber
 mkdir $aux_dir/HICOLM/R
+mkdir $aux_dir/HICOLM/R/report
+mkdir $aux_dir/HICOLM/amber
 #
 # -- installing HICOLM --
 #
@@ -176,7 +172,8 @@ echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
 cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp -r $path/contrib/R/* $aux_dir/HICOLM/R/.
+cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/R/report/.
+cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/R/report/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -185,12 +182,8 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
-echo -e "\e[33m-> Preparing R environment\e[0m"
-echo
-case "$supp" in
-    yes|YES|Yes)
-	Rscript $path/contrib/R/prepare.R
-esac
+#echo -e "\e[33m-> Preparing R environment\e[0m"
+#Rscript $path/contrib/R/prepare.R
 #
 # --preparing script to call HICOLM executable
 #
@@ -266,50 +259,49 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-if [ -d \"/home/\$USER/.hicolm\" ]
+#
+# - check for auxiliary files and directories
+#
+if [ ! -d \"/home/\$USER/.hicolm\" ]
 then
-    echo
-    echo 'Please, choose one of the following options:'
-    echo
-    echo '1 -> Thermodynamic variables'
-    echo '2 -> RDF and coordination number (incomplete)'
-    echo '3 -> Vibrational analysis (incomplete)'
-    echo
-    read option
-    if [ ! -d '1' ]
-    then
-        cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
-        cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report/report.pdf .
-        rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
-        rm /home/\$USER/.hicolm/R/report/HICOLM.atoms
-        rm /home/\$USER/.hicolm/R/report/report.tex
-    fi
-    exit 0
-else
     mkdir /home/\$USER/.hicolm
     cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
     cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    echo
-    echo 'Please, choose one of the following options:'
-    echo
-    echo '1 -> Thermodynamic variables'
-    echo '2 -> RDF and coordination number (incomplete)'
-    echo '3 -> Vibrational analysis (incomplete)'
-    echo
-    read option
-    if [ ! -d '1' ]
+else
+    if [ ! -d \"/home/\$USER/.hicolm/R\" ]
     then
-        cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
-        cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report/report.pdf .
-        rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
-        rm /home/\$USER/.hicolm/R/report/HICOLM.atoms
-        rm /home/\$USER/.hicolm/R/report/report.tex
+        cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    else
+        if [ ! -d \"/home/\$USER/.hicolm/R/report\" ]
+        then
+            cp -r $aux_dir/HICOLM/R/report /home/\$USER/.hicolm/R/report
+        fi
     fi
-    exit 0
+    if [ ! -d \"/home/\$USER/.hicolm/amber\" ]
+    then
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    fi
+fi
+#
+# copying files to auxiliary directories
+#
+echo
+echo 'Please, choose one of the following options:'
+echo
+echo '1 -> Thermodynamic variables'
+echo '2 -> RDF and coordination number (incomplete)'
+echo '3 -> Vibrational analysis (incomplete)'
+echo
+read option
+if [ ! -d '1' ]
+then
+    cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+    cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
+    Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
+    mv /home/\$USER/.hicolm/R/report/report.pdf .
+    rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
+    rm /home/\$USER/.hicolm/R/report/HICOLM.atoms
+    rm /home/\$USER/.hicolm/R/report/report.tex
 fi" >> $exe_dir/hresults
 #
 chmod +x $exe_dir/hresults
