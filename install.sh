@@ -56,10 +56,6 @@ if [ -d "$aux_dir/HICOLM" ]
 then
     rm -rf $aux_dir/HICOLM
 fi
-if [ -d "$HOME/.hicolm" ]
-then
-    rm -rf $HOME/.hicolm
-fi
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/R
 mkdir $aux_dir/HICOLM/R/report
@@ -221,35 +217,68 @@ else
     fi
 fi" >> $exe_dir/hicolm
 #
-case "$supp" in
-    yes|YES|Yes)
-        echo "
-if [ -d \"/home/\$USER/.hicolm\" ]
-then
-    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
-else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
-fi" >> $exe_dir/hicolm
-        ;;
-    no|NO|No|"")
-        echo "
-if [ -d \"/home/\$USER/.hicolm\" ]
-then
-    $exe_dir/HICOLM.bin
-else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    $exe_dir/HICOLM.bin
-fi" >> $exe_dir/hicolm
-esac
-#
-# preparing script to get results
+#case "$supp" in
+#    yes|YES|Yes)
+#        echo "
+#if [ -d \"/home/\$USER/.hicolm\" ]
+#then
+#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+#else
+#    mkdir /home/\$USER/.hicolm
+#    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+#    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+#fi" >> $exe_dir/hicolm
+#        ;;
+#    no|NO|No|"")
+#        echo "
+#if [ -d \"/home/\$USER/.hicolm\" ]
+#then
+#    $exe_dir/HICOLM.bin
+#else
+#    mkdir /home/\$USER/.hicolm
+#    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+#    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+#    $exe_dir/HICOLM.bin
+#fi" >> $exe_dir/hicolm
+#esac
 #
 chmod +x $exe_dir/hicolm
+#
+# preparing scripts to get results
+#
+if [ -f "$exe_dir/hprepare" ]
+then
+    rm $exe_dir/hprepare
+fi
+#
+echo "#!/bin/sh
+#
+echo
+echo \"Updating R environment...\"
+echo
+#
+if [ -d \"/home/\$USER/.hicolm\" ]
+then
+    rm -r /home/\$USER/.hicolm
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    echo
+    echo \"Finish!\"
+    echo
+else
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    echo
+    echo \"Finish!\"
+    echo
+fi">> $exe_dir/hprepare
+#
+chmod +x $exe_dir/hprepare
+#
+touch $exe_dir/hresults
 #
 if [ -f "$exe_dir/hresults" ]
 then
@@ -264,22 +293,23 @@ echo "#!/bin/sh
 #
 if [ ! -d \"/home/\$USER/.hicolm\" ]
 then
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    echo \"Error to find the auxiliary directory! Running hprepare...\"
+    $exe_dir/hprepare
 else
     if [ ! -d \"/home/\$USER/.hicolm/R\" ]
     then
-        cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+        echo \"Error to find the auxiliary directory! Running hprepare...\"
+        $exe_dir/hprepare
     else
         if [ ! -d \"/home/\$USER/.hicolm/R/report\" ]
         then
-            cp -r $aux_dir/HICOLM/R/report /home/\$USER/.hicolm/R/report
+            echo \"Error to find the auxiliary directory! Running hprepare...\"
+            $exe_dir/hprepare
         fi
     fi
     if [ ! -d \"/home/\$USER/.hicolm/amber\" ]
     then
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+        echo \"Error to find the auxiliary directory! Running hprepare...\"
     fi
 fi
 #
