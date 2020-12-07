@@ -325,8 +325,8 @@ echo
 read option
 if [ ! -d '1' ]
 then
-    cp -r HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
-    cp -r HICOLM.atoms /home/\$USER/.hicolm/R/report/.
+    cp HICOLM.thermodynamics /home/\$USER/.hicolm/R/report/.
+    cp HICOLM.atoms /home/\$USER/.hicolm/R/report/.
     Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
     mv /home/\$USER/.hicolm/R/report/report.pdf .
     rm /home/\$USER/.hicolm/R/report/HICOLM.thermodynamics
