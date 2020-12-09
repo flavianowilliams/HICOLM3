@@ -119,8 +119,8 @@ This report represents a statistical analysis of the main thermodynamic variable
 # Here is the summary of some thermodynamic variables.
 
 ```{r summary, echo=FALSE}
-  thermo %>%
-  spread(key="data",value="Value") %>%
-  select(volume:density) %>%
-  summary()
+#  thermo %>%
+#  spread(key="data",value="Value") %>%
+#  select(volume:density) %>%
+#  summary()
 ```
