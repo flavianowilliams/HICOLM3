@@ -7,6 +7,10 @@
 *.mod
 *.old
 *.dia
+*.atoms
+*.thermodynamics
+*.lattice
+*.out
 HICOLM
 x2x
 .RData
