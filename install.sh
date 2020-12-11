@@ -2,7 +2,7 @@
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
 # describe: Installation of HICOLM package and utilities
-#  version: 2.2.1
+#  version: 2.3.1
 #  license: MIT license
 #
 path=`pwd`
