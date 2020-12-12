@@ -14,5 +14,6 @@ thermo = thermo %>% gather(volume,temperature,pressure,energy,density,key="data"
 atoms=readr::read_table2(file="HICOLM.atoms",col_names = TRUE,skip = 5)
 
 atoms$step=as.integer(atoms$step)
-atoms$atom=as.integer(atoms$atom)
+atoms$site=as.integer(atoms$site)
+atoms$molecule=as.integer(atoms$molecule)
 atoms$Z=as.integer(atoms$Z)
