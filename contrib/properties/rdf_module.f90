@@ -100,13 +100,12 @@ module rdf_module
 
     rdfcut=0.5d0*min(a,min(b,c))
 
-    nk=int(rdfcut/drdfcut)
-
     do i=2,nstp
        read(1,*)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
        rdfcut=min(rdfcut,0.5d0*min(a,min(b,c)))
-       nk=max(nk,int(rdfcut/drdfcut))
     end do
+
+    nk=int(rdfcut/drdfcut)
 
     close(1)
 
