@@ -29,15 +29,24 @@ contains
 
   subroutine entrada
 
-  implicit none
+    implicit none
 
-  read(1,*)nstp,dtime,nvar,nat,spctot
+    real(8) lxf
+    character lxc
 
-  write(*,*)'RDF -> 1'
-  write(*,*)'Medias -> 2'
+    !  read(1,*)nstp,dtime,nvar,nat,spctot
+    read(2,*)
+    read(2,*)
+    read(2,*)
+    read(2,*)lxc,lxc,lxc,nat,lxf,lxf,dtime,lxf,nstp
+    read(2,*)
+    read(2,*)
 
-!    nopt=2   
-  read(*,*)nopt
+!  write(*,*)'RDF -> 1'
+!  write(*,*)'Medias -> 2'
+
+  nopt=1
+!  read(*,*)nopt
 
  end subroutine entrada
 
