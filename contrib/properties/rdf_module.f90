@@ -60,18 +60,18 @@ module rdf_module
     drdfcut=0.025d0
 
     write(*,*)'Types of molecules (qty):'
-!    read(*,*)nmolec
-    nmolec=1
+    read(*,*)nmolec
+!    nmolec=1
     write(*,*)'Number of molecules per type:'
-!    read(*,*)(qmolec(i),i=1,nmolec)
-    qmolec(1)=309
+    read(*,*)(qmolec(i),i=1,nmolec)
+!    qmolec(1)=309
     write(*,*)'Number of atoms per molecule per type:'
-!    read(*,*)(qatom(i),i=1,nmolec)
-    qatom(1)=3
+    read(*,*)(qatom(i),i=1,nmolec)
+!    qatom(1)=3
     write(*,*)'Choose two species for the RDF calculus:'
-!    read(*,*)spcat(1),spcat(2)
-    spcat(1)='OW'
-    spcat(2)='HW'
+    read(*,*)spcat(1),spcat(2)
+!    spcat(1)='OW'
+!    spcat(2)='HW'
 
     molectt=1
     do i=1,nmolec
