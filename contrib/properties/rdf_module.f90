@@ -96,12 +96,12 @@ module rdf_module
        read(1,*)
     end do
 
-    read(1,*)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
+    read(1,10)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
 
     rdfcut=0.5d0*min(a,min(b,c))
 
     do i=2,nstp
-       read(1,*)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
+       read(1,10)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
        rdfcut=min(rdfcut,0.5d0*min(a,min(b,c)))
     end do
 
@@ -110,6 +110,8 @@ module rdf_module
     close(1)
 
     return
+
+10  format(1x,e12.4,1x,13(e12.4,1x))
 
   end subroutine rdf_prepare
 
@@ -125,7 +127,7 @@ module rdf_module
     spct(1)=0
     spct(2)=0
     do i=1,nat
-       read(2,*)(lxf,k=1,5),atp(i),lxf,lxf,xa(i),ya(i),za(i)
+       read(2,10)(lxf,k=1,5),atp(i),lxf,lxf,xa(i),ya(i),za(i)
        if(atp(i).eq.spcat(1))spct(1)=spct(1)+1
        if(atp(i).eq.spcat(2))spct(2)=spct(2)+1
     end do
@@ -134,7 +136,7 @@ module rdf_module
 
     do i=2,nstp
        do j=1,nat
-          read(2,*)(lxf,k=1,5),atp(j),lxf,lxf,xa(j),ya(j),za(j)
+          read(2,10)(lxf,k=1,5),atp(j),lxf,lxf,xa(j),ya(j),za(j)
        end do
        call rdf(i)
     end do
@@ -142,6 +144,8 @@ module rdf_module
     call rdf_final(nstp,spct)
 
     return
+
+10  format(1x,e12.0,1x,e12.0,1x,2(e8.0,1x),e5.0,1x,a5,1x,21(e12.4,1x))
 
   end subroutine rdf_calc
 

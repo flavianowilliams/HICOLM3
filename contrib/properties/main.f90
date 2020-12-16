@@ -24,8 +24,8 @@ program tbmc
 
   implicit none
 
-  open(1,file='HICOLM.lattice',status='old')
-  open(2,file='HICOLM.atoms',status='old')
+  open(1,file='lattice.csv',status='old')
+  open(2,file='atoms.csv',status='old')
   open(3,file='HICOLM.dat',status='unknown')
 
   call rdf_calc(nstp,nat)

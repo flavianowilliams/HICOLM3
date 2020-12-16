@@ -83,8 +83,8 @@ contains
     write(3,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
          dtime*ntrialmax*tconv
     write(3,2)'#'
-    write(3,9)'step',&
-         'time','volume','temperature','pressure','ekinet','epotential','energy','density'
+    write(3,9)'step',',','time',',','volume',',','temperature',',','pressure',',','ekinet',&
+         ',','epotential',',','energy',',','density'
 
     write(2,2)'#'
     write(2,1)'#','This dataframe is related to the atomic data of the last simulation.'
@@ -92,8 +92,8 @@ contains
     write(2,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
          dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
     write(2,2)'#'
-    write(2,40)'step','time','molecule','site','Z','type','mass','charge','x','y','z','fx','fy','fz',&
-         'vx','vy','vz'
+    write(2,40)'step',',','time',',','molecule',',','site',',','Z',',','type',',','mass',',',&
+         'charge',',','x',',','y',',','z',',','fx',',','fy',',','fz',',','vx',',','vy',',','vz'
 
     write(9,2)'#'
     write(9,1)'#','This dataframe is related to the lattice data of the last simulation.'
@@ -101,16 +101,17 @@ contains
     write(9,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
          dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
     write(9,2)'#'
-    write(9,50)'step','time','ax','ay','az','bx','by','bz','cx','cy','cz','a','b','c'
+    write(9,50)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',',',&
+         'cx',',','cy',',','cz',',','a',',','b',',','c'
 
     time=dtime
     do i=1,nrelax
        call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
-            (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            (mtot/volume)*mconv/(n0*1.d-24*rconv**3)
+       write(3,30)i,',',time*tconv,',',volume*rconv**3,',',temp*teconv,',',press*pconv,',',&
+            ekinet*econv,',',(enpot+envdw_corr)*econv,',',(ekinet+enpot+envdw_corr)*econv,&
+            ',',(mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        time=time+dtime
     end do
 
@@ -121,9 +122,9 @@ contains
        call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
        if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,volume*rconv**3,temp*teconv,press*pconv,ekinet*econv,&
-            (enpot+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            (mtot/volume)*mconv/(n0*1.d-24*rconv**3)
+       write(3,30)i,',',time*tconv,',',volume*rconv**3,',',temp*teconv,',',press*pconv,',',&
+            ekinet*econv,',',(enpot+envdw_corr)*econv,',',(ekinet+enpot+envdw_corr)*econv,&
+            ',',(mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        if(mod(i,nhist).eq.0)call history(ihist)
        time=time+dtime
     end do
@@ -141,13 +142,15 @@ contains
 
 1   format(1x,a1,1x,a73)
 2   format(1x,a1)
-9   format(3x,a4,10x,a4,8x,a6,4x,a11,2x,a8,5x,a6,4x,a10,4x,a6,6x,a7)
+9   format(3x,a4,a1,10x,a4,a1,8x,a6,a1,4x,a11,a1,2x,a8,a1,5x,a6,a1,4x,a10,a1,4x,a6,a1,6x,a7)
 5   format(1x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3,1x,i7)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
-30  format(1x,i12,8e12.4)
-40  format(3x,a4,10x,a4,7x,a8,2x,a4,a4,a6,4x,a4,7x,a6,8x,3(a1,11x),3(a2,10x),3(a2,10x))
-50  format(3x,2(a4,10x),3(a2,10x),3(a2,10x),3(a2,10x),3(a2,10x),2(a2,10x),a2,9x,3(a1,10x))
+30  format(1x,i12,a1,8(e12.4,a1))
+40  format(3x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,a6,a1,4x,a4,a1,7x,a6,a1,8x,3(a1,a1,11x),&
+         3(a2,a1,10x),3(a2,a1,10x))
+50  format(3x,2(a4,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),2(a2,a1,10x),&
+         a2,a1,9x,3(a1,a1,10x))
 
   end subroutine md
 
@@ -286,18 +289,21 @@ contains
           n2=1
           do j=1,ntmolec(i)
              do k =1,nxmolec(i)
-                write(2,10)ix,ix*dtime*tconv,n2,k,idna(n1),atsp(atp(n1)),mass(n1)*mconv,&
-                     qat(n1),xa(n1)*rconv,ya(n1)*rconv,za(n1)*rconv,&
-                     fax(n1)*econv/rconv,fay(n1)*econv/rconv,faz(n1)*econv/rconv,&
-                     vax(n1)*rconv/tconv,vay(n1)*rconv/tconv,vaz(n1)*rconv/tconv
+                write(2,10)ix,',',ix*dtime*tconv,',',n2,',',k,',',idna(n1),',',&
+                     atsp(atp(n1)),',',mass(n1)*mconv,',',qat(n1),',',&
+                     xa(n1)*rconv,',',ya(n1)*rconv,',',za(n1)*rconv,',',&
+                     fax(n1)*econv/rconv,',',fay(n1)*econv/rconv,',',faz(n1)*econv/rconv,',',&
+                     vax(n1)*rconv/tconv,',',vay(n1)*rconv/tconv,',',vaz(n1)*rconv/tconv
                 n1=n1+1
              end do
              n2=n2+1
           enddo
        end do
-       write(9,20)ix,ix*dtime*tconv,v(1,1)*rconv,v(1,2)*rconv,v(1,3)*rconv,&
-            v(2,1)*rconv,v(2,2)*rconv,v(2,3)*rconv,&
-            v(3,1)*rconv,v(3,2)*rconv,v(3,3)*rconv,a*rconv,b*rconv,c*rconv
+       write(9,20)ix,',',ix*dtime*tconv,',',&
+            v(1,1)*rconv,',',v(1,2)*rconv,',',v(1,3)*rconv,',',&
+            v(2,1)*rconv,',',v(2,2)*rconv,',',v(2,3)*rconv,',',&
+            v(3,1)*rconv,',',v(3,2)*rconv,',',v(3,3)*rconv,',',&
+            a*rconv,',',b*rconv,',',c*rconv
     end if
 
     !-atualizando a lista de vizinhos de Verlet
@@ -308,8 +314,8 @@ contains
 
     return
 
-10  format(1x,i12,e12.4,2i8,i5,a5,21e12.4)
-20  format(1x,i12,13e12.4)
+10  format(1x,i12,a1,e12.4,a1,2(i8,a1),i5,a1,a5,a1,21(e12.4,a1))
+20  format(1x,i12,a1,13(e12.4,a1))
 
   end subroutine mdloop
 
