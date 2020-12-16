@@ -77,30 +77,12 @@ contains
     write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
     write(6,'(4x,111a1)')('-',i=1,84)
 
-    write(3,2)'#'
-    write(3,1)'#','This dataframe is related to the thermodynamic data of the last simulation.'
-    write(3,2)'#'
-    write(3,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
-         dtime*ntrialmax*tconv
-    write(3,2)'#'
-    write(3,9)'step',',','time',',','volume',',','temperature',',','pressure',',','ekinet',&
+    write(3,5)'step',',','time',',','volume',',','temperature',',','pressure',',','ekinet',&
          ',','epotential',',','energy',',','density'
 
-    write(2,2)'#'
-    write(2,1)'#','This dataframe is related to the atomic data of the last simulation.'
-    write(2,2)'#'
-    write(2,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
-         dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
-    write(2,2)'#'
     write(2,40)'step',',','time',',','molecule',',','site',',','Z',',','type',',','mass',',',&
          'charge',',','x',',','y',',','z',',','fx',',','fy',',','fz',',','vx',',','vy',',','vz'
 
-    write(9,2)'#'
-    write(9,1)'#','This dataframe is related to the lattice data of the last simulation.'
-    write(9,2)'#'
-    write(9,5)'#',ensble,ensble_mt,natom,preext*pconv,text*teconv,dtime*tconv,&
-         dtime*ntrialmax*tconv,int((ntrialmax-nrelax)/nhist)
-    write(9,2)'#'
     write(9,50)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',',',&
          'cx',',','cy',',','cz',',','a',',','b',',','c'
 
@@ -140,10 +122,7 @@ contains
 
     return
 
-1   format(1x,a1,1x,a73)
-2   format(1x,a1)
-9   format(3x,a4,a1,10x,a4,a1,8x,a6,a1,4x,a11,a1,2x,a8,a1,5x,a6,a1,4x,a10,a1,4x,a6,a1,6x,a7)
-5   format(1x,a1,1x,a3,1x,a9,1x,i10,f7.1,1x,f7.1,1x,es10.3,1x,f10.3,1x,i7)
+5   format(3x,a4,a1,10x,a4,a1,8x,a6,a1,4x,a11,a1,2x,a8,a1,5x,a6,a1,4x,a10,a1,4x,a6,a1,6x,a7)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 30  format(1x,i12,a1,8(e12.4,a1))

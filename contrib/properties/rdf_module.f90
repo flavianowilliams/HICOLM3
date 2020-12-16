@@ -22,13 +22,13 @@ module rdf_module
 
   implicit none
 
-  integer nk,nkmx,nmolec,molectt,nat,nstp
+  integer nk,nkmx,nmolec,molectt,nat,nstp,nstpmax
   integer, allocatable :: idna(:)
   integer qmolec(10),qatom(10),namoltt(100000)
   character(2) spcat(2)
   character(2), allocatable :: atp(:)
 
-  parameter(nkmx=1000000)
+  parameter(nkmx=1000000,nstpmax=10000)
 
   real(8) rdfcut,drdfcut,a,b,c
   real(8), allocatable :: gr(:)
@@ -45,20 +45,6 @@ module rdf_module
     real(8) lxf
     character lxc
 
-    read(2,*)
-    read(2,*)
-    read(2,*)
-    read(2,*)lxc,lxc,lxc,nat,lxf,lxf,lxf,lxf,nstp
-    read(2,*)
-    read(2,*)
-
-    allocate (xa(nat),ya(nat),za(nat))
-    allocate (idna(nat),atp(nat))
-    allocate (gr(nkmx))
-    allocate (v(nstp,3,3))
-
-    drdfcut=0.025d0
-
     write(*,*)'Types of molecules (qty):'
     read(*,*)nmolec
 !    nmolec=1
@@ -72,6 +58,26 @@ module rdf_module
     read(*,*)spcat(1),spcat(2)
 !    spcat(1)='OW'
 !    spcat(2)='HW'
+
+    nat=0
+    do i=1,nmolec
+       nat=nat+qmolec(i)*qatom(i)
+    end do
+
+    read(1,*)
+
+    do i=1,nstpmax
+       read(1,'(1x,i12)',end=1)nstp
+    end do
+
+1   rewind(1)
+
+    allocate (xa(nat),ya(nat),za(nat))
+    allocate (idna(nat),atp(nat))
+    allocate (gr(nkmx))
+    allocate (v(nstp,3,3))
+
+    drdfcut=0.025d0
 
     molectt=1
     do i=1,nmolec
@@ -92,10 +98,7 @@ module rdf_module
 
 !    nk=int(rdfcut/drdfcut)
 
-    do i=1,6
-       read(1,*)
-    end do
-
+    read(1,*)
     read(1,10)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
 
     rdfcut=0.5d0*min(a,min(b,c))
@@ -123,6 +126,8 @@ module rdf_module
     real(8) lxf
 
     call rdf_prepare(nat,nstp)
+
+    read(2,*)
 
     spct(1)=0
     spct(2)=0
