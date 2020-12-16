@@ -1,5 +1,8 @@
 # importanto e transformando dataframe de dados termodinamicos
 
+#setwd("/home/flaviano/Documentos/GitHub/HICOLM/examples/H2O")
+#library(tidyverse)
+
 head=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_max = 10,skip = 42)
 
 head$X1=NULL
@@ -25,13 +28,13 @@ system=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_ma
 
 system$X1=NULL
 
-thermo=readr::read_csv(file="thermodynamics.csv",col_names = TRUE,skip = 5)
+thermo=readr::read_csv(file="thermodynamics.csv",col_names = TRUE)
 
 thermo = thermo %>% gather(volume,temperature,pressure,energy,density,key="data",value="Value")
 
 # importanto e transformando dataframe de dados atomicos
 
-atoms=readr::read_csv(file="atoms.csv",col_names = TRUE,skip = 5)
+atoms=readr::read_csv(file="atoms.csv",col_names = TRUE)
 
 atoms$step=as.integer(atoms$step)
 atoms$site=as.integer(atoms$site)
