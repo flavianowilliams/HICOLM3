@@ -1,8 +1,5 @@
 # importanto e transformando dataframe de dados termodinamicos
 
-#setwd("/home/flaviano/Documentos/GitHub/HICOLM/examples/H2O")
-#library(tidyverse)
-
 head=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_max = 10,skip = 42)
 
 head$X1=NULL
