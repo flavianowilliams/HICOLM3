@@ -23,16 +23,16 @@ This report represents a statistical analysis of the main thermodynamic variable
 ## Parameters
 
 ```{r, echo=FALSE}
-  cat("Ensemble:",head$X2,head$X3)
-  cat("System:",head$X4,"atoms")
-  if (head$X2=="npt") {
-    cat("pressure:",head$X5,"atm")
+  cat("Ensemble:",head$ensemble[1],head$ensemble[2])
+  cat("System:",system$X3,"atoms")
+  if (head$ensemble[1]=="npt") {
+    cat("pressure:",head$pressure[1],"atm")
+  } 
+  if (head$ensemble[1]=="npt"| head$ensemble[1]=="nvt") {
+    cat("temperature:",head$temperature[1],"K")
   }
-  if (head$X2=="nvt"|head$X2=="npt") {
-    cat("temperature:",head$X6,"K")
-  }
-  cat("timestep:",head$X7,"ps")
-  cat("time-scale:",head$X8,"ps")
+  cat("timestep:",head$timestep[1],"ps")
+  cat("time-scale:",head$timestep[1]*head$nstep[1],"ps")
 ```
 
 ## volume
@@ -65,7 +65,7 @@ This report represents a statistical analysis of the main thermodynamic variable
     ggplot(aes(x=time,y=Value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
-    labs(x="time (ps)",y=expression(paste("pressure (atm)")))
+    labs(x="time (ps)",y=expression(paste("pressure", (atm))))
 ```
 
 ## energy
@@ -76,7 +76,7 @@ This report represents a statistical analysis of the main thermodynamic variable
   ggplot(aes(x=time,y=Value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="time (ps)",y=expression(paste("energy (kcal/mol)")))
+  labs(x="time (ps)",y=expression(paste("energy", (kcal/mol))))
 ```
 
 ## density
@@ -87,7 +87,7 @@ This report represents a statistical analysis of the main thermodynamic variable
   ggplot(aes(x=time,y=Value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="time (ps)",y=expression(paste("density (g/cm3)")))
+  labs(x="time (ps)",y=expression(paste("density", (g/cm^3))))
 ```
 
 ## Maximum force
@@ -97,7 +97,7 @@ This report represents a statistical analysis of the main thermodynamic variable
   ggplot(aes(x=time,y=fmax))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
-  labs(x="time (ps)",y=expression(paste("F_max (kcal/mol.A)")))
+  labs(x="time (ps)",y=expression(paste("F_max", (kcal/mol.A))))
 ```
 
 # Gather of the thermodynamic values.

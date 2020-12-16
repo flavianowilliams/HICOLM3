@@ -321,10 +321,12 @@ echo
 read option
 if [ ! -d '1' ]
 then
+    cp HICOLM.out /home/\$USER/.hicolm/R/report/.
     cp thermodynamics.csv /home/\$USER/.hicolm/R/report/.
     cp atoms.csv /home/\$USER/.hicolm/R/report/.
     Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
     mv /home/\$USER/.hicolm/R/report/report.pdf .
+    rm /home/\$USER/.hicolm/R/report/HICOLM.out
     rm /home/\$USER/.hicolm/R/report/thermodynamics.csv
     rm /home/\$USER/.hicolm/R/report/atoms.csv
     rm /home/\$USER/.hicolm/R/report/report.tex
