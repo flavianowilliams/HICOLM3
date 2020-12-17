@@ -1,5 +1,9 @@
 # importanto e transformando dataframe de dados termodinamicos
 
+#library(tidyverse)
+#setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/GLYP0+H2O/MD")
+
+
 head=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_max = 10,skip = 42)
 
 head$X1=NULL
@@ -21,13 +25,13 @@ head$reuse=as.integer(head$reuse)
 head$timestep=as.numeric(head$timestep)
 head$r_cutoff=as.numeric(head$r_cutoff)
 
-system=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_max = 1,skip = 67)
+system=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3","X4"),n_max = 1,skip = 13)
 
-system$X1=NULL
+system[1:3]=NULL
 
 thermo=readr::read_csv(file="thermodynamics.csv",col_names = TRUE)
 
-thermo = thermo %>% gather(volume,temperature,pressure,energy,density,key="data",value="Value")
+thermo = thermo %>% gather(volume,temperature,pressure,energy,density,key="data",value="value")
 
 # importanto e transformando dataframe de dados atomicos
 

@@ -24,7 +24,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 
 ```{r, echo=FALSE}
   cat("Ensemble:",head$ensemble[1],head$ensemble[2])
-  cat("System:",system$X3,"atoms")
+  cat("System:",system$X4,"atoms")
   if (head$ensemble[1]=="npt") {
     cat("pressure:",head$pressure[1],"atm")
   } 
@@ -35,12 +35,18 @@ This report represents a statistical analysis of the main thermodynamic variable
   cat("time-scale:",head$timestep[1]*head$nstep[1],"ps")
 ```
 
+# Here is the summary of some thermodynamic variables.
+
+```{r, statistics, echo=FALSE}
+  print(data_mean)
+```
+
 ## volume
 
 ```{r volume, echo=FALSE}
   thermo %>%
   filter(data=='volume') %>%
-    ggplot(aes(x=time,y=Value))+
+    ggplot(aes(x=time,y=value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
     labs(x="time (ps)",y=expression(paste("volume ",(ring(A)^3))))
@@ -51,7 +57,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r temperature, echo=FALSE}
   thermo %>%
   filter(data=='temperature') %>%
-    ggplot(aes(x=time,y=Value))+
+    ggplot(aes(x=time,y=value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
     labs(x="time (ps)",y=expression(paste("temperature (K)")))
@@ -62,7 +68,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r pressure, echo=FALSE}
   thermo %>%
   filter(data=='pressure') %>%
-    ggplot(aes(x=time,y=Value))+
+    ggplot(aes(x=time,y=value))+
     geom_line(color="black")+
     geom_smooth(color="red",se=T)+
     labs(x="time (ps)",y=expression(paste("pressure", (atm))))
@@ -73,7 +79,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r energy, echo=FALSE}
   thermo %>%
   filter(data=='energy') %>%
-  ggplot(aes(x=time,y=Value))+
+  ggplot(aes(x=time,y=value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
   labs(x="time (ps)",y=expression(paste("energy", (kcal/mol))))
@@ -84,7 +90,7 @@ This report represents a statistical analysis of the main thermodynamic variable
 ```{r density, echo=FALSE}
   thermo %>%
   filter(data=='density') %>%
-  ggplot(aes(x=time,y=Value))+
+  ggplot(aes(x=time,y=value))+
   geom_line(color="black")+
   geom_smooth(color="red",se=T)+
   labs(x="time (ps)",y=expression(paste("density", (g/cm^3))))
@@ -100,27 +106,14 @@ This report represents a statistical analysis of the main thermodynamic variable
   labs(x="time (ps)",y=expression(paste("F_max", (kcal/mol.A))))
 ```
 
-# Gather of the thermodynamic values.
+# Gaussiana distribution of the thermodynamic values.
 
-```{r facet, echo=FALSE}
+```{r, echo=FALSE}
   ggplot()+
-    geom_line(data=filter(thermo,data=='volume'),mapping=aes(x=time,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='volume'),mapping=aes(x=time,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='temperature'),mapping=aes(x=time,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='temperature'),mapping=aes(x=time,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='pressure'),mapping=aes(x=time,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='pressure'),mapping=aes(x=time,y=Value),color="red",se=T)+     geom_line(data=filter(thermo,data=='energy'),mapping=aes(x=time,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='energy'),mapping=aes(x=time,y=Value),color="red",se=T)+
-    geom_line(data=filter(thermo,data=='density'),mapping=aes(x=time,y=Value),color="black")+
-    geom_smooth(data=filter(thermo,data=='density'),mapping=aes(x=time,y=Value),color="red",se=T)+
-  facet_wrap(~data,nrow = 3,scales = 'free')
-```
-
-# Here is the summary of some thermodynamic variables.
-
-```{r summary, echo=FALSE}
-#  thermo %>%
-#  spread(key="data",value="Value") %>%
-#  select(volume:density) %>%
-#  summary()
+    geom_histogram(data=filter(thermo,data=='volume'),mapping=aes(value),binwidth = 10)+
+    geom_histogram(data=filter(thermo,data=='temperature'),mapping=aes(value),binwidth = 5)+
+    geom_histogram(data=filter(thermo,data=='pressure'),mapping=aes(value),binwidth = 30)+
+    geom_histogram(data=filter(thermo,data=='energy'),mapping=aes(value),binwidth = 10)+
+    geom_histogram(data=filter(thermo,data=='density'),mapping=aes(value),binwidth = 0.01)+
+    facet_wrap(~data,nrow=3,scales = "free")
 ```
