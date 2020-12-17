@@ -110,10 +110,10 @@ This report represents a statistical analysis of the main thermodynamic variable
 
 ```{r, echo=FALSE}
   ggplot()+
-    geom_histogram(data=filter(thermo,data=='volume'),mapping=aes(value),binwidth = 10)+
-    geom_histogram(data=filter(thermo,data=='temperature'),mapping=aes(value),binwidth = 5)+
-    geom_histogram(data=filter(thermo,data=='pressure'),mapping=aes(value),binwidth = 30)+
+    geom_histogram(data=filter(thermo,data=='volume'),mapping=aes(value),binwidth = 50)+
+    geom_histogram(data=filter(thermo,data=='temperature'),mapping=aes(value),binwidth = 2.5)+
+    geom_histogram(data=filter(thermo,data=='pressure'),mapping=aes(value),binwidth = 500)+
     geom_histogram(data=filter(thermo,data=='energy'),mapping=aes(value),binwidth = 10)+
-    geom_histogram(data=filter(thermo,data=='density'),mapping=aes(value),binwidth = 0.01)+
+    geom_histogram(data=filter(thermo,data=='density'),mapping=aes(value),binwidth = 0.005)+
     facet_wrap(~data,nrow=3,scales = "free")
 ```

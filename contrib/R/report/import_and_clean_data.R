@@ -1,7 +1,7 @@
 # importanto e transformando dataframe de dados termodinamicos
 
 #library(tidyverse)
-#setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/GLYP0+H2O/MD")
+#setwd("/home/flaviano/MEGA/maria_eduarda/simulacoes/H2O/simulacoes/MD/hoover")
 
 
 head=readr::read_table2(file = "HICOLM.out",col_names = c("X1","X2","X3"),n_max = 10,skip = 42)
