@@ -46,8 +46,8 @@ contains
 
     implicit none
 
-    integer i,ihist,geo_backup
-    real(8) t0,t3,time,temp,press,xhi,eta,sigma
+    integer i,ihist
+    real(8) t0,t3,time,temp,press,xhi,eta,sigma,mtot
     real(8) enpot,ekinet
 
     !-contagem do tempo absoluto
@@ -60,7 +60,7 @@ contains
 
     !-preparando Dinâmica molecular
 
-    call md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
+    call md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press)
 
     write(6,*)('#',i=1,93)
     write(6,*)('MD RUNNING ',i=1,8)
@@ -77,19 +77,23 @@ contains
     write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
     write(6,'(4x,111a1)')('-',i=1,84)
 
-    !-relaxação do sistema
+    write(3,5)'step',',','time',',','volume',',','temperature',',','pressure',',','ekinet',&
+         ',','epotential',',','energy',',','density'
 
-    write(3,5)'i','TIME','VOLUME','TEMPERATURE','PRESSURE','ENERGY'
+    write(2,40)'step',',','time',',','molecule',',','site',',','Z',',','type',',','mass',',',&
+         'charge',',','x',',','y',',','z',',','fx',',','fy',',','fz',',','vx',',','vy',',','vz'
 
-    geo_backup=-1
+    write(9,50)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',',',&
+         'cx',',','cy',',','cz',',','a',',','b',',','c'
 
     time=dtime
     do i=1,nrelax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
-       write(6,20)'MD',i,time*tconv,volume*rconv**3,&
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
+       if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,&
-            volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)i,',',time*tconv,',',volume*rconv**3,',',temp*teconv,',',press*pconv,',',&
+            ekinet*econv,',',(enpot+envdw_corr)*econv,',',(ekinet+enpot+envdw_corr)*econv,&
+            ',',(mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        time=time+dtime
     end do
 
@@ -97,11 +101,12 @@ contains
 
     ihist=1
     do i=nrelax+1,ntrialmax
-       call mdloop(i,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
-       write(6,20)'MD',i,time*tconv,volume*rconv**3,&
+       call mdloop(i,xhi,eta,sigma,temp,press,ekinet,enpot)
+       if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
             temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
-       write(3,30)i,time*tconv,&
-            volume*rconv**3,temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
+       write(3,30)i,',',time*tconv,',',volume*rconv**3,',',temp*teconv,',',press*pconv,',',&
+            ekinet*econv,',',(enpot+envdw_corr)*econv,',',(ekinet+enpot+envdw_corr)*econv,&
+            ',',(mtot/volume)*mconv/(n0*1.d-24*rconv**3)
        if(mod(i,nhist).eq.0)call history(ihist)
        time=time+dtime
     end do
@@ -117,14 +122,18 @@ contains
 
     return
 
-5   format(5x,a8,6x,a4,10x,a6,6x,a11,4x,a8,7x,a6)
+5   format(3x,a4,a1,10x,a4,a1,8x,a6,a1,4x,a11,a1,2x,a8,a1,5x,a6,a1,4x,a10,a1,4x,a6,a1,6x,a7)
 10  format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20  format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
-30  format(5x,i8,5(2x,es12.4))
+30  format(1x,i12,a1,8(e12.4,a1))
+40  format(3x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,a6,a1,4x,a4,a1,7x,a6,a1,8x,3(a1,a1,11x),&
+         3(a2,a1,10x),3(a2,a1,10x))
+50  format(3x,2(a4,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),2(a2,a1,10x),&
+         a2,a1,9x,3(a1,a1,10x))
 
   end subroutine md
 
-  subroutine md_prepare(xhi,eta,sigma,ekinet,enpot,temp,press)
+  subroutine md_prepare(xhi,eta,sigma,mtot,ekinet,enpot,temp,press)
     !***************************************************************************************
     ! Preparacao da dinâmica molecular:                                                    *
     ! - Preparando campo de forca;                                                         *
@@ -133,18 +142,10 @@ contains
 
     implicit none
 
-    integer i,nwr
-    real(8) xhi,eta,sigma,ekinet,temp,press
+    integer i
+    real(8) xhi,eta,sigma,ekinet,temp,press,mtot
     real(8) virvdw,virbond,virbend,virtors,vircoul,virtot
     real(8) encoul,enbond,enbend,entors,envdw,enpot
-
-    !-abrindo ficheiro de dados
-
-    open(2,file='HICOLM.md',status='unknown')
-
-    nwr=6
-
-    write(2,'(i12,e12.4,3i7)')int((ntrialmax-nrelax)/nhist),dtime*tconv,nwr,natom,spctot
 
     !-preparando Campo de Força
 
@@ -208,7 +209,7 @@ contains
 
   end subroutine md_prepare
 
-  subroutine mdloop(mdstp,geo_backup,xhi,eta,sigma,temp,press,ekinet,enpot)
+  subroutine mdloop(mdstp,xhi,eta,sigma,temp,press,ekinet,enpot)
     !***************************************************************************************
     ! Obtencao das variaveis canonicas;                                                    *
     ! Calculo da energia total;                                                            *
@@ -218,7 +219,7 @@ contains
 
     implicit none
 
-    integer mdstp,i,ix,geo_backup
+    integer mdstp,i,j,k,ix,n1,n2
     real(8) temp,press,xhi,eta,sigma
 
     real(8) virvdw,virbond,virbend,virtors,vircoul
@@ -256,28 +257,32 @@ contains
 
     !-imprimindo estrutura
 
-    call geometry(geo_backup)
+    call geometry(mdstp)
 
     !-escrevendo variaveis canonicas em arquivo de dados
 
     if(mdstp.gt.nrelax.and.mod(mdstp-nrelax,nhist).eq.0)then
        ix=(mdstp-nrelax)/nhist
-       write(2,10)ix
-       write(2,20)(str(i)*econv/rconv**3,i=1,6)
-       write(2,20)(ix*dtime)*nhist*tconv,volume*rconv**3,temp*teconv,&
-            press*pconv,(ekinet+envdw_corr)*econv,(ekinet+enpot+envdw_corr)*econv,&
-            (mtot/volume)*mconv/(6.02d-4*rconv**3)
-       write(2,*)
-       do i=1,3
-          write(2,40)v(i,1)*rconv,v(i,2)*rconv,v(i,3)*rconv
+       n1=1
+       do i=1,nmolec
+          n2=1
+          do j=1,ntmolec(i)
+             do k =1,nxmolec(i)
+                write(2,10)ix,',',ix*dtime*tconv,',',n2,',',k,',',idna(n1),',',&
+                     atsp(atp(n1)),',',mass(n1)*mconv,',',qat(n1),',',&
+                     xa(n1)*rconv,',',ya(n1)*rconv,',',za(n1)*rconv,',',&
+                     fax(n1)*econv/rconv,',',fay(n1)*econv/rconv,',',faz(n1)*econv/rconv,',',&
+                     vax(n1)*rconv/tconv,',',vay(n1)*rconv/tconv,',',vaz(n1)*rconv/tconv
+                n1=n1+1
+             end do
+             n2=n2+1
+          enddo
        end do
-       write(2,*)
-       do i=1,natom
-          write(2,30)idna(i),atp(i),mass(i)*mconv,qat(i),xa(i)*rconv, &
-               ya(i)*rconv,za(i)*rconv
-          write(2,40)vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
-          write(2,40)fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv
-       end do
+       write(9,20)ix,',',ix*dtime*tconv,',',&
+            v(1,1)*rconv,',',v(1,2)*rconv,',',v(1,3)*rconv,',',&
+            v(2,1)*rconv,',',v(2,2)*rconv,',',v(2,3)*rconv,',',&
+            v(3,1)*rconv,',',v(3,2)*rconv,',',v(3,3)*rconv,',',&
+            a*rconv,',',b*rconv,',',c*rconv
     end if
 
     !-atualizando a lista de vizinhos de Verlet
@@ -288,10 +293,8 @@ contains
 
     return
 
-10  format(1x,i5)
-20  format(6e16.5)
-30  format(1x,2i5,5e12.4)
-40  format(35x,3e12.4)
+10  format(1x,i12,a1,e12.4,a1,2(i8,a1),i5,a1,a5,a1,21(e12.4,a1))
+20  format(1x,i12,a1,13(e12.4,a1))
 
   end subroutine mdloop
 

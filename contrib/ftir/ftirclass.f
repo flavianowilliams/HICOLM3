@@ -39,7 +39,7 @@ c
       real(kind=4) t0,dt,cmsprec
       real(kind=4) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
 c
-      open(unit=ird,file="TBMD.md",status="old")
+      open(unit=ird,file="HICOLM.md",status="old")
       open(unit=iwrz,file="infrared.dat",status="unknown")
       open(unit=iwtt,file="vacf.dat",status="unknown")
       open(unit=iwrx,file="probability.dat",status="unknown")
@@ -69,7 +69,7 @@ c
       write(iwrt,*)
       write(iwrt,*)'Desligando CC?:',' SIM'
       write(iwrt,*)
-      write(iwrt,*)'Parametros do arquivo TBMD.md:'
+      write(iwrt,*)'Parametros do arquivo HICOLM.md:'
       write(iwrt,*)'-------------------------------------'
       write(iwrt,'(a7,2x,i5)')'Frames:',tmax
       write(iwrt,'(a14,2x,f9.6)')'Timestep (ps):',dtime

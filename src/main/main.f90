@@ -38,8 +38,12 @@ program HICOLM
 
   call cpu_time(t0)
 
-  open(3,file='HICOLM.df',status='unknown')  ! print dataframe
-  open(6,file='HICOLM.out',status='unknown') ! imprimindo arquivo out
+  !-abrindo ficheiro de dados
+
+  open(2,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
+  open(3,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodinamicas
+  open(6,file='HICOLM.out',status='unknown')         ! imprimindo arquivo de log
+  open(9,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
 
   t1=0.d0
   t2=0.d0
@@ -58,7 +62,7 @@ program HICOLM
   write(6,*)
   write(6,'(18x,a57)')'HICOLM: Multi-Methods for Molecules and Condensed Systems'
   write(6,*)
-  write(6,'(39x,a14)')'Version: 2.2.1'
+  write(6,'(39x,a14)')'Version: 2.3.1'
   write(6,*)
   write(6,'(''Host: '',2x,a10)')host
   write(6,'(''Date: '',2x,a8)')date

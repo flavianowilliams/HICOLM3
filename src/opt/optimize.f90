@@ -145,16 +145,10 @@ contains
 !          call steepest_descent_rotation
           einter=envdw+encoul+envdw_corr
        else
-          if(mod(i,2).eq.0)then
-             call ff_modules_inter(envdw,encoul,virvdw,vircoul)
-             call steepest_descent_CM(gax,gay,gaz)
-             einter=envdw+encoul+envdw_corr
-          else
-             call ff_modules_intra&
-                  (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
-             call steepest_descent(gax,gay,gaz)
-             eintra=enbond+enbend+entors+envdw+encoul
-          end if
+          call ff_modules_intra&
+               (enbond,enbend,entors,envdw,encoul,virbond,virbend,virtors,virvdw,vircoul)
+          call steepest_descent(gax,gay,gaz)
+          eintra=enbond+enbend+entors+envdw+encoul
        end if
 
        enpot=eintra+einter
