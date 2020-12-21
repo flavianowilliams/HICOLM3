@@ -25,3 +25,7 @@ data_mean = data_mean %>%
   inner_join(data_max, by="data") %>%
   rename("Mean"="mean(value)","Standard deviation"="sd(value)",
          "Minimum value"="min(value)","Maximum value"="max(value)")
+
+# limpando memoria
+
+rm(data_sd,data_min,data_max)
