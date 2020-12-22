@@ -156,7 +156,7 @@ contains
 
   end subroutine vdw_calc
 
-  subroutine vdw_14sf(envdw,virvdw)
+  subroutine vdw_sf(ni,nj,nk,xvz,yvz,zvz,envdw,virvdw)
 
     implicit none
 
@@ -164,29 +164,19 @@ contains
     real(8) pot,fr,xvz,yvz,zvz
     real(8) envdw,virvdw
 
-    do i=1,ntorsstp
+    call vdw_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
 
-       ni=torsijkn(1,i)
-       nj=torsijkn(4,i)
-       nk=torsim(i)
+    pot=pot*sf_vdw(nk)
+    fr=fr*sf_vdw(nk)
 
-       call mic(ni,nj,xvz,yvz,zvz)
+    call vdw_force(ni,nj,xvz,yvz,zvz,fr)
 
-       call vdw_flags(atp(ni),atp(nj),xvz,yvz,zvz,pot,fr)
-
-       pot=pot*sf_vdw(nk)
-       fr=fr*sf_vdw(nk)
-
-       call vdw_force(ni,nj,xvz,yvz,zvz,fr)
-
-       virvdw=virvdw+fr*(xvz**2+yvz**2+zvz**2)
-       envdw=envdw+pot
-
-    end do
+    virvdw=virvdw+fr*(xvz**2+yvz**2+zvz**2)
+    envdw=envdw+pot
 
     return
 
-  end subroutine vdw_14sf
+  end subroutine vdw_sf
 
   subroutine vdw_flags(i,j,xvz,yvz,zvz,pot,fr)
     !****************************************************************************************

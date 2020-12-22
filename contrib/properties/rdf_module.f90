@@ -20,19 +20,19 @@
 !
 module rdf_module
 
-  use input_module
-
   implicit none
 
-  integer nk,nkmx,nmolec,molectt
-  integer, allocatable :: idna(:),atp(:)
-  integer qmolec(10),qatom(10),namoltt(10000),spcat(2)
+  integer nk,nkmx,nmolec,molectt,nat,nstp,nstpmax
+  integer, allocatable :: idna(:)
+  integer qmolec(10),qatom(10),namoltt(100000)
+  character(2) spcat(2)
+  character(2), allocatable :: atp(:)
 
-  parameter(nkmx=1000000)
+  parameter(nkmx=1000000,nstpmax=10000)
 
   real(8) rdfcut,drdfcut,a,b,c
   real(8), allocatable :: gr(:)
-  real(8), allocatable :: v(:,:)
+  real(8), allocatable :: v(:,:,:)
   real(8), allocatable :: xa(:),ya(:),za(:)
 
   contains
@@ -42,22 +42,42 @@ module rdf_module
     implicit none
 
     integer i,j,k,nat,nstp
+    real(8) lxf
+    character lxc
+
+    write(*,*)'Types of molecules (qty):'
+    read(*,*)nmolec
+!    nmolec=1
+    write(*,*)'Number of molecules per type:'
+    read(*,*)(qmolec(i),i=1,nmolec)
+!    qmolec(1)=309
+    write(*,*)'Number of atoms per molecule per type:'
+    read(*,*)(qatom(i),i=1,nmolec)
+!    qatom(1)=3
+    write(*,*)'Choose two species for the RDF calculus:'
+    read(*,*)spcat(1),spcat(2)
+!    spcat(1)='OW'
+!    spcat(2)='HW'
+
+    nat=0
+    do i=1,nmolec
+       nat=nat+qmolec(i)*qatom(i)
+    end do
+
+    read(1,*)
+
+    do i=1,nstpmax
+       read(1,'(1x,i12)',end=1)nstp
+    end do
+
+1   rewind(1)
 
     allocate (xa(nat),ya(nat),za(nat))
     allocate (idna(nat),atp(nat))
     allocate (gr(nkmx))
-    allocate (v(3,3))
+    allocate (v(nstp,3,3))
 
     drdfcut=0.025d0
-
-    write(*,*)'Types of molecules (qty):'
-    read(*,*)nmolec
-    write(*,*)'Number of molecules per type:'
-    read(*,*)(qmolec(i),i=1,nmolec)
-    write(*,*)'Number of atoms per molecule per type:'
-    read(*,*)(qatom(i),i=1,nmolec)
-    write(*,*)'Choose two species for the RDF calculus:'
-    read(*,*)spcat(1),spcat(2)
 
     molectt=1
     do i=1,nmolec
@@ -78,37 +98,23 @@ module rdf_module
 
 !    nk=int(rdfcut/drdfcut)
 
-    do i=1,nstp
-       do k=1,5
-          read(1,*)
-       end do
-       do k=1,3
-          read(1,*)v(k,1),v(k,2),v(k,3)
-       end do
-       read(1,*)
-       do k=1,nat
-          read(1,*)
-          read(1,*)
-          read(1,*)
-       end do
-       if(i.eq.1)then
-          a=sqrt(v(1,1)**2+v(1,2)**2+v(1,3)**2)
-          b=sqrt(v(2,1)**2+v(2,2)**2+v(2,3)**2)
-          c=sqrt(v(3,1)**2+v(3,2)**2+v(3,3)**2)
-       else
-          a=min(a,sqrt(v(1,1)**2+v(1,2)**2+v(1,3)**2))
-          b=min(b,sqrt(v(2,1)**2+v(2,2)**2+v(2,3)**2))
-          c=min(c,sqrt(v(3,1)**2+v(3,2)**2+v(3,3)**2))
-       end if
-    end do
+    read(1,*)
+    read(1,10)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
 
     rdfcut=0.5d0*min(a,min(b,c))
 
+    do i=2,nstp
+       read(1,10)(lxf,k=1,2),((v(i,j,k),k=1,3),j=1,3),a,b,c
+       rdfcut=min(rdfcut,0.5d0*min(a,min(b,c)))
+    end do
+
     nk=int(rdfcut/drdfcut)
 
-    rewind(1)
+    close(1)
 
     return
+
+10  format(1x,e12.4,1x,13(e12.4,1x))
 
   end subroutine rdf_prepare
 
@@ -116,45 +122,43 @@ module rdf_module
 
     implicit none
 
-    integer nstp,nat,k,i,spct(3)
-    real(8) lx
+    integer nstp,nat,j,k,i,spct(3)
+    real(8) lxf
 
     call rdf_prepare(nat,nstp)
 
-    do i=1,nstp
-       do k=1,5
-          read(1,*)
-       end do
-       do k=1,3
-          read(1,*)v(k,1),v(k,2),v(k,3)
-       end do
-       read(1,*)
-       do k=1,nat
-          read(1,*)idna(k),atp(k),lx,lx,xa(k),ya(k),za(k)
-          read(1,*)
-          read(1,*)
-       end do
-       call rdf
+    read(2,*)
+
+    spct(1)=0
+    spct(2)=0
+    do i=1,nat
+       read(2,10)(lxf,k=1,5),atp(i),lxf,lxf,xa(i),ya(i),za(i)
+       if(atp(i).eq.spcat(1))spct(1)=spct(1)+1
+       if(atp(i).eq.spcat(2))spct(2)=spct(2)+1
     end do
 
-    do i=1,spctot
-       spct(i)=0
-       do k=1,nat
-          if(atp(k).eq.i)spct(i)=spct(i)+1
+    call rdf(1)
+
+    do i=2,nstp
+       do j=1,nat
+          read(2,10)(lxf,k=1,5),atp(j),lxf,lxf,xa(j),ya(j),za(j)
        end do
+       call rdf(i)
     end do
 
     call rdf_final(nstp,spct)
 
     return
 
+10  format(1x,e12.0,1x,e12.0,1x,2(e8.0,1x),e5.0,1x,a5,1x,21(e12.4,1x))
+
   end subroutine rdf_calc
 
-  subroutine rdf
+  subroutine rdf(stp)
 
     implicit none
 
-    integer i,j,l,ii,jj,nx,nxx,s,ss
+    integer i,j,l,ii,jj,nx,nxx,s,ss,stp
     real(8) xvz,yvz,zvz,dr,rr,drr
 
     drr=drdfcut
@@ -170,7 +174,7 @@ module rdf_module
                 do jj=1,namoltt(ii)
                    nxx=ss+jj+(s+namoltt(i))
                    if(atp(nx).eq.spcat(1).and.atp(nxx).eq.spcat(2))then
-                      call mic(nx,nxx,xvz,yvz,zvz)
+                      call mic(stp,nx,nxx,xvz,yvz,zvz)
                       dr=sqrt(xvz**2+yvz**2+zvz**2)
                       if(rr.gt.(dr-0.5d0*drr))then
                          if(rr.le.(dr+0.5d0*drr))gr(l)=gr(l)+2.d0
@@ -196,20 +200,20 @@ module rdf_module
     integer k,nstp,spct(3)
     real(8) rr,drr,vol
 
-    write(2,'(a26,2i5)')'# RDF calculus of species:',spcat(1),spcat(2)
+    write(3,'(a26,2a5)')'# RDF calculus of species:',spcat(1),spcat(2)
 
     drr=drdfcut
 
     rr=0.0d0
     do k=1,nk
        vol=4*3.14d0*((rr+0.5d0*drr)**3-(rr-0.5d0*drr)**3)/3.d0
-       gr(k)=gr(k)*a*b*c/(vol*nstp*spct(spcat(1))*spct(spcat(2)))
+       gr(k)=gr(k)*a*b*c/(vol*nstp*spct(1)*spct(2))
        rr=rr+drr
     end do
 
     rr=0.0d0
     do k=1,nk
-       write(2,*)rr,gr(k)
+       write(3,*)rr,gr(k)
        rr=rr+drr
     end do
 
@@ -217,18 +221,18 @@ module rdf_module
 
   end subroutine rdf_final
 
-  subroutine mic(i,j,xvz,yvz,zvz)
+  subroutine mic(stp,i,j,xvz,yvz,zvz)
     !**************************************************************************
     !subrotina responsavel por aplicar a tecnica minimum image convention     *
     !**************************************************************************
     implicit none
 
-    integer i,j
+    integer i,j,stp
     real(8) xx,yy,zz,xvz,yvz,zvz
 
-    xx=v(1,1)+v(2,1)+v(3,1)
-    yy=v(1,2)+v(2,2)+v(3,2)
-    zz=v(1,3)+v(2,3)+v(3,3)
+    xx=v(stp,1,1)+v(stp,2,1)+v(stp,3,1)
+    yy=v(stp,1,2)+v(stp,2,2)+v(stp,3,2)
+    zz=v(stp,1,3)+v(stp,2,3)+v(stp,3,3)
 
     xvz=(xa(j)-xa(i))-xx*int(2.d0*(xa(j)-xa(i))/xx)
     yvz=(ya(j)-ya(i))-yy*int(2.d0*(ya(j)-ya(i))/yy)

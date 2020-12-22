@@ -288,57 +288,18 @@ contains
 
  end subroutine cell_symmetry
 
- subroutine geometry(geo_backup)
+ subroutine geometry(mdstp)
    !***************************************************************************************
    ! - Impressao de variaveis canonicas em HICOLM.XSF                                       *
    !***************************************************************************************
 
    implicit none
 
-   integer i,j,geo_backup
-
-   !-abrindo ficheiro de backup
-
-   if(geo_backup.gt.0)goto 1
-
-   open(8,file='.HICOLM.XSF',status='unknown')
-
-   !-imprimindo arquivo XSF
-
-   write(8,*)'BEGIN_INFO'
-   write(8,*)'  #'
-   write(8,*)'  # This is a XCRYSDEN-Structure-File'
-   write(8,*)'  #'
-   write(8,*)'  # aimed for Visualization of geometry'
-   write(8,*)'  #'
-   write(8,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
-   write(8,*)'  #'
-   write(8,*)'  #'
-   write(8,*)'END_INFO'
-
-   write(8,*)'# estrutura final'
-   write(8,'(a7)')'CRYSTAL'
-
-   write(8,'(a7)')'PRIMVEC'
-   do i=1,3
-      write(8,'(3(3x,f14.8))')(v(i,j)*rconv,j=1,3)
-   end do
-
-   write(8,'(a9)')'PRIMCOORD'
-   write(8,'(2i5)')natom,1
-
-   do i=1,natom
-      write(8,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)') &
-           idna(i),xa(i)*rconv,ya(i)*rconv,za(i)*rconv, &
-           fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv, &
-           vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
-   end do
-
-   close(8)
+   integer i,j,mdstp
 
    !-abrindo ficheiro de escrita
 
-1  open(1,file='HICOLM.XSF',status='unknown')
+   open(1,file='HICOLM.XSF',status='unknown')
 
    !-imprimindo arquivo XSF
 
@@ -373,7 +334,42 @@ contains
 
    close(1)
 
-   geo_backup=-geo_backup
+   if(mod(mdstp,2).eq.0)return
+
+   !-abrindo ficheiro de backup
+
+   open(8,file='.HICOLM.XSF',status='unknown')
+
+   write(8,*)'BEGIN_INFO'
+   write(8,*)'  #'
+   write(8,*)'  # This is a XCRYSDEN-Structure-File'
+   write(8,*)'  #'
+   write(8,*)'  # aimed for Visualization of geometry'
+   write(8,*)'  #'
+   write(8,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
+   write(8,*)'  #'
+   write(8,*)'  #'
+   write(8,*)'END_INFO'
+
+   write(8,*)'# estrutura final'
+   write(8,'(a7)')'CRYSTAL'
+
+   write(8,'(a7)')'PRIMVEC'
+   do i=1,3
+      write(8,'(3(3x,f14.8))')(v(i,j)*rconv,j=1,3)
+   end do
+
+   write(8,'(a9)')'PRIMCOORD'
+   write(8,'(2i5)')natom,1
+
+   do i=1,natom
+      write(8,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)') &
+           idna(i),xa(i)*rconv,ya(i)*rconv,za(i)*rconv, &
+           fax(i)*econv/rconv,fay(i)*econv/rconv,faz(i)*econv/rconv, &
+           vax(i)*rconv/tconv,vay(i)*rconv/tconv,vaz(i)*rconv/tconv
+   end do
+
+   close(8)
 
     return
 

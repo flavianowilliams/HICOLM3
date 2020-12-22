@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
-# describe: Installation of HICOLM package and utilitaries
-#  version: 2.1.0
+# describe: Installation of HICOLM package and utilities
+#  version: 2.3.1
 #  license: MIT license
 #
 path=`pwd`
@@ -45,29 +45,21 @@ echo
 echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 read aux_dir
 #
-echo
-echo "Would you like to install HICOLM with graphical support? (default: no)"
-read supp
-#
 if [ -z $aux_dir ]
 then
     aux_dir="/usr/local/share"
 fi
 #
-# --creating directories
+# -- removing old directories and files
 #
 if [ -d "$aux_dir/HICOLM" ]
 then
     rm -rf $aux_dir/HICOLM
 fi
-if [ -d "$HOME/.hicolm" ]
-then
-    rm -rf $HOME/.hicolm
-fi
-#
 mkdir $aux_dir/HICOLM
-mkdir $aux_dir/HICOLM/amber
 mkdir $aux_dir/HICOLM/R
+mkdir $aux_dir/HICOLM/R/report
+mkdir $aux_dir/HICOLM/amber
 #
 # -- installing HICOLM --
 #
@@ -175,8 +167,9 @@ echo
 echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
-cp $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp $path/contrib/R/* $aux_dir/HICOLM/R/.
+cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/R/report/.
+cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/R/report/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
@@ -185,12 +178,8 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
-echo -e "\e[33m-> Installing R-packages\e[0m"
-echo
-case "$supp" in
-    yes|YES|Yes)
-	Rscript $path/contrib/R/prepare.R
-esac
+#echo -e "\e[33m-> Preparing R environment\e[0m"
+#Rscript $path/contrib/R/prepare.R
 #
 # --preparing script to call HICOLM executable
 #
@@ -202,6 +191,7 @@ fi
 touch $exe_dir/hicolm
 #
 echo "#!/bin/sh
+#
 if [ ! -d '/tmp/amber' ]
 then
     cp -r $aux_dir/HICOLM/amber /tmp/amber
@@ -226,37 +216,65 @@ else
     then
         cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
-fi" >> $exe_dir/hicolm
+fi
 #
-case "$supp" in
-    yes|YES|Yes)
-        echo "
-if [ -d \"/home/\$USER/.hicolm\" ]
-then
-    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
-else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
-fi" >> $exe_dir/hicolm
-        ;;
-    no|NO|No|"")
-        echo "
-if [ -d \"/home/\$USER/.hicolm\" ]
-then
-    $exe_dir/HICOLM.bin
-else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    $exe_dir/HICOLM.bin
-fi" >> $exe_dir/hicolm
-esac
+$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
 #
-# preparing script to get results
+#case "$supp" in
+#    yes|YES|Yes)
+#        echo "
+#if [ -d \"/home/\$USER/.hicolm\" ]
+#then
+#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+#else
+#    mkdir /home/\$USER/.hicolm
+#    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+#    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+#fi" >> $exe_dir/hicolm
+#        ;;
+#    no|NO|No|"")
+#        echo "
+#    $exe_dir/HICOLM.bin
+#    ">> $exe_dir/hicolm
+#esac
 #
 chmod +x $exe_dir/hicolm
+#
+# preparing scripts to get results
+#
+if [ -f "$exe_dir/hprepare" ]
+then
+    rm $exe_dir/hprepare
+fi
+#
+echo "#!/bin/sh
+#
+echo
+echo \"Updating R environment...\"
+echo
+#
+if [ -d \"/home/\$USER/.hicolm\" ]
+then
+    rm -r /home/\$USER/.hicolm
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    echo
+    echo \"Finish!\"
+    echo
+else
+    mkdir /home/\$USER/.hicolm
+    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
+    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    echo
+    echo \"Finish!\"
+    echo
+fi">> $exe_dir/hprepare
+#
+chmod +x $exe_dir/hprepare
+#
+touch $exe_dir/hresults
 #
 if [ -f "$exe_dir/hresults" ]
 then
@@ -266,50 +284,52 @@ fi
 touch $exe_dir/hresults
 #
 echo "#!/bin/sh
-if [ -d \"/home/\$USER/.hicolm\" ]
+#
+# - check for auxiliary files and directories
+#
+if [ ! -d \"/home/\$USER/.hicolm\" ]
 then
-    echo
-    echo 'Please, choose one of the following options:'
-    echo
-    echo '1 -> Thermodynamic variables'
-    echo '2 -> RDF and coordination number (incomplete)'
-    echo '3 -> Vibrational analysis (incomplete)'
-    echo
-    read option
-    if [ ! -d '1' ]
-    then
-        cp HICOLM.df /home/\$USER/.hicolm/R/.
-        cp HICOLM.out /home/\$USER/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.df
-        rm /home/\$USER/.hicolm/R/HICOLM.out
-        rm /home/\$USER/.hicolm/R/report.tex
-    fi
-    exit 0
+    echo \"Error to find the auxiliary directory! Running hprepare...\"
+    $exe_dir/hprepare
 else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-    echo
-    echo 'Please, choose one of the following options:'
-    echo
-    echo '1 -> Thermodynamic variables'
-    echo '2 -> RDF and coordination number (incomplete)'
-    echo '3 -> Vibrational analysis (incomplete)'
-    echo
-    read option
-    if [ ! -d '1' ]
+    if [ ! -d \"/home/\$USER/.hicolm/R\" ]
     then
-        cp HICOLM.df /home/\$USER/.hicolm/R/.
-        cp HICOLM.out /home/\$USER/.hicolm/R/.
-        Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report.Rmd')\"
-        mv /home/\$USER/.hicolm/R/report.pdf .
-        rm /home/\$USER/.hicolm/R/HICOLM.df
-        rm /home/\$USER/.hicolm/R/HICOLM.out
-        rm /home/\$USER/.hicolm/R/report.tex
+        echo \"Error to find the auxiliary directory! Running hprepare...\"
+        $exe_dir/hprepare
+    else
+        if [ ! -d \"/home/\$USER/.hicolm/R/report\" ]
+        then
+            echo \"Error to find the auxiliary directory! Running hprepare...\"
+            $exe_dir/hprepare
+        fi
     fi
-    exit 0
+    if [ ! -d \"/home/\$USER/.hicolm/amber\" ]
+    then
+        echo \"Error to find the auxiliary directory! Running hprepare...\"
+    fi
+fi
+#
+# copying files to auxiliary directories
+#
+echo
+echo 'Please, choose one of the following options:'
+echo
+echo '1 -> Thermodynamic variables'
+echo '2 -> RDF and coordination number (incomplete)'
+echo '3 -> Vibrational analysis (incomplete)'
+echo
+read option
+if [ ! -d '1' ]
+then
+    cp HICOLM.out /home/\$USER/.hicolm/R/report/.
+    cp thermodynamics.csv /home/\$USER/.hicolm/R/report/.
+    cp atoms.csv /home/\$USER/.hicolm/R/report/.
+    Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
+    mv /home/\$USER/.hicolm/R/report/report.pdf .
+    rm /home/\$USER/.hicolm/R/report/HICOLM.out
+    rm /home/\$USER/.hicolm/R/report/thermodynamics.csv
+    rm /home/\$USER/.hicolm/R/report/atoms.csv
+    rm /home/\$USER/.hicolm/R/report/report.tex
 fi" >> $exe_dir/hresults
 #
 chmod +x $exe_dir/hresults
