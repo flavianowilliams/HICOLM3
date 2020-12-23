@@ -1,34 +1,40 @@
 #=====================================================================================
-OBJ_SYS=sistema.o elements.o utils.o amber.o input.o alloc_arrays.o estrutura.o \
-	brillouin.o
+OBJ_GEN = constants_module.o
 #
-OBJ_MD=bonds_module.o bends_module.o dihedral_module.o \
+OBJ_PRP = system_module.o prepare_module.o
+#
+OBJ_MD = bonds_module.o bends_module.o dihedral_module.o \
 	vdw_module.o coulomb_module.o scale_factor_module.o neighbour_list.o \
 	force_field.o ensemble_nve.o ensemble_nvt.o ensemble_npt.o molecular_dynamics.o
 #
-OBJ_OPT=optimize.o
+OBJ_OPT = optimize.o
 #
-OBJ_MAIN=outfile.o main.o
+OBJ_MAIN = main.o
 #=====================================================================================
 ODIR1=main
-ODIR2=md
-ODIR3=opt
-ODIR4=main
+ODIR2=prepare
+ODIR3=md
+ODIR4=opt
 #
-$(OBJ_SYS):
-	$(FC) -c $(FFLAGS) $(ODIR1)/$*.f90
+$(OBJ_GEN):
+	$(FC) -c $(FFLAGS) $(ODIR1)/$*.f08
+#
+$(OBJ_PRP):
+	$(FC) -c $(FFLAGS) $(ODIR2)/$*.f08
 #
 $(OBJ_MD):
-	$(FC) -c $(FFLAGS) $(ODIR2)/$*.f90
+	$(FC) -c $(FFLAGS) $(ODIR3)/$*.f08
 #
 $(OBJ_OPT):
-	$(FC) -c $(FFLAGS) $(ODIR3)/$*.f90
+	$(FC) -c $(FFLAGS) $(ODIR4)/$*.f08
 #
 $(OBJ_MAIN):
-	$(FC) -c $(FFLAGS) $(ODIR4)/$*.f90
+	$(FC) -c $(FFLAGS) $(ODIR1)/$*.f08
 #
-all: $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
-	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
+#all: $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
+#	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
+all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MAIN)
+	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MAIN)
 #
 clean:
 	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.dat *.out *.md
