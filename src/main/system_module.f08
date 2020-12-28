@@ -24,18 +24,27 @@ module system_module
 
   use constants_module
 
+  implicit none
+
+  integer i
+
   private
   public :: system
 
   type, extends(constants) :: system
      integer                    :: nmol
      integer                    :: natom
+     character(9)               :: gsym
      integer, allocatable       :: ntmol(:)
      integer, allocatable       :: nxmol(:)
      character(10), allocatable :: namemol(:)
+     real(8)                    :: volume
      real(8)                    :: a
      real(8)                    :: b
      real(8)                    :: c
+     real(8)                    :: alpha
+     real(8)                    :: beta
+     real(8)                    :: gamma
      real(8)                    :: v(3,3)
      real(8), allocatable       :: xa(:)
      real(8), allocatable       :: ya(:)
@@ -43,9 +52,12 @@ module system_module
    contains
      procedure :: sites
      procedure :: molecules
-     procedure :: unit_cell
+     procedure :: set_lattice_constants
+     procedure :: set_lattice_angles
      procedure :: set_natom
      procedure :: get_natom
+     procedure :: set_volume
+     procedure :: set_symmetry
   end type system
 
 contains
@@ -53,8 +65,9 @@ contains
   subroutine molecules(this)
     implicit none
     class(system), intent(inout) :: this
-    integer                      :: nx,i
+    integer                      :: nx
     character(4)                 :: key
+    nx=0
 1   read(5,*,end=2)key
     if(key.ne.'&SYS')goto 1
     do while (key.ne.'&END')
@@ -69,14 +82,13 @@ contains
        end if
     end do
     this%nmol=nx
-    rewind(5)
-2   return
+2   rewind(5)
   end subroutine molecules
 
   subroutine set_natom(this)
     implicit none
     class(system), intent(inout) :: this
-    integer                      :: i,nx
+    integer                      :: nx
     nx=0
     do i=1,this%nmol
        nx=nx+this%ntmol(i)*this%nxmol(i)
@@ -94,7 +106,7 @@ contains
   subroutine sites(this)
     implicit none
     class(system), intent(inout) :: this
-    integer                        :: i,nx
+    integer                        :: nx
     character(2)                   :: at
     nx=this%get_natom()
     allocate(this%xa(nx),this%ya(nx),this%za(nx))
@@ -111,10 +123,9 @@ contains
     stop
   end subroutine sites
 
-  subroutine unit_cell(this)
+  subroutine set_lattice_constants(this)
     implicit none
     class(system), intent(inout) :: this
-    integer                      :: nx,i
     character(4)                 :: key
 1   read(5,*,end=2)key
     if(key.ne.'&SYS')goto 1
@@ -125,16 +136,75 @@ contains
           read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
        end if
     end do
-    this%nmol=nx
     this%a=sqrt(this%v(1,1)**2+this%v(1,2)**2+this%v(1,3)**2)
     this%b=sqrt(this%v(2,1)**2+this%v(2,2)**2+this%v(2,3)**2)
     this%c=sqrt(this%v(3,1)**2+this%v(3,2)**2+this%v(3,3)**2)
-2   return
-  end subroutine unit_cell
+2   rewind(5)
+  end subroutine set_lattice_constants
 
-  subroutine system_check(this)
+  subroutine set_lattice_angles(this)
     implicit none
     class(system), intent(inout) :: this
-  end subroutine system_check
+    real(8)                      :: sum
+    sum=0.d0
+    do i=1,3
+       sum=sum+this%v(2,i)*this%v(3,i)
+    end do
+    this%alpha=acos(sum/(this%b*this%c))
+    sum=0.d0
+    do i=1,3
+       sum=sum+this%v(1,i)*this%v(3,i)
+    end do
+    this%beta=acos(sum/(this%a*this%c))
+    sum=0.d0
+    do i=1,3
+       sum=sum+this%v(1,i)*this%v(2,i)
+    end do
+    this%gamma=acos(sum/(this%a*this%b))
+  end subroutine set_lattice_angles
+
+  subroutine set_volume(this)
+    implicit none
+    class(system), intent(inout) :: this
+    real(8)                      :: volume,vl(3)
+    vl(1)=(this%v(1,2)*this%v(2,3)-this%v(1,3)*this%v(2,2))
+    vl(2)=(this%v(1,3)*this%v(2,1)-this%v(1,1)*this%v(2,3))
+    vl(3)=(this%v(1,1)*this%v(2,2)-this%v(1,2)*this%v(2,1))
+    volume=0.d0
+    do i=1,3
+       volume=volume+this%v(3,i)*vl(i)
+    end do
+    this%volume=abs(volume)
+  end subroutine set_volume
+
+  subroutine set_symmetry(this)
+    implicit none
+    class(system), intent(inout) :: this
+    real(8)                      :: prec
+    character(9)                 :: cvar
+    prec=1.d-2
+    !tryclinic
+    cvar='Tryclinic'
+    !-cubic
+    if(abs(2.d0*this%alpha-this%pi).le.prec)then
+       if(abs(2.d0*this%beta-this%pi).le.prec)then
+          if(abs(2.d0*this%gamma-this%pi).le.prec)then
+             if(abs(this%a-this%b).le.prec)then
+                if(abs(this%a-this%c).le.prec)cvar='Cubic'
+             end if
+          end if
+       end if
+    end if
+    !-Hexagonal
+    if(abs(2.d0*this%alpha-acos(-1.d0)).le.prec)then
+       if(abs(2.d0*this%beta-acos(-1.d0)).le.prec)then
+          if(abs(this%a-this%b).le.prec)then
+             if(abs(2.d0*this%gamma-this%pi/6.d0).le.prec.or.&
+                  abs(2.d0*this%gamma-this%pi/3.d0).le.prec)cvar='Hexagonal'
+          end if
+       end if
+    end if
+    this%gsym=cvar
+  end subroutine set_symmetry
 
 end module system_module

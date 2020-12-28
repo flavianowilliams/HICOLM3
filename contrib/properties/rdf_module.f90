@@ -43,7 +43,6 @@ module rdf_module
 
     integer i,j,k,nat,nstp
     real(8) lxf
-    character lxc
 
     write(*,*)'Types of molecules (qty):'
     read(*,*)nmolec

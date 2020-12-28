@@ -27,10 +27,11 @@ program HICOLM
 
   implicit none
 
-  real(8) :: t0,t1,t2,t3,t4
-  character(10) host,time
-  character(8) date,in
-  logical lval
+  real(8)       :: t0,t1,t2,t3,t4
+  real(8)       :: sf_coul,sf_vdw
+  character(10) :: host,time
+  character(8)  :: date,in
+  logical       :: lval
 
   type(prepare) :: prp      ! instanciating prepare object
 
@@ -72,6 +73,11 @@ program HICOLM
   write(6,'(''Time: '',2x,a10)')time
   write(6,*)
 
+  ! assign 1-4 scale factor according AMBER force field
+  !
+  sf_coul=1.d0/1.2d0
+  sf_vdw=1.d0/2.d0
+
   !========================================================
   !-read MD option
   lval=.false.
@@ -82,11 +88,21 @@ program HICOLM
         call prp%constants_prepare()             ! definindo constantes
         call prp%molecules()                     ! atribuindo qde moléculas e sitios atomicos
         call prp%set_natom()                     ! calculando qde de sitios atomicos
-        call prp%unit_cell()                     ! atribuindo vetores da celula unitaria
+        call prp%set_lattice_constants()         ! calculando constantes de rede
+        call prp%set_lattice_angles()            ! calculando angulos de rede
+        call prp%set_volume()                    ! calculando volume da supercelula
+        call prp%set_symmetry()                  ! calculando grupo de simetria
         call prp%sites()                         ! atribuindo coordenadas atomicas e Z
         call prp%check()                         ! checando parametros de entrada
         call prp%print_sys()                     ! imprimindo estrutura em HICOLM.sys
-        print*,prp%xa(927)
+        call prp%molecule_prepare()              ! atribuindo informacoes moleculares
+        call prp%set_massmol()                   ! calculando massa molecular
+        call prp%set_mmolar()                    ! calculando massa molecular
+        call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
+        call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
+        call prp%set_potentials()                ! atribuindo potenciais intra/intermolec.
+        call prp%print_top()                     ! imprimindo topologia em HICOLM.top
+        call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
      elseif(in.eq.'@MD     ')then
         lval=.true.

@@ -26,8 +26,8 @@ export FC="$compiler"
 #
 if [ -z $instructions ]
 then
-#    instructions="-fcheck=all -fbacktrace -Wall"
-    instructions=""
+    instructions="-fcheck=all -fbacktrace -Wall"
+#    instructions=""
 fi
 #
 export FFLAGS="$instructions"

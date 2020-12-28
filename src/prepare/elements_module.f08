@@ -37,6 +37,51 @@ module elements_module
 
 contains
 
+  subroutine set_zat(this)
+    implicit none
+    class(elements), intent(inout) :: this
+    integer                        :: i
+    allocate(this%zat(this%get_natom()))
+    do i=1,this%get_natom()
+       select case(this%at(i))
+       case('H ')
+          zat=1
+       case('He')
+          zat=2
+       case('Li')
+          zat=3
+       case('Be')
+          zat=4
+       case('B ')
+          zat=5
+       case('C ')
+          zat=6
+       case('N ')
+          zat=7
+       case('O ')
+          zat=8
+       case('F ')
+          zat=9
+       case('Ne')
+          zat=10
+       case('Na')
+          zat=11
+       case('Mg')
+          zat=12
+       case('Al')
+          zat=13
+       case('Si')
+          zat=14
+       case('P ')
+          zat=15
+       case('S ')
+          zat=16
+       case('Cl')
+          zat=17
+       end select
+    end do
+  end subroutine set_zat
+
   subroutine covalent_radius(this,i,rc)
     implicit none
     class(elements), intent(inout) :: this

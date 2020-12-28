@@ -22,6 +22,7 @@ module constants_module
   !*******************************************************************************************
   !*******************************************************************************************
 
+  implicit none
   private
   public :: constants
 
@@ -45,16 +46,7 @@ module constants_module
      procedure :: constants_prepare
   end type constants
 
-  interface constants
-     module procedure constructor
-  end interface constants
-
 contains
-
-  type(constants) function constructor()
-    implicit none
-    call constructor%constants_prepare
-  end function constructor
 
   subroutine constants_prepare(this)
     implicit none
