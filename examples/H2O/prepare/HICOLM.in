@@ -8,14 +8,22 @@
 
 &SYS
  cell 18.0 18.0 18.0
- nmol 1
- H2O 309 3
+ nmol 2
+ H2O1 300 3
+ H2O2 9 3
 &END
 
 &FORCE_FIELD
- molecule H2O
+ molecule H2O1
    8  1  1
   OW HW HW
  -0.82 0.41 0.41
- end
+  bonds 1
+  1 1 2 harm 0.0 0.0
+ molecule H2O2
+   8  1  1
+  OW HW HW
+ -0.82 0.41 0.42
+  bonds 1
+  1 2 3 amber 0.0 10.0
 &END

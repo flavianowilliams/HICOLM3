@@ -50,20 +50,37 @@ module system_module
      real(8), allocatable       :: ya(:)
      real(8), allocatable       :: za(:)
    contains
-     procedure :: sites
-     procedure :: molecules
-     procedure :: set_lattice_constants
-     procedure :: set_lattice_angles
-     procedure :: set_natom
-     procedure :: get_natom
-     procedure :: set_volume
-     procedure :: set_symmetry
+     procedure, private :: system_init
+     procedure          :: sites
+     procedure          :: molecules
+     procedure          :: set_lattice_constants
+     procedure          :: set_lattice_angles
+     procedure          :: set_symmetry
+     procedure          :: set_nmol
+     procedure          :: get_nmol
+     procedure          :: set_natom
+     procedure          :: get_natom
+     procedure          :: set_namemol
+     procedure          :: set_ntmol
+     procedure          :: set_nxmol
+     procedure          :: set_volume
+     procedure          :: get_volume
+     procedure          :: get_a
+     procedure          :: get_b
+     procedure          :: get_c
   end type system
+
+  interface system
+     module procedure constructor
+  end interface system
 
 contains
 
-  subroutine molecules(this)
-    implicit none
+  type(system) function constructor()
+    call constructor%system_init()
+  end function constructor
+
+  subroutine system_init(this)
     class(system), intent(inout) :: this
     integer                      :: nx
     character(4)                 :: key
@@ -75,13 +92,97 @@ contains
        if(key.eq.'nmol')then
           backspace(5)
           read(5,*)key,nx
-          allocate(this%namemol(nx),this%ntmol(nx),this%nxmol(nx))
+       end if
+    end do
+    allocate(this%namemol(nx),this%ntmol(nx),this%nxmol(nx))
+    call this%set_nmol(nx)
+2   rewind(5)
+  end subroutine system_init
+
+  subroutine set_nmol(this,nmol)
+    class(system), intent(inout) :: this
+    integer, intent(in)          :: nmol
+    this%nmol=nmol
+  end subroutine set_nmol
+
+  integer function get_nmol(this)
+    class(system), intent(in) :: this
+    get_nmol=this%nmol
+  end function get_nmol
+
+  subroutine set_namemol(this,namemol,i)
+    class(system), intent(inout) :: this
+    integer, intent(in)          :: i
+    character(10), intent(in)    :: namemol
+    this%namemol(i)=namemol
+  end subroutine set_namemol
+
+  subroutine set_ntmol(this,ntmol,i)
+    class(system), intent(inout) :: this
+    integer, intent(in)          :: i
+    integer, intent(in)          :: ntmol
+    this%ntmol(i)=ntmol
+  end subroutine set_ntmol
+
+  subroutine set_nxmol(this,nxmol,i)
+    class(system), intent(inout) :: this
+    integer, intent(in)          :: i
+    integer, intent(in)          :: nxmol
+    this%nxmol(i)=nxmol
+  end subroutine set_nxmol
+
+  subroutine set_volume(this)
+    implicit none
+    class(system), intent(inout) :: this
+    real(8)                      :: volume,vl(3)
+    vl(1)=(this%v(1,2)*this%v(2,3)-this%v(1,3)*this%v(2,2))
+    vl(2)=(this%v(1,3)*this%v(2,1)-this%v(1,1)*this%v(2,3))
+    vl(3)=(this%v(1,1)*this%v(2,2)-this%v(1,2)*this%v(2,1))
+    volume=0.d0
+    do i=1,3
+       volume=volume+this%v(3,i)*vl(i)
+    end do
+    this%volume=abs(volume)
+  end subroutine set_volume
+
+  double precision function get_volume(this)
+    class(system), intent(in) :: this
+    get_volume=this%volume
+  end function get_volume
+
+  double precision function get_a(this)
+    class(system), intent(in) :: this
+    get_a=this%a
+  end function get_a
+
+  double precision function get_b(this)
+    class(system), intent(in) :: this
+    get_b=this%b
+  end function get_b
+
+  double precision function get_c(this)
+    class(system), intent(in) :: this
+    get_c=this%c
+  end function get_c
+
+  subroutine molecules(this)
+    class(system), intent(inout) :: this
+    integer                      :: nx
+    character(4)                 :: key
+    call this%system_init()
+    nx=0
+1   read(5,*,end=2)key
+    if(key.ne.'&SYS')goto 1
+    do while (key.ne.'&END')
+       read(5,*)key
+       if(key.eq.'nmol')then
+          backspace(5)
+          read(5,*)key,nx
           do i=1,nx
              read(5,*)this%namemol(i),this%ntmol(i),this%nxmol(i)
           end do
        end if
     end do
-    this%nmol=nx
 2   rewind(5)
   end subroutine molecules
 
@@ -162,20 +263,6 @@ contains
     end do
     this%gamma=acos(sum/(this%a*this%b))
   end subroutine set_lattice_angles
-
-  subroutine set_volume(this)
-    implicit none
-    class(system), intent(inout) :: this
-    real(8)                      :: volume,vl(3)
-    vl(1)=(this%v(1,2)*this%v(2,3)-this%v(1,3)*this%v(2,2))
-    vl(2)=(this%v(1,3)*this%v(2,1)-this%v(1,1)*this%v(2,3))
-    vl(3)=(this%v(1,1)*this%v(2,2)-this%v(1,2)*this%v(2,1))
-    volume=0.d0
-    do i=1,3
-       volume=volume+this%v(3,i)*vl(i)
-    end do
-    this%volume=abs(volume)
-  end subroutine set_volume
 
   subroutine set_symmetry(this)
     implicit none

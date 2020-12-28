@@ -28,7 +28,7 @@ module prepare_module
 
   implicit none
 
-  integer i,j
+  integer i,j,k
 
   private
   public :: prepare
@@ -62,25 +62,37 @@ contains
     class(prepare), intent(inout) :: this
     if(this%nmol.le.0)then
        write(6,*)'ERROR: The number of types of molecules does not be zero!'
-       write(6,*)'Hint: Check the input in the HICOLM.in.'
+       write(6,*)'Hint: Check the input in the &SYS section.'
        stop
     else
        do i=1,this%nmol
           if(this%ntmol(i).le.0)then
              write(6,*)'ERROR: The number of molecules does not be zero!'
-             write(6,*)'Hint: Check the input in the HICOLM.in.'
+             write(6,*)'Hint: Check the input in the &SYS section.'
              stop
           end if
           if(this%nxmol(i).le.0)then
              write(6,*)'ERROR: The number of sites at each molecule does not be zero!'
-             write(6,*)'Hint: Check the input in the HICOLM.in.'
+             write(6,*)'Hint: Check the input in the &SYS section.'
              stop
           end if
+          do j=1,this%nxmol(i)
+             if(this%zatmol(i,j).eq.0)then
+                write(6,*)'ERROR: The atomic number does not be zero!'
+                write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+                stop
+             end if
+             if(this%tpmol(i,j).eq.'NA')then
+                write(6,*)'ERROR: You must define the type of each site!'
+                write(6,*)'Hint: Put the corresponding value in &FORCE_FIELD section.'
+                stop
+             end if
+          end do
        end do
     end if
     if(this%a.le.1.e-4.or.this%b.le.1.e-4.or.this%c.le.1.e-4)then
        write(6,*)'ERROR: Lattice constant too small!'
-       write(6,*)'Hint: Increase the value in the HICOLM.in.'
+       write(6,*)'Hint: Increase the value of the lattice constant.'
        stop
     end if
   end subroutine check
@@ -112,8 +124,14 @@ contains
        write(11,'(15(1x,f8.4))')(this%qatmol(i,j),j=1,this%nxmol(i))
        write(11,'(1x,a5,1x,i3)')'bonds',this%bondscnt(i)
        do j=1,this%bondscnt(i)
-          write(11,'(2(1x,i3),2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
-               this%parbnd(i,j,1),this%parbnd(i,j,2)
+          select case(this%tbonds(i,j))
+          case('amber')
+             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          case('harm')
+             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          end select
        end do
     end do
   end subroutine print_top
@@ -137,7 +155,7 @@ contains
     write(6,'(16x,3f15.8)')(this%v(2,i),i=1,3)
     write(6,'(16x,3f15.8)')(this%v(3,i),i=1,3)
     write(6,*)
-    write(6,'(a14,f14.4)')'       VOLUME:',this%volume
+    write(6,'(a14,f14.4)')'       VOLUME:',this%get_volume()
     write(6,*)
     write(6,'(a14,1x,a9)')'     Symmetry:',this%gsym
     write(6,*)
@@ -157,7 +175,7 @@ contains
     write(6,'(20x,a6,2x,i5,5(4x,i5))')&
          'Total:'
     write(6,*)
-    do i=1,this%nmol
+    do i=1,this%get_nmol()
        write(6,'(42x,a6)')this%namemol(i)
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
@@ -177,8 +195,23 @@ contains
           write(6,'(13x,10(1x,f6.3))')(this%qatmol(i,j),j=11,this%nxmol(i))
        end if
        write(6,*)
-       write(6,'(2x,111a1)')('*',j=1,90)
+       write(6,'(2x,a6,1x,i3)')'Bonds:',this%bondscnt(i)
+       write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,'(2x,3(a4,2x),a4,3x,a10)')' i ','Site','Site','Type','Parameters'
+       write(6,'(2x,111a1)')('-',j=1,52)
+       do j=1,this%bondscnt(i)
+          select case(this%tbonds(i,j))
+          case('amber')
+             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
+                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          case('harm')
+             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
+                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          end select
+       end do
+       write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
+       write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
     end do
   end subroutine print_out

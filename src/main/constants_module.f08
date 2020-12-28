@@ -23,6 +23,7 @@ module constants_module
   !*******************************************************************************************
 
   implicit none
+
   private
   public :: constants
 
@@ -44,6 +45,21 @@ module constants_module
      real(8) :: kconv
    contains
      procedure :: constants_prepare
+     procedure :: get_pi
+     procedure :: get_kb
+     procedure :: get_n0
+     procedure :: get_kelect
+     procedure :: get_mconv
+     procedure :: get_aconv
+     procedure :: get_hcconv
+     procedure :: get_elconv
+     procedure :: get_keconv
+     procedure :: get_econv
+     procedure :: get_rconv
+     procedure :: get_pconv
+     procedure :: get_tconv
+     procedure :: get_teconv
+     procedure :: get_kconv
   end type constants
 
 contains
@@ -87,5 +103,80 @@ contains
     this%teconv=this%teconv*(6.241506363094d+18)                       !
 
   end subroutine constants_prepare
+
+  double precision function get_pi(this)
+    class(constants), intent(inout) :: this
+    get_pi=this%pi
+  end function get_pi
+
+  double precision function get_kb(this)
+    class(constants), intent(inout) :: this
+    get_kb=this%kb
+  end function get_kb
+
+  double precision function get_n0(this)
+    class(constants), intent(inout) :: this
+    get_n0=this%n0
+  end function get_n0
+
+  double precision function get_kelect(this)
+    class(constants), intent(inout) :: this
+    get_kelect=this%kelect
+  end function get_kelect
+
+  double precision function get_mconv(this)
+    class(constants), intent(inout) :: this
+    get_mconv=this%mconv
+  end function get_mconv
+
+  double precision function get_aconv(this)
+    class(constants), intent(inout) :: this
+    get_aconv=this%aconv
+  end function get_aconv
+
+  double precision function get_hcconv(this)
+    class(constants), intent(inout) :: this
+    get_hcconv=this%hcconv
+  end function get_hcconv
+
+  double precision function get_elconv(this)
+    class(constants), intent(inout) :: this
+    get_elconv=this%elconv
+  end function get_elconv
+
+  double precision function get_keconv(this)
+    class(constants), intent(inout) :: this
+    get_keconv=this%keconv
+  end function get_keconv
+
+  double precision function get_econv(this)
+    class(constants), intent(inout) :: this
+    get_econv=this%econv
+  end function get_econv
+
+  double precision function get_rconv(this)
+    class(constants), intent(inout) :: this
+    get_rconv=this%rconv
+  end function get_rconv
+
+  double precision function get_pconv(this)
+    class(constants), intent(inout) :: this
+    get_pconv=this%pconv
+  end function get_pconv
+
+  double precision function get_tconv(this)
+    class(constants), intent(inout) :: this
+    get_tconv=this%tconv
+  end function get_tconv
+
+  double precision function get_teconv(this)
+    class(constants), intent(inout) :: this
+    get_teconv=this%teconv
+  end function get_teconv
+
+  double precision function get_kconv(this)
+    class(constants), intent(inout) :: this
+    get_kconv=this%kconv
+  end function get_kconv
 
 end module constants_module

@@ -40,47 +40,70 @@ module molecule_module
      real(8), allocatable      :: mmolar(:)
      character(2), allocatable :: tpmol(:,:)
    contains
-     procedure :: molecule_prepare
-     procedure :: set_massmol
-     procedure :: set_mmolar
-     procedure :: set_scale_factor
+     procedure, private :: molecule_init
+     procedure          :: molecule_prepare
+     procedure          :: set_massmol
+     procedure          :: set_mmolar
+     procedure          :: set_scale_factor
   end type molecule
 
+  interface molecule
+     module procedure constructor
+  end interface molecule
+
 contains
+
+  type(molecule) function constructor()
+    implicit none
+    call constructor%molecule_init()
+  end function constructor
+
+  subroutine molecule_init(this)
+    implicit none
+    class(molecule), intent(inout) :: this
+    allocate(this%zatmol(this%nmol,this%get_natom()))
+    allocate(this%qatmol(this%nmol,this%get_natom()))
+    allocate(this%tpmol(this%nmol,this%get_natom()))
+    do i=1,this%nmol
+       do j=1,this%nxmol(i)
+          this%zatmol(i,j)=0
+          this%qatmol(i,j)=0.d0
+          this%tpmol(i,j)='NA'
+       end do
+    end do
+  end subroutine molecule_init
 
   subroutine molecule_prepare(this)
     implicit none
     class(molecule), intent(inout) :: this
+    integer                        :: i3
     character(12)                  :: key
     character(4)                   :: key2
     character(8)                   :: key3
-    character(3)                   :: key4
     character(10)                  :: cvar
-    allocate(this%zatmol(this%nmol,this%get_natom()))
-    allocate(this%qatmol(this%nmol,this%get_natom()))
-    allocate(this%tpmol(this%nmol,this%get_natom()))
+    call this%molecule_init()
+    i3=0
 1   read(5,*,end=2)key
     if(key.ne.'&FORCE_FIELD')goto 1
     do while (key2.ne.'&END')
        read(5,*)key2
        if(key2.ne.'&END')then
           backspace(5)
-          read(5,*)key3
-          if(key3.eq.'molecule')then
-             backspace(5)
-             read(5,*)key3,cvar
-             do i=1,this%nmol
-                if(cvar.eq.this%namemol(i))then
+          do i=1,this%nmol
+             read(5,*)key3
+             if(key3.eq.'molecule')then
+                backspace(5)
+                read(5,*)key3,cvar
+                do j=1,this%nmol
+                   if(cvar.eq.this%namemol(j))i3=j
+                end do
+                if(i3.ne.0)then
                    read(5,*)(this%zatmol(i,j),j=1,this%nxmol(i))
                    read(5,*)(this%tpmol(i,j),j=1,this%nxmol(i))
                    read(5,*)(this%qatmol(i,j),j=1,this%nxmol(i))
-                   read(5,*)key4
-                   if(key4.ne.'end')then
-                      print*,'xxxxx'
-                   end if
                 end if
-             end do
-          end if
+             end if
+          end do
        end if
     end do
 2   rewind(5)

@@ -33,31 +33,35 @@ module zmatrix_module
 
   type, extends(molecule) :: zmatrix
      real(8)              :: zmatrix_tol
+     integer              :: bondmax
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
      integer, allocatable :: molbond(:,:,:)
    contains
-     procedure :: set_bonds
-     procedure :: set_bends
-     procedure :: set_torsion
-     procedure :: covalent_radius
-     procedure :: set_internal_coordinates
+     procedure, private :: zmatrix_init
+     procedure          :: set_bonds
+     procedure          :: set_bends
+     procedure          :: set_torsion
+     procedure          :: covalent_radius
+     procedure          :: set_internal_coordinates
   end type zmatrix
+
+  interface zmatrix
+     module procedure constructor
+  end interface zmatrix
 
 contains
 
-  subroutine set_internal_coordinates(this)
+  type(zmatrix) function constructor()
     implicit none
-    class(zmatrix), intent(inout) :: this
-    call this%set_bonds()
-  end subroutine set_internal_coordinates
+    call constructor%zmatrix_init()
+  end function constructor
 
-  subroutine set_bonds(this)
+  subroutine zmatrix_init(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol,ia,ib
-    real(8)                       :: dr,rca,rcb
+    integer                       :: nx,nxx
     nxx=1
     do i=1,this%nmol
        nx=1
@@ -67,8 +71,23 @@ contains
        nx=int(0.5*nx)
        nxx=max(nx,nxx)
     end do
+    this%bondmax=nxx
     allocate(this%bondscnt(this%nmol))
-    allocate(this%molbond(this%nmol,nxx,2))
+    allocate(this%molbond(this%nmol,this%bondmax,2))
+  end subroutine zmatrix_init
+
+  subroutine set_internal_coordinates(this)
+    implicit none
+    class(zmatrix), intent(inout) :: this
+    call this%zmatrix_init()
+    call this%set_bonds()
+  end subroutine set_internal_coordinates
+
+  subroutine set_bonds(this)
+    implicit none
+    class(zmatrix), intent(inout) :: this
+    integer                       :: nx,nxx,imol,ia,ib
+    real(8)                       :: dr,rca,rcb
     do imol=1,this%nmol
        nx=0
        do i=1,imol-1

@@ -93,14 +93,15 @@ program HICOLM
         call prp%set_volume()                    ! calculando volume da supercelula
         call prp%set_symmetry()                  ! calculando grupo de simetria
         call prp%sites()                         ! atribuindo coordenadas atomicas e Z
-        call prp%check()                         ! checando parametros de entrada
-        call prp%print_sys()                     ! imprimindo estrutura em HICOLM.sys
         call prp%molecule_prepare()              ! atribuindo informacoes moleculares
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
         call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_potentials()                ! atribuindo potenciais intra/intermolec.
+        call prp%set_extra_potentials()          ! alterando potenciais intramoleculares
+        call prp%check()                         ! checando parametros de entrada
+        call prp%print_sys()                     ! imprimindo estrutura em HICOLM.sys
         call prp%print_top()                     ! imprimindo topologia em HICOLM.top
         call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
