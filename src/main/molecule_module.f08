@@ -61,10 +61,10 @@ contains
   subroutine molecule_init(this)
     implicit none
     class(molecule), intent(inout) :: this
-    allocate(this%zatmol(this%nmol,this%get_natom()))
-    allocate(this%qatmol(this%nmol,this%get_natom()))
-    allocate(this%tpmol(this%nmol,this%get_natom()))
-    do i=1,this%nmol
+    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
+    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
+    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
+    do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
           this%zatmol(i,j)=0
           this%qatmol(i,j)=0.d0
@@ -89,12 +89,12 @@ contains
        read(5,*)key2
        if(key2.ne.'&END')then
           backspace(5)
-          do i=1,this%nmol
+          do i=1,this%get_nmol()
              read(5,*)key3
              if(key3.eq.'molecule')then
                 backspace(5)
                 read(5,*)key3,cvar
-                do j=1,this%nmol
+                do j=1,this%get_nmol()
                    if(cvar.eq.this%namemol(j))i3=j
                 end do
                 if(i3.ne.0)then
@@ -113,8 +113,8 @@ contains
     implicit none
     class(molecule), intent(inout) :: this
     real(8)                        :: var
-    allocate(this%massmol(this%nmol,this%get_natom()))
-    do i=1,this%nmol
+    allocate(this%massmol(this%get_nmol(),this%get_natom()))
+    do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
           select case(this%zatmol(i,j))
           case(1)
@@ -361,13 +361,13 @@ contains
     implicit none
     class(molecule), intent(inout) :: this
     real(8)                        :: var
-    allocate(this%mmolar(this%nmol))
-    do i=1,this%nmol
+    allocate(this%mmolar(this%get_nmol()))
+    do i=1,this%get_nmol()
        var=0.d0
        do j=1,this%nxmol(i)
           var=var+this%massmol(i,j)
        end do
-       this%mmolar=var
+       this%mmolar(i)=var
     end do
   end subroutine set_mmolar
 
@@ -376,8 +376,8 @@ contains
     class(molecule), intent(inout) :: this
     real(8)                        :: sf_coul
     real(8)                        :: sf_vdw
-    allocate(this%sf_coul(this%nmol),this%sf_vdw(this%nmol))
-    do i=1,this%nmol
+    allocate(this%sf_coul(this%get_nmol()),this%sf_vdw(this%get_nmol()))
+    do i=1,this%get_nmol()
        this%sf_coul(i)=sf_coul
        this%sf_vdw(i)=sf_vdw
     end do

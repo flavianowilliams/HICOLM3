@@ -30,35 +30,15 @@ module amber_module
   public :: amber
 
   type :: amber
-     integer      :: namber
      real(8)      :: prms(115,2)
      character(2) :: tpam(115,2)
    contains
-     procedure :: amber_init
      procedure :: set_amber
   end type amber
 
-  interface amber
-     module procedure constructor
-  end interface amber
-
 contains
 
-  type(amber) function constructor(namber)
-    implicit none
-    integer, intent(in) :: namber
-    call constructor%amber_init(namber)
-  end function constructor
-
-  subroutine amber_init(this,namber)
-    implicit none
-    class(amber), intent(inout) :: this
-    integer, intent(in)         :: namber
-    this%namber=namber
-  end subroutine amber_init
-
   subroutine set_amber(this)
-    implicit none
     class(amber), intent(inout) :: this
     real(4) x1,x2
     character(2) pa,pb

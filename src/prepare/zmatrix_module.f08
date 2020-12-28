@@ -33,10 +33,11 @@ module zmatrix_module
 
   type, extends(molecule) :: zmatrix
      real(8)              :: zmatrix_tol
-     integer              :: bondmax
+     integer, private     :: bondmax
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
+     integer, allocatable :: itorscnt(:)
      integer, allocatable :: molbond(:,:,:)
    contains
      procedure, private :: zmatrix_init
@@ -45,6 +46,8 @@ module zmatrix_module
      procedure          :: set_torsion
      procedure          :: covalent_radius
      procedure          :: set_internal_coordinates
+     procedure          :: set_bondmax
+     procedure          :: get_bondmax
   end type zmatrix
 
   interface zmatrix
@@ -54,41 +57,27 @@ module zmatrix_module
 contains
 
   type(zmatrix) function constructor()
-    implicit none
     call constructor%zmatrix_init()
   end function constructor
 
   subroutine zmatrix_init(this)
-    implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx
-    nxx=1
-    do i=1,this%nmol
-       nx=1
-       do j=0,this%nxmol(i)-1
-          nx=nx*(this%nxmol(i)-j)
-       end do
-       nx=int(0.5*nx)
-       nxx=max(nx,nxx)
-    end do
-    this%bondmax=nxx
-    allocate(this%bondscnt(this%nmol))
-    allocate(this%molbond(this%nmol,this%bondmax,2))
+    call this%set_bondmax()
+    allocate(this%bondscnt(this%get_nmol()))
+    allocate(this%molbond(this%get_nmol(),this%bondmax,2))
   end subroutine zmatrix_init
 
   subroutine set_internal_coordinates(this)
-    implicit none
     class(zmatrix), intent(inout) :: this
     call this%zmatrix_init()
     call this%set_bonds()
   end subroutine set_internal_coordinates
 
   subroutine set_bonds(this)
-    implicit none
     class(zmatrix), intent(inout) :: this
     integer                       :: nx,nxx,imol,ia,ib
     real(8)                       :: dr,rca,rcb
-    do imol=1,this%nmol
+    do imol=1,this%get_nmol()
        nx=0
        do i=1,imol-1
           nx=nx+this%nxmol(i)*this%ntmol(i)
@@ -114,19 +103,40 @@ contains
   end subroutine set_bonds
 
   subroutine set_bends(this)
-    implicit none
     class(zmatrix), intent(inout) :: this
-    allocate(this%bendscnt(this%nmol))
+    allocate(this%bendscnt(this%get_nmol()))
   end subroutine set_bends
 
   subroutine set_torsion(this)
-    implicit none
     class(zmatrix), intent(inout) :: this
-    allocate(this%torscnt(this%nmol))
+    allocate(this%torscnt(this%get_nmol()))
   end subroutine set_torsion
 
+  subroutine set_zmatrix_tol(this)
+    class(zmatrix), intent(inout) :: this
+    
+
+  subroutine set_bondmax(this)
+    class(zmatrix), intent(inout) :: this
+    integer                       :: nx,nxx
+    nxx=1
+    do i=1,this%get_nmol()
+       nx=1
+       do j=0,this%nxmol(i)-1
+          nx=nx*(this%nxmol(i)-j)
+       end do
+       nx=int(0.5*nx)
+       nxx=max(nx,nxx)
+    end do
+    this%bondmax=nxx
+  end subroutine set_bondmax
+
+  integer function get_bondmax(this)
+    class(zmatrix), intent(in) :: this
+    get_bondmax=this%bondmax
+  end function get_bondmax
+
   subroutine covalent_radius(this,ix,jx,rc)
-    implicit none
     class(zmatrix), intent(inout) :: this
     integer, intent(in)            :: ix,jx
     real(8), intent(out)           :: rc

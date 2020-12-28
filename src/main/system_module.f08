@@ -32,23 +32,23 @@ module system_module
   public :: system
 
   type, extends(constants) :: system
-     integer                    :: nmol
-     integer                    :: natom
-     character(9)               :: gsym
+     integer, private           :: nmol
+     integer, private           :: natom
+     character(9), private      :: gsym
      integer, allocatable       :: ntmol(:)
      integer, allocatable       :: nxmol(:)
      character(10), allocatable :: namemol(:)
-     real(8)                    :: volume
-     real(8)                    :: a
-     real(8)                    :: b
-     real(8)                    :: c
-     real(8)                    :: alpha
-     real(8)                    :: beta
-     real(8)                    :: gamma
-     real(8)                    :: v(3,3)
+     real(8), private           :: volume
+     real(8), private           :: a
+     real(8), private           :: b
+     real(8), private           :: c
+     real(8), private           :: alpha
+     real(8), private           :: beta
+     real(8), private           :: gamma
      real(8), allocatable       :: xa(:)
      real(8), allocatable       :: ya(:)
      real(8), allocatable       :: za(:)
+     real(8)                    :: v(3,3)
    contains
      procedure, private :: system_init
      procedure          :: sites
@@ -68,6 +68,10 @@ module system_module
      procedure          :: get_a
      procedure          :: get_b
      procedure          :: get_c
+     procedure          :: get_alpha
+     procedure          :: get_beta
+     procedure          :: get_gamma
+     procedure          :: get_gsym
   end type system
 
   interface system
@@ -165,6 +169,26 @@ contains
     get_c=this%c
   end function get_c
 
+  double precision function get_alpha(this)
+    class(system), intent(in) :: this
+    get_alpha=this%alpha
+  end function get_alpha
+
+  double precision function get_beta(this)
+    class(system), intent(in) :: this
+    get_beta=this%beta
+  end function get_beta
+
+  double precision function get_gamma(this)
+    class(system), intent(in) :: this
+    get_gamma=this%gamma
+  end function get_gamma
+
+  character(9) function get_gsym(this)
+    class(system), intent(in) :: this
+    get_gsym=this%gsym
+  end function get_gsym
+
   subroutine molecules(this)
     class(system), intent(inout) :: this
     integer                      :: nx
@@ -187,7 +211,6 @@ contains
   end subroutine molecules
 
   subroutine set_natom(this)
-    implicit none
     class(system), intent(inout) :: this
     integer                      :: nx
     nx=0
@@ -198,14 +221,12 @@ contains
   end subroutine set_natom
 
   function get_natom(this)
-    implicit none
     class(system), intent(inout) :: this
     integer                      :: get_natom
     get_natom=this%natom
   end function get_natom
 
   subroutine sites(this)
-    implicit none
     class(system), intent(inout) :: this
     integer                        :: nx
     character(2)                   :: at
@@ -225,7 +246,6 @@ contains
   end subroutine sites
 
   subroutine set_lattice_constants(this)
-    implicit none
     class(system), intent(inout) :: this
     character(4)                 :: key
 1   read(5,*,end=2)key
@@ -244,7 +264,6 @@ contains
   end subroutine set_lattice_constants
 
   subroutine set_lattice_angles(this)
-    implicit none
     class(system), intent(inout) :: this
     real(8)                      :: sum
     sum=0.d0
@@ -265,7 +284,6 @@ contains
   end subroutine set_lattice_angles
 
   subroutine set_symmetry(this)
-    implicit none
     class(system), intent(inout) :: this
     real(8)                      :: prec
     character(9)                 :: cvar
@@ -273,9 +291,9 @@ contains
     !tryclinic
     cvar='Tryclinic'
     !-cubic
-    if(abs(2.d0*this%alpha-this%pi).le.prec)then
-       if(abs(2.d0*this%beta-this%pi).le.prec)then
-          if(abs(2.d0*this%gamma-this%pi).le.prec)then
+    if(abs(2.d0*this%alpha-this%get_pi()).le.prec)then
+       if(abs(2.d0*this%beta-this%get_pi()).le.prec)then
+          if(abs(2.d0*this%gamma-this%get_pi()).le.prec)then
              if(abs(this%a-this%b).le.prec)then
                 if(abs(this%a-this%c).le.prec)cvar='Cubic'
              end if
@@ -286,8 +304,8 @@ contains
     if(abs(2.d0*this%alpha-acos(-1.d0)).le.prec)then
        if(abs(2.d0*this%beta-acos(-1.d0)).le.prec)then
           if(abs(this%a-this%b).le.prec)then
-             if(abs(2.d0*this%gamma-this%pi/6.d0).le.prec.or.&
-                  abs(2.d0*this%gamma-this%pi/3.d0).le.prec)cvar='Hexagonal'
+             if(abs(2.d0*this%gamma-this%get_pi()/6.d0).le.prec.or.&
+                  abs(2.d0*this%gamma-this%get_pi()/3.d0).le.prec)cvar='Hexagonal'
           end if
        end if
     end if

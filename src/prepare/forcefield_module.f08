@@ -56,9 +56,9 @@ contains
   subroutine forcefield_init(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    allocate(this%parbnd(this%nmol,this%bondmax,2))
-    allocate(this%tbonds(this%nmol,this%bondmax))
-    do i=1,this%nmol
+    allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
+    allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
+    do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
           this%tbonds(i,j)='amber'
        end do
@@ -71,7 +71,7 @@ contains
     integer                          :: i1,i2
     call this%forcefield_init()
     call this%amber%set_amber()
-    do i=1,this%nmol
+    do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
@@ -104,13 +104,13 @@ contains
        read(5,*)key2
        if(key2.ne.'&END')then
           backspace(5)
-          do i=1,this%nmol
+          do i=1,this%get_nmol()
              check=.FALSE.
              read(5,*)key3
              if(key3.eq.'molecule')then
                 backspace(5)
                 read(5,*)key3,cvar
-                do j=1,this%nmol
+                do j=1,this%get_nmol()
                    if(cvar.eq.this%namemol(j))then
                       check=.TRUE.
                       i3=j

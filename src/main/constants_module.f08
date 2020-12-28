@@ -28,21 +28,21 @@ module constants_module
   public :: constants
 
   type :: constants
-     real(8) :: pi
-     real(8) :: kb
-     real(8) :: n0
-     real(8) :: kelect
-     real(8) :: mconv
-     real(8) :: aconv
-     real(8) :: hcconv
-     real(8) :: elconv
-     real(8) :: keconv
-     real(8) :: econv
-     real(8) :: rconv
-     real(8) :: pconv
-     real(8) :: tconv
-     real(8) :: teconv
-     real(8) :: kconv
+     real(8), private :: pi
+     real(8), private :: kb
+     real(8), private :: n0
+     real(8), private :: kelect
+     real(8), private :: mconv
+     real(8), private :: aconv
+     real(8), private :: hcconv
+     real(8), private :: elconv
+     real(8), private :: keconv
+     real(8), private :: econv
+     real(8), private :: rconv
+     real(8), private :: pconv
+     real(8), private :: tconv
+     real(8), private :: teconv
+     real(8), private :: kconv
    contains
      procedure :: constants_prepare
      procedure :: get_pi
@@ -105,77 +105,77 @@ contains
   end subroutine constants_prepare
 
   double precision function get_pi(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_pi=this%pi
   end function get_pi
 
   double precision function get_kb(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_kb=this%kb
   end function get_kb
 
   double precision function get_n0(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_n0=this%n0
   end function get_n0
 
   double precision function get_kelect(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_kelect=this%kelect
   end function get_kelect
 
   double precision function get_mconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_mconv=this%mconv
   end function get_mconv
 
   double precision function get_aconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_aconv=this%aconv
   end function get_aconv
 
   double precision function get_hcconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_hcconv=this%hcconv
   end function get_hcconv
 
   double precision function get_elconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_elconv=this%elconv
   end function get_elconv
 
   double precision function get_keconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_keconv=this%keconv
   end function get_keconv
 
   double precision function get_econv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_econv=this%econv
   end function get_econv
 
   double precision function get_rconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_rconv=this%rconv
   end function get_rconv
 
   double precision function get_pconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_pconv=this%pconv
   end function get_pconv
 
   double precision function get_tconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_tconv=this%tconv
   end function get_tconv
 
   double precision function get_teconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_teconv=this%teconv
   end function get_teconv
 
   double precision function get_kconv(this)
-    class(constants), intent(inout) :: this
+    class(constants), intent(in) :: this
     get_kconv=this%kconv
   end function get_kconv
 
