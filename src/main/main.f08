@@ -27,6 +27,7 @@ program HICOLM
 
   implicit none
 
+  integer       :: i
   real(8)       :: t0,t1,t2,t3,t4
   real(8)       :: sf_coul,sf_vdw
   character(10) :: host,time
@@ -79,7 +80,9 @@ program HICOLM
   sf_vdw=1.d0/2.d0
 
   !========================================================
+  !
   !-read MD option
+  !
   lval=.false.
   do while (lval.eqv..false.)
      read(5,*,end=1)in
@@ -93,6 +96,7 @@ program HICOLM
         call prp%set_volume()                    ! calculando volume da supercelula
         call prp%set_symmetry()                  ! calculando grupo de simetria
         call prp%sites()                         ! atribuindo coordenadas atomicas e Z
+        call prp%translate()                     ! aplicando translação do sistema coordenadas
         call prp%molecule_prepare()              ! atribuindo informacoes moleculares
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
@@ -109,7 +113,34 @@ program HICOLM
         lval=.true.
      end if
   end do
-  !========================================================
+  !============================================================================================
+  !
+  !-print copyright
+  !
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)('END!',i=1,23)
+    write(6,'(93a1)')('#',i=1,93)
+    write(6,*)
+    write(6,'(5x,a12)')'MIT License'
+    write(6,*)
+    write(6,'(5x,a36)')'Copyright (c) 2020 flavianowilliams'
+    write(6,*)
+    write(6,'(5x,a77)')'Permission is hereby granted, free of charge, to any person obtaining a copy'
+    write(6,'(5x,a78)')'of this software and associated documentation files (the "Software"), to deal'
+    write(6,'(5x,a77)')'in the Software without restriction, including without limitation the rights'
+    write(6,'(5x,a74)')'to use, copy, modify, merge, publish, distribute, sublicense, and/or sell'
+    write(6,'(5x,a70)')'copies of the Software, and to permit persons to whom the Software is'
+    write(6,'(5x,a57)')'furnished to do so, subject to the following conditions:'
+    write(6,*)
+    write(6,'(5x,a75)')'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR'
+    write(6,'(5x,a73)')'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,'
+    write(6,'(5x,a76)')'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE'
+    write(6,'(5x,a71)')'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER'
+    write(6,'(5x,a78)')'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,'
+    write(6,'(5x,a78)')'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE'
+    write(6,'(5x,a10)')'SOFTWARE.'
+    write(6,*)
+    !==========================================================================================
 
   stop
 

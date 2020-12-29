@@ -11,6 +11,8 @@
  nmol 2
  H2O1 300 3
  H2O2 9 3
+ zmatrix 0.5
+ translate 0.5 0.0 0.0
 &END
 
 &FORCE_FIELD

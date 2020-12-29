@@ -49,10 +49,12 @@ module system_module
      real(8), allocatable       :: ya(:)
      real(8), allocatable       :: za(:)
      real(8)                    :: v(3,3)
+     real(8)                    :: sys_shift(3)
    contains
      procedure, private :: system_init
      procedure          :: sites
      procedure          :: molecules
+     procedure          :: translate
      procedure          :: set_lattice_constants
      procedure          :: set_lattice_angles
      procedure          :: set_symmetry
@@ -63,6 +65,7 @@ module system_module
      procedure          :: set_namemol
      procedure          :: set_ntmol
      procedure          :: set_nxmol
+     procedure          :: set_sys_shift
      procedure          :: set_volume
      procedure          :: get_volume
      procedure          :: get_a
@@ -102,6 +105,35 @@ contains
     call this%set_nmol(nx)
 2   rewind(5)
   end subroutine system_init
+
+  subroutine set_sys_shift(this)
+    class(system), intent(inout) :: this
+    character(4)                 :: key
+    character(9)                 :: key2
+    do i=1,3
+       this%sys_shift(i)=0.d0
+    end do
+1   read(5,*,end=2)key
+    if(key.ne.'&SYS')goto 1
+    do while (key2.ne.'&END     ')
+       read(5,*)key2
+       if(key2.eq.'translate')then
+          backspace(5)
+          read(5,*)key,(this%sys_shift(i),i=1,3)
+       end if
+    end do
+2   rewind(5)
+  end subroutine set_sys_shift
+
+  subroutine translate(this)
+    class(system), intent(inout) :: this
+    call this%set_sys_shift()
+    do i=1,this%get_natom()
+       this%xa(i)=this%xa(i)+1.0d0*this%sys_shift(1)*this%a
+       this%ya(i)=this%ya(i)+1.0d0*this%sys_shift(2)*this%b
+       this%za(i)=this%za(i)+1.0d0*this%sys_shift(3)*this%c
+    end do
+  end subroutine translate
 
   subroutine set_nmol(this,nmol)
     class(system), intent(inout) :: this

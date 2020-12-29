@@ -48,6 +48,8 @@ module zmatrix_module
      procedure          :: set_internal_coordinates
      procedure          :: set_bondmax
      procedure          :: get_bondmax
+     procedure          :: set_zmatrix_tol
+     procedure          :: get_zmatrix_tol
   end type zmatrix
 
   interface zmatrix
@@ -77,6 +79,7 @@ contains
     class(zmatrix), intent(inout) :: this
     integer                       :: nx,nxx,imol,ia,ib
     real(8)                       :: dr,rca,rcb
+    call this%set_zmatrix_tol()
     do imol=1,this%get_nmol()
        nx=0
        do i=1,imol-1
@@ -114,7 +117,25 @@ contains
 
   subroutine set_zmatrix_tol(this)
     class(zmatrix), intent(inout) :: this
-    
+    integer                       :: nx
+    character(7)                  :: key
+    nx=0
+1   read(5,*,end=2)key
+    if(key.ne.'&SYS')goto 1
+    do while (key.ne.'&END')
+       read(5,*)key
+       if(key.eq.'zmatrix')then
+          backspace(5)
+          read(5,*)key,this%zmatrix_tol
+       end if
+    end do
+2   rewind(5)
+  end subroutine set_zmatrix_tol
+
+  double precision function get_zmatrix_tol(this)
+    class(zmatrix), intent(in) :: this
+    get_zmatrix_tol=this%zmatrix_tol
+  end function get_zmatrix_tol
 
   subroutine set_bondmax(this)
     class(zmatrix), intent(inout) :: this
