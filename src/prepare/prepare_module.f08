@@ -101,6 +101,9 @@ contains
     implicit none
     class(prepare), intent(inout) :: this
     open(10,file='HICOLM.sys',status='unknown')
+    do i=1,this%get_nmol()
+       write(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
+    end do
     do i=1,3
        write(10,'(3f16.8)')(this%v(i,j),j=1,3)
     end do
@@ -116,22 +119,21 @@ contains
     write(11,'(1x,a2)')'MM'
     write(11,'(1x,i2)')this%get_nmol()
     do i=1,this%get_nmol()
-       write(11,'(1x,a10,2(1x,i5),2(1x,f8.6))')&
-            this%namemol(i),this%ntmol(i),this%nxmol(i),this%sf_coul(i),this%sf_vdw(i)
+       write(11,'(1x,a10,1(1x,i5),2(1x,f8.6))')&
+            this%namemol(i),this%nxmol(i),this%sf_coul(i),this%sf_vdw(i)
        write(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,a2))')(this%tpmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,f8.4))')(this%massmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,f8.4))')(this%qatmol(i,j),j=1,this%nxmol(i))
        write(11,'(1x,a5,1x,i3)')'bonds',this%bondscnt(i)
        do j=1,this%bondscnt(i)
-          select case(this%tbonds(i,j))
-          case('amber')
-             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
-                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
-          case('harm')
-             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
-                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
-          end select
+          write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+               this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+       end do
+       write(11,'(1x,a5,1x,i3)')'bends',this%bendscnt(i)
+       do j=1,this%bendscnt(i)
+          write(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
+               this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
        end do
     end do
     write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
@@ -181,7 +183,7 @@ contains
     write(6,'(19x,111a1)')('-',i=1,54)
     do i=1,this%get_nmol()
        write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-            this%namemol(i),this%ntmol(i),this%nxmol(i),this%bondscnt(i)!
+            this%namemol(i),this%ntmol(i),this%nxmol(i),this%bondscnt(i),this%bendscnt(i)
     end do
     write(6,'(19x,111a1)')('-',i=1,54)
     write(6,*)
@@ -210,20 +212,41 @@ contains
        write(6,'(2x,3(a4,2x),a4,3x,a10)')' i ','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%bondscnt(i)
-          select case(this%tbonds(i,j))
-          case('amber')
-             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
-                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
-          case('harm')
-             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
-                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
-          end select
+          write(6,'(2x,3(i3,3x),a5,2f9.2)')&
+               j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(2x,a6,1x,i5)')'Bends:',this%bendscnt(i)
+       write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,'(2x,4(a4,1x),a4,4x,a10)')' i ','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,111a1)')('-',j=1,52)
+       do j=1,this%bendscnt(i)
+          write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')&
+               j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+       end do
+       write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,*)
        write(6,*)
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
     end do
+    write(6,'(39x,a14)')'INTERMOLECULAR'
+    write(6,'(39x,a14)')'=============='
+    write(6,*)
+    write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
+    write(6,*)
+    if(this%get_nspcs().le.10)then
+       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+            'Total of species:',this%get_nspcs(),'->',(this%spcs(i),i=1,this%get_nspcs())
+       write(6,*)
+    else
+       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+            'Total of species:',this%get_nspcs(),'->',(this%spcs(i),i=1,10)
+       write(6,'(27x,10(1x,a2))')(this%spcs(i),i=11,this%get_nspcs())
+       write(*,*)
+    end if
+
   end subroutine print_out
 
 end module prepare_module

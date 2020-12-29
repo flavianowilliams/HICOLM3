@@ -30,12 +30,14 @@ module amber_module
   public :: amber
 
   type :: amber
-     real(8)      :: prms_intra(2)
+     real(8)      :: prms_bonds(2)
+     real(8)      :: prms_bends(2)
      real(8)      :: prms_vdw(2)
    contains
      procedure :: set_amberbonds
+     procedure :: set_amberbends
      procedure :: set_ambervdw
-     generic   :: set_amber => set_amberbonds, set_ambervdw
+     generic   :: set_amber => set_amberbonds, set_amberbends, set_ambervdw
   end type amber
 
 contains
@@ -45,17 +47,36 @@ contains
     real(4) x1,x2
     character(2) pa,pb,p1,p2
     open(12,file='/tmp/amber/amber_bonds.prm',status='old')
-    this%prms_intra(1)=0.d0
-    this%prms_intra(2)=0.d0
+    this%prms_bonds(1)=0.d0
+    this%prms_bonds(2)=0.d0
     do i=1,115
        read(12,*,end=1)pa,pb,x1,x2
        if(pa.eq.p1.and.pb.eq.p2.or.pa.eq.p2.and.pb.eq.p1)then
-          this%prms_intra(1)=dble(x1)
-          this%prms_intra(2)=dble(x2)
+          this%prms_bonds(1)=dble(x1)
+          this%prms_bonds(2)=dble(x2)
        end if
     end do
 1   close(12)
   end subroutine set_amberbonds
+
+  subroutine set_amberbends(this,p1,p2,p3)
+    class(amber), intent(inout) :: this
+    real(4) x1,x2
+    character(2) pa,pb,pc,p1,p2,p3
+    open(12,file='/tmp/amber/amber_angles.prm',status='old')
+    this%prms_bends(1)=0.d0
+    this%prms_bends(2)=0.d0
+    do i=1,281
+       read(12,*,end=1)pa,pb,pc,x1,x2
+       if(pa.eq.p1.and.pc.eq.p3.or.pa.eq.p3.and.pc.eq.p1)then
+          if(pb.eq.p2)then
+             this%prms_bends(1)=dble(x1)
+             this%prms_bends(2)=dble(x2)
+          end if
+       end if
+    end do
+1   close(12)
+  end subroutine set_amberbends
 
   subroutine set_ambervdw(this,p1)
     class(amber), intent(inout) :: this

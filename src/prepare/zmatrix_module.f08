@@ -26,7 +26,7 @@ module zmatrix_module
 
   implicit none
 
-  integer i,j
+  integer i,j,k,l
 
   private
   public :: zmatrix
@@ -34,11 +34,13 @@ module zmatrix_module
   type, extends(molecule) :: zmatrix
      real(8)              :: zmatrix_tol
      integer, private     :: bondmax
+     integer, private     :: bendmax
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
      integer, allocatable :: itorscnt(:)
      integer, allocatable :: molbond(:,:,:)
+     integer, allocatable :: molbend(:,:,:)
    contains
      procedure, private :: zmatrix_init
      procedure          :: set_bonds
@@ -48,6 +50,8 @@ module zmatrix_module
      procedure          :: set_internal_coordinates
      procedure          :: set_bondmax
      procedure          :: get_bondmax
+     procedure          :: set_bendmax
+     procedure          :: get_bendmax
      procedure          :: set_zmatrix_tol
      procedure          :: get_zmatrix_tol
   end type zmatrix
@@ -64,22 +68,23 @@ contains
 
   subroutine zmatrix_init(this)
     class(zmatrix), intent(inout) :: this
-    call this%set_bondmax()
-    allocate(this%bondscnt(this%get_nmol()))
-    allocate(this%molbond(this%get_nmol(),this%bondmax,2))
+    call this%set_zmatrix_tol()
   end subroutine zmatrix_init
 
   subroutine set_internal_coordinates(this)
     class(zmatrix), intent(inout) :: this
     call this%zmatrix_init()
     call this%set_bonds()
+    call this%set_bends()
   end subroutine set_internal_coordinates
 
   subroutine set_bonds(this)
     class(zmatrix), intent(inout) :: this
     integer                       :: nx,nxx,imol,ia,ib
     real(8)                       :: dr,rca,rcb
-    call this%set_zmatrix_tol()
+    call this%set_bondmax()
+    allocate(this%bondscnt(this%get_nmol()))
+    allocate(this%molbond(this%get_nmol(),this%bondmax,2))
     do imol=1,this%get_nmol()
        nx=0
        do i=1,imol-1
@@ -105,10 +110,76 @@ contains
     end do
   end subroutine set_bonds
 
+  subroutine set_bondmax(this)
+    class(zmatrix), intent(inout) :: this
+    integer                       :: nx,nxx
+    nxx=1
+    do i=1,this%get_nmol()
+       nx=1
+       do j=0,this%nxmol(i)-1
+          nx=nx*(this%nxmol(i)-j)
+       end do
+       nx=int(0.5*nx)
+       nxx=max(nx,nxx)
+    end do
+    this%bondmax=nxx
+  end subroutine set_bondmax
+
+  integer function get_bondmax(this)
+    class(zmatrix), intent(in) :: this
+    get_bondmax=this%bondmax
+  end function get_bondmax
+
   subroutine set_bends(this)
     class(zmatrix), intent(inout) :: this
+    integer                       :: nx,imol
+    call this%set_bendmax()
     allocate(this%bendscnt(this%get_nmol()))
+    allocate(this%molbend(this%get_nmol(),this%bendmax,3))
+    do imol=1,this%get_nmol()
+       nx=1
+       do i=1,this%bondscnt(imol)
+          do j=i+1,this%bondscnt(imol)
+             do k=1,2
+                do l=1,2
+                   if(this%molbond(imol,i,k).eq.this%molbond(imol,j,l))then
+                      this%molbend(imol,nx,1)=this%molbond(imol,i,3-k)
+                      this%molbend(imol,nx,2)=this%molbond(imol,i,k)
+                      this%molbend(imol,nx,3)=this%molbond(imol,j,3-l)
+                      nx=nx+1
+                   end if
+                end do
+             end do
+          end do
+       end do
+       this%bendscnt(imol)=nx-1
+    end do
   end subroutine set_bends
+
+  subroutine set_bendmax(this)
+    class(zmatrix), intent(inout) :: this
+    integer                       :: nx,nxx,imol
+    nxx=0
+    do imol=1,this%get_nmol()
+       nx=1
+       do i=1,this%bondscnt(imol)
+          do j=i+1,this%bondscnt(imol)
+             do k=1,2
+                do l=1,2
+                   if(this%molbond(imol,i,k).eq.this%molbond(imol,j,l))nx=nx+1
+                end do
+             end do
+          end do
+       end do
+       nxx=max(nxx,nx)
+    end do
+    this%bendmax=nxx-1
+  end subroutine set_bendmax
+
+  integer function get_bendmax(this)
+    class(zmatrix), intent(in) :: this
+    get_bendmax=this%bendmax
+  end function get_bendmax
 
   subroutine set_torsion(this)
     class(zmatrix), intent(inout) :: this
@@ -136,26 +207,6 @@ contains
     class(zmatrix), intent(in) :: this
     get_zmatrix_tol=this%zmatrix_tol
   end function get_zmatrix_tol
-
-  subroutine set_bondmax(this)
-    class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx
-    nxx=1
-    do i=1,this%get_nmol()
-       nx=1
-       do j=0,this%nxmol(i)-1
-          nx=nx*(this%nxmol(i)-j)
-       end do
-       nx=int(0.5*nx)
-       nxx=max(nx,nxx)
-    end do
-    this%bondmax=nxx
-  end subroutine set_bondmax
-
-  integer function get_bondmax(this)
-    class(zmatrix), intent(in) :: this
-    get_bondmax=this%bondmax
-  end function get_bondmax
 
   subroutine covalent_radius(this,ix,jx,rc)
     class(zmatrix), intent(inout) :: this

@@ -1,5 +1,5 @@
 #=====================================================================================
-OBJ_GEN = constants_module.o system_module.o molecule_module.o
+OBJ_GEN = constants_module.o structure_module.o system_module.o molecule_module.o
 #
 OBJ_PRP = zmatrix_module.o amber_module.o forcefield_module.o prepare_module.o
 #

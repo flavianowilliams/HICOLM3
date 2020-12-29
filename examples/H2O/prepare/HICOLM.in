@@ -25,7 +25,7 @@
  molecule H2O2
    8  1  1
   OW HW HW
- -0.82 0.41 0.42
+ -0.82 0.41 0.41
   bonds 1
   1 2 3 amber 0.5 10.0
 &END

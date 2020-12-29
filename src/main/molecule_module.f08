@@ -22,6 +22,7 @@ module molecule_module
   !*******************************************************************************************
   !*******************************************************************************************
 
+  use structure_module
   use system_module
 
   implicit none
@@ -31,7 +32,8 @@ module molecule_module
   private
   public :: molecule
 
-  type, extends(system) :: molecule
+  type, extends(structure) :: molecule
+     type(system)              :: sys
      integer, allocatable      :: zatmol(:,:)
      real(8), allocatable      :: sf_coul(:)
      real(8), allocatable      :: sf_vdw(:)
@@ -45,6 +47,7 @@ module molecule_module
      procedure          :: set_massmol
      procedure          :: set_mmolar
      procedure          :: set_scale_factor
+     procedure          :: set_global
   end type molecule
 
   interface molecule
@@ -382,5 +385,10 @@ contains
        this%sf_vdw(i)=sf_vdw
     end do
   end subroutine set_scale_factor
+
+  subroutine set_global(this)
+    class(molecule), intent(inout) :: this
+    call this%sys%set_qtotal(this%qatmol)
+  end subroutine set_global
 
 end module molecule_module

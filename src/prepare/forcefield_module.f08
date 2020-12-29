@@ -37,15 +37,18 @@ module forcefield_module
      integer, private          :: nspcs
      integer, private          :: nvdw
      real(8), allocatable      :: parbnd(:,:,:)
+     real(8), allocatable      :: parbend(:,:,:)
      real(8), allocatable      :: parvdw(:,:,:)
      character(2), allocatable :: spcs(:)
      character(5), allocatable :: tbonds(:,:)
+     character(5), allocatable :: tbends(:,:)
    contains
      procedure, private :: forcefield_init
      procedure          :: set_spcs
      procedure          :: set_nspcs
      procedure          :: get_nspcs
      procedure          :: set_parbnd
+     procedure          :: set_parbend
      procedure          :: set_extra_parbnd
      procedure          :: set_parvdw
      procedure          :: get_nvdw
@@ -66,11 +69,16 @@ contains
     class(forcefield), intent(inout) :: this
     call this%set_nspcs()
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
+    allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
     allocate(this%parvdw(this%nspcs,this%nspcs,2))
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
+    allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     do i=1,this%get_nmol()
-       do j=1,this%nxmol(i)
+       do j=1,this%get_bondmax()
           this%tbonds(i,j)='amber'
+       end do
+       do j=1,this%get_bendmax()
+          this%tbends(i,j)='amber'
        end do
     end do
   end subroutine forcefield_init
@@ -162,11 +170,27 @@ contains
           i2=this%molbond(i,j,2)
           call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
           do k=1,2
-             this%parbnd(i,j,k)=this%amber%prms_intra(k)
+             this%parbnd(i,j,k)=this%amber%prms_bonds(k)
           end do
        end do
     end do
   end subroutine set_parbnd
+
+  subroutine set_parbend(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,i2,i3
+    do i=1,this%get_nmol()
+       do j=1,this%bendscnt(i)
+          i1=this%molbend(i,j,1)
+          i2=this%molbend(i,j,2)
+          i3=this%molbend(i,j,3)
+          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
+          do k=1,2
+             this%parbend(i,j,k)=this%amber%prms_bends(k)
+          end do
+       end do
+    end do
+  end subroutine set_parbend
 
   subroutine set_extra_parbnd(this)
     class(forcefield), intent(inout) :: this
