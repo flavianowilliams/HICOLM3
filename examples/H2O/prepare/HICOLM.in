@@ -21,11 +21,11 @@
   OW HW HW
  -0.82 0.41 0.41
   bonds 1
-  1 1 2 harm 0.0 0.0
+  1 1 2 harm 300.0 20.0
  molecule H2O2
    8  1  1
   OW HW HW
  -0.82 0.41 0.42
   bonds 1
-  1 2 3 amber 0.0 10.0
+  1 2 3 amber 0.5 10.0
 &END

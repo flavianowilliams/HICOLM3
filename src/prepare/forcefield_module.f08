@@ -34,12 +34,21 @@ module forcefield_module
 
   type, extends(zmatrix) :: forcefield
      type(amber)               :: amber
+     integer, private          :: nspcs
+     integer, private          :: nvdw
      real(8), allocatable      :: parbnd(:,:,:)
+     real(8), allocatable      :: parvdw(:,:,:)
+     character(2), allocatable :: spcs(:)
      character(5), allocatable :: tbonds(:,:)
    contains
      procedure, private :: forcefield_init
-     procedure          :: set_potentials
-     procedure          :: set_extra_potentials
+     procedure          :: set_spcs
+     procedure          :: set_nspcs
+     procedure          :: get_nspcs
+     procedure          :: set_parbnd
+     procedure          :: set_extra_parbnd
+     procedure          :: set_parvdw
+     procedure          :: get_nvdw
   end type forcefield
 
   interface forcefield
@@ -49,14 +58,15 @@ module forcefield_module
 contains
 
   type(forcefield) function constructor()
-    implicit none
     call constructor%forcefield_init()
   end function constructor
 
   subroutine forcefield_init(this)
     implicit none
     class(forcefield), intent(inout) :: this
+    call this%set_nspcs()
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
+    allocate(this%parvdw(this%nspcs,this%nspcs,2))
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
@@ -65,30 +75,100 @@ contains
     end do
   end subroutine forcefield_init
 
-  subroutine set_potentials(this)
-    implicit none
+  subroutine set_nspcs(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: nx
+    logical                          :: check
+    nx=0
+    check=.FALSE.
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          do k=1,(i-1)
+             do l=1,this%nxmol(k)
+                if(this%tpmol(k,l).eq.this%tpmol(i,j))check=.TRUE.
+             end do
+          end do
+          do l=1,(j-1)
+             if(this%tpmol(i,l).eq.this%tpmol(i,j))check=.TRUE.
+          end do
+          if(check.neqv..TRUE.)nx=nx+1
+          check=.FALSE.
+       end do
+    end do
+    this%nspcs=nx
+  end subroutine set_nspcs
+
+  integer function get_nspcs(this)
+    class(forcefield), intent(in) :: this
+    get_nspcs=this%nspcs
+  end function get_nspcs
+
+  subroutine set_spcs(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: nx
+    allocate(this%spcs(this%nspcs))
+    this%spcs(1)=this%tpmol(1,1)
+    nx=1
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          do k=1,nx
+             if(this%tpmol(i,j).eq.this%spcs(k))goto 1
+          end do
+          this%spcs(nx+1)=this%tpmol(i,j)
+          nx=nx+1
+1         continue
+       end do
+    end do
+  end subroutine set_spcs
+
+  subroutine set_parvdw(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: nx
+    real(8)                          :: e1,e2,e12,s1,s2,s12
+    call this%set_spcs()
+    nx=0
+    do i=1,this%nspcs
+       call this%amber%set_amber(this%spcs(i))
+       e1=this%amber%prms_vdw(2)
+       s1=this%amber%prms_vdw(1)
+       do j=i,this%nspcs
+          call this%amber%set_amber(this%spcs(j))
+          e2=this%amber%prms_vdw(2)
+          s2=this%amber%prms_vdw(1)
+          e12=sqrt(e1*e2)
+          s12=s1+s2
+          if(e12.gt.1.d-8.and.s12.gt.1.d-2)then
+             this%parvdw(i,j,1)=e12
+             this%parvdw(i,j,2)=s12
+             nx=nx+1
+          end if
+       end do
+    end do
+    this%nvdw=nx
+  end subroutine set_parvdw
+
+  integer function get_nvdw(this)
+    class(forcefield), intent(in) :: this
+    get_nvdw=this%nvdw
+  end function get_nvdw
+
+  subroutine set_parbnd(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2
     call this%forcefield_init()
-    call this%amber%set_amber()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
-          do k=1,115
-             if(this%tpmol(i,i1).eq.this%amber%tpam(k,1).and.&
-                  this%tpmol(i,i2).eq.this%amber%tpam(k,2))then
-                do l=1,2
-                   this%parbnd(i,j,l)=this%amber%prms(k,l)
-                end do
-             end if
+          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
+          do k=1,2
+             this%parbnd(i,j,k)=this%amber%prms_intra(k)
           end do
        end do
     end do
-  end subroutine set_potentials
+  end subroutine set_parbnd
 
-  subroutine set_extra_potentials(this)
-    implicit none
+  subroutine set_extra_parbnd(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
     character(12)                    :: key
@@ -155,6 +235,6 @@ contains
 3   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
-  end subroutine set_extra_potentials
+  end subroutine set_extra_parbnd
 
 end module forcefield_module

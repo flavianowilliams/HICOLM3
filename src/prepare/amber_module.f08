@@ -30,27 +30,48 @@ module amber_module
   public :: amber
 
   type :: amber
-     real(8)      :: prms(115,2)
-     character(2) :: tpam(115,2)
+     real(8)      :: prms_intra(2)
+     real(8)      :: prms_vdw(2)
    contains
-     procedure :: set_amber
+     procedure :: set_amberbonds
+     procedure :: set_ambervdw
+     generic   :: set_amber => set_amberbonds, set_ambervdw
   end type amber
 
 contains
 
-  subroutine set_amber(this)
+  subroutine set_amberbonds(this,p1,p2)
     class(amber), intent(inout) :: this
     real(4) x1,x2
-    character(2) pa,pb
+    character(2) pa,pb,p1,p2
     open(12,file='/tmp/amber/amber_bonds.prm',status='old')
+    this%prms_intra(1)=0.d0
+    this%prms_intra(2)=0.d0
     do i=1,115
        read(12,*,end=1)pa,pb,x1,x2
-       this%tpam(i,1)=pa
-       this%tpam(i,2)=pb
-       this%prms(i,1)=dble(x1)
-       this%prms(i,2)=dble(x2)
+       if(pa.eq.p1.and.pb.eq.p2.or.pa.eq.p2.and.pb.eq.p1)then
+          this%prms_intra(1)=dble(x1)
+          this%prms_intra(2)=dble(x2)
+       end if
     end do
-1  close(12)
-  end subroutine set_amber
+1   close(12)
+  end subroutine set_amberbonds
+
+  subroutine set_ambervdw(this,p1)
+    class(amber), intent(inout) :: this
+    real(4) x1,x2
+    character(2) pa,p1
+    open(12,file='/tmp/amber/amber_vdw.prm',status='old')
+    this%prms_vdw(1)=0.d0
+    this%prms_vdw(2)=0.d0
+    do i=1,43
+       read(12,*,end=1)pa,x1,x2
+       if(pa.eq.p1)then
+          this%prms_vdw(1)=dble(x1)
+          this%prms_vdw(2)=dble(x2)
+       end if
+    end do
+1   close(12)
+  end subroutine set_ambervdw
 
 end module amber_module

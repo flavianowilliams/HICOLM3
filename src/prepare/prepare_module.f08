@@ -134,6 +134,15 @@ contains
           end select
        end do
     end do
+    write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
+    do i=1,this%get_nspcs()
+       do j=i,this%get_nspcs()
+          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)then
+             write(11,'(2(1x,a2),2(1x,f9.4))')this%spcs(i),this%spcs(j),&
+                  this%parvdw(i,j,1),this%parvdw(i,j,2)
+          end if
+       end do
+    end do
   end subroutine print_top
 
   subroutine print_out(this)
