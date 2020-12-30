@@ -16,16 +16,18 @@
 &END
 
 &FORCE_FIELD
- molecule H2O1
-   8  1  1
-  OW HW HW
- -0.82 0.41 0.41
-  bonds 1
-  1 1 2 harm 300.0 20.0
  molecule H2O2
    8  1  1
-  OW HW HW
- -0.82 0.41 0.41
-  bonds 1
-  1 2 3 amber 0.5 10.0
+   OW HW HW
+  -0.82 0.41 0.41
+ end_molecule
+ molecule H2O1
+   8  1  1
+   OW HW HW
+  -0.82 0.41 0.41
+   bonds 1
+   1 2 3 harm 1.0 1.0
+   bends 1
+   1 1 2 3 harm 1.0 1.0
+ end_molecule
 &END

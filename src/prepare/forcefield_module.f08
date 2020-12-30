@@ -50,6 +50,7 @@ module forcefield_module
      procedure          :: set_parbnd
      procedure          :: set_parbend
      procedure          :: set_extra_parbnd
+     procedure          :: set_extra_parbend
      procedure          :: set_parvdw
      procedure          :: get_nvdw
   end type forcefield
@@ -132,7 +133,7 @@ contains
   subroutine set_parvdw(this)
     class(forcefield), intent(inout) :: this
     integer                          :: nx
-    real(8)                          :: e1,e2,e12,s1,s2,s12
+    real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     nx=0
     do i=1,this%nspcs
@@ -143,13 +144,9 @@ contains
           call this%amber%set_amber(this%spcs(j))
           e2=this%amber%prms_vdw(2)
           s2=this%amber%prms_vdw(1)
-          e12=sqrt(e1*e2)
-          s12=s1+s2
-          if(e12.gt.1.d-8.and.s12.gt.1.d-2)then
-             this%parvdw(i,j,1)=e12
-             this%parvdw(i,j,2)=s12
-             nx=nx+1
-          end if
+          this%parvdw(i,j,1)=sqrt(e1*e2)
+          this%parvdw(i,j,2)=s1+s2
+          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)nx=nx+1
        end do
     end do
     this%nvdw=nx
@@ -196,69 +193,108 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
     character(12)                    :: key
-    character(4)                     :: key2
-    character(8)                     :: key3
-    character(5)                     :: key4
     character(10)                    :: cvar
-    logical                          :: check
     i3=0
-1   read(5,*,end=2)key
+1   read(5,*,end=3)key
     if(key.ne.'&FORCE_FIELD')goto 1
-    do while (key2.ne.'&END')
-       read(5,*)key2
-       if(key2.ne.'&END')then
-          backspace(5)
-          do i=1,this%get_nmol()
-             check=.FALSE.
-             read(5,*)key3
-             if(key3.eq.'molecule')then
-                backspace(5)
-                read(5,*)key3,cvar
-                do j=1,this%get_nmol()
-                   if(cvar.eq.this%namemol(j))then
-                      check=.TRUE.
-                      i3=j
-                   end if
-                end do
-                if(check.eqv..FALSE.)goto 3
-                if(i3.ne.0)then
-                   read(5,*)
-                   read(5,*)
-                   read(5,*)
-                   read(5,*)key4
-                   if(key4.eq.'bonds')then
-                      backspace(5)
-                      read(5,*)key4,i1
-                      if(i1.eq.0)then
-                         this%bondscnt(i)=i1
-                      elseif(i1.gt.0)then
-                         do j=1,i1
-                            read(5,*)i2
-                            backspace(5)
-                            read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                                 this%tbonds(i3,i2)
-                            backspace(5)
-                            select case(this%tbonds(i3,i2))
-                            case('amber')
-                               read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                                    this%tbonds(i3,i2),(this%parbnd(i3,i2,k),k=1,2)
-                            case('harm')
-                               read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                                    this%tbonds(i3,i2),(this%parbnd(i3,i2,k),k=1,2)
-                            end select
-                         end do
-                      end if
-                   end if
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             backspace(5)
+             read(5,*)key,cvar
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))then
+                   i3=k
                 end if
-             end if
-          end do
-       end if
+             end do
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'bonds')then
+                   backspace(5)
+                   read(5,*)key,i1
+                   do k=1,i1
+                      read(5,*)i2
+                      backspace(5)
+                      read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+                           this%tbonds(i3,i2)
+                      backspace(5)
+                      select case(this%tbonds(i3,i2))
+                      case('amber')
+                         read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+                              this%tbonds(i3,i2),(this%parbnd(i3,i2,l),l=1,2)
+                      case('harm')
+                         read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+                              this%tbonds(i3,i2),(this%parbnd(i3,i2,l),l=1,2)
+                      end select
+                   end do
+                end if
+             end do
+          end if
+2         continue
+       end do
     end do
-2   rewind(5)
+3   rewind(5)
     return
-3   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
-    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
-    stop
   end subroutine set_extra_parbnd
+
+  subroutine set_extra_parbend(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,i2,i3
+    character(12)                    :: key
+    character(10)                    :: cvar
+    i3=0
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             backspace(5)
+             read(5,*)key,cvar
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))then
+                   i3=k
+                end if
+             end do
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'bends')then
+                   backspace(5)
+                   read(5,*)key,i1
+                   do k=1,i1
+                      read(5,*)i2
+                      backspace(5)
+                      read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+                           this%molbend(i3,i2,3),this%tbends(i3,i2)
+                      backspace(5)
+                      select case(this%tbends(i3,i2))
+                      case('amber')
+                         read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+                              this%molbend(i3,i2,3),this%tbonds(i3,i2),&
+                              (this%parbend(i3,i2,l),l=1,2)
+                      case('harm')
+                         read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+                              this%molbend(i3,i2,2),this%tbonds(i3,i2),&
+                              (this%parbend(i3,i2,l),l=1,2)
+                      end select
+                   end do
+                end if
+             end do
+          end if
+2         continue
+       end do
+    end do
+3   rewind(5)
+    return
+  end subroutine set_extra_parbend
 
 end module forcefield_module

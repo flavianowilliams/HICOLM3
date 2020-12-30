@@ -7,7 +7,7 @@
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &SYS
- cell 18.0 18.0 18.0
+ cell 28.0 28.0 28.0
  nmol 1
  C2H4 1 6
 &END
@@ -17,5 +17,7 @@
   6 6 1 1 1 1
   CA CA HA HA HA HA
  -0.3550 -0.3550  0.1775  0.1775  0.1775  0.1775
- end
+  bonds 1
+  1 1 2 harm 1.0 1.0
+ end_molecule
 &END

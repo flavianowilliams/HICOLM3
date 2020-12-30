@@ -27,7 +27,7 @@ module molecule_module
 
   implicit none
 
-  integer i,j
+  integer i,j,k
 
   private
   public :: molecule
@@ -79,37 +79,44 @@ contains
   subroutine molecule_prepare(this)
     implicit none
     class(molecule), intent(inout) :: this
-    integer                        :: i3
-    character(12)                  :: key
-    character(4)                   :: key2
-    character(8)                   :: key3
+    integer                        :: i3,nx
+    character(12)                  :: key,key2
     character(10)                  :: cvar
     call this%molecule_init()
-    i3=0
-1   read(5,*,end=2)key
+    nx=1
+1   read(5,*,end=3)key
     if(key.ne.'&FORCE_FIELD')goto 1
-    do while (key2.ne.'&END')
-       read(5,*)key2
-       if(key2.ne.'&END')then
-          backspace(5)
-          do i=1,this%get_nmol()
-             read(5,*)key3
-             if(key3.eq.'molecule')then
-                backspace(5)
-                read(5,*)key3,cvar
-                do j=1,this%get_nmol()
-                   if(cvar.eq.this%namemol(j))i3=j
-                end do
-                if(i3.ne.0)then
-                   read(5,*)(this%zatmol(i,j),j=1,this%nxmol(i))
-                   read(5,*)(this%tpmol(i,j),j=1,this%nxmol(i))
-                   read(5,*)(this%qatmol(i,j),j=1,this%nxmol(i))
-                end if
-             end if
-          end do
-       end if
+    do j=1,this%get_nmol()
+       do while (key2.ne.'&END')
+          read(5,*)key2
+          if(key2.eq.'molecule')then
+             backspace(5)
+             read(5,*)key2,cvar
+             i3=0
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))i3=k
+             end do
+             if(i3.eq.0)goto 4
+             read(5,*)(this%zatmol(i3,k),k=1,this%nxmol(i3))
+             read(5,*)(this%tpmol(i3,k),k=1,this%nxmol(i3))
+             read(5,*)(this%qatmol(i3,k),k=1,this%nxmol(i3))
+             do while (key2.ne.'end_molecule')
+                read(5,*)key2
+             end do
+             nx=nx+1
+          end if
+       end do
     end do
-2   rewind(5)
+    nx=nx-1
+    if(nx.lt.this%get_nmol())goto 5
+3   rewind(5)
+    return
+4   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
+5   write(6,*)'ERROR: The number of molecules in &FORCE_FIELD section does not match with that ones found in the &SYS section!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
   end subroutine molecule_prepare
 
   subroutine set_massmol(this)

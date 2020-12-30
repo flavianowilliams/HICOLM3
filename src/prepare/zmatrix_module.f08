@@ -42,6 +42,7 @@ module zmatrix_module
      integer, allocatable :: itorscnt(:)
      integer, allocatable :: molbond(:,:,:)
      integer, allocatable :: molbend(:,:,:)
+     integer, allocatable :: moltors(:,:,:)
    contains
      procedure, private :: zmatrix_init
      procedure          :: set_bonds
@@ -187,11 +188,141 @@ contains
 
   subroutine set_torsion(this)
     class(zmatrix), intent(inout) :: this
+    integer                       :: nx,imol,ii,kk
+    call this%set_torsmax()
     allocate(this%torscnt(this%get_nmol()))
+    allocate(this%moltors(this%get_nmol(),this%torsmax,4))
+    do imol=1,this%get_nmol()
+       nx=1
+       do i=1,this%bondscnt(imol)
+          do j=1,i-1
+             do k=1,j-1
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            this%moltors(imol,nx,1)=this%molbond(imol,i,ii)
+                            this%moltors(imol,nx,2)=this%molbond(imol,j,1)
+                            this%moltors(imol,nx,3)=this%molbond(imol,j,2)
+                            this%moltors(imol,nx,4)=this%molbond(imol,k,3-kk)
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+             do k=j+1,this%bondscnt(imol)
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            this%moltors(imol,nx,1)=this%molbond(imol,i,ii)
+                            this%moltors(imol,nx,2)=this%molbond(imol,j,1)
+                            this%moltors(imol,nx,3)=this%molbond(imol,j,2)
+                            this%moltors(imol,nx,4)=this%molbond(imol,k,3-kk)
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+          end do
+          do j=i+1,this%bondscnt(imol)
+             do k=1,j-1
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            this%moltors(imol,nx,1)=this%molbond(imol,i,ii)
+                            this%moltors(imol,nx,2)=this%molbond(imol,j,1)
+                            this%moltors(imol,nx,3)=this%molbond(imol,j,2)
+                            this%moltors(imol,nx,4)=this%molbond(imol,k,3-kk)
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+             do k=j+1,this%bondscnt(imol)
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            this%moltors(imol,nx,1)=this%molbond(imol,i,ii)
+                            this%moltors(imol,nx,2)=this%molbond(imol,j,1)
+                            this%moltors(imol,nx,3)=this%molbond(imol,j,2)
+                            this%moltors(imol,nx,4)=this%molbond(imol,k,3-kk)
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+          end do
+       end do
+       this%torscnt(imol)=nx-1
+    end do
   end subroutine set_torsion
 
   subroutine set_torsmax(this)
     class(zmatrix), intent(inout) :: this
+    integer                       :: nx,nxx,imol,ii,kk
+    nxx=0
+    do imol=1,this%get_nmol()
+       nx=1
+       do i=1,this%bondscnt(imol)
+          do j=1,i-1
+             do k=1,j-1
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+             do k=j+1,this%bondscnt(imol)
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+          end do
+          do j=i+1,this%bondscnt(imol)
+             do k=1,j-1
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+             do k=j+1,this%bondscnt(imol)
+                do ii=1,2
+                   do kk=1,2
+                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
+                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
+                            nx=nx+1
+                         end if
+                      end if
+                   end do
+                end do
+             end do
+          end do
+       end do
+       nxx=max(nxx,nx)
+    end do
+    this%torsmax=nxx-1
   end subroutine set_torsmax
 
   integer function get_torsmax(this)

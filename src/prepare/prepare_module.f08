@@ -135,6 +135,11 @@ contains
           write(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
                this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
        end do
+       write(11,'(1x,a9,1x,i3)')'dihedrals',this%torscnt(i)
+       do j=1,this%torscnt(i)
+          write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4)!,&
+!               this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+       end do
     end do
     write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
     do i=1,this%get_nspcs()
@@ -246,7 +251,20 @@ contains
        write(6,'(27x,10(1x,a2))')(this%spcs(i),i=11,this%get_nspcs())
        write(*,*)
     end if
-
+    write(6,'(20x,a15,i5)')'Van der Waals:',this%get_nvdw()
+    write(6,'(20x,111a1)')('-',i=1,52)
+    write(6,'(20x,a4,2x,a4,3x,a4,6x,a10)')'Site','Site','Type','Parameters'
+    write(6,'(20x,111a1)')('-',i=1,52)
+    do i=1,this%get_nspcs()
+       do j=i,this%get_nspcs()
+          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)then
+             write(6,'(21x,a2,4x,a2,3(1x,f9.4))')this%spcs(i),this%spcs(j),&
+                  this%parvdw(i,j,1),this%parvdw(i,j,2)
+          end if
+       end do
+    end do
+    write(6,'(20x,111a1)')('-',i=1,52)
+    write(6,*)
   end subroutine print_out
 
 end module prepare_module
