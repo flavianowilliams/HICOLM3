@@ -35,6 +35,7 @@ module zmatrix_module
      real(8)              :: zmatrix_tol
      integer, private     :: bondmax
      integer, private     :: bendmax
+     integer, private     :: torsmax
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
@@ -52,6 +53,8 @@ module zmatrix_module
      procedure          :: get_bondmax
      procedure          :: set_bendmax
      procedure          :: get_bendmax
+     procedure          :: set_torsmax
+     procedure          :: get_torsmax
      procedure          :: set_zmatrix_tol
      procedure          :: get_zmatrix_tol
   end type zmatrix
@@ -76,6 +79,7 @@ contains
     call this%zmatrix_init()
     call this%set_bonds()
     call this%set_bends()
+    call this%set_torsion()
   end subroutine set_internal_coordinates
 
   subroutine set_bonds(this)
@@ -185,6 +189,15 @@ contains
     class(zmatrix), intent(inout) :: this
     allocate(this%torscnt(this%get_nmol()))
   end subroutine set_torsion
+
+  subroutine set_torsmax(this)
+    class(zmatrix), intent(inout) :: this
+  end subroutine set_torsmax
+
+  integer function get_torsmax(this)
+    class(zmatrix), intent(in) :: this
+    get_torsmax=this%torsmax
+  end function get_torsmax
 
   subroutine set_zmatrix_tol(this)
     class(zmatrix), intent(inout) :: this

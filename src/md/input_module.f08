@@ -18,29 +18,31 @@
 !OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 !SOFTWARE.
 !
-module modelo_module
+module input_module
   !*******************************************************************************************
   !*******************************************************************************************
+
+  use molecule_module
 
   implicit none
 
-  integer i,j,k,l
+!  integer i,j,k,l
 
   private
-  public :: modelo
+  public :: input
 
-  type :: modelo
+  type, extends(molecule) :: input
    contains
-  end type modelo
+  end type input
 
-  interface modelo
-     module procedure constructor
-  end interface modelo
+!  interface input
+!     module procedure constructor
+!  end interface input
 
 contains
 
-  type(modelo) function constructor()
-    implicit none
-  end function constructor
+!  type(input) function constructor()
+!    implicit none
+!  end function constructor
 
-end module modelo_module
+end module input_module

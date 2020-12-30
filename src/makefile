@@ -3,9 +3,7 @@ OBJ_GEN = constants_module.o structure_module.o system_module.o molecule_module.
 #
 OBJ_PRP = zmatrix_module.o amber_module.o forcefield_module.o prepare_module.o
 #
-OBJ_MD = bonds_module.o bends_module.o dihedral_module.o \
-	vdw_module.o coulomb_module.o scale_factor_module.o neighbour_list.o \
-	force_field.o ensemble_nve.o ensemble_nvt.o ensemble_npt.o molecular_dynamics.o
+OBJ_MD = input_module.o
 #
 OBJ_OPT = optimize.o
 #
@@ -33,8 +31,8 @@ $(OBJ_MAIN):
 #
 #all: $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
 #	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_SYS) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
-all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MAIN)
-	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MAIN)
+all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_MAIN)
+	$(FC) -o HICOLM $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_MAIN)
 #
 clean:
 	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.dat *.out *.md
