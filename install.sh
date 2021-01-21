@@ -178,9 +178,9 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --creating executing script--
 #
-echo -e "\e[33m-> Preparing R environment\e[0m"
-Rscript $path/contrib/R/prepare.R
-echo
+#echo -e "\e[33m-> Preparing R environment\e[0m"
+#Rscript $path/contrib/R/prepare.R
+#echo
 #
 # --preparing script to call HICOLM executable
 #
