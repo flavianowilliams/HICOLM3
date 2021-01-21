@@ -92,6 +92,70 @@ c
       integer w,i,j,k,h,p,s,g,check
       character*20 lixc
 c
+c      if(w.eq.1)then
+c         read(ird,'(a12,f12.4,a7,i7,a7)')lixc,dtime,lixc,atmax,lixc
+c         keyi(1)=2
+c         keyi(2)=2
+c      end if
+c
+      read(ird,100,end=1)timestep(w)
+c
+c      read(ird,*)
+c      read(ird,*)
+c      read(ird,*)
+c      read(ird,300)l(w,1),keyf(1),keyf(2)
+c      read(ird,300)keyf(3),l(w,2),keyf(4)
+c      read(ird,300)keyf(5),keyf(6),l(w,3)
+c
+c      read(ird,*)
+c
+c      k=1
+c      do i=1,atmax
+c         read(ird,400)lixc,at(i),mmol(i),qat(i),(r(w,i,j),j=1,iz)
+c         read(ird,300)(v(w,i,j),j=1,iz)
+c         read(ird,300)(a(w,i,j),j=1,iz)
+c         nat(i)=k
+c         k=k+1
+c      end do
+c
+c      k=k-1
+c--------------------------------------------------------------------
+c-teste da quantidade de atomos
+c      s=0
+c      do h=1,qmol
+c         do p=1,nmolec(h)
+c            g=s+(p-1)*qatom(h)
+c            do j=1,qatom(h)
+c               i=g+j
+c            end do
+c         end do
+c         s=s+nmolec(h)*qatom(h)
+c      end do
+c
+c      if(i.ne.k)call erro(3,2,2)
+c
+      tmax=w
+c
+      goto 2
+c
+ 1    check=1
+
+ 2    return
+c
+ 100  format(1x,i5)
+c 200  format(6a16)
+ 300  format(35x,3f12.4)
+ 400  format(1x,a5,i5,5f12.4)
+c
+      end subroutine coord
+c
+      subroutine coordold(check,w)
+c
+      implicit none
+c
+      integer w,i,j,k,h,p,s,g,check
+      character*20 lixc
+c
       if(w.eq.1)then
          read(ird,'(a12,f12.4,a7,i7,a7)')lixc,dtime,lixc,atmax,lixc
          keyi(1)=2
@@ -147,7 +211,7 @@ c 200  format(6a16)
  300  format(35x,3f12.4)
  400  format(1x,a5,i5,5f12.4)
 c
-      end subroutine coord
+      end subroutine coordold
 c
       subroutine opinit()
 c

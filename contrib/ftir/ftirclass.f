@@ -39,7 +39,7 @@ c
       real(kind=4) t0,dt,cmsprec
       real(kind=4) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
 c
-      open(unit=ird,file="HICOLM.md",status="old")
+      open(unit=ird,file="lattice.csv",status="old")
       open(unit=iwrz,file="infrared.dat",status="unknown")
       open(unit=iwtt,file="vacf.dat",status="unknown")
       open(unit=iwrx,file="probability.dat",status="unknown")
@@ -59,6 +59,7 @@ c
          call molec(check,w,cmserr,cmsprec)
          if(check.eq.1)exit
       end do
+      stop
 c
       if(ddw.gt.tmax)ddw=tmax   !acertando o limite máximo p/ ddw
 c
