@@ -40,12 +40,13 @@ c
       dstr=(strmx-dstr0)/nmax
       dflx=(flxmx-dflx0)/nmax
 c
+      write(iwrx,'(3x,a1,a6,a7,a4)')'#','dipole','stretch','bend'
+c
       mi=0.
       strv=0.+dstr0
       flxv=0.+dflx0
       do i=1,nmax
-         write(iwrx,'(3(a4,4x,f7.4,f12.4))')
-     1        '1',mi,nn(i),'2',strv,str(i),'3',flxv,flx(i)
+         write(iwrx,'(3(f7.4,f12.4))')mi,nn(i),strv,str(i),flxv,flx(i)
          mi=mi+dmi
          strv=strv+dstr
          flxv=flxv+dflx
