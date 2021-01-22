@@ -158,12 +158,12 @@ c
          end do
       end do
 c----------------------------------------------------------------------
-      write(iwrz,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
+      write(iwrz,'(6x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
      1     '#','Freq','dosvel','stretch','libration',(atx(p),p=1,nx)
 c
       ni=0.
       do k=1,nimx
-         write(iwrz,'((f9.4,5x,22(f12.5)))')ni,(integ(3,p,k),p=1,nx+3)
+         write(iwrz,'((f12.4,5x,22(f12.5)))')ni,(integ(3,p,k),p=1,nx+3)
          ni=ni+dni
       end do
 c
