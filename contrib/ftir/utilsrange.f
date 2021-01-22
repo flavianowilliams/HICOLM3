@@ -65,11 +65,10 @@ c
       implicit none
 c
       integer c,i,wop
-      integer ats
       real(kind=4) rint,rend,az
-c      character*8 ats
+      character*5 ats
 c
-      ats=1
+      ats='OW'
       az=-0.5*l(wop,3)
       c=0
       do i=1,atmax

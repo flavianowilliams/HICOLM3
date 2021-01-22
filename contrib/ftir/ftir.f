@@ -43,13 +43,12 @@ c
       parameter (dblemol=2*nmmax)
 c
       integer nimx,w,www,k,i,j,p,op,nx,nt(fmax)
-      integer atx(atmmax)
       real(kind=4) str(fmax,dblemol)
       real(kind=4) smedi,smed(fmax),dm(fmax,molmax,nmmax,iz)
       real(kind=4) vel(atmmax,fmax),fint(3,pmax),integ(3,atmmax+3,pmax)
       real(kind=4) dni,ni,nimax,vol,temp,cte,light,dt,strmm,flexmm
       real(kind=4) tcfmed(fmax),flexmed(fmax),dip(fmax)
-c      character*8 atx(atmmax)
+      character*5 atx(atmmax)
 c
       data light/3.e-2/,cte/4.553024e5/,dni/1.e-2/
 c
@@ -159,7 +158,7 @@ c
          end do
       end do
 c----------------------------------------------------------------------
-      write(iwrz,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(i6,6x))')
+      write(iwrz,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
      1     '#','Freq','dosvel','stretch','libration',(atx(p),p=1,nx)
 c
       ni=0.
@@ -168,7 +167,7 @@ c
          ni=ni+dni
       end do
 c
-      write(iwtt,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(i6,6x))')
+      write(iwtt,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
      2     '#','Time','dosvel','stretch','libration',(atx(p),p=1,nx)
 c
       do w=1,www
@@ -182,7 +181,7 @@ c
       write(iwrt,*)('-',i=1,79)
       write(iwrt,'(2x,a12,5x,a16)')'Periodo (ps)','autocorrelacao->'
       write(iwrt,*)('-',i=1,79)
-      write(iwrt,'(3x,f10.7,6x,a6,6x,a11,6x,a6,22(3x,i3))')
+      write(iwrt,'(3x,f10.7,6x,a6,6x,a11,6x,a6,22(3x,a3))')
      1 1/(2*light*nimax),'dosvel','estiramento','flexao',(atx(p),p=1,nx)
       write(iwrt,*)('-',i=1,79)
       write(iwrt,*)

@@ -40,6 +40,7 @@ c
       real(kind=4) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
 c
       open(unit=ird,file="lattice.csv",status="old")
+      open(unit=ird2,file="atoms.csv",status="old")
       open(unit=iwrz,file="infrared.dat",status="unknown")
       open(unit=iwtt,file="vacf.dat",status="unknown")
       open(unit=iwrx,file="probability.dat",status="unknown")
@@ -50,8 +51,10 @@ c
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
       call input
 c
-      write(*,*)'-> calculando CMS e desligando CC'
+      write(*,*)'-> calculando CMS'
 c
+      read(ird,*)
+      read(ird2,*)
       check=0
       cmserr=0
       do w=1,fmax
@@ -59,7 +62,6 @@ c
          call molec(check,w,cmserr,cmsprec)
          if(check.eq.1)exit
       end do
-      stop
 c
       if(ddw.gt.tmax)ddw=tmax   !acertando o limite máximo p/ ddw
 c

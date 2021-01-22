@@ -41,7 +41,7 @@ c
       parameter (atmmax=200)
       parameter (iz=3)
 c
-      integer ird,irdd,iwrx,iwrt,iwtt,iwrz,iwrh
-      parameter (ird=1,irdd=2,iwrx=3,iwtt=4,iwrz=8,iwrh=6,iwrt=7)
+      integer ird,irdd,iwrx,iwrt,iwtt,iwrz,iwrh,ird2
+      parameter (ird=1,irdd=2,iwrx=3,iwtt=4,iwrz=8,iwrh=6,iwrt=7,ird2=9)
 c     
       end module sizes
