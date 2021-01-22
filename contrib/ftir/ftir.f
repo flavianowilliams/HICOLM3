@@ -158,8 +158,8 @@ c
          end do
       end do
 c----------------------------------------------------------------------
-      write(iwrz,'(6x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
-     1     '#','Freq','dosvel','stretch','libration',(atx(p),p=1,nx)
+      write(iwrz,'(7x,a4,12x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
+     1     'Freq','dosvel','stretch','libration',(atx(p),p=1,nx)
 c
       ni=0.
       do k=1,nimx
@@ -167,8 +167,8 @@ c
          ni=ni+dni
       end do
 c
-      write(iwtt,'(3x,a1,1x,a4,11x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
-     2     '#','Time','dosvel','stretch','libration',(atx(p),p=1,nx)
+      write(iwtt,'(4x,a4,12x,a6,5x,a7,4x,a9,5x,22(a6,6x))')
+     2     'Time','dosvel','stretch','libration',(atx(p),p=1,nx)
 c
       do w=1,www
          dt=dtime*float(timestep(w)-timestep(1))
