@@ -51,7 +51,7 @@ c
       real(kind=4) mtmol
       character*12 mark(nmax)
 c
-      cmsprec=5.e-3
+      cmsprec=1.e-2
 c
       if(check.eq.1)goto 1
 c--------------------------------------------------------------------

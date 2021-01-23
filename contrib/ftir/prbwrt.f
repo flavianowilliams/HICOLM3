@@ -48,7 +48,7 @@ c
       flxv=0.+dflx0
       do i=1,nmax
          write(iwrx,'(6f12.4)')
-     1        mi,nn(i),strv,str(i),flxv*3.141593/180.d0,flx(i)
+     1        mi,nn(i),strv,str(i),flxv*180.d0/3.141593,flx(i)
          mi=mi+dmi
          strv=strv+dstr
          flxv=flxv+dflx
