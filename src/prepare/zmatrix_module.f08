@@ -39,7 +39,6 @@ module zmatrix_module
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
-     integer, allocatable :: itorscnt(:)
      integer, allocatable :: molbond(:,:,:)
      integer, allocatable :: molbend(:,:,:)
      integer, allocatable :: moltors(:,:,:)

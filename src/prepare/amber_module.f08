@@ -32,12 +32,15 @@ module amber_module
   type :: amber
      real(8)      :: prms_bonds(2)
      real(8)      :: prms_bends(2)
+     real(8)      :: prms_tors(4)
      real(8)      :: prms_vdw(2)
    contains
      procedure :: set_amberbonds
      procedure :: set_amberbends
+     procedure :: set_amberdihedrals
      procedure :: set_ambervdw
-     generic   :: set_amber => set_amberbonds, set_amberbends, set_ambervdw
+     generic   :: set_amber => set_amberbonds, set_amberbends, set_ambervdw, &
+          set_amberdihedrals
   end type amber
 
 contains
@@ -77,6 +80,38 @@ contains
     end do
 1   close(12)
   end subroutine set_amberbends
+
+  subroutine set_amberdihedrals(this,p1,p2,p3,p4)
+    class(amber), intent(inout) :: this
+    real(4) x1,x2,x3,x4
+    character(2) pa,pb,pc,pd,p1,p2,p3,p4
+    open(12,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
+    open(13,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
+    this%prms_tors(1)=0.d0
+    this%prms_tors(2)=0.d0
+    this%prms_tors(3)=0.d0
+    this%prms_tors(4)=0.d0
+    do i=1,63
+       read(12,*,end=1)pa,pb,pc,pd,x1,x2,x3,x4
+       if(pb.eq.p2.and.pc.eq.p3.or.pb.eq.p3.and.pc.eq.p2)then
+          this%prms_tors(1)=dble(x1)
+          this%prms_tors(2)=dble(x2)
+          this%prms_tors(3)=dble(x3)
+          this%prms_tors(4)=dble(x4)
+       end if
+    end do
+1   do i=1,100
+       read(13,*,end=2)pa,pb,pc,pd,x1,x2,x3,x4
+       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
+          this%prms_tors(1)=dble(x1)
+          this%prms_tors(2)=dble(x2)
+          this%prms_tors(3)=dble(x3)
+          this%prms_tors(4)=dble(x4)
+       end if
+    end do
+2   close(12)
+    close(13)
+  end subroutine set_amberdihedrals
 
   subroutine set_ambervdw(this,p1)
     class(amber), intent(inout) :: this

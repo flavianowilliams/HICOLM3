@@ -104,8 +104,11 @@ program HICOLM
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_parbnd()                    ! atribuindo potenciais de ligacao
         call prp%set_parbend()                   ! atribuindo potenciais angulares
-        call prp%set_extra_parbnd()              ! alterando potenciais intramoleculares
-        call prp%set_extra_parbend()             ! alterando potenciais intramoleculares
+        call prp%set_partors()                   ! atribuindo potenciais de torsão
+        call prp%set_paritors()                   ! atribuindo diedros improprios
+        call prp%set_extra_parbnd()              ! alterando potenciais de ligacao
+        call prp%set_extra_parbend()             ! alterando potenciais angulares
+        call prp%set_extra_partors()             ! alterando diedros
         call prp%set_parvdw()                    ! atribuindo potenciais de Van der Waals
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais

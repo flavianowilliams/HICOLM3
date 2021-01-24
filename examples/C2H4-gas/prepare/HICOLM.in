@@ -19,5 +19,9 @@
  -0.3550 -0.3550  0.1775  0.1775  0.1775  0.1775
   bonds 1
   1 1 2 harm 1.0 1.0
+  dihedrals 1
+  4 4 1 2 6 harm 1.0 1.0
+  idihedrals 1
+  1 1 4 2 6 amber 0. 0. 0. 0.
  end_molecule
 &END

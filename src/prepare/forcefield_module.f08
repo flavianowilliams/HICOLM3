@@ -36,12 +36,19 @@ module forcefield_module
      type(amber)               :: amber
      integer, private          :: nspcs
      integer, private          :: nvdw
+     integer, private          :: itorsmax
+     integer, allocatable      :: itorscnt(:)
+     integer, allocatable      :: molitors(:,:,:)
      real(8), allocatable      :: parbnd(:,:,:)
      real(8), allocatable      :: parbend(:,:,:)
+     real(8), allocatable      :: partors(:,:,:)
+     real(8), allocatable      :: paritors(:,:,:)
      real(8), allocatable      :: parvdw(:,:,:)
      character(2), allocatable :: spcs(:)
      character(5), allocatable :: tbonds(:,:)
      character(5), allocatable :: tbends(:,:)
+     character(5), allocatable :: ttors(:,:)
+     character(5), allocatable :: titors(:,:)
    contains
      procedure, private :: forcefield_init
      procedure          :: set_spcs
@@ -49,10 +56,14 @@ module forcefield_module
      procedure          :: get_nspcs
      procedure          :: set_parbnd
      procedure          :: set_parbend
+     procedure          :: set_partors
+     procedure          :: set_paritors
      procedure          :: set_extra_parbnd
      procedure          :: set_extra_parbend
+     procedure          :: set_extra_partors
      procedure          :: set_parvdw
      procedure          :: get_nvdw
+     procedure          :: set_itorsmax
   end type forcefield
 
   interface forcefield
@@ -71,15 +82,20 @@ contains
     call this%set_nspcs()
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
     allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
+    allocate(this%partors(this%get_nmol(),this%get_bendmax(),4))
     allocate(this%parvdw(this%nspcs,this%nspcs,2))
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
+    allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
           this%tbonds(i,j)='amber'
        end do
        do j=1,this%get_bendmax()
           this%tbends(i,j)='amber'
+       end do
+       do j=1,this%get_torsmax()
+          this%ttors(i,j)='amber'
        end do
     end do
   end subroutine forcefield_init
@@ -189,6 +205,115 @@ contains
     end do
   end subroutine set_parbend
 
+  subroutine set_partors(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,i2,i3,i4
+    do i=1,this%get_nmol()
+       do j=1,this%torscnt(i)
+          i1=this%moltors(i,j,1)
+          i2=this%moltors(i,j,2)
+          i3=this%moltors(i,j,3)
+          i4=this%moltors(i,j,4)
+          call this%amber%set_amber&
+               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
+          do k=1,4
+             this%partors(i,j,k)=this%amber%prms_tors(k)
+          end do
+       end do
+    end do
+  end subroutine set_partors
+
+  subroutine set_itorsmax(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,nxx
+    character(12)                    :: key
+    nxx=0
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'idihedrals')then
+                   backspace(5)
+                   read(5,*)key,i1
+                end if
+             end do
+          end if
+2         continue
+       end do
+       nxx=max(nxx,i1)
+    end do
+    this%itorsmax=nxx
+3   rewind(5)
+  end subroutine set_itorsmax
+
+  subroutine set_paritors(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i2,i3
+    character(12)                    :: key
+    character(10)                    :: cvar
+    i3=0
+    call this%set_itorsmax()
+    if(this%itorsmax.eq.0)goto 3
+    allocate(this%itorscnt(this%get_nmol()))
+    allocate(this%molitors(this%get_nmol(),this%itorsmax,4))
+    allocate(this%titors(this%get_nmol(),this%itorsmax))
+    allocate(this%paritors(this%get_nmol(),this%itorsmax,4))
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             backspace(5)
+             read(5,*)key,cvar
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))then
+                   i3=k
+                end if
+             end do
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'idihedrals')then
+                   backspace(5)
+                   read(5,*)key,this%itorscnt(i3)
+                   do k=1,this%itorscnt(i3)
+                      read(5,*)i2
+                      backspace(5)
+                      read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+                           this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2)
+                      backspace(5)
+                      select case(this%titors(i3,i2))
+                      case('amber')
+                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
+                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,4)
+                      case('harm')
+                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
+                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,2)
+                      end select
+                   end do
+                end if
+             end do
+          end if
+2         continue
+       end do
+    end do
+3   rewind(5)
+  end subroutine set_paritors
+
   subroutine set_extra_parbnd(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
@@ -279,11 +404,11 @@ contains
                       select case(this%tbends(i3,i2))
                       case('amber')
                          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                              this%molbend(i3,i2,3),this%tbonds(i3,i2),&
+                              this%molbend(i3,i2,3),this%tbends(i3,i2),&
                               (this%parbend(i3,i2,l),l=1,2)
                       case('harm')
                          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                              this%molbend(i3,i2,2),this%tbonds(i3,i2),&
+                              this%molbend(i3,i2,2),this%tbends(i3,i2),&
                               (this%parbend(i3,i2,l),l=1,2)
                       end select
                    end do
@@ -296,5 +421,60 @@ contains
 3   rewind(5)
     return
   end subroutine set_extra_parbend
+
+  subroutine set_extra_partors(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,i2,i3
+    character(12)                    :: key
+    character(10)                    :: cvar
+    i3=0
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             backspace(5)
+             read(5,*)key,cvar
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))then
+                   i3=k
+                end if
+             end do
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'dihedrals')then
+                   backspace(5)
+                   read(5,*)key,i1
+                   do k=1,i1
+                      read(5,*)i2
+                      backspace(5)
+                      read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+                           this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2)
+                      backspace(5)
+                      select case(this%ttors(i3,i2))
+                      case('amber')
+                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
+                              (this%partors(i3,i2,l),l=1,4)
+                      case('harm')
+                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+                              this%moltors(i3,i2,2),this%moltors(i3,i2,3),this%ttors(i3,i2),&
+                              (this%partors(i3,i2,l),l=1,2)
+                      end select
+                   end do
+                end if
+             end do
+          end if
+2         continue
+       end do
+    end do
+3   rewind(5)
+    return
+  end subroutine set_extra_partors
 
 end module forcefield_module
