@@ -10,6 +10,7 @@
    1   3 amber  553.0000    0.9572
  bends   1
    1   3   3 harm     1.0000    1.0000
+ dihedrals   0
  H2O2           3 0.833333 0.500000
   8  1  1
  OW HW HW
@@ -20,5 +21,6 @@
    1   3 amber  553.0000    0.9572
  bends   1
    2   1   3 amber  100.0000  104.5200
+ dihedrals   0
  vdw   1
  OW OW    0.1520    3.5366
