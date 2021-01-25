@@ -39,6 +39,7 @@ module forcefield_module
      integer, private          :: itorsmax
      integer, allocatable      :: itorscnt(:)
      integer, allocatable      :: molitors(:,:,:)
+     character(4), private     :: coulop
      real(8), allocatable      :: parbnd(:,:,:)
      real(8), allocatable      :: parbend(:,:,:)
      real(8), allocatable      :: partors(:,:,:)
@@ -63,6 +64,8 @@ module forcefield_module
      procedure          :: set_extra_partors
      procedure          :: set_parvdw
      procedure          :: get_nvdw
+     procedure          :: set_coulop
+     procedure          :: get_coulop
      procedure          :: set_itorsmax
   end type forcefield
 
@@ -80,10 +83,6 @@ contains
     implicit none
     class(forcefield), intent(inout) :: this
     call this%set_nspcs()
-    allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
-    allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
-    allocate(this%partors(this%get_nmol(),this%get_bendmax(),4))
-    allocate(this%parvdw(this%nspcs,this%nspcs,2))
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
@@ -151,6 +150,7 @@ contains
     integer                          :: nx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
+    allocate(this%parvdw(this%nspcs,this%nspcs,2))
     nx=0
     do i=1,this%nspcs
        call this%amber%set_amber(this%spcs(i))
@@ -176,6 +176,7 @@ contains
   subroutine set_parbnd(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2
+    allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
     call this%forcefield_init()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
@@ -192,6 +193,7 @@ contains
   subroutine set_parbend(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
+    allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
     do i=1,this%get_nmol()
        do j=1,this%bendscnt(i)
           i1=this%molbend(i,j,1)
@@ -208,6 +210,7 @@ contains
   subroutine set_partors(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4
+    allocate(this%partors(this%get_nmol(),this%get_bendmax(),4))
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
           i1=this%moltors(i,j,1)
@@ -476,5 +479,28 @@ contains
 3   rewind(5)
     return
   end subroutine set_extra_partors
+
+  subroutine set_coulop(this,coulop)
+    class(forcefield), intent(inout) :: this
+    character(4)                     :: coulop
+    character(13)                    :: key
+    this%coulop=coulop
+1   read(5,*,end=2)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do while (key.ne.'&END')
+       read(5,*)key
+       if(key.eq.'electrostatic')then
+          backspace(5)
+          read(5,*)key,this%coulop
+          goto 2
+       end if
+    end do
+2   rewind(5)
+  end subroutine set_coulop
+
+  character(4) function get_coulop(this)
+    class(forcefield), intent(inout) :: this
+    get_coulop=this%coulop
+  end function get_coulop
 
 end module forcefield_module

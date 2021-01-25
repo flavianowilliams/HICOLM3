@@ -55,6 +55,7 @@ contains
        end do
     end do
     constructor%zmatrix_tol=0.5d0
+    call constructor%set_coulop('fscs')
   end function constructor
 
   subroutine check(this)
@@ -119,6 +120,7 @@ contains
     real(8)                       :: f1,f2
     open(11,file='HICOLM.top',status='unknown')
     write(11,'(1x,a2)')'MM'
+    write(11,'(1x,a4)')this%get_coulop()
     write(11,'(1x,i2)')this%get_nmol()
     do i=1,this%get_nmol()
        write(11,'(1x,a10,1(1x,i5),2(1x,f8.6))')&
@@ -310,6 +312,17 @@ contains
     write(6,'(39x,a14)')'INTERMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
+    select case(this%get_coulop())
+    case('coul')
+       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
+       write(6,*)
+    case('fscs')
+       write(6,'(2x,a53)')'Electrostatic interaction: Force-Shifted Coulomb Sum'
+       write(6,*)
+    case('escl')
+       write(6,'(2x,a53)')'Electrostatic interaction: Coulomb scaled potencial'
+       write(6,*)
+    end select
     write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
