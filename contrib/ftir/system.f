@@ -107,7 +107,6 @@ c         keyi(1)=2
 c         keyi(2)=2
 c      end if
 c
-      dtime=0.001d0
       read(ird,100,end=1)timestep(w),(l(w,i),i=1,3)
 c
       do i=1,atmax
