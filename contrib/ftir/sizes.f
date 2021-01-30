@@ -34,7 +34,7 @@ c-atmmax: limite de átomos por molécula     *
 c********************************************
       integer fmax,nmax,iz,molmax,nmmax,atmmax
 c
-      parameter (fmax=1100)
+      parameter (fmax=2500)
       parameter (nmax=6000)
       parameter (molmax=4)
       parameter (nmmax=2000)

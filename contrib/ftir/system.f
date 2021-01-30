@@ -187,7 +187,7 @@ c
                read(*,*)oph(1,i,j),natk(1,i,j)
             end do
          else
-      read(*,*)(natk(1,i,j),j=1,2)
+            read(*,*)(natk(1,i,j),j=1,2)
 c            natk(1,i,1)=1
 c            natk(1,i,2)=2
             do j=1,2
