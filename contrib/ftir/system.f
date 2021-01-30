@@ -99,20 +99,21 @@ c
       implicit none
 c
       integer w,i,j,k,h,p,s,g,check
+      real(8) dtt
       character*5 lixc
 c
-c      if(w.eq.1)then
-c         read(ird,'(a12,f12.4,a7,i7,a7)')lixc,dtime,lixc,atmax,lixc
-c         keyi(1)=2
-c         keyi(2)=2
-c      end if
-c
-      read(ird,100,end=1)timestep(w),(l(w,i),i=1,3)
+      read(ird,100,end=1)timestep(w),dtt,(l(w,i),i=1,3)
 c
       do i=1,atmax
          read(ird2,200)at(i),mmol(i),qat(i),(r(w,i,j),j=1,iz),
      1        (a(w,i,j),j=1,iz),(v(w,i,j),j=1,iz)
       end do
+c
+      if(w.eq.1)then
+         dtime=dtt
+      elseif(w.eq.2)then
+         dtime=dtt-dtime
+      end if
 c
       tmax=w
 c
@@ -122,7 +123,7 @@ c
 
  2    return
 c
- 100  format(1x,i12,131x,3(e12.4,1x))
+ 100  format(1x,i12,1x,e12.4,119x,3(e12.4,1x))
  200  format(51x,a5,1x,11(e12.4,1x))
 c
       end subroutine coord

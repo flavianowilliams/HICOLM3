@@ -63,8 +63,6 @@ c
          if(check.eq.1)exit
       end do
 c
-      dtime=timestep(2)-timestep(1)
-c
       if(ddw.gt.tmax)ddw=tmax   !acertando o limite máximo p/ ddw
 c
       write(*,*)'-> Calculo CMS e desligando CC: ok'
