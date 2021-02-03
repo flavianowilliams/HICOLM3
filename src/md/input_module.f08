@@ -62,6 +62,14 @@ module input_module
      procedure :: get_rcutoff
      procedure :: set_drcutoff
      procedure :: get_drcutoff
+     procedure :: set_pstat
+     procedure :: get_pstat
+     procedure :: set_tstat
+     procedure :: get_tstat
+     procedure :: set_ensble
+     procedure :: get_ensble
+     procedure :: set_ensble_mt
+     procedure :: get_ensble_mt
   end type input
 
 contains
@@ -110,8 +118,6 @@ contains
           read(5,*)key,ensble
           if(ensble.eq.'nve')then
              this%ensble=ensble
-             print*,this%ensble
-             stop
           elseif(ensble.eq.'nvt')then
              backspace(5)
              read(5,*)key,ensble,ensble_mt
@@ -242,5 +248,57 @@ contains
     class(input), intent(in) :: this
     get_drcutoff=this%drcutoff
   end function get_drcutoff
+
+  subroutine set_pstat(this,pstat)
+    implicit none
+    class(input), intent(inout) :: this
+    real(8), intent(in)         :: pstat
+    this%pstat=pstat
+  end subroutine set_pstat
+
+  double precision function get_pstat(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_pstat=this%pstat
+  end function get_pstat
+
+  subroutine set_tstat(this,tstat)
+    implicit none
+    class(input), intent(inout) :: this
+    real(8), intent(in)         :: tstat
+    this%tstat=tstat
+  end subroutine set_tstat
+
+  double precision function get_tstat(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_tstat=this%tstat
+  end function get_tstat
+
+  subroutine set_ensble(this,ensble)
+    implicit none
+    class(input), intent(inout) :: this
+    character(3), intent(in)    :: ensble
+    this%ensble=ensble
+  end subroutine set_ensble
+
+  character(3) function get_ensble(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_ensble=this%ensble
+  end function get_ensble
+
+  subroutine set_ensble_mt(this,ensble_mt)
+    implicit none
+    class(input), intent(inout) :: this
+    character(9), intent(in)    :: ensble_mt
+    this%ensble_mt=ensble_mt
+  end subroutine set_ensble_mt
+
+  character(9) function get_ensble_mt(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_ensble_mt=this%ensble_mt
+  end function get_ensble_mt
 
 end module input_module

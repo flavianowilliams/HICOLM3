@@ -49,6 +49,7 @@ contains
     call constructor%set_temp(298.d0)
     call constructor%set_rcutoff(8.0d0)
     call constructor%set_drcutoff(0.1d0)
+    call constructor%set_ensble('nve')
   end function constructor
 
 end module moleculardynamics_module

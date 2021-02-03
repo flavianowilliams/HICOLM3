@@ -122,7 +122,6 @@ program HICOLM
         md=moleculardynamics()                   ! definindo valores default
         call md%constants_prepare()              ! definindo constantes
         call md%set_input()                      ! lendo parametros de entrada em HICOLM.in
-        print*,md%get_drcutoff()
         lval=.true.
      end if
   end do
