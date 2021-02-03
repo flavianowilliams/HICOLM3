@@ -32,6 +32,7 @@ module input_module
   public :: input
 
   type, extends(molecule) :: input
+<<<<<<< Updated upstream
      integer, private :: nstep
      integer, private :: nrelax
      integer, private :: nframes
@@ -40,6 +41,20 @@ module input_module
      real(8), private :: temp
      real(8), private :: rcutoff
      real(8), private :: drcutoff
+=======
+     integer, private      :: nstep
+     integer, private      :: nrelax
+     integer, private      :: nframes
+     real(8), private      :: timestep
+     real(8), private      :: press
+     real(8), private      :: temp
+     real(8), private      :: rcutoff
+     real(8), private      :: drcutoff
+     real(8), private      :: tstat
+     real(8), private      :: pstat
+     character(3), private :: ensble
+     character(9), private :: ensble_mt
+>>>>>>> Stashed changes
    contains
      procedure :: set_input
      procedure :: set_nstep
@@ -65,7 +80,14 @@ contains
   subroutine set_input(this)
     implicit none
     class(input), intent(inout) :: this
+<<<<<<< Updated upstream
     character(11)               :: key
+=======
+    real(8)                     :: tstat,pstat
+    character(11)               :: key
+    character(3)                :: ensble
+    character(9)                :: ensble_mt
+>>>>>>> Stashed changes
 1   read(5,*,end=2)key
     if(key.ne.'&MD')goto 1
     do while (key.ne.'&END')
@@ -100,6 +122,7 @@ contains
        end if
        if(key.eq.'ensemble')then
           backspace(5)
+<<<<<<< Updated upstream
           read(5,*)key,char
           if(char.eq.'nve')then
              this%ensble=char
@@ -137,6 +160,33 @@ contains
                 ensble_mt=char2
                 tstat=val(1)
                 pstat=val(2)
+=======
+          read(5,*)key,ensble
+          if(ensble.eq.'nve')then
+             this%ensble=ensble
+             print*,this%ensble
+             stop
+          elseif(.eq.'nvt')then
+             backspace(5)
+             read(5,*)key,ensble,ensble_mt
+             if(ensble_mt.eq.'berendsen'.or.ensble_mt.eq.'hoover')then
+                backspace(5)
+                read(5,*)key,ensble,ensble_mt,tstat
+                this%ensble=ensble
+                this%ensble_mt=ensble_mt
+                this%tstat=tstat
+             end if
+          elseif(ensble.eq.'npt')then
+             backspace(5)
+             read(5,*)key,ensble,ensble_mt
+             if(ensble_mt.eq.'berendsen'.or.ensble_mt.eq.'hoover')then
+                backspace(5)
+                read(5,*)key,ensble,ensble_mt,tstat,pstat
+                this%ensble=ensble
+                this%ensble_mt=ensble_mt
+                this%tstat=tstat
+                this%pstat=pstat
+>>>>>>> Stashed changes
              end if
           end if
        end if
