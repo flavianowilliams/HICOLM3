@@ -23,7 +23,8 @@ program HICOLM
   !programa principal responsavel pelo instanciamento dos objetos                            *
   !*******************************************************************************************
 
-  use prepare_module        ! prepare class to prepare the physical environment
+  use prepare_module           ! prepare class to prepare the physical environment
+  use moleculardynamics_module ! prepare class to molecular dynamics procedure
 
   implicit none
 
@@ -34,7 +35,8 @@ program HICOLM
   character(8)  :: date,in
   logical       :: lval
 
-  type(prepare) :: prp      ! instanciating prepare object
+  type(prepare)           :: prp ! instanciating prepare object
+  type(moleculardynamics) :: md  ! instanciating molecular dynamics object
 
   call cpu_time(t0)
 
@@ -48,7 +50,7 @@ program HICOLM
   open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
   open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodinamicas
   open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
-  open(9,file='HICOLM.xyz',status='old')             ! 
+  open(9,file='HICOLM.xyz',status='unknown')             ! 
 
   t1=0.d0
   t2=0.d0
@@ -116,7 +118,11 @@ program HICOLM
         call prp%print_top()                     ! imprimindo topologia em HICOLM.top
         call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
-     elseif(in.eq.'@MD     ')then
+     elseif(in.eq.'@MD')then
+        md=moleculardynamics()                   ! definindo valores default
+        call md%constants_prepare()              ! definindo constantes
+        call md%set_input()                      ! lendo parametros de entrada em HICOLM.in
+        print*,md%get_drcutoff()
         lval=.true.
      end if
   end do

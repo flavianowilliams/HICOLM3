@@ -91,8 +91,8 @@ contains
           end do
        end do
     end if
-    if(this%get_a().le.1.e-4.or.this%get_b().le.1.e-4.or.this%get_c().le.1.e-4)then
-       write(6,*)'ERROR: Lattice constant too small!'
+    if(this%get_a().le.16.d0.or.this%get_b().le.16.d0.or.this%get_c().le.16.d0)then
+       write(6,*)'ERROR: Lattice constant too small! It must be higher than 16 angstroms'
        write(6,*)'Hint: Increase the value of the lattice constant.'
        stop
     end if

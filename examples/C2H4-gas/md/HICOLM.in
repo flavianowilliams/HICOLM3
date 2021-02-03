@@ -1,0 +1,16 @@
+# Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization
+# @MDPREPARE. The default optin is optimization procedure.
+
+@MD
+
+# Structure settings. Type the coordinates of the lattice vectors of the unit cell.
+
+&MD
+ nstep 1000
+ nrelax 20
+ nframes 50
+ timestep 0.0005
+ pressure 1.5
+ temperature 300
+ rcutoff 9.0 0.1
+&END
