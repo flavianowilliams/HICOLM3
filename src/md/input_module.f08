@@ -112,7 +112,7 @@ contains
              this%ensble=ensble
              print*,this%ensble
              stop
-          elseif(.eq.'nvt')then
+          elseif(ensble.eq.'nvt')then
              backspace(5)
              read(5,*)key,ensble,ensble_mt
              if(ensble_mt.eq.'berendsen'.or.ensble_mt.eq.'hoover')then
@@ -134,12 +134,6 @@ contains
                 this%pstat=pstat
              end if
           end if
-       end if
-
-
-       if(key.eq.'ensemble')then
-          backspace(5)
-          read(5,*)key,this%
        end if
     end do
 2   rewind(5)
