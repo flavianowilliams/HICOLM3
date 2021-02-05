@@ -55,6 +55,7 @@ module structure_module
      procedure          :: sites
      procedure          :: molecules
      procedure          :: translate
+     procedure          :: set_latticevectors
      procedure          :: set_lattice_constants
      procedure          :: set_lattice_angles
      procedure          :: set_symmetry
@@ -277,9 +278,9 @@ contains
     stop
   end subroutine sites
 
-  subroutine set_lattice_constants(this)
+  subroutine set_latticevectors(this)
     class(structure), intent(inout) :: this
-    character(4)                 :: key
+    character(4)                    :: key
 1   read(5,*,end=2)key
     if(key.ne.'&SYS')goto 1
     do while (key.ne.'&END')
@@ -289,10 +290,14 @@ contains
           read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
        end if
     end do
+2   rewind(5)
+  end subroutine set_latticevectors
+
+  subroutine set_lattice_constants(this)
+    class(structure), intent(inout) :: this
     this%a=sqrt(this%v(1,1)**2+this%v(1,2)**2+this%v(1,3)**2)
     this%b=sqrt(this%v(2,1)**2+this%v(2,2)**2+this%v(2,3)**2)
     this%c=sqrt(this%v(3,1)**2+this%v(3,2)**2+this%v(3,3)**2)
-2   rewind(5)
   end subroutine set_lattice_constants
 
   subroutine set_lattice_angles(this)

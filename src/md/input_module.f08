@@ -22,30 +22,34 @@ module input_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use molecule_module
+  use forcefield_module
 
   implicit none
 
-!  integer i,j,k,l
+  integer i,j,k
 
   private
   public :: input
 
-  type, extends(molecule) :: input
-     integer, private      :: nstep
-     integer, private      :: nrelax
-     integer, private      :: nframes
-     real(8), private      :: timestep
-     real(8), private      :: press
-     real(8), private      :: temp
-     real(8), private      :: rcutoff
-     real(8), private      :: drcutoff
-     real(8), private      :: pstat
-     real(8), private      :: tstat
-     character(3), private :: ensble
-     character(9), private :: ensble_mt
+  type, extends(forcefield) :: input
+     integer, private       :: nstep
+     integer, private       :: nrelax
+     integer, private       :: nframes
+     real(8), private       :: timestep
+     real(8), private       :: press
+     real(8), private       :: temp
+     real(8), private       :: rcutoff
+     real(8), private       :: drcutoff
+     real(8), private       :: pstat
+     real(8), private       :: tstat
+     character(3), private  :: ensble
+     character(9), private  :: ensble_mt
    contains
      procedure :: set_input
+     procedure :: set_topology
+     procedure :: set_molecules
+     procedure :: set_latticevectors
+     procedure :: set_atoms
      procedure :: set_nstep
      procedure :: get_nstep
      procedure :: set_nrelax
@@ -70,6 +74,7 @@ module input_module
      procedure :: get_ensble
      procedure :: set_ensble_mt
      procedure :: get_ensble_mt
+     procedure :: convert_units
   end type input
 
 contains
@@ -144,6 +149,122 @@ contains
     end do
 2   rewind(5)
   end subroutine set_input
+
+  subroutine set_topology(this)
+    implicit none
+    class(input), intent(inout) :: this
+    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,nspcvdw,i1,i2
+    real(8)                     :: f1,f2
+    character(2)                :: mtd
+    character(4)                :: coulop
+    character(5)                :: ttors
+    open(11,file='HICOLM.top',status='old')
+    read(11,'(1x,a2)')mtd
+    if(mtd.eq.'MM')then
+       read(11,'(1x,a4)')coulop
+       call this%set_coulop(coulop)
+       read(11,'(1x,i2,4(1x,i3))')nmol,bondmax,bendmax,torsmax,nspcs
+       call this%set_nmol(nmol)
+       allocate(this%zatmol(nmol,this%get_natom()),this%qatmol(nmol,this%get_natom()))
+       allocate(this%tpmol(nmol,this%get_natom()))
+       allocate(this%sf_coul(nmol),this%sf_vdw(nmol))
+       allocate(this%massmol(this%get_nmol(),this%get_natom()))
+       allocate(this%bondscnt(nmol),this%bendscnt(nmol),this%torscnt(nmol))
+       allocate(this%tbonds(nmol,bondmax),this%tbends(nmol,bendmax),this%ttors(nmol,torsmax))
+       allocate(this%molbond(nmol,bondmax,2),this%molbend(nmol,bendmax,3))
+       allocate(this%moltors(nmol,torsmax,4))
+       allocate(this%parbnd(nmol,bondmax,2),this%parbend(nmol,bendmax,2))
+       allocate(this%partors(nmol,torsmax,4))
+       do i=1,this%get_nmol()
+          read(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
+          read(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
+          read(11,'(15(1x,a2))')(this%tpmol(i,j),j=1,this%nxmol(i))
+          read(11,'(15(1x,f8.4))')(this%massmol(i,j),j=1,this%nxmol(i))
+          read(11,'(15(1x,f8.4))')(this%qatmol(i,j),j=1,this%nxmol(i))
+          read(11,'(7x,i3)')this%bondscnt(i)
+          do j=1,this%bondscnt(i)
+             read(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          end do
+          read(11,'(7x,i3)')this%bendscnt(i)
+          do j=1,this%bendscnt(i)
+             read(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
+                  this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+          end do
+          read(11,'(11x,i3)')this%torscnt(i)
+          do j=1,this%torscnt(i)
+             read(11,'(17x,a5)')ttors
+             select case(ttors)
+             case('amber')
+                backspace(11)
+                i1=nint(this%partors(i,j,1))
+                f1=this%partors(i,j,2)
+                f2=this%partors(i,j,3)
+                i2=nint(this%partors(i,j,4))
+                read(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')&
+                     (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
+             case('harm')
+                backspace(11)
+                f1=this%partors(i,j,2)
+                f2=this%partors(i,j,3)
+                read(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
+                     this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
+             end select
+          end do
+       end do
+       read(11,'(4x,2(1x,i3))')nvdw,nspcvdw
+       call this%set_nspcs()
+       call this%set_spcs()
+       allocate(this%spcvdw(nspcvdw),this%parvdw(nspcvdw,nspcvdw,2))
+       do i=1,nspcvdw
+          do j=i,nspcvdw
+             do k=1,2
+                this%parvdw(i,j,k)=0.d0
+             end do
+          end do
+       end do
+       do i=1,nspcvdw
+          do j=i,nspcvdw
+             read(11,'(2(1x,a2),2(1x,f9.4))')&
+                  this%spcvdw(i),this%spcvdw(j),(this%parvdw(i,j,k),k=1,2)
+             this%parvdw(j,i,1)=this%parvdw(i,j,1)
+             this%parvdw(j,i,2)=this%parvdw(i,j,2)
+          end do
+       end do
+       call this%set_nspcvdw(nspcvdw)
+       call this%set_nvdw(nvdw)
+    end if
+  end subroutine set_topology
+
+  subroutine set_molecules(this)
+    implicit none
+    class(input), intent(inout) :: this
+    integer                     :: nmol
+    open(10,file='HICOLM.sys',status='old')
+    read(10,'(1x,i5)')nmol
+    call this%set_nmol(nmol)
+    allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
+    do i=1,this%get_nmol()
+       read(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
+    end do
+  end subroutine set_molecules
+
+  subroutine set_latticevectors(this)
+    implicit none
+    class(input), intent(inout) :: this
+    do i=1,3
+       read(10,'(3f16.8)')(this%v(i,j),j=1,3)
+    end do
+  end subroutine set_latticevectors
+
+  subroutine set_atoms(this)
+    implicit none
+    class(input), intent(inout) :: this
+    allocate(this%xa(this%get_natom()),this%ya(this%get_natom()),this%za(this%get_natom()))
+    do i=1,this%get_natom()
+       read(10,'(3f16.8)')this%xa(i),this%ya(i),this%za(i)
+    end do
+  end subroutine set_atoms
 
   subroutine set_nstep(this,nstep)
     implicit none
@@ -300,5 +421,26 @@ contains
     class(input), intent(in) :: this
     get_ensble_mt=this%ensble_mt
   end function get_ensble_mt
+
+  subroutine convert_units(this)
+    implicit none
+    class(input), intent(inout) :: this
+    do i=1,3
+       do j=1,3
+          this%v(i,j)=this%v(i,j)/this%get_rconv()
+       end do
+    end do
+    do i=1,this%get_natom()
+       this%xa(i)=this%xa(i)/this%get_rconv()
+       this%ya(i)=this%ya(i)/this%get_rconv()
+       this%za(i)=this%za(i)/this%get_rconv()
+    end do
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
+          this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
+       end do
+    end do
+  end subroutine convert_units
 
 end module input_module

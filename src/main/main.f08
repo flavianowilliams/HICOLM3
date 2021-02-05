@@ -44,13 +44,6 @@ program HICOLM
 
   open(5,file='HICOLM.in',status='old')               ! reading input datas
   open(6,file='HICOLM.out',status='unknown')          ! printing output informations
-  open(1,file='HICOLM.XSF',status='unknown')          ! printing atomic coordinates
-  open(2,file='.HICOLM.XSF',status='unknown')          ! 
-  open(3,file='HICOLM.AXSF',status='unknown')          ! printing coordinates for each frame
-  open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
-  open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodinamicas
-  open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
-  open(9,file='HICOLM.xyz',status='unknown')             ! 
 
   t1=0.d0
   t2=0.d0
@@ -89,10 +82,14 @@ program HICOLM
   do while (lval.eqv..false.)
      read(5,*,end=1)in
      if(in.eq.'@PREPARE')then
+        open(9,file='HICOLM.xyz',status='old')   ! read atomic coordinates
+!
         prp=prepare()                            ! definindo valores default
+!
         call prp%constants_prepare()             ! definindo constantes
         call prp%molecules()                     ! atribuindo qde moléculas e sitios atomicos
         call prp%set_natom()                     ! calculando qde de sitios atomicos
+        call prp%set_latticevectors()            ! lendo coordenadas da celula unitaria
         call prp%set_lattice_constants()         ! calculando constantes de rede
         call prp%set_lattice_angles()            ! calculando angulos de rede
         call prp%set_volume()                    ! calculando volume da supercelula
@@ -119,9 +116,30 @@ program HICOLM
         call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
      elseif(in.eq.'@MD')then
-        md=moleculardynamics()                   ! definindo valores default
+        open(1,file='HICOLM.XSF',status='unknown')         ! printing atomic coordinates
+        open(2,file='.HICOLM.XSF',status='unknown')        ! backup of the atomic coordinates
+        open(3,file='HICOLM.AXSF',status='unknown')        ! printing coordinates for each frame
+        open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
+        open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodinamicas
+        open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
+!
+        md=moleculardynamics()                   ! set default values
+!
         call md%constants_prepare()              ! definindo constantes
         call md%set_input()                      ! lendo parametros de entrada em HICOLM.in
+        call md%set_molecules()                  ! lendo tipos e qde de moleculas
+        call md%set_latticevectors()             ! lendo coordenadas da celula unitaria
+        call md%set_natom()                      ! calculando qde de sitios atomicos
+        call md%set_atoms()                      ! lendo coordenadas atomicas
+        call md%set_topology()                   ! lendo parametros do campo de forca
+        call md%convert_units()                  ! convertendo unidades de medida
+        call md%set_mmolar()                     ! calculando massa molecular
+        call md%set_global()                     ! calculando a carga total do sistema
+        call md%set_lattice_constants()          ! calculando constantes de rede
+        call md%set_lattice_angles()             ! calculando angulos de rede
+        call md%set_symmetry()                   ! calculando grupo de simetria
+        call md%set_volume()                     ! calculando volume da supercelula
+        call md%print_out()                      ! imprimindo valores em HICOLM.out
         lval=.true.
      end if
   end do

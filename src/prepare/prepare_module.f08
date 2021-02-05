@@ -56,6 +56,9 @@ contains
     end do
     constructor%zmatrix_tol=0.5d0
     call constructor%set_coulop('fscs')
+    call constructor%set_bondmax(100)
+    call constructor%set_bendmax(100)
+    call constructor%set_torsmax(100)
   end function constructor
 
   subroutine check(this)
@@ -102,6 +105,7 @@ contains
     implicit none
     class(prepare), intent(inout) :: this
     open(10,file='HICOLM.sys',status='unknown')
+    write(10,'(1x,i5)')this%get_nmol()
     do i=1,this%get_nmol()
        write(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
     end do
@@ -121,10 +125,10 @@ contains
     open(11,file='HICOLM.top',status='unknown')
     write(11,'(1x,a2)')'MM'
     write(11,'(1x,a4)')this%get_coulop()
-    write(11,'(1x,i2)')this%get_nmol()
+    write(11,'(1x,i2,4(1x,i3))')this%get_nmol(),this%get_bondmax(),this%get_bendmax(),&
+         this%get_torsmax(),this%get_nspcs()
     do i=1,this%get_nmol()
-       write(11,'(1x,a10,1(1x,i5),2(1x,f8.6))')&
-            this%namemol(i),this%nxmol(i),this%sf_coul(i),this%sf_vdw(i)
+       write(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
        write(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,a2))')(this%tpmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,f8.4))')(this%massmol(i,j),j=1,this%nxmol(i))
@@ -173,13 +177,11 @@ contains
           end select
        end do
     end do
-    write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
-    do i=1,this%get_nspcs()
-       do j=i,this%get_nspcs()
-          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)then
-             write(11,'(2(1x,a2),2(1x,f9.4))')this%spcs(i),this%spcs(j),&
-                  this%parvdw(i,j,1),this%parvdw(i,j,2)
-          end if
+    write(11,'(1x,a3,2(1x,i3))')'vdw',this%get_nvdw(),this%get_nspcvdw()
+    do i=1,this%get_nspcvdw()
+       do j=i,this%get_nspcvdw()
+          write(11,'(2(1x,a2),2(1x,f9.4))')&
+               this%spcvdw(i),this%spcvdw(j),this%parvdw(i,j,1),this%parvdw(i,j,2)
        end do
     end do
   end subroutine print_top
@@ -222,7 +224,8 @@ contains
     write(6,'(19x,111a1)')('-',i=1,54)
     do i=1,this%get_nmol()
        write(6,'(20x,a6,2x,i5,4(4x,i5))')&
-            this%namemol(i),this%ntmol(i),this%nxmol(i),this%bondscnt(i),this%bendscnt(i)
+            this%namemol(i),this%ntmol(i),this%nxmol(i),this%bondscnt(i),this%bendscnt(i),&
+            (this%torscnt(i)+this%itorscnt(i))
     end do
     write(6,'(19x,111a1)')('-',i=1,54)
     write(6,*)
@@ -339,12 +342,10 @@ contains
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,'(20x,a4,2x,a4,3x,a4,6x,a10)')'Site','Site','Type','Parameters'
     write(6,'(20x,111a1)')('-',i=1,52)
-    do i=1,this%get_nspcs()
-       do j=i,this%get_nspcs()
-          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)then
-             write(6,'(21x,a2,4x,a2,3(1x,f9.4))')this%spcs(i),this%spcs(j),&
-                  this%parvdw(i,j,1),this%parvdw(i,j,2)
-          end if
+    do i=1,this%get_nspcvdw()
+       do j=i,this%get_nspcvdw()
+          write(6,'(21x,a2,4x,a2,3(1x,f9.4))')&
+               this%spcvdw(i),this%spcvdw(j),this%parvdw(i,j,1),this%parvdw(i,j,2)
        end do
     end do
     write(6,'(20x,111a1)')('-',i=1,52)

@@ -84,11 +84,11 @@ contains
 
   subroutine set_bonds(this)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol,ia,ib
+    integer                       :: nx,nxx,nxxx,imol,ia,ib
     real(8)                       :: dr,rca,rcb
-    call this%set_bondmax()
     allocate(this%bondscnt(this%get_nmol()))
     allocate(this%molbond(this%get_nmol(),this%bondmax,2))
+    nxxx=0
     do imol=1,this%get_nmol()
        nx=0
        do i=1,imol-1
@@ -111,22 +111,15 @@ contains
           end do
        end do
        this%bondscnt(imol)=nxx-1
+       nxxx=max(nxxx,this%bondscnt(imol))
     end do
+    this%bondmax=nxxx
   end subroutine set_bonds
 
-  subroutine set_bondmax(this)
+  subroutine set_bondmax(this,bondmax)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx
-    nxx=1
-    do i=1,this%get_nmol()
-       nx=1
-       do j=0,this%nxmol(i)-1
-          nx=nx*(this%nxmol(i)-j)
-       end do
-       nx=int(0.5*nx)
-       nxx=max(nx,nxx)
-    end do
-    this%bondmax=nxx
+    integer, intent(in)           :: bondmax
+    this%bondmax=bondmax
   end subroutine set_bondmax
 
   integer function get_bondmax(this)
@@ -136,10 +129,10 @@ contains
 
   subroutine set_bends(this)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,imol
-    call this%set_bendmax()
+    integer                       :: nx,nxx,imol
     allocate(this%bendscnt(this%get_nmol()))
     allocate(this%molbend(this%get_nmol(),this%bendmax,3))
+    nxx=0
     do imol=1,this%get_nmol()
        nx=1
        do i=1,this%bondscnt(imol)
@@ -157,27 +150,15 @@ contains
           end do
        end do
        this%bendscnt(imol)=nx-1
+       nxx=max(nxx,this%bendscnt(imol))
     end do
+    this%bendmax=nxx
   end subroutine set_bends
 
-  subroutine set_bendmax(this)
+  subroutine set_bendmax(this,bendmax)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol
-    nxx=0
-    do imol=1,this%get_nmol()
-       nx=1
-       do i=1,this%bondscnt(imol)
-          do j=i+1,this%bondscnt(imol)
-             do k=1,2
-                do l=1,2
-                   if(this%molbond(imol,i,k).eq.this%molbond(imol,j,l))nx=nx+1
-                end do
-             end do
-          end do
-       end do
-       nxx=max(nxx,nx)
-    end do
-    this%bendmax=nxx-1
+    integer                       :: bendmax
+    this%bendmax=bendmax
   end subroutine set_bendmax
 
   integer function get_bendmax(this)
@@ -187,10 +168,10 @@ contains
 
   subroutine set_torsion(this)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,imol,ii,kk
-    call this%set_torsmax()
+    integer                       :: nx,nxx,imol,ii,kk
     allocate(this%torscnt(this%get_nmol()))
     allocate(this%moltors(this%get_nmol(),this%torsmax,4))
+    nxx=0
     do imol=1,this%get_nmol()
        nx=1
        do i=1,this%bondscnt(imol)
@@ -260,68 +241,15 @@ contains
           end do
        end do
        this%torscnt(imol)=nx-1
+       nxx=max(nxx,this%torscnt(imol))
     end do
+    this%torsmax=nxx
   end subroutine set_torsion
 
-  subroutine set_torsmax(this)
+  subroutine set_torsmax(this,torsmax)
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol,ii,kk
-    nxx=0
-    do imol=1,this%get_nmol()
-       nx=1
-       do i=1,this%bondscnt(imol)
-          do j=1,i-1
-             do k=1,j-1
-                do ii=1,2
-                   do kk=1,2
-                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
-                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
-                            nx=nx+1
-                         end if
-                      end if
-                   end do
-                end do
-             end do
-             do k=j+1,this%bondscnt(imol)
-                do ii=1,2
-                   do kk=1,2
-                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
-                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
-                            nx=nx+1
-                         end if
-                      end if
-                   end do
-                end do
-             end do
-          end do
-          do j=i+1,this%bondscnt(imol)
-             do k=1,j-1
-                do ii=1,2
-                   do kk=1,2
-                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
-                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
-                            nx=nx+1
-                         end if
-                      end if
-                   end do
-                end do
-             end do
-             do k=j+1,this%bondscnt(imol)
-                do ii=1,2
-                   do kk=1,2
-                      if(this%molbond(imol,j,1).eq.this%molbond(imol,i,3-ii))then
-                         if(this%molbond(imol,j,2).eq.this%molbond(imol,k,kk))then
-                            nx=nx+1
-                         end if
-                      end if
-                   end do
-                end do
-             end do
-          end do
-       end do
-       nxx=max(nxx,nx)
-    end do
-    this%torsmax=nxx-1
+    integer                       :: torsmax
+    this%torsmax=torsmax
   end subroutine set_torsmax
 
   integer function get_torsmax(this)

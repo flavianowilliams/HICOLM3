@@ -35,6 +35,7 @@ module forcefield_module
   type, extends(zmatrix) :: forcefield
      type(amber)               :: amber
      integer, private          :: nspcs
+     integer, private          :: nspcvdw
      integer, private          :: nvdw
      integer, private          :: itorsmax
      integer, allocatable      :: itorscnt(:)
@@ -46,6 +47,7 @@ module forcefield_module
      real(8), allocatable      :: paritors(:,:,:)
      real(8), allocatable      :: parvdw(:,:,:)
      character(2), allocatable :: spcs(:)
+     character(2), allocatable :: spcvdw(:)
      character(5), allocatable :: tbonds(:,:)
      character(5), allocatable :: tbends(:,:)
      character(5), allocatable :: ttors(:,:)
@@ -55,6 +57,8 @@ module forcefield_module
      procedure          :: set_spcs
      procedure          :: set_nspcs
      procedure          :: get_nspcs
+     procedure          :: set_nspcvdw
+     procedure          :: get_nspcvdw
      procedure          :: set_parbnd
      procedure          :: set_parbend
      procedure          :: set_partors
@@ -63,6 +67,7 @@ module forcefield_module
      procedure          :: set_extra_parbend
      procedure          :: set_extra_partors
      procedure          :: set_parvdw
+     procedure          :: set_nvdw
      procedure          :: get_nvdw
      procedure          :: set_coulop
      procedure          :: get_coulop
@@ -128,6 +133,7 @@ contains
   end function get_nspcs
 
   subroutine set_spcs(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: nx
     allocate(this%spcs(this%nspcs))
@@ -145,28 +151,57 @@ contains
     end do
   end subroutine set_spcs
 
+  subroutine set_nspcvdw(this,nspcvdw)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer, intent(in)              :: nspcvdw
+    this%nspcvdw=nspcvdw
+  end subroutine set_nspcvdw
+
+  integer function get_nspcvdw(this)
+    class(forcefield), intent(in) :: this
+    get_nspcvdw=this%nspcvdw
+  end function get_nspcvdw
+
   subroutine set_parvdw(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: nx
+    integer                          :: nx,nxx,nxxx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
-    allocate(this%parvdw(this%nspcs,this%nspcs,2))
-    nx=0
+    allocate(this%parvdw(this%nspcs,this%nspcs,2),this%spcvdw(this%nspcs))
+    nx=1
+    nxxx=1
     do i=1,this%nspcs
        call this%amber%set_amber(this%spcs(i))
        e1=this%amber%prms_vdw(2)
        s1=this%amber%prms_vdw(1)
-       do j=i,this%nspcs
-          call this%amber%set_amber(this%spcs(j))
-          e2=this%amber%prms_vdw(2)
-          s2=this%amber%prms_vdw(1)
-          this%parvdw(i,j,1)=sqrt(e1*e2)
-          this%parvdw(i,j,2)=s1+s2
-          if(this%parvdw(i,j,1).ge.1.d-8.and.this%parvdw(i,j,2).ge.1.d-2)nx=nx+1
-       end do
+       if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
+          this%spcvdw(nxxx)=this%spcs(i)
+          nxx=nxxx
+          do j=i,this%nspcs
+             call this%amber%set_amber(this%spcs(j))
+             e2=this%amber%prms_vdw(2)
+             s2=this%amber%prms_vdw(1)
+             if(e2.ge.1.d-4.and.s2.ge.1.d-1)then
+                this%parvdw(nxxx,nxx,1)=sqrt(e1*e2)
+                this%parvdw(nxxx,nxx,2)=s1+s2
+                nx=nx+1
+                nxx=nxx+1
+             end if
+          end do
+          nxxx=nxxx+1
+       end if
     end do
-    this%nvdw=nx
+    this%nvdw=nx-1
+    this%nspcvdw=nxxx-1
   end subroutine set_parvdw
+
+  subroutine set_nvdw(this,nvdw)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer, intent(in)              :: nvdw
+    this%nvdw=nvdw
+  end subroutine set_nvdw
 
   integer function get_nvdw(this)
     class(forcefield), intent(in) :: this
@@ -254,6 +289,7 @@ contains
        nxx=max(nxx,i1)
     end do
     this%itorsmax=nxx
+    call this%set_torsmax(this%get_torsmax()+this%itorsmax)
 3   rewind(5)
   end subroutine set_itorsmax
 
@@ -411,7 +447,7 @@ contains
                               (this%parbend(i3,i2,l),l=1,2)
                       case('harm')
                          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                              this%molbend(i3,i2,2),this%tbends(i3,i2),&
+                              this%molbend(i3,i2,3),this%tbends(i3,i2),&
                               (this%parbend(i3,i2,l),l=1,2)
                       end select
                    end do
@@ -466,7 +502,7 @@ contains
                               (this%partors(i3,i2,l),l=1,4)
                       case('harm')
                          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
-                              this%moltors(i3,i2,2),this%moltors(i3,i2,3),this%ttors(i3,i2),&
+                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
                               (this%partors(i3,i2,l),l=1,2)
                       end select
                    end do
