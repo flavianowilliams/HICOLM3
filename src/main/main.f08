@@ -118,9 +118,9 @@ program HICOLM
      elseif(in.eq.'@MD')then
         open(1,file='HICOLM.XSF',status='unknown')         ! printing atomic coordinates
         open(2,file='.HICOLM.XSF',status='unknown')        ! backup of the atomic coordinates
-        open(3,file='HICOLM.AXSF',status='unknown')        ! printing coordinates for each frame
+        open(3,file='HICOLM.AXSF',status='unknown')        ! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
-        open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodinamicas
+        open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
 !
         md=moleculardynamics()                   ! set default values
@@ -135,10 +135,15 @@ program HICOLM
         call md%convert_units()                  ! convertendo unidades de medida
         call md%set_mmolar()                     ! calculando massa molecular
         call md%set_global()                     ! calculando a carga total do sistema
+        call md%set_zat()                        ! atribuindo numero atomico
+        call md%set_mass()                       ! atribuindo massa atomica
+        call md%set_qat()                        ! atribuindo cargas atomicas
+        call md%set_tpa()                        ! atribuindo tipos atomicos
         call md%set_lattice_constants()          ! calculando constantes de rede
         call md%set_lattice_angles()             ! calculando angulos de rede
         call md%set_symmetry()                   ! calculando grupo de simetria
         call md%set_volume()                     ! calculando volume da supercelula
+        call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%print_out()                      ! imprimindo valores em HICOLM.out
         lval=.true.
      end if

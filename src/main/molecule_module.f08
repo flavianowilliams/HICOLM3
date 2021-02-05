@@ -69,7 +69,7 @@ contains
     allocate(this%tpmol(this%get_nmol(),this%get_natom()))
     do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
-          this%zatmol(i,j)=0
+          this%zatmol(i,j)=1
           this%qatmol(i,j)=0.d0
           this%tpmol(i,j)='NA'
        end do
