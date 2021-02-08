@@ -33,7 +33,8 @@ module moleculardynamics_module
 
   type, extends(atoms) :: moleculardynamics
    contains
-     procedure :: geometry
+     procedure :: print_geometry
+     procedure :: read_geometry
      procedure :: print_out
   end type moleculardynamics
 
@@ -56,10 +57,42 @@ contains
     call constructor%set_ensble('nve')
   end function constructor
 
- subroutine geometry(this,mdstp)
+  subroutine read_geometry(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    open(1,file='HICOLM.XSF',status='old')
+    do i=1,13
+       read(1,*)
+    end do
+    do i=1,3
+       read(1,'(3(3x,f14.8))')(this%v(i,j),j=1,3)
+    end do
+    read(1,*)
+    read(1,*)
+    select case(this%get_restart())
+    case(1)
+       do i=1,this%get_natom()
+          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i)
+       end do
+    case(2)
+       do i=1,this%get_natom()
+          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i),&
+               this%fax(i),this%fay(i),this%faz(i)
+       end do
+    case(3)
+       do i=1,this%get_natom()
+          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i),&
+               this%fax(i),this%fay(i),this%faz(i),this%vax(i),this%vay(i),this%vaz(i)
+       end do
+    end select
+    close(1)
+  end subroutine read_geometry
+
+ subroutine print_geometry(this,mdstp)
    implicit none
    class(moleculardynamics), intent(inout) :: this
    integer, intent(in)                     :: mdstp
+   open(1,file='HICOLM.XSF',status='unknown')
    write(1,*)'BEGIN_INFO'
    write(1,*)'  #'
    write(1,*)'  # This is a XCRYSDEN-Structure-File'
@@ -79,7 +112,7 @@ contains
    write(1,'(a9)')'PRIMCOORD'
    write(1,'(2i5)')this%get_natom(),1
    do i=1,this%get_natom()
-      write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
+      write(1,'(5x,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
            this%xa(i)*this%get_rconv(),&
            this%ya(i)*this%get_rconv(),&
            this%za(i)*this%get_rconv(),&
@@ -92,6 +125,7 @@ contains
    end do
    close(1)
    if(mod(mdstp,2).ne.0)return
+   open(2,file='.HICOLM.XSF',status='unknown')
    write(2,*)'BEGIN_INFO'
    write(2,*)'  #'
    write(2,*)'  # This is a XCRYSDEN-Structure-File'
@@ -124,7 +158,7 @@ contains
    end do
    close(2)
     return
-  end subroutine geometry
+  end subroutine print_geometry
 
   subroutine print_out(this)
     implicit none

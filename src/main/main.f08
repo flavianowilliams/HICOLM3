@@ -116,8 +116,6 @@ program HICOLM
         call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
      elseif(in.eq.'@MD')then
-        open(1,file='HICOLM.XSF',status='unknown')         ! printing atomic coordinates
-        open(2,file='.HICOLM.XSF',status='unknown')        ! backup of the atomic coordinates
         open(3,file='HICOLM.AXSF',status='unknown')        ! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
@@ -132,6 +130,8 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_atoms()                      ! lendo coordenadas atomicas
         call md%set_topology()                   ! lendo parametros do campo de forca
+        call md%read_geometry()                  ! lendo coordenadas da última simulação
+        call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%convert_units()                  ! convertendo unidades de medida
         call md%set_mmolar()                     ! calculando massa molecular
         call md%set_global()                     ! calculando a carga total do sistema
@@ -143,7 +143,6 @@ program HICOLM
         call md%set_lattice_angles()             ! calculando angulos de rede
         call md%set_symmetry()                   ! calculando grupo de simetria
         call md%set_volume()                     ! calculando volume da supercelula
-        call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%print_out()                      ! imprimindo valores em HICOLM.out
         lval=.true.
      end if

@@ -35,6 +35,7 @@ module input_module
      integer, private       :: nstep
      integer, private       :: nrelax
      integer, private       :: nframes
+     integer, private       :: restart
      real(8), private       :: timestep
      real(8), private       :: press
      real(8), private       :: temp
@@ -50,6 +51,8 @@ module input_module
      procedure :: set_molecules
      procedure :: set_latticevectors
      procedure :: set_atoms
+     procedure :: set_restart
+     procedure :: get_restart
      procedure :: set_nstep
      procedure :: get_nstep
      procedure :: set_nrelax
@@ -117,6 +120,10 @@ contains
        if(key.eq.'rcutoff')then
           backspace(5)
           read(5,*)key,this%rcutoff,this%drcutoff
+       end if
+       if(key.eq.'restart')then
+          backspace(5)
+          read(5,*)key,this%restart
        end if
        if(key.eq.'ensemble')then
           backspace(5)
@@ -421,6 +428,19 @@ contains
     class(input), intent(in) :: this
     get_ensble_mt=this%ensble_mt
   end function get_ensble_mt
+
+  subroutine set_restart(this,restart)
+    implicit none
+    class(input), intent(inout) :: this
+    integer, intent(in)         :: restart
+    this%restart=restart
+  end subroutine set_restart
+
+  integer function get_restart(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_restart=this%restart
+  end function get_restart
 
   subroutine convert_units(this)
     implicit none
