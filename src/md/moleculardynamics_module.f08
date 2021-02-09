@@ -36,6 +36,7 @@ module moleculardynamics_module
      procedure :: print_geometry
      procedure :: read_geometry
      procedure :: print_out
+     procedure :: print
   end type moleculardynamics
 
   interface moleculardynamics
@@ -308,5 +309,39 @@ contains
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,*)
   end subroutine print_out
+
+  subroutine print(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    write(6,*)('#',i=1,93)
+    write(6,*)('MD RUNNING ',i=1,8)
+    write(6,*)('#',i=1,93)
+    write(6,*)
+    write(6,'(31x,a30)')'Molecular dynamics information'
+    write(6,'(28x,36a1)')('-',j=1,36)
+    write(6,'(28x,a12,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
+    if(this%get_ensble().eq.'nvt')then
+       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+    elseif(this%get_ensble().eq.'npt')then
+       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+       if(this%get_ensble_mt().eq.'berendsen')then
+          write(6,'(28x,a12,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
+       elseif(ensble_mt.eq.'hoover')then
+          write(6,'(28x,a12,5x,f8.2)')'Barostat:',pstat*tconv
+       end if
+    end if
+    write(6,'(28x,a12,5x,f9.3,1x,a1)')'Temperature:',text*teconv,'K'
+    write(6,'(28x,a12,5x,f9.3,1x,a3)')'Pressure:',preext*pconv,'atm'
+    write(6,'(28x,a12,6x,i10)')'ntrialmax:',ntrialmax
+    write(6,'(28x,a12,6x,i10)')'nrelax:',nrelax
+    write(6,'(28x,a12,9x,i1)')'reuse:',reuse
+    write(6,'(28x,a12,8x,es10.3,1x,a2)')'Timestep:',dtime*tconv,'ps'
+    write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
+    write(6,'(28x,36a1)')('-',j=1,36)
+    write(6,*)
+    write(6,'(2x,a27,f12.4)')'  Correction of VdW energy:'!,envdw_corr*econv
+    write(6,'(2x,a27,f12.4)')'Correction of VdW pressure:'!,virvdw_corr*econv
+    write(6,*)
+  end subroutine print
 
 end module moleculardynamics_module

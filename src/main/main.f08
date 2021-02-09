@@ -144,6 +144,7 @@ program HICOLM
         call md%set_symmetry()                   ! calculando grupo de simetria
         call md%set_volume()                     ! calculando volume da supercelula
         call md%print_out()                      ! imprimindo valores em HICOLM.out
+        call md%print()                          ! imprimindo parametros da MD
         lval=.true.
      end if
   end do
