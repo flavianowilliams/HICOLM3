@@ -461,6 +461,12 @@ contains
           this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
        end do
     end do
+    call this%set_temp(this%get_temp()/this%get_teconv())
+    call this%set_press(this%get_press()/this%get_pconv())
+    call this%set_tstat(this%get_tstat()/this%get_tconv())
+    call this%set_pstat(this%get_pstat()/this%get_tconv())
+    call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
+    call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
   end subroutine convert_units
 
 end module input_module

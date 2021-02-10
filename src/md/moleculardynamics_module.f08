@@ -319,24 +319,25 @@ contains
     write(6,*)
     write(6,'(31x,a30)')'Molecular dynamics information'
     write(6,'(28x,36a1)')('-',j=1,36)
-    write(6,'(28x,a12,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
+    write(6,'(28x,a16,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
     if(this%get_ensble().eq.'nvt')then
-       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+       write(6,'(28x,a16,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
     elseif(this%get_ensble().eq.'npt')then
-       write(6,'(28x,a12,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+       write(6,'(28x,a16,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
        if(this%get_ensble_mt().eq.'berendsen')then
-          write(6,'(28x,a12,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
-       elseif(ensble_mt.eq.'hoover')then
-          write(6,'(28x,a12,5x,f8.2)')'Barostat:',pstat*tconv
+          write(6,'(28x,a16,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
+       elseif(this%get_ensble_mt().eq.'hoover')then
+          write(6,'(28x,a16,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
        end if
     end if
-    write(6,'(28x,a12,5x,f9.3,1x,a1)')'Temperature:',text*teconv,'K'
-    write(6,'(28x,a12,5x,f9.3,1x,a3)')'Pressure:',preext*pconv,'atm'
-    write(6,'(28x,a12,6x,i10)')'ntrialmax:',ntrialmax
-    write(6,'(28x,a12,6x,i10)')'nrelax:',nrelax
-    write(6,'(28x,a12,9x,i1)')'reuse:',reuse
-    write(6,'(28x,a12,8x,es10.3,1x,a2)')'Timestep:',dtime*tconv,'ps'
-    write(6,'(28x,a12,8x,2f6.3,1x,a1)')'rcutoff:',rcutoff*rconv,drcutoff*rconv,'A'
+    write(6,'(28x,a16,5x,f9.3,1x,a1)')'Temperature:',this%get_temp()*this%get_teconv(),'K'
+    write(6,'(28x,a16,5x,f9.3,1x,a3)')'Pressure:',this%get_press()*this%get_pconv(),'atm'
+    write(6,'(28x,a16,6x,i10)')'Number of steps:',this%get_nstep()
+    write(6,'(28x,a16,6x,i10)')'Number of relax:',this%get_nrelax()
+    write(6,'(28x,a16,9x,i1)')'Restart:',this%get_restart()
+    write(6,'(28x,a16,8x,es10.3,1x,a2)')'Timestep:',this%get_timestep()*this%get_tconv(),'ps'
+    write(6,'(28x,a16,8x,2f6.3,1x,a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
+         this%get_drcutoff()*this%get_rconv(),'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
     write(6,'(2x,a27,f12.4)')'  Correction of VdW energy:'!,envdw_corr*econv
