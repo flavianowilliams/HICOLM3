@@ -47,6 +47,7 @@ module atoms_module
      procedure :: set_mass
      procedure :: set_qat
      procedure :: set_tpa
+     procedure :: set_velocity
   end type atoms
 
 !  interface atoms
@@ -122,5 +123,16 @@ contains
        end do
     end do
   end subroutine set_tpa
+
+  subroutine set_velocity(this)
+    implicit none
+    class(atoms), intent(inout) :: this
+    allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
+    do i=1,this%get_natom()
+       this%vax(i)=sqrt(this%get_temp()/this%mass(i))
+       this%vay(i)=sqrt(this%get_temp()/this%mass(i))
+       this%vaz(i)=sqrt(this%get_temp()/this%mass(i))
+    end do
+  end subroutine set_velocity
 
 end module atoms_module

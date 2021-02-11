@@ -77,6 +77,7 @@ module structure_module
      procedure          :: get_gamma
      procedure          :: get_gsym
      procedure          :: ccp
+     procedure          :: mic
   end type structure
 
   interface structure
@@ -364,5 +365,19 @@ contains
        this%za(i)=this%za(i)-zvz*nint(this%za(i)/zvz)
     end do
   end subroutine ccp
+
+  subroutine mic(this,i1,i2,xvz,yvz,zvz)
+    implicit none
+    class(structure), intent(inout) :: this
+    integer, intent(in)             :: i1,i2
+    real(8), intent(out)            :: xvz,yvz,zvz
+    real(8)                         :: xx,yy,zz
+    xx=this%v(1,1)+this%v(2,1)+this%v(3,1)
+    yy=this%v(1,2)+this%v(2,2)+this%v(3,2)
+    zz=this%v(1,3)+this%v(2,3)+this%v(3,3)
+    xvz=(this%xa(i2)-this%xa(i1))-xx*int(2.d0*(this%xa(i2)-this%xa(i1))/xx)
+    yvz=(this%ya(i2)-this%ya(i1))-yy*int(2.d0*(this%ya(i2)-this%ya(i1))/yy)
+    zvz=(this%za(i2)-this%za(i1))-zz*int(2.d0*(this%za(i2)-this%za(i1))/zz)
+  end subroutine mic
 
 end module structure_module

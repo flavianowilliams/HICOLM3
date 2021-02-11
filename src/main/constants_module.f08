@@ -71,9 +71,9 @@ contains
     !-constantes físicas
 
     this%pi=dble(acos(-1.d0))
-    this%kb=8.6173324d-5
     this%kelect=1.d0
     this%n0=6.022d+23
+    this%kb=8.6173324d-5
 
     !-unidades fundamentais (SI)
 

@@ -28,9 +28,10 @@ program HICOLM
 
   implicit none
 
-  integer       :: i
+  integer       :: i,j,i0
   real(8)       :: t0,t1,t2,t3,t4
   real(8)       :: sf_coul,sf_vdw
+  real(8)       :: drx,dry,drz,drmax
   character(10) :: host,time
   character(8)  :: date,in
   logical       :: lval
@@ -145,10 +146,42 @@ program HICOLM
         call md%set_volume()                     ! calculando volume da supercelula
         call md%print_out()                      ! imprimindo valores em HICOLM.out
         call md%print()                          ! imprimindo parametros da MD
+        call md%set_velocity()                   ! atribuindo velocidades iniciais
+        call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
+        call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
+        call md%interaction_prepare()            ! preparando campo de forca
+        call md%set_forces()                     ! calculo das interacoes moleculares
+        call md%set_time(0.d0)                   ! setando instante inicial
+        write(6,'(4x,111a1)')('-',i=1,84)
+        write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
+        write(6,'(4x,111a1)')('-',i=1,84)
+        drmax=md%get_drcutoff()
+        i0=0
+        do i=1,md%get_nframes()
+           if((i-i0).ge.nint(md%get_drcutoff()/drmax))then
+              call md%verlet_list()
+              drmax=0.d0
+              do j=1,md%get_natom()
+                 drx=md%vax(j)*md%get_timestep()+&
+                      0.5d0*md%fax(j)*md%get_timestep()**2/md%mass(j)
+                 dry=md%vay(j)*md%get_timestep()+&
+                      0.5d0*md%fay(j)*md%get_timestep()**2/md%mass(j)
+                 drz=md%vaz(j)*md%get_timestep()+&
+                      0.5d0*md%faz(j)*md%get_timestep()**2/md%mass(j)
+                 drmax=max(drmax,sqrt(drx**2+dry**2+drz**2))
+              end do
+              i0=i
+           end if
+           call md%set_forces()
+           call md%print_geometry(i)
+           call md%set_time(i*md%get_timestep())
+        end do
+        write(6,'(4x,111a1)')('-',i=1,84)
+        write(6,*)
         lval=.true.
      end if
   end do
-  !============================================================================================
+  !===========================================================================================
   !
   !-print copyright
   !
@@ -175,12 +208,14 @@ program HICOLM
     write(6,'(5x,a78)')'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE'
     write(6,'(5x,a10)')'SOFTWARE.'
     write(6,*)
-    !==========================================================================================
+    !=========================================================================================
 
   stop
 
 1 write(6,*)'ERROR: Method does not found!'
   write(6,*)'Hint: You must choose one of the following methods: @PREPARE or @MD'
   stop
+
+10 format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 
 end program HICOLM

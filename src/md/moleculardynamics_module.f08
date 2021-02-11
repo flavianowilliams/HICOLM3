@@ -22,7 +22,7 @@ module moleculardynamics_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use atoms_module
+  use interaction_module
 
   implicit none
 
@@ -31,12 +31,15 @@ module moleculardynamics_module
   private
   public :: moleculardynamics
 
-  type, extends(atoms) :: moleculardynamics
+  type, extends(interaction) :: moleculardynamics
+     real(8), private :: time
    contains
      procedure :: print_geometry
      procedure :: read_geometry
      procedure :: print_out
      procedure :: print
+     procedure :: set_time
+     procedure :: get_time
   end type moleculardynamics
 
   interface moleculardynamics
@@ -47,9 +50,9 @@ contains
 
   type(moleculardynamics) function constructor()
     implicit none
-    call constructor%set_nstep(1000)
-    call constructor%set_nrelax(1000)
-    call constructor%set_nframes(200)
+    call constructor%set_nstep(1)
+    call constructor%set_nrelax(1)
+    call constructor%set_nframes(1)
     call constructor%set_timestep(0.001d0)
     call constructor%set_press(1.d0)
     call constructor%set_temp(298.d0)
@@ -57,6 +60,19 @@ contains
     call constructor%set_drcutoff(0.1d0)
     call constructor%set_ensble('nve')
   end function constructor
+
+  subroutine set_time(this,time)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    real(8), intent(in)                     :: time
+    this%time=time
+  end subroutine set_time
+
+  double precision function get_time(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    get_time=this%time
+  end function get_time
 
   subroutine read_geometry(this)
     implicit none
@@ -113,7 +129,7 @@ contains
    write(1,'(a9)')'PRIMCOORD'
    write(1,'(2i5)')this%get_natom(),1
    do i=1,this%get_natom()
-      write(1,'(5x,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
+      write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
            this%xa(i)*this%get_rconv(),&
            this%ya(i)*this%get_rconv(),&
            this%za(i)*this%get_rconv(),&
