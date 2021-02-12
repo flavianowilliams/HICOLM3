@@ -174,6 +174,11 @@ program HICOLM
            end if
            call md%set_forces()
            call md%print_geometry(i)
+!           if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
+!                temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
+           if(mod(i,25).eq.0)write(6,20)&
+                'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
+                (md%get_enpot())*md%get_econv()
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
@@ -217,5 +222,6 @@ program HICOLM
   stop
 
 10 format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
+20 format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
 
 end program HICOLM

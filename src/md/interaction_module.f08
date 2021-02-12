@@ -23,6 +23,7 @@ module interaction_module
   !*******************************************************************************************
 
   use neighbourlist_module
+  use coulomb_module
 
   implicit none
 
@@ -32,40 +33,19 @@ module interaction_module
   public :: interaction
 
   type, extends(neighbourlist) :: interaction
-     real(8), private :: encoul
-     real(8), private :: vircoul
+     type(coulomb)    :: coul
+     real(8), private :: enpot
+     real(8), private :: virtot
    contains
      procedure :: interaction_prepare
      procedure :: set_forces
-     procedure :: set_encoul
-     procedure :: get_encoul
-     procedure :: set_vircoul
-     procedure :: get_vircoul
+     procedure :: set_enpot
+     procedure :: get_enpot
+     procedure :: set_virtot
+     procedure :: get_virtot
   end type interaction
 
 contains
-
-  subroutine set_forces(this)
-    implicit none
-    class(interaction), intent(inout) :: this
-    integer                           :: ni,nj
-    real(8)                           :: xvz,yvz,zvz
-    do i=1,this%get_natom()
-       this%fax(i)=0.d0
-       this%fay(i)=0.d0
-       this%faz(i)=0.d0
-    end do
-    call this%set_encoul(0.d0)
-    call this%set_vircoul(0.d0)
-    do i=1,this%get_natom()
-       do j=1,this%nlist(i)
-          ni=i
-          nj=this%ilist(i,j)
-          call this%mic(ni,nj,xvz,yvz,zvz)
-          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)print*,'ok'
-       end do
-    end do
-  end subroutine set_forces
 
   subroutine interaction_prepare(this)
     implicit none
@@ -73,30 +53,60 @@ contains
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
   end subroutine interaction_prepare
 
-  subroutine set_encoul(this,encoul)
+  subroutine set_forces(this)
     implicit none
     class(interaction), intent(inout) :: this
-    real(8), intent(in)               :: encoul
-    this%encoul=encoul
-  end subroutine set_encoul
+    integer                           :: ni,nj
+    real(8)                           :: xvz,yvz,zvz,dr,enpot
+    do i=1,this%get_natom()
+       this%fax(i)=0.d0
+       this%fay(i)=0.d0
+       this%faz(i)=0.d0
+    end do
+    call this%coul%coulomb_prepare&
+         (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
+    call this%coul%set_encoul(0.d0)
+    call this%coul%set_vircoul(0.d0)
+    enpot=0.d0
+    do i=1,this%get_natom()
+       do j=1,this%nlist(i)
+          ni=i
+          nj=this%ilist(i,j)
+          call this%mic(ni,nj,xvz,yvz,zvz)
+          dr=sqrt(xvz**2+yvz**2+zvz**2)
+          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)&
+               call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
+          enpot=enpot+this%coul%get_encoul()
+          print*,enpot,i
+       end do
+    end do
+    call this%set_enpot(enpot)
+  end subroutine set_forces
 
-  double precision function get_encoul(this)
+  subroutine set_enpot(this,enpot)
     implicit none
     class(interaction), intent(inout) :: this
-    get_encoul=this%encoul
-  end function get_encoul
+    real(8), intent(in)               :: enpot
+    this%enpot=enpot
+  end subroutine set_enpot
 
-  subroutine set_vircoul(this,vircoul)
+  double precision function get_enpot(this)
     implicit none
     class(interaction), intent(inout) :: this
-    real(8), intent(in)               :: vircoul
-    this%vircoul=vircoul
-  end subroutine set_vircoul
+    get_enpot=this%enpot
+  end function get_enpot
 
-  double precision function get_vircoul(this)
+  subroutine set_virtot(this,virtot)
     implicit none
     class(interaction), intent(inout) :: this
-    get_vircoul=this%vircoul
-  end function get_vircoul
+    real(8), intent(in)           :: virtot
+    this%virtot=virtot
+  end subroutine set_virtot
+
+  double precision function get_virtot(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    get_virtot=this%virtot
+  end function get_virtot
 
 end module interaction_module
