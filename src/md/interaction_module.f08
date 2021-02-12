@@ -38,7 +38,9 @@ module interaction_module
      real(8), private :: virtot
    contains
      procedure :: interaction_prepare
-     procedure :: set_forces
+     procedure :: set_forcefield
+     procedure :: set_force2
+     generic   :: set_force => set_force2
      procedure :: set_enpot
      procedure :: get_enpot
      procedure :: set_virtot
@@ -53,7 +55,7 @@ contains
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
   end subroutine interaction_prepare
 
-  subroutine set_forces(this)
+  subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
     integer                           :: ni,nj
@@ -65,8 +67,6 @@ contains
     end do
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
-    call this%coul%set_encoul(0.d0)
-    call this%coul%set_vircoul(0.d0)
     enpot=0.d0
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
@@ -74,14 +74,28 @@ contains
           nj=this%ilist(i,j)
           call this%mic(ni,nj,xvz,yvz,zvz)
           dr=sqrt(xvz**2+yvz**2+zvz**2)
-          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)&
-               call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
-          enpot=enpot+this%coul%get_encoul()
-          print*,enpot,i
+          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+             call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
+             call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
+             enpot=enpot+this%coul%get_encoul()
+          end if
        end do
     end do
     call this%set_enpot(enpot)
-  end subroutine set_forces
+  end subroutine set_forcefield
+
+  subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer, intent(in)               :: ni,nj
+    real(8), intent(in)               :: fr,xvz,yvz,zvz
+    this%fax(ni)=this%fax(ni)-fr*xvz
+    this%fay(ni)=this%fay(ni)-fr*yvz
+    this%faz(ni)=this%faz(ni)-fr*zvz
+    this%fax(nj)=this%fax(nj)+fr*xvz
+    this%fay(nj)=this%fay(nj)+fr*yvz
+    this%faz(nj)=this%faz(nj)+fr*zvz
+  end subroutine set_force2
 
   subroutine set_enpot(this,enpot)
     implicit none

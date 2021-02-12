@@ -150,7 +150,7 @@ program HICOLM
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%interaction_prepare()            ! preparando campo de forca
-        call md%set_forces()                     ! calculo das interacoes moleculares
+        call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_time(0.d0)                   ! setando instante inicial
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
@@ -172,7 +172,7 @@ program HICOLM
               end do
               i0=i
            end if
-           call md%set_forces()
+           call md%set_forcefield()
            call md%print_geometry(i)
 !           if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
 !                temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv

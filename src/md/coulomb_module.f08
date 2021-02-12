@@ -44,6 +44,7 @@ module coulomb_module
      procedure :: get_encoul
      procedure :: set_vircoul
      procedure :: get_vircoul
+     procedure :: get_force
   end type coulomb
 
 contains
