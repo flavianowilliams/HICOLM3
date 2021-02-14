@@ -18,7 +18,7 @@
 !OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 !SOFTWARE.
 !
-module vanderwalls_module
+module vanderwaals_module
   !*******************************************************************************************
   !*******************************************************************************************
 
@@ -37,75 +37,80 @@ module vanderwalls_module
    contains
      procedure :: set_vanderwaals
      procedure :: vanderwaals_prepare
-     procedure :: set_encoul
-     procedure :: get_encoul
-     procedure :: set_vircoul
-     procedure :: get_vircoul
+     procedure :: set_envdw
+     procedure :: get_envdw
+     procedure :: set_virvdw
+     procedure :: get_virvdw
      procedure :: get_force
+     procedure :: set_vdwcorr
+     procedure :: get_vdwcorr
   end type vanderwaals
 
 contains
 
   subroutine vanderwaals_prepare(this,rcutoff)
     implicit none
-    class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: rcutoff
+    class(vanderwaals), intent(inout) :: this
+    real(8), intent(in)               :: rcutoff
     this%rcutoff=rcutoff
-  end subroutine coulomb_prepare
+  end subroutine vanderwaals_prepare
 
-  subroutine set_vanderwaals(this,dr,qi,qj)
+  subroutine set_vanderwaals(this,dr,prm,ptrm)
     implicit none
-    class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: dr,qi,qj
-    real(8)                       :: alcoul
-    select case(this%coulop)
-    case('coul')
-       this%encoul=qi*qj/dr
-       this%force=-qi*qj/dr**2
-       this%force=-this%force/dr
-    case('fscs')
-       alcoul=1.d-1/this%kconv
-       this%encoul=qi*qj*(erfc(alcoul*dr)/dr-erfc(alcoul*this%rcutoff)/this%rcutoff &
-            +(erfc(alcoul*this%rcutoff)/this%rcutoff**2+(2.d0*alcoul) &
-            *exp(-(alcoul*this%rcutoff)**2)/(sqrt(this%pi)*this%rcutoff))*(dr-this%rcutoff))
-       this%force=-qi*qj*(erfc(alcoul*dr)/dr**2+(2.d0*alcoul) &
-            *exp(-(alcoul*dr)**2)/(sqrt(this%pi)*dr) &
-            -(erfc(alcoul*this%rcutoff)/this%rcutoff**2 &
-            +(2.d0*alcoul)*exp(-(alcoul*this%rcutoff)**2)/(sqrt(this%pi)*this%rcutoff)))
-       this%force=-this%force/dr
+    class(vanderwaals), intent(inout) :: this
+    character(4), intent(in)          :: ptrm
+    real(8), intent(in)               :: dr,prm(2)
+    select case(ptrm)
+    case('amber')
+       this%envdw=prm(1)*((prm(2)/dr)**12-2.d0*(prm(2)/dr)**6)
+       this%force=12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
+    case('lj')
+       this%envdw=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
+       this%force=24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
     end select
   end subroutine set_vanderwaals
 
   subroutine set_envdw(this,envdw)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(vanderwaals), intent(inout) :: this
     real(8), intent(in)           :: envdw
     this%envdw=envdw
   end subroutine set_envdw
 
   double precision function get_envdw(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(vanderwaals), intent(inout) :: this
     get_envdw=this%envdw
   end function get_envdw
 
   subroutine set_virvdw(this,virvdw)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(vanderwaals), intent(inout) :: this
     real(8), intent(in)               :: virvdw
     this%virvdw=virvdw
-  end subroutine set_vircoul
+  end subroutine set_virvdw
 
   double precision function get_virvdw(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(vanderwaals), intent(inout) :: this
     get_virvdw=this%virvdw
   end function get_virvdw
 
+  subroutine set_vdwcorr(this)
+    implicit none
+    class(vanderwaals), intent(inout) :: this
+  end subroutine set_vdwcorr
+
+  double precision function get_vdwcorr(this)
+    implicit none
+    class(vanderwaals), intent(inout) :: this
+    get_vdwcorr=this%vdwcorr
+  end function get_vdwcorr
+
   double precision function get_force(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(vanderwaals), intent(inout) :: this
     get_force=this%force
   end function get_force
 
-end module coulomb_module
+end module vanderwaals_module

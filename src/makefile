@@ -4,7 +4,7 @@ OBJ_GEN = constants_module.o structure_module.o system_module.o molecule_module.
 OBJ_PRP = zmatrix_module.o amber_module.o forcefield_module.o prepare_module.o
 #
 OBJ_MD = input_module.o atoms_module.o neighbourlist_module.o coulomb_module.o \
-				interaction_module.o moleculardynamics_module.o
+	vanderwaals_module.o interaction_module.o moleculardynamics_module.o
 #
 OBJ_OPT = optimize.o
 #

@@ -24,6 +24,7 @@ module interaction_module
 
   use neighbourlist_module
   use coulomb_module
+  use vanderwaals_module
 
   implicit none
 
@@ -34,6 +35,7 @@ module interaction_module
 
   type, extends(neighbourlist) :: interaction
      type(coulomb)    :: coul
+     type(vanderwaals):: vdw
      real(8), private :: enpot
      real(8), private :: virtot
    contains
@@ -82,6 +84,8 @@ contains
              enpot=enpot+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
+          if()
+          call this%vdw%set_vanderwaals()
        end do
     end do
     call this%set_enpot(enpot)

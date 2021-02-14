@@ -232,9 +232,9 @@ contains
 
        !-versão LJ normal
 
-!       pot=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
+       !       pot=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
 
-!       fr=24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
+       !       fr=24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
 
     end select
 
