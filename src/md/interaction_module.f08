@@ -59,7 +59,7 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     integer                           :: ni,nj
-    real(8)                           :: xvz,yvz,zvz,dr,enpot
+    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
     do i=1,this%get_natom()
        this%fax(i)=0.d0
        this%fay(i)=0.d0
@@ -68,6 +68,7 @@ contains
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
     enpot=0.d0
+    virtot=0.d0
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
           ni=i
@@ -77,11 +78,14 @@ contains
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
+             call this%coul%set_vircoul(this%coul%get_force()*dr**2)
              enpot=enpot+this%coul%get_encoul()
+             virtot=virtot+this%coul%get_vircoul()
           end if
        end do
     end do
     call this%set_enpot(enpot)
+    call this%set_virtot(virtot)
   end subroutine set_forcefield
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)

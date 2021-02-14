@@ -18,7 +18,7 @@
 !OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 !SOFTWARE.
 !
-module coulomb_module
+module vanderwalls_module
   !*******************************************************************************************
   !*******************************************************************************************
 
@@ -27,40 +27,33 @@ module coulomb_module
 !  integer i,j,k,l
 
   private
-  public :: coulomb
+  public :: vanderwaals
 
-  type :: coulomb
-     real(8), private      :: encoul
-     real(8), private      :: vircoul
+  type :: vanderwaals
+     real(8), private      :: envdw
+     real(8), private      :: virvdw
      real(8), private      :: rcutoff
-     real(8), private      :: kconv
-     real(8), private      :: pi
      real(8), private      :: force
-     character(4), private :: coulop
    contains
-     procedure :: set_coulomb
-     procedure :: coulomb_prepare
+     procedure :: set_vanderwaals
+     procedure :: vanderwaals_prepare
      procedure :: set_encoul
      procedure :: get_encoul
      procedure :: set_vircoul
      procedure :: get_vircoul
      procedure :: get_force
-  end type coulomb
+  end type vanderwaals
 
 contains
 
-  subroutine coulomb_prepare(this,coulop,kconv,rcutoff,pi)
+  subroutine vanderwaals_prepare(this,rcutoff)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: rcutoff,kconv,pi
-    character(4), intent(in)      :: coulop
-    this%coulop=coulop
-    this%kconv=kconv
+    real(8), intent(in)           :: rcutoff
     this%rcutoff=rcutoff
-    this%pi=pi
   end subroutine coulomb_prepare
 
-  subroutine set_coulomb(this,dr,qi,qj)
+  subroutine set_vanderwaals(this,dr,qi,qj)
     implicit none
     class(coulomb), intent(inout) :: this
     real(8), intent(in)           :: dr,qi,qj
@@ -81,33 +74,33 @@ contains
             +(2.d0*alcoul)*exp(-(alcoul*this%rcutoff)**2)/(sqrt(this%pi)*this%rcutoff)))
        this%force=-this%force/dr
     end select
-  end subroutine set_coulomb
+  end subroutine set_vanderwaals
 
-  subroutine set_encoul(this,encoul)
+  subroutine set_envdw(this,envdw)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: encoul
-    this%encoul=encoul
-  end subroutine set_encoul
+    real(8), intent(in)           :: envdw
+    this%envdw=envdw
+  end subroutine set_envdw
 
-  double precision function get_encoul(this)
+  double precision function get_envdw(this)
     implicit none
     class(coulomb), intent(inout) :: this
-    get_encoul=this%encoul
-  end function get_encoul
+    get_envdw=this%envdw
+  end function get_envdw
 
-  subroutine set_vircoul(this,vircoul)
+  subroutine set_virvdw(this,virvdw)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: vircoul
-    this%vircoul=vircoul
+    real(8), intent(in)               :: virvdw
+    this%virvdw=virvdw
   end subroutine set_vircoul
 
-  double precision function get_vircoul(this)
+  double precision function get_virvdw(this)
     implicit none
     class(coulomb), intent(inout) :: this
-    get_vircoul=this%vircoul
-  end function get_vircoul
+    get_virvdw=this%virvdw
+  end function get_virvdw
 
   double precision function get_force(this)
     implicit none
