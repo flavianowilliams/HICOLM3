@@ -52,6 +52,7 @@ module forcefield_module
      character(5), allocatable :: tbends(:,:)
      character(5), allocatable :: ttors(:,:)
      character(5), allocatable :: titors(:,:)
+     character(5), allocatable :: tvdw(:,:)
    contains
      procedure, private :: forcefield_init
      procedure          :: set_spcs
@@ -91,6 +92,7 @@ contains
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
+    allocate(this%tvdw(this%nspcs,this%nspcs))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
           this%tbonds(i,j)='amber'
@@ -100,6 +102,11 @@ contains
        end do
        do j=1,this%get_torsmax()
           this%ttors(i,j)='amber'
+       end do
+    end do
+    do i=1,this%nspcs
+       do j=1,this%nspcs
+          this%tvdw(i,j)='amber'
        end do
     end do
   end subroutine forcefield_init
