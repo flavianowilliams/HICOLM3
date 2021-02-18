@@ -34,6 +34,7 @@ module vanderwaals_module
      real(8), private      :: virvdw
      real(8), private      :: rcutoff
      real(8), private      :: force
+     real(8), private      :: vdwcorr
    contains
      procedure :: set_vanderwaals
      procedure :: vanderwaals_prepare

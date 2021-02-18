@@ -84,8 +84,8 @@ contains
              enpot=enpot+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
-          if()
-          call this%vdw%set_vanderwaals()
+!          if()
+!          call this%vdw%set_vanderwaals()
        end do
     end do
     call this%set_enpot(enpot)
@@ -121,7 +121,7 @@ contains
   subroutine set_virtot(this,virtot)
     implicit none
     class(interaction), intent(inout) :: this
-    real(8), intent(in)           :: virtot
+    real(8), intent(in)               :: virtot
     this%virtot=virtot
   end subroutine set_virtot
 
