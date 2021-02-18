@@ -35,7 +35,6 @@ module forcefield_module
   type, extends(zmatrix) :: forcefield
      type(amber)               :: amber
      integer, private          :: nspcs
-     integer, private          :: nspcvdw
      integer, private          :: nvdw
      integer, private          :: itorsmax
      integer, allocatable      :: itorscnt(:)
@@ -58,8 +57,6 @@ module forcefield_module
      procedure          :: set_spcs
      procedure          :: set_nspcs
      procedure          :: get_nspcs
-     procedure          :: set_nspcvdw
-     procedure          :: get_nspcvdw
      procedure          :: set_parbnd
      procedure          :: set_parbend
      procedure          :: set_partors
@@ -157,32 +154,18 @@ contains
     end do
   end subroutine set_spcs
 
-  subroutine set_nspcvdw(this,nspcvdw)
-    implicit none
-    class(forcefield), intent(inout) :: this
-    integer, intent(in)              :: nspcvdw
-    this%nspcvdw=nspcvdw
-  end subroutine set_nspcvdw
-
-  integer function get_nspcvdw(this)
-    class(forcefield), intent(in) :: this
-    get_nspcvdw=this%nspcvdw
-  end function get_nspcvdw
-
   subroutine set_parvdw(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: nx,nxx,nxxx
+    integer                          :: nx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     allocate(this%parvdw(this%nspcs,2),this%spcvdw(this%nspcs,2))
     nx=1
-    nxxx=1
     do i=1,this%nspcs
        call this%amber%set_amber(this%spcs(i))
        e1=this%amber%prms_vdw(2)
        s1=this%amber%prms_vdw(1)
        if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
-!          nxx=nxxx
           do j=i,this%nspcs
              call this%amber%set_amber(this%spcs(j))
              e2=this%amber%prms_vdw(2)
@@ -193,14 +176,11 @@ contains
                 this%spcvdw(nx,1)=this%spcs(i)
                 this%spcvdw(nx,2)=this%spcs(j)
                 nx=nx+1
-!                nxx=nxx+1
              end if
           end do
-!          nxxx=nxxx+1
        end if
     end do
     this%nvdw=nx-1
-    this%nspcvdw=nxxx-1
   end subroutine set_parvdw
 
   subroutine set_nvdw(this,nvdw)
@@ -379,8 +359,8 @@ contains
           do i=1,nvdw
              read(5,*)spcs1,spcs2,tvdw,p1,p2
              do j=1,this%get_nvdw()
-                if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.
-                   spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
+                if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
+                     spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
                    this%parvdw(j,1)=p1
                    this%parvdw(j,2)=p2
                    this%tvdw(j)=tvdw
@@ -393,6 +373,8 @@ contains
                       this%parvdw(nvdw+1,1)=p1
                       this%parvdw(nvdw+1,2)=p2
                       this%tvdw(nvdw+1)=tvdw
+                      this%spcvdw(nvdw+1,1)=spcs1
+                      this%spcvdw(nvdw+1,2)=spcs2
                       nvdw=nvdw+1
                       goto 2
                    end if

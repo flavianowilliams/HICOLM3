@@ -160,7 +160,7 @@ contains
   subroutine set_topology(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,nspcvdw,i1,i2
+    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2
     real(8)                     :: f1,f2
     character(2)                :: mtd
     character(4)                :: coulop
@@ -182,7 +182,6 @@ contains
        allocate(this%moltors(nmol,torsmax,4))
        allocate(this%parbnd(nmol,bondmax,2),this%parbend(nmol,bendmax,2))
        allocate(this%partors(nmol,torsmax,4))
-       allocate(this%tvdw(nspcs,nspcs))
        do i=1,this%get_nmol()
           read(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
           read(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
@@ -218,26 +217,16 @@ contains
              end select
           end do
        end do
-       read(11,'(4x,2(1x,i3))')nvdw,nspcvdw
+       read(11,'(4x,2(1x,i3))')nvdw
+       allocate(this%tvdw(nvdw))
        call this%set_nspcs()
        call this%set_spcs()
-       allocate(this%spcvdw(nspcvdw),this%parvdw(nspcvdw,nspcvdw,2))
-       do i=1,nspcvdw
-          do j=i,nspcvdw
-             do k=1,2
-                this%parvdw(i,j,k)=0.d0
-             end do
-          end do
+       allocate(this%spcvdw(nvdw,2),this%parvdw(nvdw,2))
+       do i=1,nvdw
+          read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+               this%spcvdw(i,1),this%spcvdw(i,2),this%tvdw(i),(this%parvdw(i,j),j=1,2)
        end do
-       do i=1,nspcvdw
-          do j=i,nspcvdw
-             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
-                  this%spcvdw(i),this%spcvdw(j),this%tvdw(i,j),(this%parvdw(i,j,k),k=1,2)
-             this%parvdw(j,i,1)=this%parvdw(i,j,1)
-             this%parvdw(j,i,2)=this%parvdw(i,j,2)
-          end do
-       end do
-       call this%set_nspcvdw(nspcvdw)
+!       call this%set_nspcvdw(nspcvdw)
        call this%set_nvdw(nvdw)
     end if
   end subroutine set_topology
