@@ -45,14 +45,14 @@ module forcefield_module
      real(8), allocatable      :: parbend(:,:,:)
      real(8), allocatable      :: partors(:,:,:)
      real(8), allocatable      :: paritors(:,:,:)
-     real(8), allocatable      :: parvdw(:,:,:)
+     real(8), allocatable      :: parvdw(:,:)
      character(2), allocatable :: spcs(:)
-     character(2), allocatable :: spcvdw(:)
+     character(2), allocatable :: spcvdw(:,:)
      character(5), allocatable :: tbonds(:,:)
      character(5), allocatable :: tbends(:,:)
      character(5), allocatable :: ttors(:,:)
      character(5), allocatable :: titors(:,:)
-     character(5), allocatable :: tvdw(:,:)
+     character(5), allocatable :: tvdw(:)
    contains
      procedure, private :: forcefield_init
      procedure          :: set_spcs
@@ -67,6 +67,7 @@ module forcefield_module
      procedure          :: set_extra_parbnd
      procedure          :: set_extra_parbend
      procedure          :: set_extra_partors
+     procedure          :: set_extra_parvdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
      procedure          :: get_nvdw
@@ -92,7 +93,7 @@ contains
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
-    allocate(this%tvdw(this%nspcs,this%nspcs))
+    allocate(this%tvdw(this%nspcs))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
           this%tbonds(i,j)='amber'
@@ -105,9 +106,7 @@ contains
        end do
     end do
     do i=1,this%nspcs
-       do j=1,this%nspcs
-          this%tvdw(i,j)='amber'
-       end do
+       this%tvdw(i)='amber'
     end do
   end subroutine forcefield_init
 
@@ -175,7 +174,7 @@ contains
     integer                          :: nx,nxx,nxxx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
-    allocate(this%parvdw(this%nspcs,this%nspcs,2),this%spcvdw(this%nspcs))
+    allocate(this%parvdw(this%nspcs,2),this%spcvdw(this%nspcs,2))
     nx=1
     nxxx=1
     do i=1,this%nspcs
@@ -183,20 +182,21 @@ contains
        e1=this%amber%prms_vdw(2)
        s1=this%amber%prms_vdw(1)
        if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
-          this%spcvdw(nxxx)=this%spcs(i)
-          nxx=nxxx
+!          nxx=nxxx
           do j=i,this%nspcs
              call this%amber%set_amber(this%spcs(j))
              e2=this%amber%prms_vdw(2)
              s2=this%amber%prms_vdw(1)
              if(e2.ge.1.d-4.and.s2.ge.1.d-1)then
-                this%parvdw(nxxx,nxx,1)=sqrt(e1*e2)
-                this%parvdw(nxxx,nxx,2)=s1+s2
+                this%parvdw(nx,1)=sqrt(e1*e2)
+                this%parvdw(nx,2)=s1+s2
+                this%spcvdw(nx,1)=this%spcs(i)
+                this%spcvdw(nx,2)=this%spcs(j)
                 nx=nx+1
-                nxx=nxx+1
+!                nxx=nxx+1
              end if
           end do
-          nxxx=nxxx+1
+!          nxxx=nxxx+1
        end if
     end do
     this%nvdw=nx-1
@@ -359,6 +359,57 @@ contains
     end do
 3   rewind(5)
   end subroutine set_paritors
+
+  subroutine set_extra_parvdw(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: nvdw
+    real(8)                          :: p1,p2
+    character(2)                     :: spcs1,spcs2
+    character(12)                    :: key
+    character(5)                     :: tvdw
+    nvdw=this%get_nvdw()
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    do while (key.ne.'&END')
+       read(5,*)key
+       if(key.eq.'vdw')then
+          backspace(5)
+          read(5,*)key,nvdw
+          do i=1,nvdw
+             read(5,*)spcs1,spcs2,tvdw,p1,p2
+             do j=1,this%get_nvdw()
+                if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.
+                   spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
+                   this%parvdw(j,1)=p1
+                   this%parvdw(j,2)=p2
+                   this%tvdw(j)=tvdw
+                   goto 2
+                end if
+             end do
+             do j=1,this%get_nspcs()
+                do k=1,this%get_nspcs()
+                   if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
+                      this%parvdw(nvdw+1,1)=p1
+                      this%parvdw(nvdw+1,2)=p2
+                      this%tvdw(nvdw+1)=tvdw
+                      nvdw=nvdw+1
+                      goto 2
+                   end if
+                end do
+             end do
+             goto 4
+2            continue
+          end do
+       end if
+    end do
+    call this%set_nvdw(nvdw)
+3   rewind(5)
+    return
+4   write(6,*)'ERROR: The type does not match with that defined in HICOLM.top!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
+  end subroutine set_extra_parvdw
 
   subroutine set_extra_parbnd(this)
     class(forcefield), intent(inout) :: this

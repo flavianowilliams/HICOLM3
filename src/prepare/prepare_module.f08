@@ -178,12 +178,16 @@ contains
        end do
     end do
     write(11,'(1x,a3,2(1x,i3))')'vdw',this%get_nvdw(),this%get_nspcvdw()
-    do i=1,this%get_nspcvdw()
-       do j=i,this%get_nspcvdw()
-          write(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')this%spcvdw(i),this%spcvdw(j),&
-               this%tvdw(i,j),this%parvdw(i,j,1),this%parvdw(i,j,2)
-       end do
-    end do
+    !    do i=1,this%get_nspcvdw()
+    !       do j=i,this%get_nspcvdw()
+    !          write(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')this%spcvdw(i),this%spcvdw(j),&
+    !               this%tvdw(i,j),this%parvdw(i,j,1),this%parvdw(i,j,2)
+    !       end do
+    !    end do
+    do i=1,this%get_nvdw()
+       write(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+            this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+   end do
   end subroutine print_top
 
   subroutine print_out(this)
@@ -342,11 +346,15 @@ contains
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,'(20x,a4,2x,a4,3x,a4,6x,a10)')'Site','Site','Type','Parameters'
     write(6,'(20x,111a1)')('-',i=1,52)
-    do i=1,this%get_nspcvdw()
-       do j=i,this%get_nspcvdw()
-          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')this%spcvdw(i),this%spcvdw(j),&
-               this%tvdw(i,j),this%parvdw(i,j,1),this%parvdw(i,j,2)
-       end do
+!    do i=1,this%get_nspcvdw()
+!       do j=i,this%get_nspcvdw()
+!          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')this%spcvdw(i),this%spcvdw(j),&
+!               this%tvdw(i,j),this%parvdw(i,j,1),this%parvdw(i,j,2)
+!       end do
+!    end do
+    do i=1,this%get_nvdw()
+          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+               this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
     end do
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,*)

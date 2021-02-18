@@ -25,5 +25,7 @@
    4   1   2   5 amber   4   14.50   180.0  2
    4   1   2   6 harm     1.0000    1.0000
    1   4   2   6 amber   0    0.00     0.0  0
- vdw   1   1
- HA HA amber    0.0150    2.9180
+ vdw   1   2
+ CA CA amber    0.0150    2.9180
+ CA HA amber    1.0000    1.0000
+ HA HA amber    0.0000    0.0000
