@@ -182,6 +182,7 @@ contains
        allocate(this%moltors(nmol,torsmax,4))
        allocate(this%parbnd(nmol,bondmax,2),this%parbend(nmol,bendmax,2))
        allocate(this%partors(nmol,torsmax,4))
+       allocate(this%tvdw(nspcs,nspcs))
        do i=1,this%get_nmol()
           read(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
           read(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
@@ -212,8 +213,6 @@ contains
                      (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
              case('harm')
                 backspace(11)
-                f1=this%partors(i,j,2)
-                f2=this%partors(i,j,3)
                 read(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
                      this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
              end select
@@ -232,8 +231,8 @@ contains
        end do
        do i=1,nspcvdw
           do j=i,nspcvdw
-             read(11,'(2(1x,a2),2(1x,f9.4))')&
-                  this%spcvdw(i),this%spcvdw(j),(this%parvdw(i,j,k),k=1,2)
+             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+                  this%spcvdw(i),this%spcvdw(j),this%tvdw(i,j),(this%parvdw(i,j,k),k=1,2)
              this%parvdw(j,i,1)=this%parvdw(i,j,1)
              this%parvdw(j,i,2)=this%parvdw(i,j,2)
           end do

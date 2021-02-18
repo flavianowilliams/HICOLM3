@@ -318,8 +318,8 @@ contains
     write(6,'(20x,111a1)')('-',i=1,52)
     do i=1,this%get_nspcvdw()
        do j=i,this%get_nspcvdw()
-          write(6,'(21x,a2,4x,a2,3(1x,f9.4))')&
-               this%spcvdw(i),this%spcvdw(j),(this%parvdw(i,j,k),k=1,2)
+          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')&
+               this%spcvdw(i),this%spcvdw(j),this%tvdw(i,j),(this%parvdw(i,j,k),k=1,2)
        end do
     end do
     write(6,'(20x,111a1)')('-',i=1,52)
