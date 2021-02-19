@@ -204,12 +204,12 @@ contains
              select case(ttors)
              case('amber')
                 backspace(11)
-                i1=nint(this%partors(i,j,1))
-                f1=this%partors(i,j,2)
-                f2=this%partors(i,j,3)
-                i2=nint(this%partors(i,j,4))
                 read(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')&
                      (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
+                this%partors(i,j,1)=i1
+                this%partors(i,j,2)=f1
+                this%partors(i,j,3)=f2
+                this%partors(i,j,4)=i2
              case('harm')
                 backspace(11)
                 read(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
@@ -457,6 +457,38 @@ contains
        do j=1,this%nxmol(i)
           this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
           this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
+       end do
+    end do
+    do i=1,this%get_nmol()
+       do j=1,this%bondscnt(i)
+          select case(this%tbonds(i,j))
+          case('amber')
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          case('harm')
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          end select
+       end do
+       do j=1,this%bendscnt(i)
+          select case(this%tbends(i,j))
+          case('amber')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          case('harm')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          end select
+       end do
+       do j=1,this%torscnt(i)
+          select case(this%ttors(i,j))
+          case('amber')
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_econv()
+             this%partors(i,j,3)=this%partors(i,j,3)/this%get_aconv()
+          case('harm')
+             this%partors(i,j,1)=this%partors(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
+          end select
        end do
     end do
     do i=1,this%get_nvdw()

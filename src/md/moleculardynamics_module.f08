@@ -265,15 +265,15 @@ contains
        do j=1,this%bendscnt(i)
           select case(this%tbends(i,j))
           case('amber')
-             write(6,'(2x,4(i3,3x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
+             write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),&
                   this%parbend(i,j,1)*this%get_econv()/this%get_aconv()**2,&
                   this%parbend(i,j,2)*this%get_aconv()
           case('harm')
-             write(6,'(2x,4(i3,3x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
+             write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),&
-                  this%parbend(i,j,1)*this%get_econv()/this%get_rconv()**2,&
-                  this%parbend(i,j,2)*this%get_rconv()
+                  this%parbend(i,j,1)*this%get_econv()/this%get_aconv()**2,&
+                  this%parbend(i,j,2)*this%get_aconv()
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -287,16 +287,16 @@ contains
           select case(this%ttors(i,j))
           case('amber')
              i1=nint(this%partors(i,j,1))
-             f1=this%partors(i,j,2)
-             f2=this%partors(i,j,3)
+             f1=this%partors(i,j,2)*this%get_econv()
+             f2=this%partors(i,j,3)*this%get_aconv()
              i2=nint(this%partors(i,j,4))
              write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')j,&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
           case('harm')
-             f1=this%partors(i,j,2)
-             f2=this%partors(i,j,3)
-             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,(this%moltors(i,j,k),k=1,4),&
-                  this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
+             f1=this%partors(i,j,1)*this%get_econv()/this%get_aconv()**2
+             f2=this%partors(i,j,2)*this%get_aconv()
+             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,90)
