@@ -43,8 +43,6 @@ module vanderwaals_module
      procedure :: set_virvdw
      procedure :: get_virvdw
      procedure :: get_force
-     procedure :: set_vdwcorr
-     procedure :: get_vdwcorr
   end type vanderwaals
 
 contains
@@ -59,7 +57,7 @@ contains
   subroutine set_vanderwaals(this,dr,prm,ptrm)
     implicit none
     class(vanderwaals), intent(inout) :: this
-    character(4), intent(in)          :: ptrm
+    character(5), intent(in)          :: ptrm
     real(8), intent(in)               :: dr,prm(2)
     select case(ptrm)
     case('amber')
@@ -96,17 +94,6 @@ contains
     class(vanderwaals), intent(inout) :: this
     get_virvdw=this%virvdw
   end function get_virvdw
-
-  subroutine set_vdwcorr(this)
-    implicit none
-    class(vanderwaals), intent(inout) :: this
-  end subroutine set_vdwcorr
-
-  double precision function get_vdwcorr(this)
-    implicit none
-    class(vanderwaals), intent(inout) :: this
-    get_vdwcorr=this%vdwcorr
-  end function get_vdwcorr
 
   double precision function get_force(this)
     implicit none

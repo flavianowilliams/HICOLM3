@@ -28,7 +28,7 @@ module interaction_module
 
   implicit none
 
-  integer i,j
+  integer i,j,k,l
 
   private
   public :: interaction
@@ -62,6 +62,8 @@ contains
     class(interaction), intent(inout) :: this
     integer                           :: ni,nj
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
+    real(8)                           :: prm(2)
+    character(5)                      :: ptrm
     do i=1,this%get_natom()
        this%fax(i)=0.d0
        this%fay(i)=0.d0
@@ -84,8 +86,20 @@ contains
              enpot=enpot+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
-!          if()
-!          call this%vdw%set_vanderwaals()
+          do k=1,this%get_nvdw()
+             if(this%tpa(ni).eq.this%spcvdw(k,1).and.this%tpa(nj).eq.this%spcvdw(k,2).or.&
+                  this%tpa(ni).eq.this%spcvdw(k,2).and.this%tpa(nj).eq.this%spcvdw(k,1))then
+                do l=1,2
+                   prm(l)=this%parvdw(k,l)
+                end do
+                ptrm=this%tvdw(k)
+                call this%vdw%set_vanderwaals(dr,prm,ptrm)
+                call this%set_force(ni,nj,xvz,yvz,zvz,this%vdw%get_force())
+                call this%vdw%set_virvdw(this%vdw%get_force()*dr**2)
+                enpot=enpot+this%vdw%get_envdw()
+                virtot=virtot+this%vdw%get_virvdw()
+             end if
+          end do
        end do
     end do
     call this%set_enpot(enpot)

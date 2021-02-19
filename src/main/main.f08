@@ -132,7 +132,7 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_atoms()                      ! lendo coordenadas atomicas
         call md%set_topology()                   ! lendo parametros do campo de forca
-        call md%read_geometry()                  ! lendo coordenadas da última simulação
+        if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
         call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%convert_units()                  ! convertendo unidades de medida
         call md%set_mmolar()                     ! calculando massa molecular

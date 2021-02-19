@@ -29,5 +29,5 @@
   1 1 4 2 6 amber 0. 0. 0. 0.
  end_molecule
  vdw 1
- CA HA amber 1.0 1.0
+ CA HA lj 1.0 1.0
 &END
