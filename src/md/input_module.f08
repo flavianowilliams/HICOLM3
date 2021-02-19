@@ -162,9 +162,9 @@ contains
     class(input), intent(inout) :: this
     integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2
     real(8)                     :: f1,f2
-    character(2)                :: mtd
+    character(2)                :: mtd,spcvdw1,spcvdw2
     character(4)                :: coulop
-    character(5)                :: ttors
+    character(5)                :: ttors,tvdw
     open(11,file='HICOLM.top',status='old')
     read(11,'(1x,a2)')mtd
     if(mtd.eq.'MM')then
@@ -223,10 +223,20 @@ contains
        call this%set_spcs()
        allocate(this%spcvdw(nvdw,2),this%parvdw(nvdw,2))
        do i=1,nvdw
-          read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
-               this%spcvdw(i,1),this%spcvdw(i,2),this%tvdw(i),(this%parvdw(i,j),j=1,2)
+          read(11,'(2(1x,a2),1x,a5)')spcvdw1,spcvdw2,tvdw
+          backspace(11)
+          select case(tvdw)
+          case('amber')
+             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+                  spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
+          case('lj')
+             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+                  spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
+          end select
+          this%spcvdw(i,1)=spcvdw1
+          this%spcvdw(i,2)=spcvdw2
+          this%tvdw(i)=tvdw
        end do
-!       call this%set_nspcvdw(nspcvdw)
        call this%set_nvdw(nvdw)
     end if
   end subroutine set_topology
@@ -448,6 +458,16 @@ contains
           this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
           this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
        end do
+    end do
+    do i=1,this%get_nvdw()
+       select case(this%tvdw(i))
+       case('amber')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       case('lj')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       end select
     end do
     call this%set_temp(this%get_temp()/this%get_teconv())
     call this%set_press(this%get_press()/this%get_pconv())
