@@ -129,8 +129,8 @@ contains
     write(6,*)
 !    write(6,'(2x,a24,2x,f7.4)')'1-4 scale factor (elet):',sf_coul
 !    write(6,'(2x,a23,3x,f7.4)')'1-4 scale factor (VdW):',sf_vdw
-!    write(6,*)
-!    write(6,*)
+    write(6,*)
+    write(6,*)
 
     do i=1,nmolec
        write(6,'(42x,a6)')namemol(i)

@@ -219,6 +219,8 @@ contains
             this%bondscnt(i),this%bendscnt(i),this%torscnt(i)
     end do
     write(6,'(19x,111a1)')('-',i=1,54)
+    write(6,'(20x,a6,2x,i5,5(4x,i5))')&
+         'Total:',this%get_natom(),this%get_nbonds()
     write(6,*)
     do i=1,this%get_nmol()
        write(6,'(42x,a6)')this%namemol(i)

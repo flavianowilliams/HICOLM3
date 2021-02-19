@@ -23,6 +23,7 @@ module interaction_module
   !*******************************************************************************************
 
   use neighbourlist_module
+  use bonds_module
   use coulomb_module
   use vanderwaals_module
 
@@ -34,17 +35,21 @@ module interaction_module
   public :: interaction
 
   type, extends(neighbourlist) :: interaction
-     type(coulomb)    :: coul
-     type(vanderwaals):: vdw
-     real(8), private :: enpot
-     real(8), private :: virtot
-     real(8), private :: encorr
-     real(8), private :: vircorr
+     type(bonds)                   :: bnd
+     type(coulomb)                 :: coul
+     type(vanderwaals)             :: vdw
+     integer, private              :: nbonds
+     integer, private, allocatable :: bondij(:,:)
+     real(8), private              :: enpot
+     real(8), private              :: virtot
+     real(8), private              :: encorr
+     real(8), private              :: vircorr
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
      procedure :: set_force2
      generic   :: set_force => set_force2
+     procedure :: set_bondij
      procedure :: set_enpot
      procedure :: get_enpot
      procedure :: set_virtot
@@ -52,6 +57,8 @@ module interaction_module
      procedure :: set_vdwcorr
      procedure :: get_encorr
      procedure :: get_vircorr
+     procedure :: set_nbonds
+     procedure :: get_nbonds
   end type interaction
 
 contains
@@ -60,6 +67,7 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
+    call this%set_nbonds()
   end subroutine interaction_prepare
 
   subroutine set_forcefield(this)
@@ -110,6 +118,42 @@ contains
     call this%set_enpot(enpot)
     call this%set_virtot(virtot)
   end subroutine set_forcefield
+
+  subroutine set_nbonds(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer                           :: nx
+    nx=0
+    do i=1,this%get_nmol()
+       nx=nx+this%ntmol(i)*this%bondscnt(i)
+    end do
+    this%nbonds=nx
+  end subroutine set_nbonds
+
+  integer function get_nbonds(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    get_nbonds=this%nbonds
+  end function get_nbonds
+
+  subroutine set_bondij(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer                           :: nx,nxx
+    allocate(this%bondij(this%nbonds,2))
+    nx=0
+    nxx=1
+    do i=1,this%get_nmol()
+       do j=1,this%ntmol(i)
+          do k=1,this%bondscnt(i)
+             this%bondij(nxx,1)=nx+this%molbond(i,k,1)
+             this%bondij(nxx,1)=nx+this%molbond(i,k,2)
+             nxx=nxx+1
+          end do
+          nx=nx+this%nxmol(i)
+       end do
+    end do
+  end subroutine set_bondij
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
     implicit none

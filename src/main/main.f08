@@ -145,13 +145,13 @@ program HICOLM
         call md%set_lattice_angles()             ! calculando angulos de rede
         call md%set_symmetry()                   ! calculando grupo de simetria
         call md%set_volume()                     ! calculando volume da supercelula
-        call md%print_out()                      ! imprimindo valores em HICOLM.out
         call md%set_vdwcorr()                    ! calculando correção de Van der Waals
         call md%print()                          ! imprimindo parametros da MD
         call md%set_velocity()                   ! atribuindo velocidades iniciais
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%interaction_prepare()            ! preparando campo de forca
+        call md%print_out()                      ! imprimindo valores em HICOLM.out
         call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_time(0.d0)                   ! setando instante inicial
         write(6,'(4x,111a1)')('-',i=1,84)
