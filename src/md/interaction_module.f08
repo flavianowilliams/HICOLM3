@@ -38,6 +38,8 @@ module interaction_module
      type(vanderwaals):: vdw
      real(8), private :: enpot
      real(8), private :: virtot
+     real(8), private :: encorr
+     real(8), private :: vircorr
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
@@ -47,6 +49,9 @@ module interaction_module
      procedure :: get_enpot
      procedure :: set_virtot
      procedure :: get_virtot
+     procedure :: set_vdwcorr
+     procedure :: get_encorr
+     procedure :: get_vircorr
   end type interaction
 
 contains
@@ -144,5 +149,57 @@ contains
     class(interaction), intent(inout) :: this
     get_virtot=this%virtot
   end function get_virtot
+
+  subroutine set_vdwcorr(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer                           :: natp1,natp2
+    real(8)                           :: envdw_corr,virvdw_corr,es,vs
+    real(8)                           :: prm(2)
+    envdw_corr=0.d0
+    virvdw_corr=0.d0
+    do i=1,this%get_nvdw()
+       select case(this%tvdw(i))
+       case('amber')
+          do j=1,2
+             prm(j)=this%parvdw(i,j)
+          end do
+          es=prm(1)*&
+               (prm(2)**12-6.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=12.d0*prm(1)*&
+               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+       case('lj')
+          do j=1,2
+             prm(j)=this%parvdw(i,j)
+          end do
+          es=4.d0*prm(1)*&
+               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=24.d0*prm(1)*(2.d0*prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/&
+               (9.d0*this%get_rcutoff()**9)
+       end select
+       natp1=0
+       natp2=0
+       do j=1,this%get_natom()
+          if(this%tpa(j).eq.this%spcvdw(i,1))natp1=natp1+1
+          if(this%tpa(j).eq.this%spcvdw(i,2))natp2=natp2+1
+       end do
+       envdw_corr=envdw_corr+es*natp1*natp2
+       virvdw_corr=virvdw_corr+vs*natp1*natp2
+    end do
+    this%encorr=2.d0*envdw_corr*this%get_pi()/this%get_volume()
+    this%vircorr=2.d0*virvdw_corr*this%get_pi()/this%get_volume()
+  end subroutine set_vdwcorr
+
+  double precision function get_encorr(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    get_encorr=this%encorr
+  end function get_encorr
+
+  double precision function get_vircorr(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    get_vircorr=this%vircorr
+  end function get_vircorr
 
 end module interaction_module

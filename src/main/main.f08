@@ -146,6 +146,7 @@ program HICOLM
         call md%set_symmetry()                   ! calculando grupo de simetria
         call md%set_volume()                     ! calculando volume da supercelula
         call md%print_out()                      ! imprimindo valores em HICOLM.out
+        call md%set_vdwcorr()                    ! calculando correção de Van der Waals
         call md%print()                          ! imprimindo parametros da MD
         call md%set_velocity()                   ! atribuindo velocidades iniciais
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
@@ -179,7 +180,7 @@ program HICOLM
 !                temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
-                (md%get_enpot())*md%get_econv()
+                (md%get_enpot()+md%get_encorr())*md%get_econv()
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
