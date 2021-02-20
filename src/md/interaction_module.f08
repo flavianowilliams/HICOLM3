@@ -39,11 +39,12 @@ module interaction_module
      type(coulomb)                 :: coul
      type(vanderwaals)             :: vdw
      integer, private              :: nbonds
-     integer, private, allocatable :: bondij(:,:)
+     integer, private, allocatable :: bondij(:,:,:)
      real(8), private              :: enpot
      real(8), private              :: virtot
      real(8), private              :: encorr
      real(8), private              :: vircorr
+     character(5), private, allocatable :: bondtp(:)
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
@@ -68,6 +69,7 @@ contains
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
     call this%set_nbonds()
+    call this%set_bondij()
   end subroutine interaction_prepare
 
   subroutine set_forcefield(this)
@@ -84,6 +86,17 @@ contains
     end do
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
+    do i=1,this%get_nmol()
+       do j=1,this%bondscnt(i)
+          call this%mic(this%bondij(i,j,1),this%bondij(i,j,2),xvz,yvz,zvz)
+          dr=sqrt(xvz**2+yvz**2+zvz**2)
+          do l=1,2
+             prm(l)=this%parbnd(i,j,l)
+          end do
+          ptrm=this%tbonds(i,j)
+          call this%bnd%set_bonds(dr,prm,ptrm)
+       end do
+    end do
     enpot=0.d0
     virtot=0.d0
     do i=1,this%get_natom()
@@ -140,14 +153,14 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     integer                           :: nx,nxx
-    allocate(this%bondij(this%nbonds,2))
+    allocate(this%bondij(this%get_nmol(),this%get_bondmax(),2))
     nx=0
     nxx=1
     do i=1,this%get_nmol()
        do j=1,this%ntmol(i)
           do k=1,this%bondscnt(i)
              this%bondij(nxx,1)=nx+this%molbond(i,k,1)
-             this%bondij(nxx,1)=nx+this%molbond(i,k,2)
+             this%bondij(nxx,2)=nx+this%molbond(i,k,2)
              nxx=nxx+1
           end do
           nx=nx+this%nxmol(i)
