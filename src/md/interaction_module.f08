@@ -83,22 +83,28 @@ contains
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
     nx=0
+    enpot=0.d0
+    virtot=0.d0
     do i=1,this%get_nmol()
        do j=1,this%ntmol(i)
           do k=1,this%bondscnt(i)
-             call this%mic(nx+this%molbond(i,k,1),nx+this%molbond(i,k,2),xvz,yvz,zvz)
+             ni=nx+this%molbond(i,k,1)
+             nj=nx+this%molbond(i,k,2)
+             call this%mic(ni,nj,xvz,yvz,zvz)
              dr=sqrt(xvz**2+yvz**2+zvz**2)
              do l=1,2
-                prm(l)=this%parbnd(i,j,l)
+                prm(l)=this%parbnd(i,k,l)
              end do
-             ptrm=this%tbonds(i,j)
+             ptrm=this%tbonds(i,k)
              call this%bnd%set_bonds(dr,prm,ptrm)
+             call this%set_force(ni,nj,xvz,yvz,zvz,this%bnd%get_force())
+             call this%bnd%set_virbond(this%bnd%get_force()*dr**2)
+             enpot=enpot+this%bnd%get_enbond()
+             virtot=virtot+this%bnd%get_virbond()
           end do
+          nx=nx+this%nxmol(i)
        end do
-       nx=nx+this%nxmol(i)
     end do
-    enpot=0.d0
-    virtot=0.d0
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
           ni=i
