@@ -39,18 +39,15 @@ module interaction_module
      type(coulomb)                 :: coul
      type(vanderwaals)             :: vdw
      integer, private              :: nbonds
-     integer, private, allocatable :: bondij(:,:,:)
      real(8), private              :: enpot
      real(8), private              :: virtot
      real(8), private              :: encorr
      real(8), private              :: vircorr
-     character(5), private, allocatable :: bondtp(:)
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
      procedure :: set_force2
      generic   :: set_force => set_force2
-     procedure :: set_bondij
      procedure :: set_enpot
      procedure :: get_enpot
      procedure :: set_virtot
@@ -69,13 +66,12 @@ contains
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
     call this%set_nbonds()
-    call this%set_bondij()
   end subroutine interaction_prepare
 
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: ni,nj
+    integer                           :: ni,nj,nx
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
     real(8)                           :: prm(2)
     character(5)                      :: ptrm
@@ -86,16 +82,20 @@ contains
     end do
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
+    nx=0
     do i=1,this%get_nmol()
-       do j=1,this%bondscnt(i)
-          call this%mic(this%bondij(i,j,1),this%bondij(i,j,2),xvz,yvz,zvz)
-          dr=sqrt(xvz**2+yvz**2+zvz**2)
-          do l=1,2
-             prm(l)=this%parbnd(i,j,l)
+       do j=1,this%ntmol(i)
+          do k=1,this%bondscnt(i)
+             call this%mic(nx+this%molbond(i,k,1),nx+this%molbond(i,k,2),xvz,yvz,zvz)
+             dr=sqrt(xvz**2+yvz**2+zvz**2)
+             do l=1,2
+                prm(l)=this%parbnd(i,j,l)
+             end do
+             ptrm=this%tbonds(i,j)
+             call this%bnd%set_bonds(dr,prm,ptrm)
           end do
-          ptrm=this%tbonds(i,j)
-          call this%bnd%set_bonds(dr,prm,ptrm)
        end do
+       nx=nx+this%nxmol(i)
     end do
     enpot=0.d0
     virtot=0.d0
@@ -148,25 +148,6 @@ contains
     class(interaction), intent(inout) :: this
     get_nbonds=this%nbonds
   end function get_nbonds
-
-  subroutine set_bondij(this)
-    implicit none
-    class(interaction), intent(inout) :: this
-    integer                           :: nx,nxx
-    allocate(this%bondij(this%get_nmol(),this%get_bondmax(),2))
-    nx=0
-    nxx=1
-    do i=1,this%get_nmol()
-       do j=1,this%ntmol(i)
-          do k=1,this%bondscnt(i)
-             this%bondij(nxx,1)=nx+this%molbond(i,k,1)
-             this%bondij(nxx,2)=nx+this%molbond(i,k,2)
-             nxx=nxx+1
-          end do
-          nx=nx+this%nxmol(i)
-       end do
-    end do
-  end subroutine set_bondij
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
     implicit none
