@@ -31,7 +31,7 @@ c
       implicit none
 c
       integer natm(molmax,nmax)
-      real(4) rm(fmax,molmax,nmmax,iz),vm(fmax,molmax,nmmax,iz)
+      real(kind=8) rm(fmax,molmax,nmmax,iz),vm(fmax,molmax,nmmax,iz)
       character*5 atmolec(molmax,atmmax)
 c
       save rm,vm,atmolec,natm
@@ -47,8 +47,8 @@ c
       implicit none
 c
       integer i,j,h,p,w,g,t,s,c,cmserr,check
-      real(kind=4) rsum(2,2,iz),rsq(iz),cmsprec
-      real(kind=4) mtmol
+      real(kind=8) rsum(2,2,iz),rsq(iz),cmsprec
+      real(kind=8) mtmol
       character*12 mark(nmax)
 c
       cmsprec=1.e-2

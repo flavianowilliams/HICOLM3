@@ -36,8 +36,8 @@ c
       implicit none
 c
       integer i,w,check,cmserr
-      real(kind=4) t0,dt,cmsprec
-      real(kind=4) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
+      real(kind=8) t0,dt,cmsprec
+      real(kind=8) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
 c
       open(unit=ird,file="lattice.csv",status="old")
       open(unit=ird2,file="atoms.csv",status="old")

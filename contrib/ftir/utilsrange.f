@@ -33,7 +33,7 @@ c
       implicit none
 c
       integer ans,wop,j,i
-      real(kind=4) rint,rend,rx,rc(iz)
+      real(kind=8) rint,rend,rx,rc(iz)
 c
       ans=0
       rx=0.
@@ -65,7 +65,7 @@ c
       implicit none
 c
       integer c,i,wop
-      real(kind=4) rint,rend,az
+      real(kind=8) rint,rend,az
       character*5 ats
 c
       ats='OW'

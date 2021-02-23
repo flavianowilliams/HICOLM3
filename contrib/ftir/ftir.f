@@ -43,11 +43,11 @@ c
       parameter (dblemol=2*nmmax)
 c
       integer nimx,w,www,k,i,j,p,op,nx,nt(fmax)
-      real(kind=4) str(fmax,dblemol)
-      real(kind=4) smedi,smed(fmax),dm(fmax,molmax,nmmax,iz)
-      real(kind=4) vel(atmmax,fmax),fint(3,pmax),integ(3,atmmax+3,pmax)
-      real(kind=4) dni,ni,nimax,vol,temp,cte,light,dt,strmm,flexmm
-      real(kind=4) tcfmed(fmax),flexmed(fmax),dip(fmax)
+      real(kind=8) str(fmax,dblemol)
+      real(kind=8) smedi,smed(fmax),dm(fmax,molmax,nmmax,iz)
+      real(kind=8) vel(atmmax,fmax),fint(3,pmax),integ(3,atmmax+3,pmax)
+      real(kind=8) dni,ni,nimax,vol,temp,cte,light,dt,strmm,flexmm
+      real(kind=8) tcfmed(fmax),flexmed(fmax),dip(fmax)
       character*5 atx(atmmax)
 c
       data light/3.e-2/,cte/4.553024e5/,dni/1.e-2/
@@ -264,8 +264,8 @@ c
       parameter (pmax=4000)
 c
       integer k,w,i,op,nimx,www
-      real(kind=4) light,ni,dni,dt,integ(3,pmax),escc(2),nimax
-      real(kind=4) essc(2,2),esss(2),smed(fmax),pi
+      real(kind=8) light,ni,dni,dt,integ(3,pmax),escc(2),nimax
+      real(kind=8) essc(2,2),esss(2),smed(fmax),pi
 c
       data light/3.e-2/,dni/1.e-2/
 c

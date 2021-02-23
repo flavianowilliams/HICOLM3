@@ -25,7 +25,7 @@
       integer ird,irdd,iwrx,iwrt,iwtt,iwrz,iwrh
       integer opm,ddw,bnd,flx,i
       integer oph(2,10,3),natk(2,10,3),opz(2)
-      real(kind=4) dni,strcut,vacf,strmm,flexmm,int
+      real(kind=8) dni,strcut,vacf,strmm,flexmm,int
 
       common/acfdata/ opm,opz,oph,ddw,bnd,flx,dni,strcut,natk
       common/units/ ird,irdd,iwrh,iwrx,iwtt,iwrz,iwrt

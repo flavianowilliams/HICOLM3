@@ -23,8 +23,8 @@
 *     Imprimindo probabilidades                                      *
 *     Flaviano Williams Fernandes, 20 de agosto de 2014              *
 **********************************************************************
-      use sizes
-      use system
+c
+      use dipmol
 c
       contains
 c
@@ -32,14 +32,14 @@ c
 c
       implicit none
 c
-      integer maxn,mimax,i,strmax,nmax,flxmax
+      integer maxn,i,strmax,nmax,flxmax
 c
       parameter (maxn=500)
 c
-      real(kind=4) dmi,mi,strmx,dstr,strv,dstr0,dflx0,dflx,flxmx,flxv
-      real(kind=4) nn(maxn),str(maxn),flx(maxn)
+      real(kind=8) mi,strmx,dstr,strv,dstr0,dflx0,dflx,flxmx,flxv
+      real(kind=8) str(maxn),flx(maxn)
 c
-      common/dipavecalc/ mimax,dmi,nn
+!      common/dipavecalc/ mimax,dmi,nn
       common/tcfstrdata/ strmax,strmx,dstr0,str
       common/tcfflexdata/ flxmax,flxmx,dflx0,flx
 c-----------------------------------------------------
@@ -71,7 +71,7 @@ c
       implicit none
 c
       integer i
-      real(kind=4) strmm,flexmm,int
+      real(kind=8) strmm,flexmm,int
 c
       write(iwrt,*)
       write(iwrt,*)

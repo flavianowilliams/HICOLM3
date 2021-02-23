@@ -17,7 +17,13 @@
 !     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 !     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 !     SOFTWARE.
-!     
+!
+      module prbwrt_module
+c
+      use dipmol.f
+c
+      contains
+c
       subroutine prbwrt
 c
       implicit none
@@ -27,8 +33,8 @@ c
       parameter (maxn=500)
 c
       integer ird,irdd,iwrx,iwrt,iwtt,iwrz,iwrh
-      real(kind=4) dmi,mi,strmx,dstr,strv,dstr0,dflx0,dflx,flxmx,flxv
-      real(kind=4) nn(maxn),str(maxn),flx(maxn)
+      real(kind=8) dmi,mi,strmx,dstr,strv,dstr0,dflx0,dflx,flxmx,flxv
+      real(kind=8) nn(maxn),str(maxn),flx(maxn)
 c
       common/units/ ird,irdd,iwrh,iwrx,iwtt,iwrz,iwrt
       common/dipavecalc/ mimax,dmi,nn
@@ -42,7 +48,7 @@ c
 c
       write(iwrx,'(1x,a1,16x,a6,17x,a7,19x,a4)')
      1     '#','dipole','stretch','bend'
-c     
+c
       mi=0.
       strv=0.+dstr0
       flxv=0.+dflx0
@@ -57,3 +63,5 @@ c-----------------------------------------------------
       return
 c
       end subroutine prbwrt
+
+      end module prbwrt_module
