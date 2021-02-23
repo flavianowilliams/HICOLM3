@@ -130,10 +130,9 @@ c
       implicit none
 c
       integer ww,www,w,n,atm(nmmax)
-      integer atx
       real(kind=4) vs,med,smedi
       real(kind=4) v0(nmax,iz),smed(fmax)
-c      character*8 atx
+      character*5 atx
 c
       smedi=0.
       vs=0.
@@ -174,10 +173,9 @@ c
       implicit none
 c
       integer i,j,n,w,wop
-      integer atx
       integer atm(nmmax),ans,g
       real(kind=4) med,rc(iz),v0(nmax,iz)
-c      character*8 atx
+      character*5 atx
 c
       med=0.
 c
