@@ -98,9 +98,8 @@ c
 c
       implicit none
 c
-      integer w,i,j,k,h,p,s,g,check
+      integer w,i,j,check
       real(8) dtt
-      character*5 lixc
 c
       read(ird,100,end=1)timestep(w),dtt,(l(w,i),i=1,3)
 c
