@@ -46,7 +46,7 @@ c
       integer w,j,i,k,p,g,gg,t,s,ss,strmmax
       real(kind=8) sqtstr(fmax,dblemol),str(dblemol,iz)
       real(kind=8) strmm,strm,dsv
-      real(kind=8) str(strmax),rc1(iz),rc2(iz),rx(2,nmax,iz)
+      real(kind=8) rc1(iz),rc2(iz),rx(2,nmax,iz)
 c     
 c      common/tcfstrdata/ strmmax,strmx,dstr0,str
 c
@@ -197,7 +197,7 @@ c
       integer ans1,ans2
       real(kind=8) sqtstr(fmax,dblemol),str(2,dblemol,iz)
       real(kind=8) strmm,strm,strx,dsv,strmx,dflx0
-      real(kind=8) str(strmax),rc1(iz),rc2(iz)
+      real(kind=8) rc1(iz),rc2(iz)
 c     
       common/tcfflexdata/ strmmax,strmx,dflx0,str
 c

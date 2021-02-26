@@ -34,12 +34,12 @@ c
 c
       integer ird,irdd,iwrx,iwrt,iwtt,iwrz,iwrh
       real(kind=8) dmi,mi,strmx,dstr,strv,dstr0,dflx0,dflx,flxmx,flxv
-      real(kind=8) nn(maxn),str(maxn),flx(maxn)
+      real(kind=8) nn(maxn)
 c
       common/units/ ird,irdd,iwrh,iwrx,iwtt,iwrz,iwrt
       common/dipavecalc/ mimax,dmi,nn
       common/tcfstrdata/ strmax,strmx,dstr0,str
-      common/tcfflexdata/ flxmax,flxmx,dflx0,flx
+      common/tcfflexdata/ flxmax,flxmx,dflx0
 c-----------------------------------------------------
       nmax=min(maxn,min(mimax,min(strmax,flxmax)))
 c
