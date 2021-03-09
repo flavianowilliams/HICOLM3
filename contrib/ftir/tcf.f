@@ -28,27 +28,23 @@
       use cmmolec
       use utilsrange
 c
-      integer strmax
-      parameter(strmax=500)
-      real(kind=8) strmx,dstr0
-
       contains
 c
       subroutine tcfstr(sqtstr,strmm,n)
 c
       implicit none
 c
-      integer dblemol,t0,nt,pp,ppp,ans,ans1(nmax),ans2(nmax)
+      integer strmax,dblemol,t0,nt,pp,ppp,ans,ans1(nmax),ans2(nmax)
       integer n(fmax)
 c
-      parameter (dblemol=2*nmmax)
+      parameter (dblemol=2*nmmax,strmax=500)
 c
       integer w,j,i,k,p,g,gg,t,s,ss,strmmax
-      real(kind=8) sqtstr(fmax,dblemol),str(dblemol,iz)
-      real(kind=8) strmm,strm,dsv
-      real(kind=8) rc1(iz),rc2(iz),rx(2,nmax,iz)
+      real(kind=4) sqtstr(fmax,dblemol),str(dblemol,iz)
+      real(kind=4) strmm,strm,strmx,dsv,dstr0
+      real(kind=4) nn(strmax),rc1(iz),rc2(iz),rx(2,nmax,iz)
 c     
-c      common/tcfstrdata/ strmmax,strmx,dstr0,str
+      common/tcfstrdata/ strmmax,strmx,dstr0,nn
 c
       write(*,*)'-> Calculo do Estiramento'
 c
@@ -161,7 +157,7 @@ c
       write(*,*)nt,'arrays'
 c---------------------------------------------------------
 c-calculo da probabilidade
-      call tcfprb(strmax,dstr0,strmx,sqtstr,n,str,strmm,dsv)
+      call tcfprb(strmax,dstr0,strmx,sqtstr,n,nn,strmm,dsv)
 c
       write(iwrt,*)'Estiramento ->',strmm,dsv
       write(*,*)'Estiramento ->',strmm
@@ -195,11 +191,11 @@ c
 c
       integer n(fmax)
       integer ans1,ans2
-      real(kind=8) sqtstr(fmax,dblemol),str(2,dblemol,iz)
-      real(kind=8) strmm,strm,strx,dsv,strmx,dflx0
-      real(kind=8) rc1(iz),rc2(iz)
+      real(kind=4) sqtstr(fmax,dblemol),str(2,dblemol,iz)
+      real(kind=4) strmm,strm,strx,dsv,strmx,dflx0
+      real(kind=4) nn(strmax),rc1(iz),rc2(iz)
 c     
-      common/tcfflexdata/ strmmax,strmx,dflx0,str
+      common/tcfflexdata/ strmmax,strmx,dflx0,nn
 c
       write(*,*)'-> Calculo da deformacao!'
 c
@@ -317,7 +313,7 @@ c      dsv=acos(dsv)*180/acos(-1.d0)
 c
 c---------------------------------------------------------
 c-calculo da probabilidade
-      call tcfprb(strmax,dflx0,strmx,sqtstr,n,strmm,dsv)
+      call tcfprb(strmax,dflx0,strmx,sqtstr,n,nn,strmm,dsv)
 c
       strmm=acos(strmm)*180/acos(-1.)
       dsv=acos(dsv)*180/acos(-1.)
@@ -343,7 +339,7 @@ c---------------------------------------------------------
       
       end subroutine tcfflex
 c
-      subroutine tcfprb(strmax,dstr0,strmx,sqtstr,n,vm,dsv)
+      subroutine tcfprb(strmax,dstr0,strmx,sqtstr,n,nn,vm,dsv)
       
       implicit none
 
@@ -352,9 +348,9 @@ c
       parameter (dblemol=2*nmmax)
 c
       integer strprb(strmax),n(fmax)
-      real(kind=8) prec,dstr,strmx,strv,sm,int,vm,dsv,dstr0
-      real(kind=8) sqtstr(fmax,dblemol),f(2,strmax),integ(2)
-      real(kind=8) str(strmax)
+      real(kind=4) prec,dstr,strmx,strv,sm,int,vm,dsv,dstr0
+      real(kind=4) sqtstr(fmax,dblemol),f(2,strmax),integ(2)
+      real(kind=4) nn(strmax)
 c---------------------------------------------------------
 c-calculo da probabilidade
       dstr=(strmx-dstr0)/strmax
@@ -382,25 +378,25 @@ c-contando as distancias relativas
 c---------------------------------------------------------
 c-normalizando a função probabilidade
       do i=1,strmax
-         str(i)=(float(strprb(i))/float(nt))
+         nn(i)=(float(strprb(i))/float(nt))
       end do
 c
       sm=0.
       do i=2,strmax-1,2
-         sm=sm+str(i)*4+str(i+1)*2
+         sm=sm+nn(i)*4+nn(i+1)*2
       end do
-      int=dstr*(str(1)+str(strmax)+sm)/3
+      int=dstr*(nn(1)+nn(strmax)+sm)/3
 c
       do i=1,strmax
-         str(i)=str(i)/int
+         nn(i)=nn(i)/int
       end do
 c---------------------------------------------------------
 c-calculo do valor médio de estiramento e desvio padrao
 c      call desvio(n(tmax)*tmax,valy,dsv,strmm)
       strv=0.+dstr0
       do i=1,strmax
-         f(1,i)=str(i)*strv
-         f(2,i)=str(i)*strv**2
+         f(1,i)=nn(i)*strv
+         f(2,i)=nn(i)*strv**2
          strv=strv+dstr
       end do
 c

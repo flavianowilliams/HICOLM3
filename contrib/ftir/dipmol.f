@@ -26,12 +26,6 @@
       use sizes
       use system
 c
-      integer mimax
-      parameter (mimax=500)
-c
-      real(kind=8) dmi
-      real(kind=8) nn(mimax)
-
       contains
 c
       subroutine dipole(dm)
@@ -43,7 +37,7 @@ c
       parameter (nwmax=int(nmax/3))
 c
       integer i,p,j,w,g,s
-      real(kind=8) dm(fmax,molmax,nmmax,iz),e,d
+      real(kind=4) dm(fmax,molmax,nmmax,iz),e,d
 c
       data e/-1.602176487/,d/4.803/
 c-----------------------------------------------------------------------
@@ -88,18 +82,20 @@ c
 c      
       implicit none
 c
-      integer w,p,i
+      integer mimax,w,p,i
 c
-      integer n(mimax),nt
-      real(kind=8) dm(fmax,molmax,nmmax,iz),vec(fmax,nmmax)
-      real(kind=8) int,mi,ints,s,mimx,prec,dsv,integx
-      real(kind=8) f(2,mimax),integ(2)
-!     real(kind=8) nn(mimax)
+      parameter (mimax=500)
 c
-c      common/dipavecalc/ nmimax,dmi,nn
+      integer n(mimax),nt,nmimax
+      real(kind=4) dm(fmax,molmax,nmmax,iz),vec(fmax,nmmax)
+      real(kind=4) int,mi,dmi,ints,s,mimx,prec,dsv,integx
+      real(kind=4) f(2,mimax),integ(2)
+      real(kind=4) nn(mimax)
+c
+      common/dipavecalc/ nmimax,dmi,nn
 c
 c      data prec/1.e-3/
-c      nmimax=mimax
+      nmimax=mimax
 c------------------------------------------------------
 c-modulando os vetores momento de dipolo
       mimx=0.

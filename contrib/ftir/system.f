@@ -30,15 +30,14 @@ c
 c
       integer qmol,nmolec(molmax),qatom(molmax)
       integer opm,opx,ddw,d0w,dtw,bnd,flx,opsmth
-      integer atmax,tmax,timestep(fmax),keyi(5)
-      integer oph(2,10,3),natk(2,10,3),opz(2)
-      real(kind=8) strcut,qat(nmax),rmin,rmax,mmol(nmax)
-      real(kind=8) r(fmax,nmax,iz),v(fmax,nmax,iz),a(fmax,nmax,iz)
-      real(kind=8) l(fmax,iz),keyf(8),dtime,dsmth
-      character*5 at(nmax),att
+      integer nat(nmax),atmax,tmax,timestep(fmax),keyi(5)
+      integer oph(2,10,3),natk(2,10,3),opz(2),at(nmax),att
+      real(kind=4) strcut,qat(nmax),rmin,rmax,mmol(nmax)
+      real(kind=4) r(fmax,nmax,iz),v(fmax,nmax,iz),a(fmax,nmax,iz)
+      real(kind=4) l(fmax,iz),keyf(8),dtime,dsmth
 c
       save qmol,nmolec,qatom
-      save atmax,tmax,r,v,a,at,l
+      save nat,atmax,tmax,r,v,a,at,l
       save dtime,timestep,keyf,keyi
       save opm,oph,bnd,flx,strcut,natk,opz,qat
       save d0w,dtw,ddw
@@ -55,19 +54,11 @@ c
 c
       write(*,*)'Quantidade de especies'
       read(*,*)qmol
-c      qmol=1
 
       write(*,*)'Quantidade de atomos e moleculas por especie'
 c
       do i=1,qmol
          read(*,*)qatom(i),nmolec(i)
-      end do
-c      qatom(1)=3
-c      nmolec(1)=309
-c
-      atmax=0
-      do i=1,qmol
-         atmax=atmax+qatom(i)*nmolec(i)
       end do
 c
       call opinit()
@@ -98,21 +89,50 @@ c
 c
       implicit none
 c
-      integer w,i,j,check
-      real(8) dtt
-c
-      read(ird,100,end=1)timestep(w),dtt,(l(w,i),i=1,3)
-c
-      do i=1,atmax
-         read(ird2,200)at(i),mmol(i),qat(i),(r(w,i,j),j=1,iz),
-     1        (a(w,i,j),j=1,iz),(v(w,i,j),j=1,iz)
-      end do
+      integer w,i,j,k,h,p,s,g,check
+      character*20 lixc
 c
       if(w.eq.1)then
-         dtime=dtt
-      elseif(w.eq.2)then
-         dtime=dtt-dtime
+         read(ird,'(a12,f12.4,a7,i7,a7)')lixc,dtime,lixc,atmax,lixc
+         keyi(1)=2
+         keyi(2)=2
       end if
+c
+      read(ird,100,end=1)timestep(w)
+c
+      read(ird,*)
+      read(ird,*)
+      read(ird,*)
+      read(ird,300)l(w,1),keyf(1),keyf(2)
+      read(ird,300)keyf(3),l(w,2),keyf(4)
+      read(ird,300)keyf(5),keyf(6),l(w,3)
+c
+      read(ird,*)
+c
+      k=1
+      do i=1,atmax
+         read(ird,400)lixc,at(i),mmol(i),qat(i),(r(w,i,j),j=1,iz)
+         read(ird,300)(v(w,i,j),j=1,iz)
+         read(ird,300)(a(w,i,j),j=1,iz)
+         nat(i)=k
+         k=k+1
+      end do
+c
+      k=k-1
+c--------------------------------------------------------------------
+c-teste da quantidade de atomos
+      s=0
+      do h=1,qmol
+         do p=1,nmolec(h)
+            g=s+(p-1)*qatom(h)
+            do j=1,qatom(h)
+               i=g+j
+            end do
+         end do
+         s=s+nmolec(h)*qatom(h)
+      end do
+c
+      if(i.ne.k)call erro(3,2,2)
 c
       tmax=w
 c
@@ -122,8 +142,10 @@ c
 
  2    return
 c
- 100  format(1x,i12,1x,e12.4,119x,3(e12.4,1x))
- 200  format(51x,a5,1x,11(e12.4,1x))
+ 100  format(1x,i5)
+c 200  format(6a16)
+ 300  format(35x,3f12.4)
+ 400  format(1x,a5,i5,5f12.4)
 c
       end subroutine coord
 c
@@ -134,27 +156,22 @@ c
       integer i,j
 c--------------------------------------------------------
 c-atribuindo valores iniciais
-      att='OW'
+      att=1
       dsmth=0.
 c--------------------------------------------------------
       write(*,*)'Calculo ACF!'
       write(*,*)'Molecula de referencia:'
       read(*,*)opm
-c      opm=1
 c
       write(*,*)'Controle do calculo ACF:'
       write(*,*)'Inicial, amostras, intervalo amostral:'
       read(*,*)d0w,dtw,ddw
-c      d0w=1
-c      dtw=1
-c      ddw=200
 c
       write(*,*)'Range:'
       write(*,*)'None?         -> 1'
       write(*,*)'Eixo z?       -> 2'
       write(*,*)'Pesonalizado? -> 3'
       read(*,*)opx
-c      opx=1
 c
       if(opx.eq.2)then
          write(*,*)'Alcance minimo e maximo:'
@@ -169,13 +186,10 @@ c
       write(*,*)'Estiramento pelo metodo TCF!'
       write(*,*)'Quantidade a ser analisada'
       read(*,*)bnd
-c      bnd=1
-
 
       write(*,*)'Intermolecular? -> 1'
       write(*,*)'Intramolecular? -> 2'
       read(*,*)opz(1)
-c      opz(1)=2
 c
       write(*,*)'Moleculas e atomos da coordenada relativa:'
 c
@@ -187,8 +201,6 @@ c
             end do
          else
             read(*,*)(natk(1,i,j),j=1,2)
-c            natk(1,i,1)=1
-c            natk(1,i,2)=2
             do j=1,2
                oph(1,i,j)=opm
             end do
@@ -198,12 +210,10 @@ c
       write(*,*)'Deformacao pelo metodo TCF!'
       write(*,*)'Quantidade a ser analisada'
       read(*,*)flx
-c      flx=1
 c
       write(*,*)'Intermolecular? -> 1'
       write(*,*)'Intramolecular? -> 2'
       read(*,*)opz(2)
-c      opz(2)=2
 c
       do i=1,flx
          write(*,*)'->',i
@@ -214,10 +224,7 @@ c
             end do
          else
             write(*,*)'Atomos da coordenada relativa'
-      read(*,*)(natk(2,i,j),j=1,3)
-c            natk(2,i,1)=3
-c            natk(2,i,2)=1
-c            natk(2,i,3)=2
+            read(*,*)(natk(2,i,j),j=1,3)
             do j=1,3
                oph(2,i,j)=opm
             end do
@@ -226,7 +233,6 @@ c            natk(2,i,3)=2
 c
       write(*,*)'Distancia maxima de estiramento:'
       read(*,*)strcut
-c      strcut=2.0
 c
       write(*,*)'Escolha da funcao janela para o metodo de suavizacao'
       write(*,*)'1 -> retangular'
@@ -235,7 +241,6 @@ c
       write(*,*)'4 -> Cauchy'
       write(*,*)'5 -> Gaussiana'
       read(*,*)opsmth
-c      opsmth=1
 c
       if(opsmth.ne.1)then
          write(*,*)'Parametro de decaimento'

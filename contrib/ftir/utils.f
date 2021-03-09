@@ -33,13 +33,13 @@ c
       implicit none
 c
       integer i,op,www
-      real(kind=8) smed(fmax),ni,dni,nimax,pi,phi
-      real(kind=8) d
+      real(kind=4) smed(fmax),ni,dni,nimax,pi,phi
+      real(kind=4) d
 c
       op=opsmth
       d=dsmth
 c
-      pi=acos(-1.d0)
+      pi=acos(-1.0)
 c
       ni=0.+dni
       select case(op)
@@ -76,11 +76,11 @@ c
       implicit none
 
       integer w
-      real(kind=8) aaa,bbb,ccc,img(iz)
+      real(kind=4) aaa,bbb,ccc,img(iz)
 
-      aaa=1.d0/l(w,1)
-      bbb=1.d0/l(w,2)
-      ccc=1.d0/l(w,3)
+      aaa=1.0/l(w,1)
+      bbb=1.0/l(w,2)
+      ccc=1.0/l(w,3)
 c     
       img(1)=img(1)-l(w,1)*nint(aaa*img(1))
       img(2)=img(2)-l(w,2)*nint(bbb*img(2))
@@ -98,8 +98,8 @@ c
 
       parameter (ymax=10000000)
 
-      real (kind=8) valy(ymax)
-      real (kind=8) sum,md,dsv
+      real (kind=4) valy(ymax)
+      real (kind=4) sum,md,dsv
 
       md=0.
       do i=1,nmax
@@ -123,7 +123,7 @@ c
 
       implicit none
 
-      real(kind=8) t0,tf
+      real(kind=4) t0,tf
       character(10) host,time
       character(8) date
 

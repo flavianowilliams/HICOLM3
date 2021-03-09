@@ -37,8 +37,8 @@ c
 c
       integer atm(nmmax)
       integer ww,w,n,www
-      real(kind=8) vs,med,smed(fmax),smedi,dni,nimax
-      real(kind=8) vm0(nmmax,iz),nm(fmax,molmax,nmmax,iz)
+      real(kind=4) vs,med,smed(fmax),smedi,dni,nimax
+      real(kind=4) vm0(nmmax,iz),nm(fmax,molmax,nmmax,iz)
 c
       smedi=0.
       vs=0.
@@ -86,8 +86,8 @@ c
       implicit none
 
       integer i,j,n,w,wop,ans,g,atm(nmmax)
-      real(kind=8) vm0(nmmax,iz),med
-      real(kind=8) nm(fmax,molmax,nmmax,iz),rc(iz)
+      real(kind=4) vm0(nmmax,iz),med
+      real(kind=4) nm(fmax,molmax,nmmax,iz),rc(iz)
 c
       med=0.
 c
@@ -130,9 +130,10 @@ c
       implicit none
 c
       integer ww,www,w,n,atm(nmmax)
-      real(kind=8) vs,med,smedi
-      real(kind=8) v0(nmax,iz),smed(fmax)
-      character*5 atx
+      integer atx
+      real(kind=4) vs,med,smedi
+      real(kind=4) v0(nmax,iz),smed(fmax)
+c      character*8 atx
 c
       smedi=0.
       vs=0.
@@ -173,9 +174,10 @@ c
       implicit none
 c
       integer i,j,n,w,wop
+      integer atx
       integer atm(nmmax),ans,g
-      real(kind=8) med,rc(iz),v0(nmax,iz)
-      character*5 atx
+      real(kind=4) med,rc(iz),v0(nmax,iz)
+c      character*8 atx
 c
       med=0.
 c
@@ -225,8 +227,8 @@ c
 c
       integer ww,w,n
       integer atm(dblemol),nt(fmax)
-      real(kind=8) v0(dblemol),smed(fmax),nm(fmax,dblemol)
-      real(kind=8) med,smedi
+      real(kind=4) v0(dblemol),smed(fmax),nm(fmax,dblemol)
+      real(kind=4) med,smedi
 c
       smedi=0.
 c
@@ -265,7 +267,7 @@ c
       parameter (dblemol=2*nmmax)
 c
       integer atm(dblemol)
-      real(kind=8) nm(fmax,dblemol),med,v0(dblemol)
+      real(kind=4) nm(fmax,dblemol),med,v0(dblemol)
 c
       med=0.
 c

@@ -36,11 +36,10 @@ c
       implicit none
 c
       integer i,w,check,cmserr
-      real(kind=8) t0,dt,cmsprec
-      real(kind=8) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
+      real(kind=4) t0,dt,cmsprec
+      real(kind=4) strmm,flexmm,int,dm(fmax,molmax,nmmax,iz)
 c
-      open(unit=ird,file="lattice.csv",status="old")
-      open(unit=ird2,file="atoms.csv",status="old")
+      open(unit=ird,file="HICOLM.md",status="old")
       open(unit=iwrz,file="infrared.dat",status="unknown")
       open(unit=iwtt,file="vacf.dat",status="unknown")
       open(unit=iwrx,file="probability.dat",status="unknown")
@@ -51,10 +50,8 @@ c
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
       call input
 c
-      write(*,*)'-> calculando CMS'
+      write(*,*)'-> calculando CMS e desligando CC'
 c
-      read(ird,*)
-      read(ird2,*)
       check=0
       cmserr=0
       do w=1,fmax
