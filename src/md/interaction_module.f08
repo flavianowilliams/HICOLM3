@@ -24,6 +24,7 @@ module interaction_module
 
   use neighbourlist_module
   use bonds_module
+  use angles_module
   use coulomb_module
   use vanderwaals_module
 
@@ -36,6 +37,7 @@ module interaction_module
 
   type, extends(neighbourlist) :: interaction
      type(bonds)                   :: bnd
+     type(angles)                  :: tht
      type(coulomb)                 :: coul
      type(vanderwaals)             :: vdw
      integer, private              :: nbonds
@@ -47,7 +49,8 @@ module interaction_module
      procedure :: interaction_prepare
      procedure :: set_forcefield
      procedure :: set_force2
-     generic   :: set_force => set_force2
+     procedure :: set_force3
+     generic   :: set_force => set_force2, set_force3
      procedure :: set_enpot
      procedure :: get_enpot
      procedure :: set_virtot
@@ -71,9 +74,9 @@ contains
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: ni,nj,nx
-    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
-    real(8)                           :: prm(2)
+    integer                           :: ni,nj,nk,nx
+    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
+    real(8)                           :: prm(2),drij(3),drik(3)
     character(5)                      :: ptrm
     do i=1,this%get_natom()
        this%fax(i)=0.d0
@@ -101,6 +104,23 @@ contains
              call this%bnd%set_virbond(this%bnd%get_force()*dr**2)
              enpot=enpot+this%bnd%get_enbond()
              virtot=virtot+this%bnd%get_virbond()
+          end do
+          do k=1,this%bendscnt(i)
+             ni=nx+this%molbend(i,k,1)
+             nj=nx+this%molbend(i,k,2)
+             nk=nx+this%molbend(i,k,3)
+             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             call this%mic(ni,nk,drik(1),drik(2),drik(3))
+             dr1=sqrt(drij(1)**2+drij(2)**2+drij(3)**2)
+             dr2=sqrt(drik(1)**2+drik(2)**2+drik(3)**2)
+             theta=acos((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
+             do l=1,2
+                prm(l)=this%parbend(i,k,l)
+             end do
+             ptrm=this%tbends(i,k)
+             call this%tht%set_angles(theta,prm,ptrm)
+             call this%set_force&
+                  (ni,nj,nk,drij,drik,dr1,dr2,theta,this%tht%get_force())
           end do
           nx=nx+this%nxmol(i)
        end do
@@ -167,6 +187,14 @@ contains
     this%fay(nj)=this%fay(nj)+fr*yvz
     this%faz(nj)=this%faz(nj)+fr*zvz
   end subroutine set_force2
+
+  subroutine set_force3(this,i1,i2,i3,drij,drik,dr1,dr2,theta,fa)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer, intent(in)               :: i1,i2,i3
+    real(8), intent(in)               :: fa,dr1,dr2,theta
+    real(8), intent(in)               :: drij(3),drik(3)
+  end subroutine set_force3
 
   subroutine set_enpot(this,enpot)
     implicit none
