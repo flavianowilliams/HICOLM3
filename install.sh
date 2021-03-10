@@ -2,7 +2,7 @@
 #
 #   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
 # describe: Installation of HICOLM package and utilities
-#  version: 2.3.1
+#  version: 3.0.0
 #  license: MIT license
 #
 path=`pwd`
@@ -52,24 +52,24 @@ fi
 #
 # -- removing old directories and files
 #
-if [ -d "$aux_dir/HICOLM" ]
+if [ -d "$aux_dir/HICOLM3" ]
 then
-    rm -rf $aux_dir/HICOLM
+    rm -rf $aux_dir/HICOLM3
 fi
-mkdir $aux_dir/HICOLM
-mkdir $aux_dir/HICOLM/R
-mkdir $aux_dir/HICOLM/R/report
-mkdir $aux_dir/HICOLM/amber
+mkdir $aux_dir/HICOLM3
+mkdir $aux_dir/HICOLM3/R
+mkdir $aux_dir/HICOLM3/R/report
+mkdir $aux_dir/HICOLM3/amber
 #
 # -- installing HICOLM --
 #
 echo
-echo -e "\e[33m-> Compiling HICOLM\e[0m"
+echo -e "\e[33m-> Compiling HICOLM3\e[0m"
 echo
 #
-if [ -f "$exe_dir/HICOLM.bin" ]
+if [ -f "$exe_dir/HICOLM3.bin" ]
 then
-    rm -f $exe_dir/HICOLM.bin
+    rm -f $exe_dir/HICOLM3.bin
 fi
 #
 cd $path/src
@@ -82,7 +82,7 @@ make -s clean
 make -s all
 if [ ! -f "HICOLM" ]
 then
-    echo -e "\e[31mError in compiling HICOLM. The installation will be finish!"
+    echo -e "\e[31mError in compiling HICOLM3. The installation will be finish!"
     exit
 fi
 make -s clean
@@ -167,11 +167,11 @@ echo
 echo -e "\e[33m-> Moving files\e[0m"
 echo
 #
-cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
-cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/R/report/.
-cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/R/report/.
+cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM3/amber/.
+cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM3/R/report/.
+cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM3/R/report/.
 #
-mv $path/src/HICOLM $exe_dir/HICOLM.bin
+mv $path/src/HICOLM $exe_dir/HICOLM3.bin
 mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 mv $path/contrib/system/hsystem $exe_dir/hsystem
@@ -183,63 +183,63 @@ mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
 # --preparing script to call HICOLM executable
 #
-if [ -f "$exe_dir/hicolm" ]
+if [ -f "$exe_dir/hicolm3" ]
 then
-    rm $exe_dir/hicolm
+    rm $exe_dir/hicolm3
 fi
 #
-touch $exe_dir/hicolm
+touch $exe_dir/hicolm3
 #
 echo "#!/bin/sh
 #
 if [ ! -d '/tmp/amber' ]
 then
-    cp -r $aux_dir/HICOLM/amber /tmp/amber
+    cp -r $aux_dir/HICOLM3/amber /tmp/amber
 else
     if [ ! -f '/tmp/amber/amber_bonds.prm' ]
     then
-        cp -r $aux_dir/HICOLM/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
+        cp -r $aux_dir/HICOLM3/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
     fi
     if [ ! -f '/tmp/amber/amber_angles.prm' ]
     then
-        cp -r $aux_dir/HICOLM/amber/amber_angles.prm /tmp/amber/amber_angles.prm
+        cp -r $aux_dir/HICOLM3/amber/amber_angles.prm /tmp/amber/amber_angles.prm
     fi
     if [ ! -f '/tmp/amber/amber_dihedrals_general.prm' ]
     then
-        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
+        cp -r $aux_dir/HICOLM3/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
     fi
     if [ ! -f '/tmp/amber/amber_dihedrals_proper.prm' ]
     then
-        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
+        cp -r $aux_dir/HICOLM3/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
     fi
     if [ ! -f '/tmp/amber/amber_vdw.prm' ]
     then
-        cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
+        cp -r $aux_dir/HICOLM3/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
 fi
 #
-$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
+$exe_dir/HICOLM3.bin" >> $exe_dir/hicolm3
 #
 #case "$supp" in
 #    yes|YES|Yes)
 #        echo "
-#if [ -d \"/home/\$USER/.hicolm\" ]
+#if [ -d \"/home/\$USER/.hicolm3\" ]
 #then
-#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
+#    $exe_dir/HICOLM3.bin | Rscript $aux_dir/HICOLM3/R/time_series.R
 #else
-#    mkdir /home/\$USER/.hicolm
-#    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-#    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
-#    $exe_dir/HICOLM.bin | Rscript $aux_dir/HICOLM/R/time_series.R
-#fi" >> $exe_dir/hicolm
+#    mkdir /home/\$USER/.hicolm3
+#    cp -r $aux_dir/HICOLM3/R /home/\$USER/.hicolm3/R
+#    cp -r $aux_dir/HICOLM3/amber /home/\$USER/.hicolm3/amber
+#    $exe_dir/HICOLM3.bin | Rscript $aux_dir/HICOLM3/R/time_series.R
+#fi" >> $exe_dir/hicolm3
 #        ;;
 #    no|NO|No|"")
 #        echo "
-#    $exe_dir/HICOLM.bin
-#    ">> $exe_dir/hicolm
+#    $exe_dir/HICOLM3.bin
+#    ">> $exe_dir/hicolm3
 #esac
 #
-chmod +x $exe_dir/hicolm
+chmod +x $exe_dir/hicolm3
 #
 # preparing scripts to get results
 #
@@ -256,17 +256,17 @@ echo
 #
 if [ -d \"/home/\$USER/.hicolm\" ]
 then
-    rm -r /home/\$USER/.hicolm
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    rm -r /home/\$USER/.hicolm3
+    mkdir /home/\$USER/.hicolm3
+    cp -r $aux_dir/HICOLM3/R /home/\$USER/.hicolm3/R
+    cp -r $aux_dir/HICOLM3/amber /home/\$USER/.hicolm3/amber
     echo
     echo \"Finish!\"
     echo
 else
-    mkdir /home/\$USER/.hicolm
-    cp -r $aux_dir/HICOLM/R /home/\$USER/.hicolm/R
-    cp -r $aux_dir/HICOLM/amber /home/\$USER/.hicolm/amber
+    mkdir /home/\$USER/.hicolm3
+    cp -r $aux_dir/HICOLM3/R /home/\$USER/.hicolm3/R
+    cp -r $aux_dir/HICOLM3/amber /home/\$USER/.hicolm3/amber
     echo
     echo \"Finish!\"
     echo
@@ -287,23 +287,23 @@ echo "#!/bin/sh
 #
 # - check for auxiliary files and directories
 #
-if [ ! -d \"/home/\$USER/.hicolm\" ]
+if [ ! -d \"/home/\$USER/.hicolm3\" ]
 then
     echo \"Error to find the auxiliary directory! Running hprepare...\"
     $exe_dir/hprepare
 else
-    if [ ! -d \"/home/\$USER/.hicolm/R\" ]
+    if [ ! -d \"/home/\$USER/.hicolm3/R\" ]
     then
         echo \"Error to find the auxiliary directory! Running hprepare...\"
         $exe_dir/hprepare
     else
-        if [ ! -d \"/home/\$USER/.hicolm/R/report\" ]
+        if [ ! -d \"/home/\$USER/.hicolm3/R/report\" ]
         then
             echo \"Error to find the auxiliary directory! Running hprepare...\"
             $exe_dir/hprepare
         fi
     fi
-    if [ ! -d \"/home/\$USER/.hicolm/amber\" ]
+    if [ ! -d \"/home/\$USER/.hicolm3/amber\" ]
     then
         echo \"Error to find the auxiliary directory! Running hprepare...\"
     fi
@@ -321,15 +321,15 @@ echo
 read option
 if [ ! -d '1' ]
 then
-    cp HICOLM.out /home/\$USER/.hicolm/R/report/.
-    cp thermodynamics.csv /home/\$USER/.hicolm/R/report/.
-    cp atoms.csv /home/\$USER/.hicolm/R/report/.
-    Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm/R/report/report.Rmd')\"
-    mv /home/\$USER/.hicolm/R/report/report.pdf .
-    rm /home/\$USER/.hicolm/R/report/HICOLM.out
-    rm /home/\$USER/.hicolm/R/report/thermodynamics.csv
-    rm /home/\$USER/.hicolm/R/report/atoms.csv
-    rm /home/\$USER/.hicolm/R/report/report.tex
+    cp HICOLM.out /home/\$USER/.hicolm3/R/report/.
+    cp thermodynamics.csv /home/\$USER/.hicolm3/R/report/.
+    cp atoms.csv /home/\$USER/.hicolm3/R/report/.
+    Rscript -e \"rmarkdown::render('/home/\$USER/.hicolm3/R/report/report.Rmd')\"
+    mv /home/\$USER/.hicolm3/R/report/report.pdf .
+    rm /home/\$USER/.hicolm3/R/report/HICOLM.out
+    rm /home/\$USER/.hicolm3/R/report/thermodynamics.csv
+    rm /home/\$USER/.hicolm3/R/report/atoms.csv
+    rm /home/\$USER/.hicolm3/R/report/report.tex
 fi" >> $exe_dir/hresults
 #
 chmod +x $exe_dir/hresults
