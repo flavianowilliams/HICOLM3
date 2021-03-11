@@ -113,9 +113,9 @@ program HICOLM
         call prp%set_extra_parvdw()              ! alterando potenciais de Van der Waals
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais
-        call prp%print_sys()                     ! imprimindo estrutura em HICOLM.sys
-        call prp%print_top()                     ! imprimindo topologia em HICOLM.top
-        call prp%print_out()                     ! imprimindo valores em HICOLM.out
+        call prp%print_sys()                     ! imprimindo estrutura em SYSTEM
+        call prp%print_top()                     ! imprimindo topologia em TOPOLOGY
+        call prp%print_out()                     ! imprimindo valores em hicolm.out
         lval=.true.
      elseif(in.eq.'@MD')then
         open(3,file='hicolm.axsf',status='unknown')        ! printing coordinates per frame
@@ -126,7 +126,7 @@ program HICOLM
         md=moleculardynamics()                   ! set default values
 !
         call md%constants_prepare()              ! definindo constantes
-        call md%set_input()                      ! lendo parametros de entrada em HICOLM.in
+        call md%set_input()                      ! lendo parametros de entrada em INPUT
         call md%set_molecules()                  ! lendo tipos e qde de moleculas
         call md%set_latticevectors()             ! lendo coordenadas da celula unitaria
         call md%set_natom()                      ! calculando qde de sitios atomicos
@@ -151,7 +151,7 @@ program HICOLM
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%interaction_prepare()            ! preparando campo de forca
-        call md%print_out()                      ! imprimindo valores em HICOLM.out
+        call md%print_out()                      ! imprimindo valores em hicolm.out
         call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_time(0.d0)                   ! setando instante inicial
         write(6,'(4x,111a1)')('-',i=1,84)

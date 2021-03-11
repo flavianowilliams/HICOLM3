@@ -1,0 +1,18 @@
+ BEGIN_INFO
+   #
+   # This is a XCRYSDEN-Structure-File
+   #
+   # aimed for Visualization of geometry
+   #
+   # Launch as: xcrysden --xsf .HICOLM.XSF
+   #
+   #
+ END_INFO
+ # estrutura final
+CRYSTAL
+PRIMVEC
+      21.00000000       0.00000000       0.00000000
+       0.00000000      21.00000000       0.00000000
+       0.00000000       0.00000000      21.00000000
+PRIMCOORD
+  927    1

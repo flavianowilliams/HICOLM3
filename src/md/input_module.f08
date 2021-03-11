@@ -165,7 +165,7 @@ contains
     character(2)                :: mtd,spcvdw1,spcvdw2
     character(4)                :: coulop
     character(5)                :: ttors,tvdw
-    open(11,file='HICOLM.top',status='old')
+    open(11,file='TOPOLOGY',status='old')
     read(11,'(1x,a2)')mtd
     if(mtd.eq.'MM')then
        read(11,'(1x,a4)')coulop
@@ -245,7 +245,7 @@ contains
     implicit none
     class(input), intent(inout) :: this
     integer                     :: nmol
-    open(10,file='HICOLM.sys',status='old')
+    open(10,file='SYSTEM',status='old')
     read(10,'(1x,i5)')nmol
     call this%set_nmol(nmol)
     allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))

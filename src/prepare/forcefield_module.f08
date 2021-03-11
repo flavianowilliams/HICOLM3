@@ -388,7 +388,7 @@ contains
     call this%set_nvdw(nvdw)
 3   rewind(5)
     return
-4   write(6,*)'ERROR: The type does not match with that defined in HICOLM.top!'
+4   write(6,*)'ERROR: The type does not match with that defined in TOPOLOGY file!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
   end subroutine set_extra_parvdw

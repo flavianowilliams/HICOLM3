@@ -275,8 +275,8 @@ contains
     end do
     return
 1   write(6,*)&
-         'ERROR: The number of atoms in HICOLM.xyz does not match with defined in HICOLM.in!'
-    write(6,*)'Hint: Change the HICOLM.xyz, or the inputs in HICOLM.in.'
+         'ERROR: The number of atoms in HICOLM.xyz does not match with defined in INPUT file!'
+    write(6,*)'Hint: Change the HICOLM.xyz, or the inputs in INPUT file.'
     stop
   end subroutine sites
 

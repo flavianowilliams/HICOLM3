@@ -21,7 +21,7 @@
 module prepare_module
   !*******************************************************************************************
   ! class to prepare the physical environment for simulation                                 *
-  ! HICOLM.sys and HICOLM.top will be create                                                 *
+  ! SYSTEM and TOPOLGY files will be create                                                  *
   !*******************************************************************************************
 
   use forcefield_module
