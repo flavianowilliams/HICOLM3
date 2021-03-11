@@ -43,8 +43,8 @@ program HICOLM
 
   !-abrindo ficheiro de dados
 
-  open(5,file='HICOLM.in',status='old')               ! reading input datas
-  open(6,file='HICOLM.out',status='unknown')          ! printing output informations
+  open(5,file='INPUT',status='old')          ! reading input datas
+  open(6,file='hicolm.out',status='unknown') ! printing output informations
 
   t1=0.d0
   t2=0.d0
@@ -118,7 +118,7 @@ program HICOLM
         call prp%print_out()                     ! imprimindo valores em HICOLM.out
         lval=.true.
      elseif(in.eq.'@MD')then
-        open(3,file='HICOLM.AXSF',status='unknown')        ! printing coordinates per frame
+        open(3,file='hicolm.axsf',status='unknown')        ! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede

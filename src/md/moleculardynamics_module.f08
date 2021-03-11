@@ -77,7 +77,7 @@ contains
   subroutine read_geometry(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
-    open(1,file='HICOLM.XSF',status='old')
+    open(1,file='hicolm.xsf',status='old')
     do i=1,13
        read(1,*)
     end do
@@ -109,7 +109,7 @@ contains
    implicit none
    class(moleculardynamics), intent(inout) :: this
    integer, intent(in)                     :: mdstp
-   open(1,file='HICOLM.XSF',status='unknown')
+   open(1,file='hicolm.xsf',status='unknown')
    write(1,*)'BEGIN_INFO'
    write(1,*)'  #'
    write(1,*)'  # This is a XCRYSDEN-Structure-File'
@@ -142,7 +142,7 @@ contains
    end do
    close(1)
    if(mod(mdstp,2).ne.0)return
-   open(2,file='.HICOLM.XSF',status='unknown')
+   open(2,file='.hicolm.xsf',status='unknown')
    write(2,*)'BEGIN_INFO'
    write(2,*)'  #'
    write(2,*)'  # This is a XCRYSDEN-Structure-File'

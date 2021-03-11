@@ -104,7 +104,7 @@ contains
   subroutine print_sys(this)
     implicit none
     class(prepare), intent(inout) :: this
-    open(10,file='HICOLM.sys',status='unknown')
+    open(10,file='SYSTEM',status='unknown')
     write(10,'(1x,i5)')this%get_nmol()
     do i=1,this%get_nmol()
        write(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
@@ -122,7 +122,7 @@ contains
     class(prepare), intent(inout) :: this
     integer                       :: i1,i2
     real(8)                       :: f1,f2
-    open(11,file='HICOLM.top',status='unknown')
+    open(11,file='TOPOLOGY',status='unknown')
     write(11,'(1x,a2)')'MM'
     write(11,'(1x,a4)')this%get_coulop()
     write(11,'(1x,i2,4(1x,i3))')this%get_nmol(),this%get_bondmax(),this%get_bendmax(),&

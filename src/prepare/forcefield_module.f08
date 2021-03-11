@@ -287,11 +287,11 @@ contains
     character(10)                    :: cvar
     i3=0
     call this%set_itorsmax()
-    if(this%itorsmax.eq.0)goto 3
     allocate(this%itorscnt(this%get_nmol()))
     allocate(this%molitors(this%get_nmol(),this%itorsmax,4))
     allocate(this%titors(this%get_nmol(),this%itorsmax))
     allocate(this%paritors(this%get_nmol(),this%itorsmax,4))
+    if(this%itorsmax.eq.0)goto 3
 1   read(5,*,end=3)key
     if(key.ne.'&FORCE_FIELD')goto 1
     do j=1,this%get_nmol()
