@@ -106,8 +106,8 @@ contains
              virtot=virtot+this%bnd%get_virbond()
           end do
           do k=1,this%bendscnt(i)
-             ni=nx+this%molbend(i,k,1)
-             nj=nx+this%molbend(i,k,2)
+             ni=nx+this%molbend(i,k,2)
+             nj=nx+this%molbend(i,k,1)
              nk=nx+this%molbend(i,k,3)
              call this%mic(ni,nj,drij(1),drij(2),drij(3))
              call this%mic(ni,nk,drik(1),drik(2),drik(3))
@@ -192,8 +192,40 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3
+    integer                           :: ix(3)
     real(8), intent(in)               :: fa,dr1,dr2,theta
     real(8), intent(in)               :: drij(3),drik(3)
+    real(8)                           :: derij(3,3),fbi(3),fbj(3),fbk(3)
+    ix(1)=i1
+    ix(2)=i2
+    ix(3)=i3
+    print*,drij*this%get_rconv()
+!    do j=1,3
+!       do i=1,3
+!          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
+!               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
+!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+!       end do
+!    end do
+!    fbi(1)=fa*derij(1,1)/sin(theta)
+!    fbi(2)=fa*derij(1,2)/sin(theta)
+!    fbi(3)=fa*derij(1,3)/sin(theta)
+!    fbj(1)=fa*derij(2,1)/sin(theta)
+!    fbj(2)=fa*derij(2,2)/sin(theta)
+!    fbj(3)=fa*derij(2,3)/sin(theta)
+!    fbk(1)=fa*derij(3,1)/sin(theta)
+!    fbk(2)=fa*derij(3,2)/sin(theta)
+!    fbk(3)=fa*derij(3,3)/sin(theta)
+!    this%fax(i1)=this%fax(i1)+fbi(1)
+!    this%fay(i1)=this%fay(i1)+fbi(2)
+!    this%faz(i1)=this%faz(i1)+fbi(3)
+!    this%fax(i2)=this%fax(i2)+fbj(1)
+!    this%fay(i2)=this%fay(i2)+fbj(2)
+!    this%faz(i2)=this%faz(i2)+fbj(3)
+!    this%fax(i3)=this%fax(i3)+fbk(1)
+!    this%fay(i3)=this%fay(i3)+fbk(2)
+!    this%faz(i3)=this%faz(i3)+fbk(3)
   end subroutine set_force3
 
   subroutine set_enpot(this,enpot)
@@ -273,5 +305,11 @@ contains
     class(interaction), intent(inout) :: this
     get_vircorr=this%vircorr
   end function get_vircorr
+
+  integer function kronij(i,j)
+    implicit none
+    integer i,j
+    kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
+  end function kronij
 
 end module interaction_module
