@@ -30,8 +30,6 @@ module interaction_module
 
   implicit none
 
-  integer i,j,k,l
-
   private
   public :: interaction
 
@@ -45,6 +43,9 @@ module interaction_module
      real(8), private              :: virtot
      real(8), private              :: encorr
      real(8), private              :: vircorr
+     real(8), private              :: fbi(3)
+     real(8), private              :: fbj(3)
+     real(8), private              :: fbk(3)
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
@@ -74,7 +75,7 @@ contains
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: ni,nj,nk,nx
+    integer                           :: i,j,k,l,ni,nj,nk,nx
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
     real(8)                           :: prm(2),drij(3),drik(3)
     character(5)                      :: ptrm
@@ -101,7 +102,7 @@ contains
              ptrm=this%tbonds(i,k)
              call this%bnd%set_bonds(dr,prm,ptrm)
              call this%set_force(ni,nj,xvz,yvz,zvz,this%bnd%get_force())
-             call this%bnd%set_virbond(this%bnd%get_force()*dr**2)
+             call this%bnd%set_virbond(this%bnd%get_force()*dr)
              enpot=enpot+this%bnd%get_enbond()
              virtot=virtot+this%bnd%get_virbond()
           end do
@@ -121,6 +122,9 @@ contains
              call this%tht%set_angles(theta,prm,ptrm)
              call this%set_force&
                   (ni,nj,nk,drij,drik,dr1,dr2,theta,this%tht%get_force())
+             call this%tht%set_virbend(this%fbj,this%fbk,drij,drik)
+             enpot=enpot+this%tht%get_enbend()
+             virtot=virtot+this%tht%get_virbend()
           end do
           nx=nx+this%nxmol(i)
        end do
@@ -134,7 +138,7 @@ contains
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
-             call this%coul%set_vircoul(this%coul%get_force()*dr**2)
+             call this%coul%set_vircoul(this%coul%get_force()*dr)
              enpot=enpot+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
@@ -147,21 +151,21 @@ contains
                 ptrm=this%tvdw(k)
                 call this%vdw%set_vanderwaals(dr,prm,ptrm)
                 call this%set_force(ni,nj,xvz,yvz,zvz,this%vdw%get_force())
-                call this%vdw%set_virvdw(this%vdw%get_force()*dr**2)
+                call this%vdw%set_virvdw(this%vdw%get_force()*dr)
                 enpot=enpot+this%vdw%get_envdw()
                 virtot=virtot+this%vdw%get_virvdw()
              end if
           end do
        end do
     end do
-    call this%set_enpot(enpot)
-    call this%set_virtot(virtot)
+    call this%set_enpot(enpot+this%get_encorr())
+    call this%set_virtot(virtot+this%get_vircorr())
   end subroutine set_forcefield
 
   subroutine set_nbonds(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: nx
+    integer                           :: nx,i
     nx=0
     do i=1,this%get_nmol()
        nx=nx+this%ntmol(i)*this%bondscnt(i)
@@ -192,40 +196,39 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3
-    integer                           :: ix(3)
+    integer                           :: ix(3),i,j
     real(8), intent(in)               :: fa,dr1,dr2,theta
     real(8), intent(in)               :: drij(3),drik(3)
-    real(8)                           :: derij(3,3),fbi(3),fbj(3),fbk(3)
+    real(8)                           :: derij(3,3)
     ix(1)=i1
     ix(2)=i2
     ix(3)=i3
-    print*,drij*this%get_rconv()
-!    do j=1,3
-!       do i=1,3
-!          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
-!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
-!               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
-!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
-!       end do
-!    end do
-!    fbi(1)=fa*derij(1,1)/sin(theta)
-!    fbi(2)=fa*derij(1,2)/sin(theta)
-!    fbi(3)=fa*derij(1,3)/sin(theta)
-!    fbj(1)=fa*derij(2,1)/sin(theta)
-!    fbj(2)=fa*derij(2,2)/sin(theta)
-!    fbj(3)=fa*derij(2,3)/sin(theta)
-!    fbk(1)=fa*derij(3,1)/sin(theta)
-!    fbk(2)=fa*derij(3,2)/sin(theta)
-!    fbk(3)=fa*derij(3,3)/sin(theta)
-!    this%fax(i1)=this%fax(i1)+fbi(1)
-!    this%fay(i1)=this%fay(i1)+fbi(2)
-!    this%faz(i1)=this%faz(i1)+fbi(3)
-!    this%fax(i2)=this%fax(i2)+fbj(1)
-!    this%fay(i2)=this%fay(i2)+fbj(2)
-!    this%faz(i2)=this%faz(i2)+fbj(3)
-!    this%fax(i3)=this%fax(i3)+fbk(1)
-!    this%fay(i3)=this%fay(i3)+fbk(2)
-!    this%faz(i3)=this%faz(i3)+fbk(3)
+    do j=1,3
+       do i=1,3
+          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
+               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+       end do
+    end do
+    this%fbi(1)=fa*derij(1,1)/sin(theta)
+    this%fbi(2)=fa*derij(1,2)/sin(theta)
+    this%fbi(3)=fa*derij(1,3)/sin(theta)
+    this%fbj(1)=fa*derij(2,1)/sin(theta)
+    this%fbj(2)=fa*derij(2,2)/sin(theta)
+    this%fbj(3)=fa*derij(2,3)/sin(theta)
+    this%fbk(1)=fa*derij(3,1)/sin(theta)
+    this%fbk(2)=fa*derij(3,2)/sin(theta)
+    this%fbk(3)=fa*derij(3,3)/sin(theta)
+    this%fax(i1)=this%fax(i1)+this%fbi(1)
+    this%fay(i1)=this%fay(i1)+this%fbi(2)
+    this%faz(i1)=this%faz(i1)+this%fbi(3)
+    this%fax(i2)=this%fax(i2)+this%fbj(1)
+    this%fay(i2)=this%fay(i2)+this%fbj(2)
+    this%faz(i2)=this%faz(i2)+this%fbj(3)
+    this%fax(i3)=this%fax(i3)+this%fbk(1)
+    this%fay(i3)=this%fay(i3)+this%fbk(2)
+    this%faz(i3)=this%faz(i3)+this%fbk(3)
   end subroutine set_force3
 
   subroutine set_enpot(this,enpot)
@@ -257,7 +260,7 @@ contains
   subroutine set_vdwcorr(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: natp1,natp2
+    integer                           :: natp1,natp2,i,j
     real(8)                           :: envdw_corr,virvdw_corr,es,vs
     real(8)                           :: prm(2)
     envdw_corr=0.d0
@@ -307,8 +310,7 @@ contains
   end function get_vircorr
 
   integer function kronij(i,j)
-    implicit none
-    integer i,j
+    integer, intent(in)               :: i,j
     kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
   end function kronij
 

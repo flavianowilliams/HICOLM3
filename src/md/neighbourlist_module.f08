@@ -26,8 +26,6 @@ module neighbourlist_module
 
   implicit none
 
-  integer i,j,k,l,m,n
-
   private
   public :: neighbourlist
 
@@ -59,7 +57,7 @@ contains
   subroutine verlet_list(this)
     implicit none
     class(neighbourlist), intent(inout) :: this
-    integer                             :: n1,n2,nx
+    integer                             :: i,j,k,l,m,n,n1,n2,nx
     real(8)                             :: xvz,yvz,zvz,dr
     n1=1
     do i=1,this%get_nmol()

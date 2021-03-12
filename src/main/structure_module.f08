@@ -34,6 +34,7 @@ module structure_module
   type, extends(constants) :: structure
      integer, private           :: nmol
      integer, private           :: natom
+     integer, private           :: nfree
      character(9), private      :: gsym
      integer, allocatable       :: ntmol(:)
      integer, allocatable       :: nxmol(:)
@@ -69,6 +70,8 @@ module structure_module
      procedure          :: set_sys_shift
      procedure          :: set_volume
      procedure          :: get_volume
+     procedure          :: set_nfree
+     procedure          :: get_nfree
      procedure          :: get_a
      procedure          :: get_b
      procedure          :: get_c
@@ -260,6 +263,16 @@ contains
     integer                      :: get_natom
     get_natom=this%natom
   end function get_natom
+
+  subroutine set_nfree(this)
+    class(structure), intent(inout) :: this
+    this%nfree=3*this%natom-3
+  end subroutine set_nfree
+
+  integer function get_nfree(this)
+    class(structure), intent(inout) :: this
+    get_nfree=this%nfree
+  end function get_nfree
 
   subroutine sites(this)
     class(structure), intent(inout) :: this

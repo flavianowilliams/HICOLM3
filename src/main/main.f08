@@ -130,6 +130,7 @@ program HICOLM
         call md%set_molecules()                  ! lendo tipos e qde de moleculas
         call md%set_latticevectors()             ! lendo coordenadas da celula unitaria
         call md%set_natom()                      ! calculando qde de sitios atomicos
+        call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_atoms()                      ! lendo coordenadas atomicas
         call md%set_topology()                   ! lendo parametros do campo de forca
         if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
@@ -175,12 +176,14 @@ program HICOLM
               i0=i
            end if
            call md%set_forcefield()
+           call md%set_ensemble()
            call md%print_geometry(i)
 !           if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
 !                temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
-                (md%get_enpot()+md%get_encorr())*md%get_econv()
+                md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&
+                md%get_etotal()*md%get_econv()
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)

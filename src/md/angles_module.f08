@@ -24,8 +24,6 @@ module angles_module
 
   implicit none
 
-!  integer i,j,k,l
-
   private
   public :: angles
 
@@ -62,7 +60,7 @@ contains
   subroutine set_enbend(this,enbend)
     implicit none
     class(angles), intent(inout) :: this
-    real(8), intent(in)         :: enbend
+    real(8), intent(in)          :: enbend
     this%enbend=enbend
   end subroutine set_enbend
 
@@ -72,11 +70,12 @@ contains
     get_enbend=this%enbend
   end function get_enbend
 
-  subroutine set_virbend(this,virbend)
+  subroutine set_virbend(this,fbj,fbk,drij,drik)
     implicit none
     class(angles), intent(inout) :: this
-    real(8), intent(in)         :: virbend
-    this%virbend=virbend
+    real(8), intent(in)          :: fbj(3),fbk(3),drij(3),drik(3)
+    this%virbend=(fbj(1)*drij(1)+fbj(2)*drij(2)+fbj(3)*drij(3))&
+         +(fbk(1)*drik(1)+fbk(2)*drik(2)+fbk(3)*drik(3))
   end subroutine set_virbend
 
   double precision function get_virbend(this)

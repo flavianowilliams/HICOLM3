@@ -26,8 +26,6 @@ module atoms_module
 
   implicit none
 
-  integer i,j,k
-
   private
   public :: atoms
 
@@ -63,7 +61,7 @@ contains
   subroutine set_zat(this)
     implicit none
     class(atoms), intent(inout) :: this
-    integer                     :: nx
+    integer                     :: nx,i,j,k
     allocate(this%zat(this%get_natom()))
     nx=1
     do i=1,this%get_nmol()
@@ -79,7 +77,7 @@ contains
   subroutine set_mass(this)
     implicit none
     class(atoms), intent(inout) :: this
-    integer                     :: nx
+    integer                     :: nx,i,j,k
     allocate(this%mass(this%get_natom()))
     nx=1
     do i=1,this%get_nmol()
@@ -95,7 +93,7 @@ contains
   subroutine set_qat(this)
     implicit none
     class(atoms), intent(inout) :: this
-    integer                     :: nx
+    integer                     :: nx,i,j,k
     allocate(this%qat(this%get_natom()))
     nx=1
     do i=1,this%get_nmol()
@@ -111,7 +109,7 @@ contains
   subroutine set_tpa(this)
     implicit none
     class(atoms), intent(inout) :: this
-    integer                     :: nx
+    integer                     :: nx,i,j,k
     allocate(this%tpa(this%get_natom()))
     nx=1
     do i=1,this%get_nmol()
@@ -127,6 +125,7 @@ contains
   subroutine set_velocity(this)
     implicit none
     class(atoms), intent(inout) :: this
+    integer                     :: i
     allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     do i=1,this%get_natom()
        this%vax(i)=sqrt(this%get_temp()/this%mass(i))

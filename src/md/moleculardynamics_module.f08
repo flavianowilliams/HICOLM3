@@ -22,16 +22,14 @@ module moleculardynamics_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use interaction_module
+  use ensemble_module
 
   implicit none
-
-  integer i,j,k
 
   private
   public :: moleculardynamics
 
-  type, extends(interaction) :: moleculardynamics
+  type, extends(ensemble) :: moleculardynamics
      real(8), private :: time
    contains
      procedure :: print_geometry
@@ -77,6 +75,7 @@ contains
   subroutine read_geometry(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
+    integer                                 :: i,j
     open(1,file='hicolm.xsf',status='old')
     do i=1,13
        read(1,*)
@@ -105,82 +104,83 @@ contains
     close(1)
   end subroutine read_geometry
 
- subroutine print_geometry(this,mdstp)
-   implicit none
-   class(moleculardynamics), intent(inout) :: this
-   integer, intent(in)                     :: mdstp
-   open(1,file='hicolm.xsf',status='unknown')
-   write(1,*)'BEGIN_INFO'
-   write(1,*)'  #'
-   write(1,*)'  # This is a XCRYSDEN-Structure-File'
-   write(1,*)'  #'
-   write(1,*)'  # aimed for Visualization of geometry'
-   write(1,*)'  #'
-   write(1,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
-   write(1,*)'  #'
-   write(1,*)'  #'
-   write(1,*)'END_INFO'
-   write(1,*)'# estrutura final'
-   write(1,'(a7)')'CRYSTAL'
-   write(1,'(a7)')'PRIMVEC'
-   do i=1,3
-      write(1,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
-   end do
-   write(1,'(a9)')'PRIMCOORD'
-   write(1,'(2i5)')this%get_natom(),1
-   do i=1,this%get_natom()
-      write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
-           this%xa(i)*this%get_rconv(),&
-           this%ya(i)*this%get_rconv(),&
-           this%za(i)*this%get_rconv(),&
-           this%fax(i)*this%get_econv()/this%get_rconv(),&
-           this%fay(i)*this%get_econv()/this%get_rconv(),&
-           this%faz(i)*this%get_econv()/this%get_rconv(),&
-           this%vax(i)*this%get_rconv()/this%get_tconv(),&
-           this%vay(i)*this%get_rconv()/this%get_tconv(),&
-           this%vaz(i)*this%get_rconv()/this%get_tconv()
-   end do
-   close(1)
-   if(mod(mdstp,2).ne.0)return
-   open(2,file='.hicolm.xsf',status='unknown')
-   write(2,*)'BEGIN_INFO'
-   write(2,*)'  #'
-   write(2,*)'  # This is a XCRYSDEN-Structure-File'
-   write(2,*)'  #'
-   write(2,*)'  # aimed for Visualization of geometry'
-   write(2,*)'  #'
-   write(2,*)'  # Launch as: xcrysden --xsf .HICOLM.XSF'
-   write(2,*)'  #'
-   write(2,*)'  #'
-   write(2,*)'END_INFO'
-   write(2,*)'# estrutura final'
-   write(2,'(a7)')'CRYSTAL'
-   write(2,'(a7)')'PRIMVEC'
-   do i=1,3
-      write(2,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
-   end do
-   write(2,'(a9)')'PRIMCOORD'
-   write(2,'(2i5)')this%get_natom(),1
-   do i=1,this%get_natom()
-      write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
-           this%xa(i)*this%get_rconv(),&
-           this%ya(i)*this%get_rconv(),&
-           this%za(i)*this%get_rconv(),&
-           this%fax(i)*this%get_econv()/this%get_rconv(),&
-           this%fay(i)*this%get_econv()/this%get_rconv(),&
-           this%faz(i)*this%get_econv()/this%get_rconv(),&
-           this%vax(i)*this%get_rconv()/this%get_tconv(),&
-           this%vay(i)*this%get_rconv()/this%get_tconv(),&
-           this%vaz(i)*this%get_rconv()/this%get_tconv()
-   end do
-   close(2)
+  subroutine print_geometry(this,mdstp)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    integer, intent(in)                     :: mdstp
+    integer                                 :: i,j
+    open(1,file='hicolm.xsf',status='unknown')
+    write(1,*)'BEGIN_INFO'
+    write(1,*)'  #'
+    write(1,*)'  # This is a XCRYSDEN-Structure-File'
+    write(1,*)'  #'
+    write(1,*)'  # aimed for Visualization of geometry'
+    write(1,*)'  #'
+    write(1,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
+    write(1,*)'  #'
+    write(1,*)'  #'
+    write(1,*)'END_INFO'
+    write(1,*)'# estrutura final'
+    write(1,'(a7)')'CRYSTAL'
+    write(1,'(a7)')'PRIMVEC'
+    do i=1,3
+       write(1,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
+    end do
+    write(1,'(a9)')'PRIMCOORD'
+    write(1,'(2i5)')this%get_natom(),1
+    do i=1,this%get_natom()
+       write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
+            this%xa(i)*this%get_rconv(),&
+            this%ya(i)*this%get_rconv(),&
+            this%za(i)*this%get_rconv(),&
+            this%fax(i)*this%get_econv()/this%get_rconv(),&
+            this%fay(i)*this%get_econv()/this%get_rconv(),&
+            this%faz(i)*this%get_econv()/this%get_rconv(),&
+            this%vax(i)*this%get_rconv()/this%get_tconv(),&
+            this%vay(i)*this%get_rconv()/this%get_tconv(),&
+            this%vaz(i)*this%get_rconv()/this%get_tconv()
+    end do
+    close(1)
+    if(mod(mdstp,2).ne.0)return
+    open(2,file='.hicolm.xsf',status='unknown')
+    write(2,*)'BEGIN_INFO'
+    write(2,*)'  #'
+    write(2,*)'  # This is a XCRYSDEN-Structure-File'
+    write(2,*)'  #'
+    write(2,*)'  # aimed for Visualization of geometry'
+    write(2,*)'  #'
+    write(2,*)'  # Launch as: xcrysden --xsf .HICOLM.XSF'
+    write(2,*)'  #'
+    write(2,*)'  #'
+    write(2,*)'END_INFO'
+    write(2,*)'# estrutura final'
+    write(2,'(a7)')'CRYSTAL'
+    write(2,'(a7)')'PRIMVEC'
+    do i=1,3
+       write(2,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
+    end do
+    write(2,'(a9)')'PRIMCOORD'
+    write(2,'(2i5)')this%get_natom(),1
+    do i=1,this%get_natom()
+       write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
+            this%xa(i)*this%get_rconv(),&
+            this%ya(i)*this%get_rconv(),&
+            this%za(i)*this%get_rconv(),&
+            this%fax(i)*this%get_econv()/this%get_rconv(),&
+            this%fay(i)*this%get_econv()/this%get_rconv(),&
+            this%faz(i)*this%get_econv()/this%get_rconv(),&
+            this%vax(i)*this%get_rconv()/this%get_tconv(),&
+            this%vay(i)*this%get_rconv()/this%get_tconv(),&
+            this%vaz(i)*this%get_rconv()/this%get_tconv()
+    end do
+    close(2)
     return
   end subroutine print_geometry
 
   subroutine print_out(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
-    integer                                 :: i1,i2
+    integer                                 :: i,j,k,i1,i2
     real(8)                                 :: f1,f2
     write(6,*)('#',i=1,93)
     write(6,*)('SYSTEM ',i=1,13)
@@ -353,6 +353,7 @@ contains
   subroutine print(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
+    integer                                 :: i,j
     write(6,*)('#',i=1,93)
     write(6,*)('MD RUNNING ',i=1,8)
     write(6,*)('#',i=1,93)

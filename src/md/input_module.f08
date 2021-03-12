@@ -26,8 +26,6 @@ module input_module
 
   implicit none
 
-  integer i,j,k
-
   private
   public :: input
 
@@ -160,7 +158,7 @@ contains
   subroutine set_topology(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2
+    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2,i,j,k
     real(8)                     :: f1,f2
     character(2)                :: mtd,spcvdw1,spcvdw2
     character(4)                :: coulop
@@ -244,7 +242,7 @@ contains
   subroutine set_molecules(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol
+    integer                     :: nmol,i
     open(10,file='SYSTEM',status='old')
     read(10,'(1x,i5)')nmol
     call this%set_nmol(nmol)
@@ -257,6 +255,7 @@ contains
   subroutine set_latticevectors(this)
     implicit none
     class(input), intent(inout) :: this
+    integer                     :: i,j
     do i=1,3
        read(10,'(3f16.8)')(this%v(i,j),j=1,3)
     end do
@@ -265,6 +264,7 @@ contains
   subroutine set_atoms(this)
     implicit none
     class(input), intent(inout) :: this
+    integer                     :: i
     allocate(this%xa(this%get_natom()),this%ya(this%get_natom()),this%za(this%get_natom()))
     do i=1,this%get_natom()
        read(10,'(3f16.8)')this%xa(i),this%ya(i),this%za(i)
@@ -443,6 +443,7 @@ contains
   subroutine convert_units(this)
     implicit none
     class(input), intent(inout) :: this
+    integer                     :: i,j
     do i=1,3
        do j=1,3
           this%v(i,j)=this%v(i,j)/this%get_rconv()
@@ -501,6 +502,7 @@ contains
           this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
        end select
     end do
+    call this%set_timestep(this%get_timestep()/this%get_tconv())
     call this%set_temp(this%get_temp()/this%get_teconv())
     call this%set_press(this%get_press()/this%get_pconv())
     call this%set_tstat(this%get_tstat()/this%get_tconv())
