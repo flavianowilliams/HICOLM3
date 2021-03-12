@@ -23,7 +23,6 @@ module ensemble_module
   !*******************************************************************************************
 
   use thermodynamics_module
-  use nve_module
 
   implicit none
 
@@ -31,21 +30,35 @@ module ensemble_module
   public :: ensemble
 
   type, extends(thermodynamics) :: ensemble
-     type(nve) :: nve
    contains
-     procedure :: set_ensemble
+     procedure :: set_nve
   end type ensemble
 
 contains
 
-  subroutine set_ensemble(this)
+  subroutine set_nve(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    call this%nve%teste()
+    integer                        :: i
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+this%fax(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vay(i)=this%vay(i)+this%fay(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vaz(i)=this%vaz(i)+this%faz(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%xa(i)=this%xa(i)+this%vax(i)*this%get_timestep()
+       this%ya(i)=this%ya(i)+this%vay(i)*this%get_timestep()
+       this%za(i)=this%za(i)+this%vaz(i)*this%get_timestep()
+    end do
+    call this%ccp()
+    call this%set_forcefield()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+this%fax(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vay(i)=this%vay(i)+this%fay(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vaz(i)=this%vaz(i)+this%faz(i)*(0.5d0*this%get_timestep())/this%mass(i)
+    end do
     call this%set_ekinetic()
     call this%set_etotal()
     call this%set_temperature()
     call this%set_pressure()
-  end subroutine set_ensemble
+  end subroutine set_nve
 
 end module ensemble_module

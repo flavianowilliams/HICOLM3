@@ -27,4 +27,4 @@
    1   4   2   6 amber   0    0.00     0.0  0
  vdw   2
  HA HA amber    0.0150    2.9180
- CA HA lj       1.0000    1.0000
+ CA HA lj       0.1500    3.1600

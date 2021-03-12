@@ -160,7 +160,7 @@ program HICOLM
         write(6,'(4x,111a1)')('-',i=1,84)
         drmax=md%get_drcutoff()
         i0=0
-        do i=1,md%get_nframes()
+        do i=1,md%get_nstep()
            if((i-i0).ge.nint(md%get_drcutoff()/drmax))then
               call md%verlet_list()
               drmax=0.d0
@@ -175,11 +175,10 @@ program HICOLM
               end do
               i0=i
            end if
-           call md%set_forcefield()
-           call md%set_ensemble()
+           if(md%get_ensble().eq.'nve')then
+              call md%set_nve()
+           end if
            call md%print_geometry(i)
-!           if(mod(i,25).eq.0)write(6,20)'MD',i,time*tconv,volume*rconv**3,&
-!                temp*teconv,press*pconv,(ekinet+enpot+envdw_corr)*econv
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
                 md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&
