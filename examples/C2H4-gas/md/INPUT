@@ -13,5 +13,5 @@
  pressure 1.0
  temperature 0
  rcutoff 9.0 0.1
- restart 1
+ restart 0
 &END
