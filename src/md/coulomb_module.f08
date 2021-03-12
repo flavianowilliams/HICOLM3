@@ -96,11 +96,11 @@ contains
     get_encoul=this%encoul
   end function get_encoul
 
-  subroutine set_vircoul(this,vircoul)
+  subroutine set_vircoul(this,fr,dr)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: vircoul
-    this%vircoul=vircoul
+    real(8), intent(in)           :: fr,dr
+    this%vircoul=-fr*dr
   end subroutine set_vircoul
 
   double precision function get_vircoul(this)

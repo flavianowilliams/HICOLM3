@@ -70,11 +70,11 @@ contains
     get_enbond=this%enbond
   end function get_enbond
 
-  subroutine set_virbond(this,virbond)
+  subroutine set_virbond(this,fr,dr)
     implicit none
     class(bonds), intent(inout) :: this
-    real(8), intent(in)         :: virbond
-    this%virbond=virbond
+    real(8), intent(in)         :: fr,dr
+    this%virbond=-fr*dr
   end subroutine set_virbond
 
   double precision function get_virbond(this)

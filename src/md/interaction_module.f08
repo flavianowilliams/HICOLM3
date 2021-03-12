@@ -102,7 +102,7 @@ contains
              ptrm=this%tbonds(i,k)
              call this%bnd%set_bonds(dr,prm,ptrm)
              call this%set_force(ni,nj,xvz,yvz,zvz,this%bnd%get_force())
-             call this%bnd%set_virbond(this%bnd%get_force()*dr)
+             call this%bnd%set_virbond(this%bnd%get_force(),dr)
              enpot=enpot+this%bnd%get_enbond()
              virtot=virtot+this%bnd%get_virbond()
           end do
@@ -138,7 +138,7 @@ contains
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
-             call this%coul%set_vircoul(this%coul%get_force()*dr)
+             call this%coul%set_vircoul(this%coul%get_force(),dr)
              enpot=enpot+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
@@ -151,7 +151,7 @@ contains
                 ptrm=this%tvdw(k)
                 call this%vdw%set_vanderwaals(dr,prm,ptrm)
                 call this%set_force(ni,nj,xvz,yvz,zvz,this%vdw%get_force())
-                call this%vdw%set_virvdw(this%vdw%get_force()*dr)
+                call this%vdw%set_virvdw(this%vdw%get_force(),dr)
                 enpot=enpot+this%vdw%get_envdw()
                 virtot=virtot+this%vdw%get_virvdw()
              end if

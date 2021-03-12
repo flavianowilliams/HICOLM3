@@ -81,11 +81,11 @@ contains
     get_envdw=this%envdw
   end function get_envdw
 
-  subroutine set_virvdw(this,virvdw)
+  subroutine set_virvdw(this,fr,dr)
     implicit none
     class(vanderwaals), intent(inout) :: this
-    real(8), intent(in)               :: virvdw
-    this%virvdw=virvdw
+    real(8), intent(in)               :: fr,dr
+    this%virvdw=-fr*dr
   end subroutine set_virvdw
 
   double precision function get_virvdw(this)

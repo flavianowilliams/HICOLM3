@@ -18,34 +18,27 @@
 !OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 !SOFTWARE.
 !
-module ensemble_module
+module nve_module
   !*******************************************************************************************
   !*******************************************************************************************
-
-  use thermodynamics_module
-  use nve_module
 
   implicit none
 
   private
-  public :: ensemble
+  public :: nve
 
-  type, extends(thermodynamics) :: ensemble
-     type(nve) :: nve
+  type :: nve
    contains
-     procedure :: set_ensemble
-  end type ensemble
+     procedure :: nve
+  end type nve
 
 contains
 
-  subroutine set_ensemble(this)
+  subroutine velocity_rattle(this)
     implicit none
-    class(ensemble), intent(inout) :: this
-    call this%nve%teste()
-    call this%set_ekinetic()
-    call this%set_etotal()
-    call this%set_temperature()
-    call this%set_pressure()
-  end subroutine set_ensemble
+    class(nve), intent(inout) :: this
+    print*,this%get_econv(),'kkkkkkkkkkkkkkkkkkkkkk'
+    stop
+  end subroutine velocity_rattle
 
-end module ensemble_module
+end module nve_module
