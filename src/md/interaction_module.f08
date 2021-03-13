@@ -133,6 +133,7 @@ contains
        do j=1,this%nlist(i)
           ni=i
           nj=this%ilist(i,j)
+          print*,ni,nj
           call this%mic(ni,nj,xvz,yvz,zvz)
           dr=sqrt(xvz**2+yvz**2+zvz**2)
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
