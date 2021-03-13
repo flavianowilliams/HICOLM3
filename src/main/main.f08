@@ -127,11 +127,10 @@ program HICOLM
 !
         call md%constants_prepare()              ! definindo constantes
         call md%set_input()                      ! lendo parametros de entrada em INPUT
-        call md%set_molecules()                  ! lendo tipos e qde de moleculas
         call md%set_latticevectors()             ! lendo coordenadas da celula unitaria
+        call md%set_molecules()                  ! lendo tipos e qde de moleculas
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
-        call md%set_atoms()                      ! lendo coordenadas atomicas
         call md%set_topology()                   ! lendo parametros do campo de forca
         if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
         call md%ccp()                            ! aplicando condicoes de contorno periodicas

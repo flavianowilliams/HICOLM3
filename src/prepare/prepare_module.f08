@@ -28,8 +28,6 @@ module prepare_module
 
   implicit none
 
-  integer i,j,k
-
   private
   public :: prepare
 
@@ -49,6 +47,7 @@ contains
 
   type(prepare) function constructor()
     implicit none
+    integer :: i,j
     do i=1,3
        do j=1,3
           constructor%v(i,j)=0.d0
@@ -64,6 +63,7 @@ contains
   subroutine check(this)
     implicit none
     class(prepare), intent(inout) :: this
+    integer                       :: i,j
     if(this%get_nmol().le.0)then
        write(6,*)'ERROR: The number of types of molecules does not be zero!'
        write(6,*)'Hint: Check the input in the &SYS section.'
@@ -104,23 +104,28 @@ contains
   subroutine print_sys(this)
     implicit none
     class(prepare), intent(inout) :: this
+    integer                       :: i,j,k,nx
     open(10,file='SYSTEM',status='unknown')
-    write(10,'(1x,i5)')this%get_nmol()
-    do i=1,this%get_nmol()
-       write(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
-    end do
     do i=1,3
        write(10,'(3f16.8)')(this%v(i,j),j=1,3)
     end do
-    do i=1,this%get_natom()
-       write(10,'(3f16.8)')this%xa(i),this%ya(i),this%za(i)
+    write(10,'(1x,2i5)')this%get_nmol(),this%get_natom()
+    nx=1
+    do i=1,this%get_nmol()
+       write(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
+       do j=1,this%ntmol(i)
+          do k=1,this%nxmol(i)
+             write(10,'(3f16.8)')this%xa(nx),this%ya(nx),this%za(nx)
+             nx=nx+1
+          end do
+       end do
     end do
   end subroutine print_sys
 
   subroutine print_top(this)
     implicit none
     class(prepare), intent(inout) :: this
-    integer                       :: i1,i2
+    integer                       :: i1,i2,i,j,k
     real(8)                       :: f1,f2
     open(11,file='TOPOLOGY',status='unknown')
     write(11,'(1x,a2)')'MM'
@@ -205,7 +210,7 @@ contains
   subroutine print_out(this)
     implicit none
     class(prepare), intent(inout) :: this
-    integer                       :: i1,i2
+    integer                       :: i1,i2,i,j,k
     real(8)                       :: f1,f2
     write(6,*)('#',i=1,93)
     write(6,*)('SYSTEM ',i=1,13)

@@ -48,7 +48,6 @@ module input_module
      procedure :: set_topology
      procedure :: set_molecules
      procedure :: set_latticevectors
-     procedure :: set_atoms
      procedure :: set_restart
      procedure :: get_restart
      procedure :: set_nstep
@@ -242,13 +241,20 @@ contains
   subroutine set_molecules(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,i
-    open(10,file='SYSTEM',status='old')
-    read(10,'(1x,i5)')nmol
+    integer                     :: nmol,natom,i,j,k,nx
+    read(10,'(1x,2i5)')nmol,natom
     call this%set_nmol(nmol)
     allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
+    allocate(this%xa(natom),this%ya(natom),this%za(natom))
+    nx=1
     do i=1,this%get_nmol()
        read(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
+       do j=1,this%ntmol(i)
+          do k=1,this%nxmol(i)
+             read(10,'(3f16.8)')this%xa(nx),this%ya(nx),this%za(nx)
+             nx=nx+1
+          end do
+       end do
     end do
   end subroutine set_molecules
 
@@ -256,20 +262,11 @@ contains
     implicit none
     class(input), intent(inout) :: this
     integer                     :: i,j
+    open(10,file='SYSTEM',status='old')
     do i=1,3
        read(10,'(3f16.8)')(this%v(i,j),j=1,3)
     end do
   end subroutine set_latticevectors
-
-  subroutine set_atoms(this)
-    implicit none
-    class(input), intent(inout) :: this
-    integer                     :: i
-    allocate(this%xa(this%get_natom()),this%ya(this%get_natom()),this%za(this%get_natom()))
-    do i=1,this%get_natom()
-       read(10,'(3f16.8)')this%xa(i),this%ya(i),this%za(i)
-    end do
-  end subroutine set_atoms
 
   subroutine set_nstep(this,nstep)
     implicit none
