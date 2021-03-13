@@ -176,6 +176,10 @@ program HICOLM
            end if
            if(md%get_ensble().eq.'nve')then
               call md%set_nve()
+           elseif(md%get_ensble().eq.'nvt')then
+              if(md%get_ensble_mt().eq.'berendsen')then
+                 call md%set_nvt_berendsen()
+              end if
            end if
            call md%print_geometry(i)
            if(mod(i,25).eq.0)write(6,20)&
