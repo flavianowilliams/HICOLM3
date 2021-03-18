@@ -9,10 +9,10 @@
  nstep 1000
  nrelax 20
  nframes 1000
- timestep 0.00000001
+ timestep 0.00001
  pressure 1.0
- temperature 0
+ temperature 300
  rcutoff 9.0 0.1
- ensemble nvt berendsen 0.5 1.0
+ ensemble nvt berendsen 0.5
  restart 1
 &END
