@@ -182,10 +182,10 @@ contains
           select case(bends(i,j))
           case(1)
              write(6,'(2x,4(i3,2x),a4,a1,1x,2f8.1)')j,(molbend(i,j,l),l=1,3),&
-                  'harm',chck_amber(2,i,j),parbend(i,j,1)*econv,parbend(i,j,2)*aconv
+                  'harm',chck_amber(2,i,j),parbend(i,j,1)*(econv/aconv**2),parbend(i,j,2)*aconv
           case(2)
              write(6,'(2x,4(i3,2x),a5,a1,2f8.1)')j,&
-                  (molbend(i,j,l),l=1,3),'amber',chck_amber(2,i,j),parbend(i,j,1)*econv,&
+                  (molbend(i,j,l),l=1,3),'amber',chck_amber(2,i,j),parbend(i,j,1)*(econv/aconv**2),&
                   parbend(i,j,2)*aconv
           end select
        end do
