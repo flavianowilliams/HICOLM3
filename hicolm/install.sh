@@ -38,6 +38,7 @@ make -s clean
 #
 # -- installing hsystem --
 #
+echo
 echo "\e[33m-> Compiling utilities\e[0m"
 echo
 #
@@ -93,22 +94,22 @@ then
     rm $exe_dir/hftir
 fi
 #
-cd $path/contrib/ftir
+#cd $path/contrib/ftir
 #
-if [ -f "hftir" ]
-then
-    rm hftir
-fi
-make -s clean
-make -s all
-if [ ! -f "hftir" ]
-then
-    echo
-    echo -e "\e[31mError in compiling hftir. The installation will be finish!"
-    echo
-    exit
-fi
-make -s clean
+#if [ -f "hftir" ]
+#then
+#    rm hftir
+#fi
+#make -s clean
+#make -s all
+#if [ ! -f "hftir" ]
+#then
+#    echo
+#    echo -e "\e[31mError in compiling hftir. The installation will be finish!"
+#    echo
+#    exit
+#fi
+#make -s clean
 #
 # --copying auxiliary files--
 #
@@ -122,7 +123,7 @@ cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/hicolm/R/report/.
 cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/hicolm/R/report/.
 #
 mv $path/src/HICOLM $exe_dir/HICOLM.bin
-mv $path/contrib/ftir/hftir $exe_dir/hftir
+#mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 mv $path/contrib/system/hsystem $exe_dir/hsystem
 #
@@ -265,14 +266,3 @@ fi" >> $exe_dir/hresults
 #
 chmod +x $exe_dir/hresults
 #
-echo "\e[32m-> SUCCESS!\e[0m"
-echo
-echo "\e[33m   Installation directory:\e[0m" $exe_dir
-echo "\e[33m      Auxiliary directory:\e[0m" $aux_dir
-echo "\e[33m          Compiling rules:\e[0m" $compiler $instructions
-echo
-echo "\e[33m   \"Thank you for choosing HICOLM.\e[0m"
-echo "\e[33m    To start, just type \e[31mhicolm\e[33m in the terminal.\e[0m"
-echo "\e[33m    Do not forget the input files HICOLM.in and HICOLM.sys.\\e[0m"
-echo "\e[33m    HAVE A GREAT JOB!\"\e[0m"
-echo

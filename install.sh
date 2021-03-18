@@ -63,3 +63,15 @@ fi
 #
 sh ./hicolm/install.sh
 #
+echo -e "\e[32m-> SUCCESS!\e[0m"
+echo
+echo -e "\e[33m   Installation directory:\e[0m" $exe_dir
+echo -e "\e[33m      Auxiliary directory:\e[0m" $aux_dir
+echo -e "\e[33m          Compiling rules:\e[0m" $compiler $instructions
+echo
+echo -e "\e[33m   \"Thank you for choosing HICOLM.\e[0m"
+echo -e "\e[33m    To start the older version, just type \e[31mhicolm\e[33m in the terminal, and to start the newest one, type \e[31mhicolm3\e[33m.\e[0m"
+echo -e "\e[33m    Warning! The older version is deprecated and it will be maintained until march, 2022.\\e[0m"
+echo -e "\e[33m    HAVE A GREAT JOB!\"\e[0m"
+echo
+#
