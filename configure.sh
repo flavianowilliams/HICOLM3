@@ -41,6 +41,8 @@ then
     exe_dir="/usr/local/bin"
 fi
 #
+export exe_dir=$exe_dir
+#
 #echo
 #echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
 #read aux_dir
@@ -50,25 +52,14 @@ then
     aux_dir="/usr/local/share"
 fi
 #
+export aux_dir=$aux_dir
+#
 # -- removing old directories and files
 #
-if [ -d "$aux_dir/HICOLM3" ]
+if [ -d "$aux_dir/HICOLM" ]
 then
     rm -rf $aux_dir/HICOLM
 fi
-mkdir $aux_dir/HICOLM
-mkdir $aux_dir/HICOLM/hicolm
-mkdir $aux_dir/HICOLM/hicolm/R
-mkdir $aux_dir/HICOLM/hicolm/R/report
-mkdir $aux_dir/HICOLM/hicolm/amber
-#
-# -- installing HICOLM --
-#
-echo
-echo -e "\e[33m-> Compiling HICOLM\e[0m"
-echo
-#
-# -- installing older version of HICOLM
 #
 sh ./hicolm/install.sh
 #
