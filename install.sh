@@ -61,7 +61,20 @@ then
     rm -rf $aux_dir/HICOLM
 fi
 #
-sh ./hicolm/install.sh
+sh ./hicolm/install.sh # -- HICOLM install script
+#
+if [ ! -f "$path/hicolm/src/HICOLM" ]
+then
+    echo -e "\e[31mError in compiling HICOLM. The installation will be finish!"
+    exit
+fi
+sh ./hicolm3/install.sh # -- HICOLM3 install script
+#
+if [ ! -f "$path/hicolm3/src/HICOLM3" ]
+then
+    echo -e "\e[31mError in compiling HICOLM3. The installation will be finish!"
+    exit
+fi
 #
 echo -e "\e[32m-> SUCCESS!\e[0m"
 echo
@@ -69,8 +82,8 @@ echo -e "\e[33m   Installation directory:\e[0m" $exe_dir
 echo -e "\e[33m      Auxiliary directory:\e[0m" $aux_dir
 echo -e "\e[33m          Compiling rules:\e[0m" $compiler $instructions
 echo
-echo -e "\e[33m   \"Thank you for choosing HICOLM.\e[0m"
-echo -e "\e[33m    To start the older version, just type \e[31mhicolm\e[33m in the terminal, and to start the newest one, type \e[31mhicolm3\e[33m.\e[0m"
+echo -e "\e[33m   \"Thank you for choosing HICOLM3.\e[0m"
+echo -e "\e[33m    To start the older version, just type \e[31mhicolm\e[33m in the terminal, and to start the newest one type \e[31mhicolm3\e[33m.\e[0m"
 echo -e "\e[33m    Warning! The older version is deprecated and it will be maintained until march, 2022.\\e[0m"
 echo -e "\e[33m    HAVE A GREAT JOB!\"\e[0m"
 echo

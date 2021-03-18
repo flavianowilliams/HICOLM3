@@ -16,6 +16,12 @@ mkdir $aux_dir/HICOLM/hicolm/R
 mkdir $aux_dir/HICOLM/hicolm/R/report
 mkdir $aux_dir/HICOLM/hicolm/amber
 #
+# -- installing hsystem --
+#
+#
+echo
+echo "\e[33m-> Compiling HICOLM routines\e[0m"
+echo
 if [ -f "$exe_dir/HICOLM.bin" ]
 then
     rm -f $exe_dir/HICOLM.bin
@@ -31,14 +37,12 @@ make -s clean
 make -s all
 if [ ! -f "HICOLM" ]
 then
-    echo "\e[31mError in compiling HICOLM. The installation will be finish!"
     exit
 fi
 make -s clean
 #
 # -- installing hsystem --
 #
-echo
 echo "\e[33m-> Compiling utilities\e[0m"
 echo
 #
@@ -122,7 +126,7 @@ cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/hicolm/amber/.
 cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/hicolm/R/report/.
 cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/hicolm/R/report/.
 #
-mv $path/src/HICOLM $exe_dir/HICOLM.bin
+cp $path/src/HICOLM $exe_dir/HICOLM.bin
 #mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 mv $path/contrib/system/hsystem $exe_dir/hsystem
