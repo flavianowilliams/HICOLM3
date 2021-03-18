@@ -9,9 +9,9 @@ path=`pwd`
 #
 # -- definind installation and auxiliary directory --
 #
-#echo
-#echo "Please, type the compiler or press ENTER (default: gfortran)"
-#read compiler
+echo
+echo "Please, type the compiler or press ENTER (default: gfortran)"
+read compiler
 #
 if [ -z $compiler ]
 then
@@ -20,9 +20,9 @@ fi
 #
 export FC="$compiler"
 #
-#echo
-#echo "Please, type the instructions of compilation or press ENTER"
-#read instructions
+echo
+echo "Please, type the instructions of compilation or press ENTER"
+read instructions
 #
 if [ -z $instructions ]
 then
@@ -32,18 +32,18 @@ fi
 #
 export FFLAGS="$instructions"
 #
-#echo
-#echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
-#read exe_dir
+echo
+echo "Please, type the installation directory or press ENTER (default: /usr/local/bin)"
+read exe_dir
 #
 if [ -z $exe_dir ]
 then
     exe_dir="/usr/local/bin"
 fi
 #
-#echo
-#echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
-#read aux_dir
+echo
+echo "Please, type the auxiliary directory or press ENTER (default: /usr/local/share)"
+read aux_dir
 #
 if [ -z $aux_dir ]
 then
