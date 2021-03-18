@@ -1,10 +1,5 @@
 #!/bin/bash
 #
-#   author: Flaviano Williams Fernandes <flaviano.fernandes@ifpr.edu.br>
-# describe: Installation of HICOLM package and utilities
-#  version: 3.0.0
-#  license: MIT license
-#
 path=`pwd`
 path=$path/hicolm3
 #
