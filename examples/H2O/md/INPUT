@@ -6,13 +6,13 @@
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &MD
- nstep 1000
+ nstep 100
  nrelax 20
- nframes 1000
- timestep 0.00001
+ nframes 100
+ timestep 0.00000001
  pressure 1.0
  temperature 300
  rcutoff 9.0 0.1
  ensemble nvt berendsen 0.5
- restart 1
+ restart 0
 &END

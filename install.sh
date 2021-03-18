@@ -65,14 +65,14 @@ sh ./hicolm/install.sh # -- HICOLM install script
 #
 if [ ! -f "$path/hicolm/src/HICOLM" ]
 then
-    echo -e "\e[31mError in compiling HICOLM. The installation will be finish!"
+    echo -e "\e[31mError in compiling HICOLM. Installation aborted!"
     exit
 fi
 sh ./hicolm3/install.sh # -- HICOLM3 install script
 #
 if [ ! -f "$path/hicolm3/src/HICOLM3" ]
 then
-    echo -e "\e[31mError in compiling HICOLM3. The installation will be finish!"
+    echo -e "\e[31mError in compiling HICOLM3. Installation aborted!"
     exit
 fi
 #
