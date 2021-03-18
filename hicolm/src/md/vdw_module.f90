@@ -160,7 +160,7 @@ contains
 
     implicit none
 
-    integer i,ni,nj,nk
+    integer ni,nj,nk
     real(8) pot,fr,xvz,yvz,zvz
     real(8) envdw,virvdw
 
