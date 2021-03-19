@@ -70,6 +70,7 @@ module structure_module
      procedure          :: set_sys_shift
      procedure          :: set_volume
      procedure          :: get_volume
+     procedure          :: set_volume2
      procedure          :: set_nfree
      procedure          :: get_nfree
      procedure          :: get_a
@@ -186,6 +187,13 @@ contains
     end do
     this%volume=abs(volume)
   end subroutine set_volume
+
+  subroutine set_volume2(this,volume)
+    implicit none
+    class(structure), intent(inout) :: this
+    real(8), intent(in)             :: volume
+    this%volume=volume
+  end subroutine set_volume2
 
   double precision function get_volume(this)
     class(structure), intent(in) :: this

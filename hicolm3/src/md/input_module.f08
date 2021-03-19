@@ -41,6 +41,7 @@ module input_module
      real(8), private       :: drcutoff
      real(8), private       :: pstat
      real(8), private       :: tstat
+     real(8), private       :: bfactor
      character(3), private  :: ensble
      character(9), private  :: ensble_mt
    contains
@@ -74,6 +75,8 @@ module input_module
      procedure :: get_ensble
      procedure :: set_ensble_mt
      procedure :: get_ensble_mt
+     procedure :: set_bfactor
+     procedure :: get_bfactor
      procedure :: convert_units
   end type input
 
@@ -437,6 +440,19 @@ contains
     get_restart=this%restart
   end function get_restart
 
+  subroutine set_bfactor(this,bfactor)
+    implicit none
+    class(input), intent(inout) :: this
+    real(8), intent(in)         :: bfactor
+    this%bfactor=bfactor
+  end subroutine set_bfactor
+
+  double precision function get_bfactor(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_bfactor=this%bfactor
+  end function get_bfactor
+
   subroutine convert_units(this)
     implicit none
     class(input), intent(inout) :: this
@@ -506,6 +522,7 @@ contains
     call this%set_pstat(this%get_pstat()/this%get_tconv())
     call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
     call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
+    call this%set_bfactor(this%get_bfactor()*this%get_pconv())
   end subroutine convert_units
 
 end module input_module

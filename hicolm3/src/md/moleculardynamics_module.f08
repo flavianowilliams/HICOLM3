@@ -57,6 +57,7 @@ contains
     call constructor%set_rcutoff(8.0d0)
     call constructor%set_drcutoff(0.1d0)
     call constructor%set_ensble('nve')
+    call constructor%set_bfactor(4.9d-5)
   end function constructor
 
   subroutine set_time(this,time)

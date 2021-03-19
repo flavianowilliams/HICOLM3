@@ -34,6 +34,7 @@ module thermodynamics_module
      real(8)   :: pressure
      real(8)   :: ekinetic
      real(8)   :: etotal
+     real(8)   :: sigma
    contains
      procedure :: set_temperature
      procedure :: get_temperature
@@ -43,6 +44,8 @@ module thermodynamics_module
      procedure :: get_ekinetic
      procedure :: set_etotal
      procedure :: get_etotal
+     procedure :: set_sigma
+     procedure :: get_sigma
   end type thermodynamics
 
 contains
@@ -100,5 +103,17 @@ contains
     class(thermodynamics), intent(inout) :: this
     get_etotal = this%etotal
   end function get_etotal
+
+  subroutine set_sigma(this)
+    implicit none
+    class(thermodynamics), intent(inout) :: this
+    this%sigma = 0.5d0*this%get_nfree()*this%get_temp()
+  end subroutine set_sigma
+
+  double precision function get_sigma(this)
+    implicit none
+    class(thermodynamics), intent(inout) :: this
+    get_sigma = this%sigma
+  end function get_sigma
 
 end module thermodynamics_module

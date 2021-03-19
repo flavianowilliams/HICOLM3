@@ -61,13 +61,13 @@ then
     rm -rf $aux_dir/HICOLM
 fi
 #
-sh ./hicolm/install.sh # -- HICOLM install script
+#sh ./hicolm/install.sh # -- HICOLM install script
 #
-if [ ! -f "$path/hicolm/src/HICOLM" ]
-then
-    echo -e "\e[31mError in compiling HICOLM. Installation aborted!"
-    exit
-fi
+#if [ ! -f "$path/hicolm/src/HICOLM" ]
+#then
+#    echo -e "\e[31mError in compiling HICOLM. Installation aborted!"
+#    exit
+#fi
 sh ./hicolm3/install.sh # -- HICOLM3 install script
 #
 if [ ! -f "$path/hicolm3/src/HICOLM3" ]

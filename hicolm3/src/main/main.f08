@@ -57,7 +57,7 @@ program HICOLM
   call date_and_time(TIME=time)
   call hostnm(host)
 !  host='undefined'
-
+  !
   !-cabecalho
   !
   write(6,*)
@@ -65,11 +65,39 @@ program HICOLM
   write(6,*)
   write(6,'(39x,a14)')'Version: x.x.x'
   write(6,*)
+  !
+  !===========================================================================================
+  !
+  !-print copyright
+  !
+  write(6,'(5x,a12)')'MIT License'
+  write(6,*)
+  write(6,'(5x,a36)')'Copyright (c) 2020 flavianowilliams'
+  write(6,*)
+  write(6,'(5x,a77)')'Permission is hereby granted, free of charge, to any person obtaining a copy'
+  write(6,'(5x,a78)')'of this software and associated documentation files (the "Software"), to deal'
+  write(6,'(5x,a77)')'in the Software without restriction, including without limitation the rights'
+  write(6,'(5x,a74)')'to use, copy, modify, merge, publish, distribute, sublicense, and/or sell'
+  write(6,'(5x,a70)')'copies of the Software, and to permit persons to whom the Software is'
+  write(6,'(5x,a57)')'furnished to do so, subject to the following conditions:'
+  write(6,*)
+  write(6,'(5x,a75)')'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR'
+  write(6,'(5x,a73)')'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,'
+  write(6,'(5x,a76)')'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE'
+  write(6,'(5x,a71)')'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER'
+  write(6,'(5x,a78)')'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,'
+  write(6,'(5x,a78)')'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE'
+  write(6,'(5x,a10)')'SOFTWARE.'
+  write(6,*)
+  !
+  ! general information
+  !
   write(6,'(''Host: '',2x,a10)')host
   write(6,'(''Date: '',2x,a8)')date
   write(6,'(''Time: '',2x,a10)')time
   write(6,*)
-
+  !
+  !=========================================================================================
   ! assign 1-4 scale factor according AMBER force field
   !
   sf_coul=1.d0/1.2d0
@@ -152,6 +180,7 @@ program HICOLM
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%interaction_prepare()            ! preparando campo de forca
         call md%print_out()                      ! imprimindo valores em hicolm.out
+        call md%set_sigma()                      ! atribuindo sigma para o termostato Berendsen
         call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_time(0.d0)                   ! setando instante inicial
         write(6,'(4x,111a1)')('-',i=1,84)
@@ -180,6 +209,10 @@ program HICOLM
               if(md%get_ensble_mt().eq.'berendsen')then
                  call md%set_nvt_berendsen()
               end if
+           elseif(md%get_ensble().eq.'npt')then
+              if(md%get_ensble_mt().eq.'berendsen')then
+                 call md%set_npt_berendsen()
+              end if
            end if
            call md%print_geometry(i)
            if(mod(i,25).eq.0)write(6,20)&
@@ -193,36 +226,8 @@ program HICOLM
         lval=.true.
      end if
   end do
-  !===========================================================================================
-  !
-  !-print copyright
-  !
-    write(6,'(93a1)')('#',i=1,93)
-    write(6,*)('END!',i=1,23)
-    write(6,'(93a1)')('#',i=1,93)
-    write(6,*)
-    write(6,'(5x,a12)')'MIT License'
-    write(6,*)
-    write(6,'(5x,a36)')'Copyright (c) 2020 flavianowilliams'
-    write(6,*)
-    write(6,'(5x,a77)')'Permission is hereby granted, free of charge, to any person obtaining a copy'
-    write(6,'(5x,a78)')'of this software and associated documentation files (the "Software"), to deal'
-    write(6,'(5x,a77)')'in the Software without restriction, including without limitation the rights'
-    write(6,'(5x,a74)')'to use, copy, modify, merge, publish, distribute, sublicense, and/or sell'
-    write(6,'(5x,a70)')'copies of the Software, and to permit persons to whom the Software is'
-    write(6,'(5x,a57)')'furnished to do so, subject to the following conditions:'
-    write(6,*)
-    write(6,'(5x,a75)')'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR'
-    write(6,'(5x,a73)')'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,'
-    write(6,'(5x,a76)')'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE'
-    write(6,'(5x,a71)')'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER'
-    write(6,'(5x,a78)')'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,'
-    write(6,'(5x,a78)')'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE'
-    write(6,'(5x,a10)')'SOFTWARE.'
-    write(6,*)
-    !=========================================================================================
 
-  stop
+  goto 2
 
 1 write(6,*)'ERROR: Method does not found!'
   write(6,*)'Hint: You must choose one of the following methods: @PREPARE or @MD'
@@ -230,5 +235,10 @@ program HICOLM
 
 10 format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20 format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
+
+2 write(6,'(93a1)')('#',i=1,93)
+  write(6,*)('END!',i=1,23)
+  write(6,'(93a1)')('#',i=1,93)
+  write(6,*)
 
 end program HICOLM
