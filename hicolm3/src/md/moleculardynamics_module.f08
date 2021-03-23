@@ -193,8 +193,8 @@ contains
        write(8,25)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',&
             ',','cx',',','cy',',','cz',',','a',',','b',',','c'
     end if
-    if(nx.gt.this%get_nrelax().and.mod(nx-this%get_nrelax(),this%get_nhist()).eq.0)then
-       ix=(nx-this%get_nrelax())/this%get_nhist()
+    if(nx.gt.this%get_nrelax().and.mod(nx,this%get_nhist()).eq.0)then
+       ix=(nx)/this%get_nhist()
        print*,ix,nx,this%get_nrelax(),this%get_nhist()
 !       n1=1
 !       do i=1,nmolec

@@ -7,7 +7,7 @@
 
 &MD
  nstep 100
- nrelax 0
+ nrelax 10
  nframes 10
  timestep 0.000001
  pressure 1.0

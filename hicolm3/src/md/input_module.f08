@@ -316,7 +316,7 @@ contains
   subroutine set_nhist(this)
     implicit none
     class(input), intent(inout) :: this
-    this%nhist=int((this%get_nstep()-this%get_nrelax())/this%get_nframes())
+    this%nhist=int((this%get_nstep())/this%get_nframes())
   end subroutine set_nhist
 
   integer function get_nhist(this)
