@@ -33,6 +33,7 @@ module moleculardynamics_module
      real(8), private :: time
    contains
      procedure :: print_geometry
+     procedure :: print_dataframes
      procedure :: read_geometry
      procedure :: print_out
      procedure :: print
@@ -177,6 +178,56 @@ contains
     close(2)
     return
   end subroutine print_geometry
+
+  subroutine print_dataframes(this,nx)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    integer, intent(in)                     :: nx
+    integer                                 :: ix
+    if(nx.eq.1)then
+       write(4,5)'step',',','time',',','molecule',',','site',',','Z',',','type',',',&
+            'mass',',','charge',',','x',',','y',',','z',',','fx',',','fy',',','fz',',',&
+            'vx',',','vy',',','vz'
+       write(7,15)'step',',','time',',','volume',',','temperature',',','pressure',',',&
+            'ekinet',',','epotential',',','energy',',','density'
+       write(8,25)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',&
+            ',','cx',',','cy',',','cz',',','a',',','b',',','c'
+    end if
+    if(nx.gt.this%get_nrelax().and.mod(nx-this%get_nrelax(),this%get_nhist()).eq.0)then
+       ix=(nx-this%get_nrelax())/this%get_nhist()
+       print*,ix,nx,this%get_nrelax(),this%get_nhist()
+!       n1=1
+!       do i=1,nmolec
+!          n2=1
+!          do j=1,ntmolec(i)
+!             do k =1,nxmolec(i)
+!                write(4,10)ix,',',ix*dtime*tconv,',',n2,',',k,',',idna(n1),',',&
+!                     atsp(atp(n1)),',',mass(n1)*mconv,',',qat(n1),',',&
+!                     xa(n1)*rconv,',',ya(n1)*rconv,',',za(n1)*rconv,',',&
+!                     fax(n1)*econv/rconv,',',fay(n1)*econv/rconv,',',faz(n1)*econv/rconv,',',&
+!                     vax(n1)*rconv/tconv,',',vay(n1)*rconv/tconv,',',vaz(n1)*rconv/tconv
+!                n1=n1+1
+!             end do
+!             n2=n2+1
+!          enddo
+!       end do
+!       write(8,20)ix,',',ix*dtime*tconv,',',&
+!            v(1,1)*rconv,',',v(1,2)*rconv,',',v(1,3)*rconv,',',&
+!            v(2,1)*rconv,',',v(2,2)*rconv,',',v(2,3)*rconv,',',&
+!            v(3,1)*rconv,',',v(3,2)*rconv,',',v(3,3)*rconv,',',&
+!            a*rconv,',',b*rconv,',',c*rconv
+!       write(7,20)i,',',time*tconv,',',volume*rconv**3,',',temp*teconv,',',press*pconv,',',&
+!            ekinet*econv,',',(enpot+envdw_corr)*econv,',',(ekinet+enpot+envdw_corr)*econv,&
+!            ',',(mtot/volume)*mconv/(n0*1.d-24*rconv**3)
+    end if
+5   format(3x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,a6,a1,4x,a4,a1,7x,a6,a1,8x,&
+         3(a1,a1,11x),3(a2,a1,10x),3(a2,a1,10x))
+10  format(1x,i12,a1,e12.4,a1,2(i8,a1),i5,a1,a5,a1,21(e12.4,a1))
+15  format(3x,a4,a1,10x,a4,a1,8x,a6,a1,4x,a11,a1,2x,a8,a1,5x,a6,a1,4x,a10,a1,4x,a6,a1,6x,a7)
+20  format(1x,i12,a1,13(e12.4,a1))
+25  format(3x,2(a4,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),3(a2,a1,10x),2(a2,a1,10x),&
+         a2,a1,9x,3(a1,a1,10x))
+  end subroutine print_dataframes
 
   subroutine print_out(this)
     implicit none

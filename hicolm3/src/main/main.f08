@@ -182,6 +182,7 @@ program HICOLM
         call md%print_out()                      ! imprimindo valores em hicolm.out
         call md%set_sigma()                      ! atribuindo sigma para o termostato Berendsen
         call md%set_forcefield()                 ! calculo das interacoes moleculares
+        call md%set_nhist()                      ! definindo quantidade de frames
         call md%set_time(0.d0)                   ! setando instante inicial
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
@@ -215,6 +216,7 @@ program HICOLM
               end if
            end if
            call md%print_geometry(i)
+           call md%print_dataframes(i)
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
                 md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&

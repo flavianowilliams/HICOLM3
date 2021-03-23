@@ -33,6 +33,7 @@ module input_module
      integer, private       :: nstep
      integer, private       :: nrelax
      integer, private       :: nframes
+     integer, private       :: nhist
      integer, private       :: restart
      real(8), private       :: timestep
      real(8), private       :: press
@@ -57,6 +58,8 @@ module input_module
      procedure :: get_nrelax
      procedure :: set_nframes
      procedure :: get_nframes
+     procedure :: set_nhist
+     procedure :: get_nhist
      procedure :: set_timestep
      procedure :: get_timestep
      procedure :: set_press
@@ -309,6 +312,18 @@ contains
     class(input), intent(in) :: this
     get_nframes=this%nframes
   end function get_nframes
+
+  subroutine set_nhist(this)
+    implicit none
+    class(input), intent(inout) :: this
+    this%nhist=int((this%get_nstep()-this%get_nrelax())/this%get_nframes())
+  end subroutine set_nhist
+
+  integer function get_nhist(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_nhist=this%nhist
+  end function get_nhist
 
   subroutine set_timestep(this,timestep)
     implicit none
