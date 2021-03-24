@@ -1,4 +1,4 @@
-     step,          time,         volume,      temperature,    pressure,       ekinet,      epotential,      energy,       density
+     step,          time,         volume,      temperature,    pressure,      kinetic,       potential,      energy,       density
             1,  0.000000E+00,  0.926100E+04,  0.405388E+03,  0.442845E+10,  0.111847E+04,  0.177312E+09,  0.177313E+09,  0.998157E+00
             2,  0.100000E-08,  0.926301E+04,  0.720578E+03,  0.442642E+10,  0.198808E+04,  0.177256E+09,  0.177258E+09,  0.997941E+00
             3,  0.200000E-08,  0.926502E+04,  0.124589E+04,  0.442439E+10,  0.343741E+04,  0.177201E+09,  0.177205E+09,  0.997724E+00
