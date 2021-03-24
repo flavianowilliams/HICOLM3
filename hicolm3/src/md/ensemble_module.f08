@@ -34,6 +34,8 @@ module ensemble_module
      procedure :: set_nve
      procedure :: set_nvt_berendsen
      procedure :: set_npt_berendsen
+     procedure :: set_nvt_nosehoover
+     procedure :: set_npt_nosehoover
      procedure :: check_lattice
   end type ensemble
 
@@ -98,6 +100,13 @@ contains
     call this%set_pressure()
   end subroutine set_nvt_berendsen
 
+  subroutine set_nvt_nosehoover(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    integer                        :: i
+    real(8)                        :: qui
+  end subroutine set_nvt_nosehoover
+
   subroutine set_npt_berendsen(this)
     implicit none
     class(ensemble), intent(inout) :: this
@@ -141,6 +150,12 @@ contains
     call this%set_temperature()
     call this%set_pressure()
   end subroutine set_npt_berendsen
+
+  subroutine set_npt_nosehoover(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    integer                        :: i
+  end subroutine set_npt_nosehoover
 
   subroutine check_lattice(this)
     implicit none
