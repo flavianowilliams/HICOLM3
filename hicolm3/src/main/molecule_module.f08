@@ -395,7 +395,16 @@ contains
 
   subroutine set_global(this)
     class(molecule), intent(inout) :: this
+    integer                        :: i,j
+    real(8)                        :: mtotal
     call this%sys%set_qtotal(this%qatmol)
+    mtotal=0.d0
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          mtotal=mtotal+this%ntmol(i)*this%massmol(i,j)
+       end do
+    end do
+    call this%sys%set_mtotal(mtotal)
   end subroutine set_global
 
 end module molecule_module

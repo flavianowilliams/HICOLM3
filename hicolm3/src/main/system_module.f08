@@ -29,9 +29,12 @@ module system_module
 
   type :: system
      real(8), private :: qtotal
+     real(8), private :: mtotal
    contains
      procedure :: set_qtotal
      procedure :: get_qtotal
+     procedure :: set_mtotal
+     procedure :: get_mtotal
   end type system
 
 contains
@@ -46,5 +49,16 @@ contains
     class(system), intent(in) :: this
     get_qtotal=this%qtotal
   end function get_qtotal
+
+  subroutine set_mtotal(this,mtotal)
+    class(system), intent(inout) :: this
+    real(8), intent(in)          :: mtotal
+    this%mtotal=mtotal
+  end subroutine set_mtotal
+
+  double precision function get_mtotal(this)
+    class(system), intent(in) :: this
+    get_mtotal=this%mtotal
+  end function get_mtotal
 
 end module system_module
