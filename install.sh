@@ -64,6 +64,7 @@ fi
 # -- creating new directories
 #
 mkdir $aux_dir/HICOLM
+mkdir $aux_dir/HICOLM/hicolm/amber
 #
 #sh ./hicolm/install.sh # -- HICOLM install script
 #

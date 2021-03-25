@@ -13,7 +13,6 @@ path=$path/hicolm
 mkdir $aux_dir/HICOLM/hicolm
 mkdir $aux_dir/HICOLM/hicolm/R
 mkdir $aux_dir/HICOLM/hicolm/R/report
-mkdir $aux_dir/HICOLM/hicolm/amber
 #
 # -- installing hsystem --
 #
