@@ -8,9 +8,8 @@
 path=`pwd`
 path=$path/hicolm
 #
-# -- removing old directories and files
+# -- creating new directories
 #
-mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/hicolm
 mkdir $aux_dir/HICOLM/hicolm/R
 mkdir $aux_dir/HICOLM/hicolm/R/report

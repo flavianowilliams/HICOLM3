@@ -61,6 +61,10 @@ then
     rm -rf $aux_dir/HICOLM
 fi
 #
+# -- creating new directories
+#
+mkdir $aux_dir/HICOLM
+#
 #sh ./hicolm/install.sh # -- HICOLM install script
 #
 #if [ ! -f "$path/hicolm/src/HICOLM" ]
