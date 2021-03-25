@@ -64,7 +64,16 @@ fi
 # -- creating new directories
 #
 mkdir $aux_dir/HICOLM
-mkdir $aux_dir/HICOLM/hicolm/amber
+mkdir $aux_dir/HICOLM/amber
+#
+# --copying auxiliary files--
+#
+echo
+echo -e "\e[33m   Preparing to install\e[0m"
+echo
+echo -e "\e[33m-> Moving files\e[0m"
+#
+cp -r $path/hicolm/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
 #sh ./hicolm/install.sh # -- HICOLM install script
 #

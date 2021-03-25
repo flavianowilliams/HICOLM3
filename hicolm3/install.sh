@@ -29,11 +29,6 @@ make -s clean
 #
 # --copying auxiliary files--
 #
-echo "\e[33m   Preparing to install\e[0m"
-echo
-echo "\e[33m-> Moving files\e[0m"
-echo
-#
 cp $path/src/HICOLM3 $exe_dir/HICOLM3.bin
 #
 # --creating executing script--

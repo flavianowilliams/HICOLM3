@@ -113,18 +113,9 @@ fi
 #fi
 #make -s clean
 #
-# --copying auxiliary files--
-#
-echo "\e[33m   Preparing to install\e[0m"
-echo
-echo "\e[33m-> Moving files\e[0m"
-echo
-#
-cp -r $path/contrib/amber/*.prm $aux_dir/HICOLM/hicolm/amber/.
+cp $path/src/HICOLM $exe_dir/HICOLM.bin
 cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/hicolm/R/report/.
 cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/hicolm/R/report/.
-#
-cp $path/src/HICOLM $exe_dir/HICOLM.bin
 #mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 mv $path/contrib/system/hsystem $exe_dir/hsystem
