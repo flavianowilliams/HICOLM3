@@ -54,7 +54,7 @@ echo "#!/bin/sh
 #
 if [ ! -d '/tmp/amber' ]
 then
-    cp -r $aux_dir/HICOLM3/amber /tmp/amber
+    cp -r $aux_dir/HICOLM/amber /tmp/amber
 else
     if [ ! -f '/tmp/amber/amber_bonds.prm' ]
     then
