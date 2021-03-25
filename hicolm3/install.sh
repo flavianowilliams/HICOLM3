@@ -58,23 +58,23 @@ then
 else
     if [ ! -f '/tmp/amber/amber_bonds.prm' ]
     then
-        cp -r $aux_dir/HICOLM3/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
+        cp -r $aux_dir/HICOLM/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
     fi
     if [ ! -f '/tmp/amber/amber_angles.prm' ]
     then
-        cp -r $aux_dir/HICOLM3/amber/amber_angles.prm /tmp/amber/amber_angles.prm
+        cp -r $aux_dir/HICOLM/amber/amber_angles.prm /tmp/amber/amber_angles.prm
     fi
     if [ ! -f '/tmp/amber/amber_dihedrals_general.prm' ]
     then
-        cp -r $aux_dir/HICOLM3/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
     fi
     if [ ! -f '/tmp/amber/amber_dihedrals_proper.prm' ]
     then
-        cp -r $aux_dir/HICOLM3/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
+        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
     fi
     if [ ! -f '/tmp/amber/amber_vdw.prm' ]
     then
-        cp -r $aux_dir/HICOLM3/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
+        cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
     fi
 fi
 #
