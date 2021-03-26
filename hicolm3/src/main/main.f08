@@ -29,7 +29,7 @@ program HICOLM
   implicit none
 
   integer       :: i,j,i0
-  real(8)       :: t0,t1,t2,t3,t4
+  real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drx,dry,drz,drmax
   character(10) :: host,time
@@ -45,11 +45,6 @@ program HICOLM
 
   open(5,file='INPUT',status='old')          ! reading input datas
   open(6,file='hicolm.out',status='unknown') ! printing output informations
-
-  t1=0.d0
-  t2=0.d0
-  t3=0.d0
-  t4=0.d0
 
   !-elapsed time information
 
@@ -146,6 +141,7 @@ program HICOLM
         call prp%print_out()                     ! imprimindo valores em hicolm.out
         lval=.true.
      elseif(in.eq.'@MD')then
+        call cpu_time(t1)
         open(3,file='hicolm.axsf',status='unknown')        ! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
@@ -184,6 +180,8 @@ program HICOLM
         call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_nhist()                      ! definindo quantidade de frames
         call md%set_time(0.d0)                   ! setando instante inicial
+        call cpu_time(t2)
+
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
         write(6,'(4x,111a1)')('-',i=1,84)
@@ -224,6 +222,14 @@ program HICOLM
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
+        write(6,*)
+        call cpu_time(t3)
+        write(6,'(5x,a19)')'CPU time evaluation'
+        write(6,'(4x,70a1)')('-',i=1,70)
+        write(6,'(5x,a18,1x,f8.4)')'Preparing system =',(t2-t1)
+        write(6,'(5x,7x,a11,1x,f8.4)')'MD(cycle) =',(t3-t2)/md%get_nstep()
+        write(6,'(4x,70a1)')('-',i=1,70)
+        write(6,'(5x,4x,a14,1x,f8.4,1x,a7)')'Elapsed time =',(t3-t1),'seconds'
         write(6,*)
         lval=.true.
      end if
