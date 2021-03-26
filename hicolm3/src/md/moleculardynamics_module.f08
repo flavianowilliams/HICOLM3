@@ -32,6 +32,7 @@ module moleculardynamics_module
   type, extends(ensemble) :: moleculardynamics
      real(8), private :: time
    contains
+     procedure :: check
      procedure :: print_geometry
      procedure :: print_dataframes
      procedure :: read_geometry
@@ -60,6 +61,16 @@ contains
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
   end function constructor
+
+  subroutine check(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    if(this%get_nframes().ge.(this%get_nstep()-this%get_nrelax()))then
+       write(6,*)'ERROR: The number of frames does not be higher than the (nstep-nrelax)!'
+       write(6,*)'Hint: Check the input in the &MD section.'
+       stop
+    end if
+  end subroutine check
 
   subroutine set_time(this,time)
     implicit none
