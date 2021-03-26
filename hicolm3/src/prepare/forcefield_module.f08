@@ -101,6 +101,9 @@ contains
        do j=1,this%get_torsmax()
           this%ttors(i,j)='amber'
        end do
+       do j=1,this%get_torsmax()
+          this%titors(i,j)='amber'
+       end do
     end do
     do i=1,this%nspcs
        this%tvdw(i)='amber'
@@ -226,17 +229,36 @@ contains
 
   subroutine set_parbend(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3
+    integer                          :: i,j,k,l,m,n,i1,i2,i3
     allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
     do i=1,this%get_nmol()
        do j=1,this%bendscnt(i)
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
-          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
-          do k=1,2
-             this%parbend(i,j,k)=this%amber%prms_bends(k)
+          do k=1,62
+             do l=1,62
+                do m=1,62
+                   if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
+                        this%amber%atp(l).eq.this%tpmol(i,i2).and.&
+                        this%amber%atp(m).eq.this%tpmol(i,i3))then
+                      do n=1,2
+                         this%parbend(i,j,n)=this%amber%prms_angles(k,l,m,n)
+                      end do
+                   elseif(this%amber%atp(k).eq.this%tpmol(i,i3).and.&
+                        this%amber%atp(l).eq.this%tpmol(i,i2).and.&
+                        this%amber%atp(m).eq.this%tpmol(i,i1))then
+                      do n=1,2
+                         this%parbend(i,j,n)=this%amber%prms_angles(k,l,m,n)
+                      end do
+                   end if
+                end do
+             end do
           end do
+!          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
+!          do k=1,2
+!             this%parbend(i,j,k)=this%amber%prms_bends(k)
+!          end do
        end do
     end do
   end subroutine set_parbend

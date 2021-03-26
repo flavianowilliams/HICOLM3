@@ -28,19 +28,18 @@ module amber_module
   public :: amber
 
   type :: amber
-     real(8)                  :: prms_bends(2)
      real(8)                  :: prms_tors(4)
      real(8)                  :: prms_vdw(2)
+     real(8), allocatable     :: prms_angles(:,:,:,:)
      real(8), allocatable     :: prms_bonds(:,:,:)
      character(2),allocatable :: atp(:)
    contains
      procedure :: set_amberbonds
-     procedure :: set_amberbends
+     procedure :: set_amberangles
      procedure :: set_amberdihedrals
      procedure :: set_ambervdw
      procedure :: set_ambertypes
-     generic   :: set_amber => set_amberbonds, set_amberbends, set_ambervdw, &
-          set_amberdihedrals
+     generic   :: set_amber => set_ambervdw, set_amberdihedrals
   end type amber
 
 contains
@@ -345,7 +344,574 @@ contains
     this%prms_bonds(57,35,2)=0.9572d0
     this%prms_bonds(60,60,1)=166.0d0
     this%prms_bonds(60,60,2)=2.0380d0
- end subroutine set_amberbonds
+  end subroutine set_amberbonds
+
+  subroutine set_amberangles(this)
+    class(amber), intent(inout) :: this
+    allocate(this%prms_angles(62,62,62,2))
+    this%prms_angles(1,5,5,1)= 70.0d0
+    this%prms_angles(1,5,5,2)= 118.8d0
+    this%prms_angles(1,16,16,1)= 50.0d0
+    this%prms_angles(1,16,16,2)= 108.0d0
+    this%prms_angles(1,16,25,1)= 50.0d0
+    this%prms_angles(1,16,25,2)= 106.5d0
+    this%prms_angles(2,2,53,1)= 80.0d0
+    this%prms_angles(2,2,53,2)= 120.0d0
+    this%prms_angles(2,2,55,1)= 80.0d0
+    this%prms_angles(2,2,55,2)= 120.0d0
+    this%prms_angles(2,5,5,1)= 63.0d0
+    this%prms_angles(2,5,5,2)= 120.0d0
+    this%prms_angles(2,5,30,1)= 50.0d0
+    this%prms_angles(2,5,30,2)= 120.0d0
+    this%prms_angles(2,6,6,1)= 63.0d0
+    this%prms_angles(2,6,6,2)= 119.2d0
+    this%prms_angles(2,6,49,1)= 70.0d0
+    this%prms_angles(2,6,49,2)= 130.0d0
+    this%prms_angles(2,11,11,1)= 63.0d0
+    this%prms_angles(2,11,11,2)= 120.7d0
+    this%prms_angles(2,11,16,1)= 70.0d0
+    this%prms_angles(2,11,16,2)= 119.7d0
+    this%prms_angles(2,11,28,1)= 50.0d0
+    this%prms_angles(2,11,28,2)= 119.7d0
+    this%prms_angles(2,11,30,1)= 50.0d0
+    this%prms_angles(2,11,30,2)= 119.7d0
+    this%prms_angles(2,16,16,1)= 63.0d0
+    this%prms_angles(2,16,16,2)= 111.1d0
+    this%prms_angles(2,16,25,1)= 50.0d0
+    this%prms_angles(2,16,25,2)= 109.5d0
+    this%prms_angles(2,16,31,1)= 50.0d0
+    this%prms_angles(2,16,31,2)= 109.5d0
+    this%prms_angles(2,16,33,1)= 50.0d0
+    this%prms_angles(2,16,33,2)= 109.5d0
+    this%prms_angles(2,16,44,1)= 63.0d0
+    this%prms_angles(2,16,44,2)= 110.1d0
+    this%prms_angles(2,16,47,1)= 80.0d0
+    this%prms_angles(2,16,47,2)= 111.2d0
+    this%prms_angles(2,16,56,1)= 60.0d0
+    this%prms_angles(2,16,56,2)= 109.5d0
+    this%prms_angles(2,44,16,1)= 50.0d0
+    this%prms_angles(2,44,16,2)= 121.9d0
+    this%prms_angles(2,44,24,1)= 50.0d0
+    this%prms_angles(2,44,24,2)= 120.0d0
+    this%prms_angles(2,45,11,1)= 70.0d0
+    this%prms_angles(2,45,11,2)= 121.6d0
+    this%prms_angles(2,45,16,1)= 70.0d0
+    this%prms_angles(2,45,16,2)= 117.6d0
+    this%prms_angles(2,45,24,1)= 50.0d0
+    this%prms_angles(2,45,24,2)= 119.2d0
+    this%prms_angles(2,50,5,1)= 70.0d0
+    this%prms_angles(2,50,5,2)= 120.5d0
+    this%prms_angles(2,50,5,1)=150.0d0
+    this%prms_angles(2,50,5,2)= 120.0d0
+    this%prms_angles(2,53,5,1)=150.0d0
+    this%prms_angles(2,53,5,2)= 120.0d0
+    this%prms_angles(2,55,32,1)= 50.0d0
+    this%prms_angles(2,55,32,2)= 113.0d0
+    this%prms_angles(2,55,5,1)=150.0d0
+    this%prms_angles(2,55,5,2)= 120.0d0
+    this%prms_angles(2,56,16,1)= 60.0d0
+    this%prms_angles(2,56,16,2)= 117.0d0
+    this%prms_angles(2,56,5,1)=150.0d0
+    this%prms_angles(2,56,5,2)= 109.5d0
+    this%prms_angles(2,5,2,1)= 70.0d0
+    this%prms_angles(2,5,2,2)= 126.4d0
+    this%prms_angles(2,5,5,1)= 70.0d0
+    this%prms_angles(2,5,5,2)= 125.2d0
+    this%prms_angles(2,5,24,1)= 50.0d0
+    this%prms_angles(2,5,24,2)= 116.8d0
+    this%prms_angles(3,6,5,1)= 63.0d0
+    this%prms_angles(3,6,5,2)= 134.9d0
+    this%prms_angles(3,6,12,1)= 63.0d0
+    this%prms_angles(3,6,12,2)= 108.8d0
+    this%prms_angles(3,16,16,1)= 63.0d0
+    this%prms_angles(3,16,16,2)= 115.6d0
+    this%prms_angles(3,16,31,1)= 50.0d0
+    this%prms_angles(3,16,31,2)= 109.5d0
+    this%prms_angles(3,19,28,1)= 50.0d0
+    this%prms_angles(3,19,28,2)= 120.0d0
+    this%prms_angles(3,19,5,1)= 70.0d0
+    this%prms_angles(3,19,5,2)= 108.7d0
+    this%prms_angles(5,2,5,1)= 63.0d0
+    this%prms_angles(5,2,5,2)= 120.0d0
+    this%prms_angles(5,2,55,1)= 70.0d0
+    this%prms_angles(5,2,55,2)= 120.0d0
+    this%prms_angles(5,5,5,1)= 63.0d0
+    this%prms_angles(5,5,5,2)= 120.0d0
+    this%prms_angles(5,5,6,1)= 63.0d0
+    this%prms_angles(5,5,6,2)= 120.0d0
+    this%prms_angles(5,5,12,1)= 63.0d0
+    this%prms_angles(5,5,12,2)= 120.0d0
+    this%prms_angles(5,5,16,1)= 70.0d0
+    this%prms_angles(5,5,16,2)= 120.0d0
+    this%prms_angles(5,5,28,1)= 50.0d0
+    this%prms_angles(5,5,28,2)= 120.0d0
+    this%prms_angles(5,5,30,1)= 50.0d0
+    this%prms_angles(5,5,30,2)= 120.0d0
+    this%prms_angles(5,5,55,1)= 70.0d0
+    this%prms_angles(5,5,55,2)= 120.0d0
+    this%prms_angles(5,6,6,1)= 63.0d0
+    this%prms_angles(5,6,6,2)= 117.3d0
+    this%prms_angles(5,6,12,1)= 63.0d0
+    this%prms_angles(5,6,12,2)= 116.2d0
+    this%prms_angles(5,6,49,1)= 70.0d0
+    this%prms_angles(5,6,49,2)= 132.4d0
+    this%prms_angles(5,11,11,1)= 63.0d0
+    this%prms_angles(5,11,11,2)= 117.0d0
+    this%prms_angles(5,11,28,1)= 50.0d0
+    this%prms_angles(5,11,28,2)= 123.3d0
+    this%prms_angles(5,11,30,1)= 50.0d0
+    this%prms_angles(5,11,30,2)= 123.3d0
+    this%prms_angles(5,12,6,1)= 63.0d0
+    this%prms_angles(5,12,6,2)= 122.7d0
+    this%prms_angles(5,12,5,1)= 70.0d0
+    this%prms_angles(5,12,5,2)= 132.8d0
+    this%prms_angles(5,16,31,1)= 50.0d0
+    this%prms_angles(5,16,31,2)= 109.5d0
+    this%prms_angles(5,46,16,1)= 50.0d0
+    this%prms_angles(5,46,16,2)= 123.2d0
+    this%prms_angles(5,46,24,1)= 50.0d0
+    this%prms_angles(5,46,24,2)= 120.0d0
+    this%prms_angles(5,50,6,1)= 70.0d0
+    this%prms_angles(5,50,6,2)= 112.2d0
+    this%prms_angles(5,50,13,1)= 70.0d0
+    this%prms_angles(5,50,13,2)= 118.6d0
+    this%prms_angles(5,50,5,1)=150.0d0
+    this%prms_angles(5,50,5,2)= 120.0d0
+    this%prms_angles(5,55,32,1)= 50.0d0
+    this%prms_angles(5,55,32,2)= 113.0d0
+    this%prms_angles(5,5,24,1)= 50.0d0
+    this%prms_angles(5,5,24,2)= 118.0d0
+    this%prms_angles(6,2,53,1)= 80.0d0
+    this%prms_angles(6,2,53,2)= 128.8d0
+    this%prms_angles(6,2,5,1)= 70.0d0
+    this%prms_angles(6,2,5,2)= 111.3d0
+    this%prms_angles(6,3,16,1)= 70.0d0
+    this%prms_angles(6,3,16,2)= 128.6d0
+    this%prms_angles(6,3,19,1)= 63.0d0
+    this%prms_angles(6,3,19,2)= 106.4d0
+    this%prms_angles(6,5,28,1)= 50.0d0
+    this%prms_angles(6,5,28,2)= 120.0d0
+    this%prms_angles(6,5,30,1)= 50.0d0
+    this%prms_angles(6,5,30,2)= 120.0d0
+    this%prms_angles(6,5,46,1)= 70.0d0
+    this%prms_angles(6,5,46,2)= 123.5d0
+    this%prms_angles(6,5,50,1)= 70.0d0
+    this%prms_angles(6,5,50,2)= 117.3d0
+    this%prms_angles(6,6,45,1)= 70.0d0
+    this%prms_angles(6,6,45,2)= 106.2d0
+    this%prms_angles(6,6,49,1)= 70.0d0
+    this%prms_angles(6,6,49,2)= 110.4d0
+    this%prms_angles(6,6,50,1)= 70.0d0
+    this%prms_angles(6,6,50,2)= 127.7d0
+    this%prms_angles(6,12,5,1)= 70.0d0
+    this%prms_angles(6,12,5,2)= 104.4d0
+    this%prms_angles(6,45,9,1)= 70.0d0
+    this%prms_angles(6,45,9,2)= 105.4d0
+    this%prms_angles(6,45,16,1)= 70.0d0
+    this%prms_angles(6,45,16,2)= 125.8d0
+    this%prms_angles(6,45,24,1)= 50.0d0
+    this%prms_angles(6,45,24,2)= 125.8d0
+    this%prms_angles(6,49,9,1)= 70.0d0
+    this%prms_angles(6,49,9,2)= 103.8d0
+    this%prms_angles(6,49,5,1)=150.0d0
+    this%prms_angles(6,49,5,2)= 126.0d0
+    this%prms_angles(6,50,13,1)= 70.0d0
+    this%prms_angles(6,50,13,2)= 111.0d0
+    this%prms_angles(6,50,5,1)=150.0d0
+    this%prms_angles(6,50,5,2)= 120.0d0
+    this%prms_angles(7,16,16,1)= 63.0d0
+    this%prms_angles(7,16,16,2)= 113.1d0
+    this%prms_angles(7,16,31,1)= 50.0d0
+    this%prms_angles(7,16,31,2)= 109.5d0
+    this%prms_angles(7,18,28,1)= 50.0d0
+    this%prms_angles(7,18,28,2)= 120.0d0
+    this%prms_angles(7,18,49,1)= 70.0d0
+    this%prms_angles(7,18,49,2)= 120.0d0
+    this%prms_angles(7,19,28,1)= 50.0d0
+    this%prms_angles(7,19,28,2)= 120.0d0
+    this%prms_angles(7,19,5,1)= 70.0d0
+    this%prms_angles(7,19,5,2)= 120.0d0
+    this%prms_angles(7,49,14,1)= 70.0d0
+    this%prms_angles(7,49,14,2)= 117.0d0
+    this%prms_angles(7,49,5,1)=150.0d0
+    this%prms_angles(7,49,5,2)= 126.0d0
+    this%prms_angles(7,5,14,1)= 70.0d0
+    this%prms_angles(7,5,14,2)= 120.0d0
+    this%prms_angles(7,5,24,1)= 50.0d0
+    this%prms_angles(7,5,24,2)= 120.0d0
+    this%prms_angles(8,8,11,1)= 63.0d0
+    this%prms_angles(8,8,11,2)= 120.0d0
+    this%prms_angles(8,8,16,1)= 70.0d0
+    this%prms_angles(8,8,16,2)= 120.0d0
+    this%prms_angles(9,45,16,1)= 70.0d0
+    this%prms_angles(9,45,16,2)= 128.8d0
+    this%prms_angles(9,45,24,1)= 50.0d0
+    this%prms_angles(9,45,24,2)= 128.8d0
+    this%prms_angles(9,49,5,1)=150.0d0
+    this%prms_angles(9,49,5,2)= 126.0d0
+    this%prms_angles(10,5,5,1)= 70.0d0
+    this%prms_angles(10,5,5,2)= 118.8d0
+    this%prms_angles(10,16,16,1)= 50.0d0
+    this%prms_angles(10,16,16,2)= 108.5d0
+    this%prms_angles(10,16,25,1)= 50.0d0
+    this%prms_angles(10,16,25,2)= 108.5d0
+    this%prms_angles(11,2,53,1)= 80.0d0
+    this%prms_angles(11,2,53,2)= 125.3d0
+    this%prms_angles(11,2,5,1)= 70.0d0
+    this%prms_angles(11,2,5,2)= 114.1d0
+    this%prms_angles(11,5,46,1)= 70.0d0
+    this%prms_angles(11,5,46,2)= 120.1d0
+    this%prms_angles(11,5,50,1)= 70.0d0
+    this%prms_angles(11,5,50,2)= 121.5d0
+    this%prms_angles(11,8,16,1)= 70.0d0
+    this%prms_angles(11,8,16,2)= 120.0d0
+    this%prms_angles(11,11,16,1)= 70.0d0
+    this%prms_angles(11,11,16,2)= 119.7d0
+    this%prms_angles(11,11,28,1)= 50.0d0
+    this%prms_angles(11,11,28,2)= 119.7d0
+    this%prms_angles(11,11,30,1)= 50.0d0
+    this%prms_angles(11,11,30,2)= 119.7d0
+    this%prms_angles(11,11,45,1)= 70.0d0
+    this%prms_angles(11,11,45,2)= 121.2d0
+    this%prms_angles(11,11,56,1)= 80.0d0
+    this%prms_angles(11,11,56,2)= 125.0d0
+    this%prms_angles(11,16,16,1)= 63.0d0
+    this%prms_angles(11,16,16,2)= 111.0d0
+    this%prms_angles(11,16,56,1)= 50.0d0
+    this%prms_angles(11,16,56,2)= 109.5d0
+    this%prms_angles(11,45,16,1)= 70.0d0
+    this%prms_angles(11,45,16,2)= 121.2d0
+    this%prms_angles(11,45,24,1)= 50.0d0
+    this%prms_angles(11,45,24,2)= 121.2d0
+    this%prms_angles(11,56,16,1)= 60.0d0
+    this%prms_angles(11,56,16,2)= 117.0d0
+    this%prms_angles(11,56,5,1)=150.0d0
+    this%prms_angles(11,56,5,2)= 109.5d0
+    this%prms_angles(12,5,30,1)= 50.0d0
+    this%prms_angles(12,5,30,2)= 120.0d0
+    this%prms_angles(12,5,19,1)= 70.0d0
+    this%prms_angles(12,5,19,2)= 111.6d0
+    this%prms_angles(12,5,24,1)= 50.0d0
+    this%prms_angles(12,5,24,2)= 123.1d0
+    this%prms_angles(13,50,5,1)=150.0d0
+    this%prms_angles(13,50,5,2)= 120.0d0
+    this%prms_angles(14,49,18,1)= 70.0d0
+    this%prms_angles(14,49,18,2)= 117.0d0
+    this%prms_angles(14,49,5,1)=150.0d0
+    this%prms_angles(14,49,5,2)= 126.0d0
+    this%prms_angles(14,5,19,1)= 70.0d0
+    this%prms_angles(14,5,19,2)= 120.0d0
+    this%prms_angles(14,5,24,1)= 50.0d0
+    this%prms_angles(14,5,24,2)= 120.0d0
+    this%prms_angles(16,2,16,1)= 63.0d0
+    this%prms_angles(16,2,16,2)= 117.0d0
+    this%prms_angles(16,2,44,1)= 70.0d0
+    this%prms_angles(16,2,44,2)= 116.6d0
+    this%prms_angles(16,2,53,1)= 80.0d0
+    this%prms_angles(16,2,53,2)= 120.4d0
+    this%prms_angles(16,2,54,1)= 70.0d0
+    this%prms_angles(16,2,54,2)= 117.0d0
+    this%prms_angles(16,2,55,1)= 80.0d0
+    this%prms_angles(16,2,55,2)= 110.0d0
+    this%prms_angles(16,2,56,1)= 80.0d0
+    this%prms_angles(16,2,56,2)= 115.0d0
+    this%prms_angles(16,3,19,1)= 70.0d0
+    this%prms_angles(16,3,19,2)= 125.0d0
+    this%prms_angles(16,7,18,1)= 70.0d0
+    this%prms_angles(16,7,18,2)= 120.0d0
+    this%prms_angles(16,7,19,1)= 70.0d0
+    this%prms_angles(16,7,19,2)= 120.0d0
+    this%prms_angles(16,7,49,1)= 70.0d0
+    this%prms_angles(16,7,49,2)= 120.0d0
+    this%prms_angles(16,7,5,1)= 70.0d0
+    this%prms_angles(16,7,5,2)= 120.0d0
+    this%prms_angles(16,16,5,1)= 63.0d0
+    this%prms_angles(16,16,5,2)= 114.0d0
+    this%prms_angles(16,16,16,1)= 40.0d0
+    this%prms_angles(16,16,16,2)= 109.5d0
+    this%prms_angles(16,16,20,1)= 63.0d0
+    this%prms_angles(16,16,20,2)= 110.0d0
+    this%prms_angles(16,16,21,1)= 63.0d0
+    this%prms_angles(16,16,21,2)= 110.0d0
+    this%prms_angles(16,16,25,1)= 50.0d0
+    this%prms_angles(16,16,25,2)= 109.5d0
+    this%prms_angles(16,16,26,1)= 50.0d0
+    this%prms_angles(16,16,26,2)= 109.5d0
+    this%prms_angles(16,16,31,1)= 50.0d0
+    this%prms_angles(16,16,31,2)= 109.5d0
+    this%prms_angles(16,16,33,1)= 50.0d0
+    this%prms_angles(16,16,33,2)= 109.5d0
+    this%prms_angles(16,16,44,1)= 80.0d0
+    this%prms_angles(16,16,44,2)= 109.7d0
+    this%prms_angles(16,16,45,1)= 50.0d0
+    this%prms_angles(16,16,45,2)= 109.5d0
+    this%prms_angles(16,16,46,1)= 80.0d0
+    this%prms_angles(16,16,46,2)= 111.2d0
+    this%prms_angles(16,16,47,1)= 80.0d0
+    this%prms_angles(16,16,47,2)= 111.2d0
+    this%prms_angles(16,16,51,1)= 80.0d0
+    this%prms_angles(16,16,51,2)= 111.2d0
+    this%prms_angles(16,16,55,1)= 50.0d0
+    this%prms_angles(16,16,55,2)= 109.5d0
+    this%prms_angles(16,16,56,1)= 50.0d0
+    this%prms_angles(16,16,56,2)= 109.5d0
+    this%prms_angles(16,16,60,1)= 50.0d0
+    this%prms_angles(16,16,60,2)= 114.7d0
+    this%prms_angles(16,16,61,1)= 50.0d0
+    this%prms_angles(16,16,61,2)= 108.6d0
+    this%prms_angles(16,20,52,1)= 80.0d0
+    this%prms_angles(16,20,52,2)= 180.0d0
+    this%prms_angles(16,21,21,1)= 80.0d0
+    this%prms_angles(16,21,21,2)= 180.0d0
+    this%prms_angles(16,44,16,1)= 50.0d0
+    this%prms_angles(16,44,16,2)= 118.0d0
+    this%prms_angles(16,44,24,1)= 50.0d0
+    this%prms_angles(16,44,24,2)= 118.0d0
+    this%prms_angles(16,46,24,1)= 50.0d0
+    this%prms_angles(16,46,24,2)= 118.4d0
+    this%prms_angles(16,47,16,1)= 50.0d0
+    this%prms_angles(16,47,16,2)= 109.5d0
+    this%prms_angles(16,47,24,1)= 50.0d0
+    this%prms_angles(16,47,24,2)= 109.5d0
+    this%prms_angles(16,47,5,1)=150.0d0
+    this%prms_angles(16,47,5,2)= 109.5d0
+    this%prms_angles(16,51,16,1)= 50.0d0
+    this%prms_angles(16,51,16,2)= 109.5d0
+    this%prms_angles(16,51,24,1)= 50.0d0
+    this%prms_angles(16,51,24,2)= 109.5d0
+    this%prms_angles(16,51,5,1)=150.0d0
+    this%prms_angles(16,51,5,2)= 109.5d0
+    this%prms_angles(16,55,32,1)= 55.0d0
+    this%prms_angles(16,55,32,2)= 108.5d0
+    this%prms_angles(16,55,5,1)=150.0d0
+    this%prms_angles(16,55,5,2)= 109.5d0
+    this%prms_angles(16,56,16,1)= 60.0d0
+    this%prms_angles(16,56,16,2)= 109.5d0
+    this%prms_angles(16,56,5,1)=150.0d0
+    this%prms_angles(16,56,5,2)= 109.5d0
+    this%prms_angles(16,56,58,1)=100.0d0
+    this%prms_angles(16,56,58,2)= 120.5d0
+    this%prms_angles(16,60,16,1)= 62.0d0
+    this%prms_angles(16,60,16,2)=  98.9d0
+    this%prms_angles(16,60,5,1)=150.0d0
+    this%prms_angles(16,60,5,2)=  90.0d0
+    this%prms_angles(16,60,60,1)= 68.0d0
+    this%prms_angles(16,60,60,2)= 103.7d0
+    this%prms_angles(16,61,34,1)= 43.0d0
+    this%prms_angles(16,61,34,2)=  96.0d0
+    this%prms_angles(16,61,5,1)=150.0d0
+    this%prms_angles(16,61,5,2)=  90.0d0
+    this%prms_angles(18,7,5,1)= 70.0d0
+    this%prms_angles(18,7,5,2)= 120.0d0
+    this%prms_angles(18,49,5,1)=150.0d0
+    this%prms_angles(18,49,5,2)= 126.0d0
+    this%prms_angles(19,7,49,1)= 70.0d0
+    this%prms_angles(19,7,49,2)= 120.0d0
+    this%prms_angles(19,7,5,1)= 70.0d0
+    this%prms_angles(19,7,5,2)= 120.0d0
+    this%prms_angles(19,5,24,1)= 50.0d0
+    this%prms_angles(19,5,24,2)= 120.0d0
+    this%prms_angles(21,21,36,1)= 50.0d0
+    this%prms_angles(21,21,36,2)= 180.0d0
+    this%prms_angles(22,5,5,1)= 70.0d0
+    this%prms_angles(22,5,5,2)= 121.0d0
+    this%prms_angles(22,16,16,1)= 50.0d0
+    this%prms_angles(22,16,16,2)= 109.0d0
+    this%prms_angles(22,16,22,1)= 77.0d0
+    this%prms_angles(22,16,22,2)= 109.1d0
+    this%prms_angles(22,16,25,1)= 50.0d0
+    this%prms_angles(22,16,25,2)= 109.5d0
+    this%prms_angles(22,16,26,1)= 50.0d0
+    this%prms_angles(22,16,26,2)= 109.5d0
+    this%prms_angles(24,44,24,1)= 35.0d0
+    this%prms_angles(24,44,24,2)= 120.0d0
+    this%prms_angles(24,46,24,1)= 35.0d0
+    this%prms_angles(24,46,24,2)= 120.0d0
+    this%prms_angles(24,47,24,1)= 35.0d0
+    this%prms_angles(24,47,24,2)= 109.5d0
+    this%prms_angles(24,47,5,1)=150.0d0
+    this%prms_angles(24,47,5,2)= 109.5d0
+    this%prms_angles(24,51,24,1)= 35.0d0
+    this%prms_angles(24,51,24,2)= 109.5d0
+    this%prms_angles(24,51,5,1)=150.0d0
+    this%prms_angles(24,51,5,2)= 109.5d0
+    this%prms_angles(25,16,11,1)= 50.0d0
+    this%prms_angles(25,16,11,2)= 109.5d0
+    this%prms_angles(25,16,20,1)= 50.0d0
+    this%prms_angles(25,16,20,2)= 110.0d0
+    this%prms_angles(25,16,21,1)= 50.0d0
+    this%prms_angles(25,16,21,2)= 110.0d0
+    this%prms_angles(25,16,25,1)= 35.0d0
+    this%prms_angles(25,16,25,2)= 109.5d0
+    this%prms_angles(25,16,44,1)= 50.0d0
+    this%prms_angles(25,16,44,2)= 109.5d0
+    this%prms_angles(25,16,45,1)= 50.0d0
+    this%prms_angles(25,16,45,2)= 109.5d0
+    this%prms_angles(25,16,46,1)= 50.0d0
+    this%prms_angles(25,16,46,2)= 109.5d0
+    this%prms_angles(25,16,51,1)= 50.0d0
+    this%prms_angles(25,16,51,2)= 109.5d0
+    this%prms_angles(25,16,55,1)= 50.0d0
+    this%prms_angles(25,16,55,2)= 109.5d0
+    this%prms_angles(25,16,56,1)= 50.0d0
+    this%prms_angles(25,16,56,2)= 109.5d0
+    this%prms_angles(25,16,60,1)= 50.0d0
+    this%prms_angles(25,16,60,2)= 109.5d0
+    this%prms_angles(25,16,61,1)= 50.0d0
+    this%prms_angles(25,16,61,2)= 109.5d0
+    this%prms_angles(26,16,26,1)= 35.0d0
+    this%prms_angles(26,16,26,2)= 109.5d0
+    this%prms_angles(26,16,45,1)= 50.0d0
+    this%prms_angles(26,16,45,2)= 109.5d0
+    this%prms_angles(26,16,56,1)= 50.0d0
+    this%prms_angles(26,16,56,2)= 109.5d0
+    this%prms_angles(28,2,2,1)= 50.0d0
+    this%prms_angles(28,2,2,2)= 120.0d0
+    this%prms_angles(28,2,11,1)= 50.0d0
+    this%prms_angles(28,2,11,2)= 115.0d0
+    this%prms_angles(28,2,16,1)= 50.0d0
+    this%prms_angles(28,2,16,2)= 115.0d0
+    this%prms_angles(28,2,53,1)= 50.0d0
+    this%prms_angles(28,2,53,2)= 120.0d0
+    this%prms_angles(28,2,55,1)= 50.0d0
+    this%prms_angles(28,2,55,2)= 120.0d0
+    this%prms_angles(28,11,45,1)= 50.0d0
+    this%prms_angles(28,11,45,2)= 119.1d0
+    this%prms_angles(28,11,56,1)= 50.0d0
+    this%prms_angles(28,11,56,2)= 113.0d0
+    this%prms_angles(28,18,49,1)= 50.0d0
+    this%prms_angles(28,18,49,2)= 120.0d0
+    this%prms_angles(28,19,5,1)= 50.0d0
+    this%prms_angles(28,19,5,2)= 120.0d0
+    this%prms_angles(29,2,44,1)= 50.0d0
+    this%prms_angles(29,2,44,2)= 120.0d0
+    this%prms_angles(29,2,53,1)= 50.0d0
+    this%prms_angles(29,2,53,2)= 119.0d0
+    this%prms_angles(29,2,55,1)= 50.0d0
+    this%prms_angles(29,2,55,2)= 107.0d0
+    this%prms_angles(29,2,56,1)= 50.0d0
+    this%prms_angles(29,2,56,2)= 107.0d0
+    this%prms_angles(29,9,45,1)= 50.0d0
+    this%prms_angles(29,9,45,2)= 123.0d0
+    this%prms_angles(29,9,49,1)= 50.0d0
+    this%prms_angles(29,9,49,2)= 123.0d0
+    this%prms_angles(29,13,50,1)= 50.0d0
+    this%prms_angles(29,13,50,2)= 115.5d0
+    this%prms_angles(29,14,49,1)= 50.0d0
+    this%prms_angles(29,14,49,2)= 120.0d0
+    this%prms_angles(29,14,5,1)= 50.0d0
+    this%prms_angles(29,14,5,2)= 120.0d0
+    this%prms_angles(30,8,8,1)= 50.0d0
+    this%prms_angles(30,8,8,2)= 120.0d0
+    this%prms_angles(30,8,11,1)= 50.0d0
+    this%prms_angles(30,8,11,2)= 120.0d0
+    this%prms_angles(30,8,30,1)= 35.0d0
+    this%prms_angles(30,8,30,2)= 119.0d0
+    this%prms_angles(30,11,8,1)= 50.0d0
+    this%prms_angles(30,11,8,2)= 120.0d0
+    this%prms_angles(30,11,16,1)= 50.0d0
+    this%prms_angles(30,11,16,2)= 120.0d0
+    this%prms_angles(30,11,30,1)= 35.0d0
+    this%prms_angles(30,11,30,2)= 120.0d0
+    this%prms_angles(31,16,8,1)= 50.0d0
+    this%prms_angles(31,16,8,2)= 109.5d0
+    this%prms_angles(31,16,11,1)= 50.0d0
+    this%prms_angles(31,16,11,2)= 109.5d0
+    this%prms_angles(31,16,21,1)= 50.0d0
+    this%prms_angles(31,16,21,2)= 110.0d0
+    this%prms_angles(31,16,31,1)= 35.0d0
+    this%prms_angles(31,16,31,2)= 109.5d0
+    this%prms_angles(32,55,5,1)=150.0d0
+    this%prms_angles(32,55,5,2)= 109.5d0
+    this%prms_angles(32,55,58,1)= 45.0d0
+    this%prms_angles(32,55,58,2)= 108.5d0
+    this%prms_angles(33,16,33,1)= 35.0d0
+    this%prms_angles(33,16,33,2)= 109.5d0
+    this%prms_angles(33,16,47,1)= 50.0d0
+    this%prms_angles(33,16,47,2)= 109.5d0
+    this%prms_angles(34,61,34,1)= 35.0d0
+    this%prms_angles(34,61,34,2)=  92.1d0
+    this%prms_angles(34,61,5,1)=150.0d0
+    this%prms_angles(34,61,5,2)=  90.0d0
+    this%prms_angles(35,35,57,1)=  0.0d0
+    this%prms_angles(35,35,57,2)= 127.7d0
+    this%prms_angles(35,57,35,1)=100.0d0
+    this%prms_angles(35,57,35,2)= 104.5d0
+    this%prms_angles(37,5,5,1)= 70.0d0
+    this%prms_angles(37,5,5,2)= 118.8d0
+    this%prms_angles(37,16,16,1)= 50.0d0
+    this%prms_angles(37,16,16,2)= 106.0d0
+    this%prms_angles(1,53,5,1)=150.0d0
+    this%prms_angles(1,53,5,2)= 120.0d0
+    this%prms_angles(1,55,5,1)=150.0d0
+    this%prms_angles(1,55,5,2)= 109.5d0
+    this%prms_angles(1,56,5,1)=150.0d0
+    this%prms_angles(1,56,5,2)= 109.5d0
+    this%prms_angles(1,60,5,1)=150.0d0
+    this%prms_angles(1,60,5,2)= 180.0d0
+    this%prms_angles(1,61,5,1)=150.0d0
+    this%prms_angles(1,61,5,2)= 180.0d0
+    this%prms_angles(44,2,53,1)= 80.0d0
+    this%prms_angles(44,2,53,2)= 122.9d0
+    this%prms_angles(45,2,50,1)= 70.0d0
+    this%prms_angles(45,2,50,2)= 118.6d0
+    this%prms_angles(45,2,53,1)= 80.0d0
+    this%prms_angles(45,2,53,2)= 120.9d0
+    this%prms_angles(45,2,5,1)= 70.0d0
+    this%prms_angles(45,2,5,2)= 115.4d0
+    this%prms_angles(45,6,50,1)= 70.0d0
+    this%prms_angles(45,6,50,2)= 126.2d0
+    this%prms_angles(45,9,49,1)= 70.0d0
+    this%prms_angles(45,9,49,2)= 113.9d0
+    this%prms_angles(46,5,46,1)= 70.0d0
+    this%prms_angles(46,5,46,2)= 120.0d0
+    this%prms_angles(46,5,50,1)= 70.0d0
+    this%prms_angles(46,5,50,2)= 119.3d0
+    this%prms_angles(46,5,5,1)= 70.0d0
+    this%prms_angles(46,5,5,2)= 116.0d0
+    this%prms_angles(50,2,53,1)= 80.0d0
+    this%prms_angles(50,2,53,2)= 122.5d0
+    this%prms_angles(50,13,50,1)= 70.0d0
+    this%prms_angles(50,13,50,2)= 129.1d0
+    this%prms_angles(53,2,53,1)= 80.0d0
+    this%prms_angles(53,2,53,2)= 126.0d0
+    this%prms_angles(53,2,55,1)= 80.0d0
+    this%prms_angles(53,2,55,2)= 120.0d0
+    this%prms_angles(53,2,56,1)= 80.0d0
+    this%prms_angles(53,2,56,2)= 125.0d0
+    this%prms_angles(54,2,54,1)= 80.0d0
+    this%prms_angles(54,2,54,2)= 126.0d0
+    this%prms_angles(54,58,54,1)=140.0d0
+    this%prms_angles(54,58,54,2)= 119.9d0
+    this%prms_angles(54,58,55,1)= 45.0d0
+    this%prms_angles(54,58,55,2)= 108.2d0
+    this%prms_angles(54,58,56,1)=100.0d0
+    this%prms_angles(54,58,56,2)= 108.2d0
+    this%prms_angles(55,58,56,1)= 45.0d0
+    this%prms_angles(55,58,56,2)= 102.6d0
+    this%prms_angles(56,16,20,1)= 50.0d0
+    this%prms_angles(56,16,20,2)= 110.0d0
+    this%prms_angles(56,16,21,1)= 50.0d0
+    this%prms_angles(56,16,21,2)= 110.0d0
+    this%prms_angles(56,16,45,1)= 50.0d0
+    this%prms_angles(56,16,45,2)= 109.5d0
+    this%prms_angles(56,16,56,1)=160.0d0
+    this%prms_angles(56,16,56,2)= 101.0d0
+    this%prms_angles(56,58,56,1)= 45.0d0
+    this%prms_angles(56,58,56,2)= 102.6d0
+    this%prms_angles(58,56,5,1)=150.0d0
+    this%prms_angles(58,56,5,2)= 109.5d0
+    this%prms_angles(58,56,58,1)=100.0d0
+    this%prms_angles(58,56,58,2)= 120.5d0
+    this%prms_angles(1,2,53,1)= 80.0d0
+    this%prms_angles(1,2,53,2)= 120.6d0
+    this%prms_angles(1,5,50,1)= 70.0d0
+    this%prms_angles(1,5,50,2)= 123.3d0
+    this%prms_angles(1,14,49,1)= 70.0d0
+    this%prms_angles(1,14,49,2)= 120.0d0
+    this%prms_angles(1,14,5,1)= 70.0d0
+    this%prms_angles(1,14,5,2)= 120.0d0
+  end subroutine set_amberangles
 
 !  subroutine set_amberbonds(this,p1,p2)
 !    class(amber), intent(inout) :: this
@@ -365,25 +931,25 @@ contains
 !1   close(12)
 !  end subroutine set_amberbonds
 
-  subroutine set_amberbends(this,p1,p2,p3)
-    class(amber), intent(inout) :: this
-    integer                     :: i
-    real(4) x1,x2
-    character(2) pa,pb,pc,p1,p2,p3
-    open(12,file='/tmp/amber/amber_angles.prm',status='old')
-    this%prms_bends(1)=0.d0
-    this%prms_bends(2)=0.d0
-    do i=1,281
-       read(12,*,end=1)pa,pb,pc,x1,x2
-       if(pa.eq.p1.and.pc.eq.p3.or.pa.eq.p3.and.pc.eq.p1)then
-          if(pb.eq.p2)then
-             this%prms_bends(1)=dble(x1)
-             this%prms_bends(2)=dble(x2)
-          end if
-       end if
-    end do
-1   close(12)
-  end subroutine set_amberbends
+!  subroutine set_amberbends(this,p1,p2,p3)
+!    class(amber), intent(inout) :: this
+!    integer                     :: i
+!    real(4) x1,x2
+!    character(2) pa,pb,pc,p1,p2,p3
+!    open(12,file='/tmp/amber/amber_angles.prm',status='old')
+!    this%prms_bends(1)=0.d0
+!    this%prms_bends(2)=0.d0
+!    do i=1,281
+!       read(12,*,end=1)pa,pb,pc,x1,x2
+!       if(pa.eq.p1.and.pc.eq.p3.or.pa.eq.p3.and.pc.eq.p1)then
+!          if(pb.eq.p2)then
+!             this%prms_bends(1)=dble(x1)
+!             this%prms_bends(2)=dble(x2)
+!          end if
+!       end if
+!    end do
+!1   close(12)
+!  end subroutine set_amberbends
 
   subroutine set_amberdihedrals(this,p1,p2,p3,p4)
     class(amber), intent(inout) :: this
