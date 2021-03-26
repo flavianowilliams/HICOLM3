@@ -28,25 +28,39 @@ module amber_module
   public :: amber
 
   type :: amber
+     integer                  :: natp
      real(8)                  :: prms_tors(4)
-     real(8)                  :: prms_vdw(2)
+     real(8), allocatable     :: prms_vdw(:,:)
      real(8), allocatable     :: prms_angles(:,:,:,:)
      real(8), allocatable     :: prms_bonds(:,:,:)
      character(2),allocatable :: atp(:)
    contains
+     procedure :: set_natp
+     procedure :: get_natp
      procedure :: set_amberbonds
      procedure :: set_amberangles
      procedure :: set_amberdihedrals
      procedure :: set_ambervdw
      procedure :: set_ambertypes
-     generic   :: set_amber => set_ambervdw, set_amberdihedrals
+     generic   :: set_amber => set_amberdihedrals
   end type amber
 
 contains
 
+  subroutine set_natp(this,natp)
+    class(amber), intent(inout) :: this
+    integer, intent(in)         :: natp
+    this%natp=natp
+  end subroutine set_natp
+
+  integer function get_natp(this)
+    class(amber), intent(inout) :: this
+    get_natp=this%natp
+  end function get_natp
+
   subroutine set_ambertypes(this)
     class(amber), intent(inout) :: this
-    allocate(this%atp(62))
+    allocate(this%atp(this%get_natp()))
     this%atp(1)='Br'
     this%atp(2)='C'
     this%atp(3)='C*'
@@ -113,7 +127,7 @@ contains
 
   subroutine set_amberbonds(this)
     class(amber), intent(inout) :: this
-    allocate(this%prms_bonds(62,62,2))
+    allocate(this%prms_bonds(this%get_natp(),this%get_natp(),2))
     this%prms_bonds(1,5,1)=172.0d0
     this%prms_bonds(1,5,2)=1.8900d0
     this%prms_bonds(1,16,1)=159.0d0
@@ -348,7 +362,7 @@ contains
 
   subroutine set_amberangles(this)
     class(amber), intent(inout) :: this
-    allocate(this%prms_angles(62,62,62,2))
+    allocate(this%prms_angles(this%get_natp(),this%get_natp(),this%get_natp(),2))
     this%prms_angles(1,5,5,1)= 70.0d0
     this%prms_angles(1,5,5,2)= 118.8d0
     this%prms_angles(1,16,16,1)= 50.0d0
@@ -984,22 +998,113 @@ contains
     close(13)
   end subroutine set_amberdihedrals
 
-  subroutine set_ambervdw(this,p1)
+  subroutine set_ambervdw(this)
     class(amber), intent(inout) :: this
-    integer                     :: i
-    real(4) x1,x2
-    character(2) pa,p1
-    open(12,file='/tmp/amber/amber_vdw.prm',status='old')
-    this%prms_vdw(1)=0.d0
-    this%prms_vdw(2)=0.d0
-    do i=1,43
-       read(12,*,end=1)pa,x1,x2
-       if(pa.eq.p1)then
-          this%prms_vdw(1)=dble(x1)
-          this%prms_vdw(2)=dble(x2)
-       end if
-    end do
-1   close(12)
+    allocate(this%prms_vdw(this%get_natp(),2))
+    this%prms_vdw(1,1)=2.2200d0
+    this%prms_vdw(1,2)=0.3200d0
+    this%prms_vdw(2,1)=1.9080d0
+    this%prms_vdw(2,2)=0.0860d0
+    this%prms_vdw(3,1)=1.9080d0
+    this%prms_vdw(3,2)=0.0860d0
+    this%prms_vdw(4,1)=1.7131d0
+    this%prms_vdw(4,2)=0.4598d0
+    this%prms_vdw(10,1)=1.9480d0
+    this%prms_vdw(10,2)=0.2650d0
+    this%prms_vdw(15,1)=3.3950d0
+    this%prms_vdw(15,2)=0.0001d0
+    this%prms_vdw(16,1)=1.9080d0
+    this%prms_vdw(16,2)=0.1094d0
+    this%prms_vdw(22,1)=1.7500d0
+    this%prms_vdw(22,2)=0.0610d0
+    this%prms_vdw(24,1)=0.6000d0
+    this%prms_vdw(24,2)=0.0157d0
+    this%prms_vdw(25,1)=1.3870d0
+    this%prms_vdw(25,2)=0.0157d0
+    this%prms_vdw(26,1)=1.2870d0
+    this%prms_vdw(26,2)=0.0157d0
+    this%prms_vdw(27,1)=1.1870d0
+    this%prms_vdw(27,2)=0.0157d0
+    this%prms_vdw(28,1)=1.4090d0
+    this%prms_vdw(28,2)=0.0150d0
+    this%prms_vdw(29,1)=1.3590d0
+    this%prms_vdw(29,2)=0.0150d0
+    this%prms_vdw(30,1)=1.4590d0
+    this%prms_vdw(30,2)=0.0150d0
+    this%prms_vdw(31,1)=1.4870d0
+    this%prms_vdw(31,2)=0.0157d0
+    this%prms_vdw(32,1)=0.0000d0
+    this%prms_vdw(32,2)=0.0000d0
+    this%prms_vdw(33,1)=1.1000d0
+    this%prms_vdw(33,2)=0.0157d0
+    this%prms_vdw(34,1)=0.6000d0
+    this%prms_vdw(34,2)=0.0157d0
+    this%prms_vdw(35,1)=0.0000d0
+    this%prms_vdw(35,2)=0.0000d0
+    this%prms_vdw(36,1)=1.4590d0
+    this%prms_vdw(36,2)=0.0150d0
+    this%prms_vdw(37,1)=2.3500d0
+    this%prms_vdw(37,2)=0.4000d0
+    this%prms_vdw(38,1)=5.0000d0
+    this%prms_vdw(38,2)=0.1000d0
+    this%prms_vdw(39,1)=2.4700d0
+    this%prms_vdw(39,2)=0.1000d0
+    this%prms_vdw(40,1)=1.8680d0
+    this%prms_vdw(40,2)=0.0028d0
+    this%prms_vdw(41,1)=2.6580d0
+    this%prms_vdw(41,2)=0.0003d0
+    this%prms_vdw(42,1)=1.1370d0
+    this%prms_vdw(42,2)=0.0183d0
+    this%prms_vdw(1,1)=0.0000d0
+    this%prms_vdw(1,2)=0.0000d0
+    this%prms_vdw(43,1)=0.7926d0
+    this%prms_vdw(43,2)=0.8947d0
+    this%prms_vdw(44,1)=1.8240d0
+    this%prms_vdw(44,2)=0.1700d0
+    this%prms_vdw(47,1)=1.8240d0
+    this%prms_vdw(47,2)=0.1700d0
+    this%prms_vdw(48,1)=1.8680d0
+    this%prms_vdw(48,2)=0.0028d0
+    this%prms_vdw(52,1)=1.8240d0
+    this%prms_vdw(52,2)=0.1700d0
+    this%prms_vdw(53,1)=1.6612d0
+    this%prms_vdw(53,2)=0.2100d0
+    this%prms_vdw(54,1)=1.6612d0
+    this%prms_vdw(54,2)=0.2100d0
+    this%prms_vdw(55,1)=1.7210d0
+    this%prms_vdw(55,2)=0.2104d0
+    this%prms_vdw(56,1)=1.6837d0
+    this%prms_vdw(56,2)=0.1700d0
+    this%prms_vdw(57,1)=1.7683d0
+    this%prms_vdw(57,2)=0.1520d0
+    this%prms_vdw(58,1)=2.1000d0
+    this%prms_vdw(58,2)=0.2000d0
+    this%prms_vdw(59,1)=2.9560d0
+    this%prms_vdw(59,2)=0.0002d0
+    this%prms_vdw(60,1)=2.0000d0
+    this%prms_vdw(60,2)=0.2500d0
+    this%prms_vdw(61,1)=2.0000d0
+    this%prms_vdw(61,2)=0.2500d0
+    this%prms_vdw(62,1)=1.1000d0
+    this%prms_vdw(62,2)=0.0125d0
   end subroutine set_ambervdw
+
+!  subroutine set_ambervdw(this,p1)
+!    class(amber), intent(inout) :: this
+!    integer                     :: i
+!    real(4) x1,x2
+!    character(2) pa,p1
+!    open(12,file='/tmp/amber/amber_vdw.prm',status='old')
+!    this%prms_vdw(1)=0.d0
+!    this%prms_vdw(2)=0.d0
+!    do i=1,43
+!       read(12,*,end=1)pa,x1,x2
+!       if(pa.eq.p1)then
+!          this%prms_vdw(1)=dble(x1)
+!          this%prms_vdw(2)=dble(x2)
+!       end if
+!    end do
+!1   close(12)
+!  end subroutine set_ambervdw
 
 end module amber_module

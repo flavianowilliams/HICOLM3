@@ -101,9 +101,6 @@ contains
        do j=1,this%get_torsmax()
           this%ttors(i,j)='amber'
        end do
-       do j=1,this%get_torsmax()
-          this%titors(i,j)='amber'
-       end do
     end do
     do i=1,this%nspcs
        this%tvdw(i)='amber'
@@ -159,20 +156,28 @@ contains
 
   subroutine set_parvdw(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: nx
+    integer                          :: i,j,k,nx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     allocate(this%parvdw(this%nspcs,2),this%spcvdw(this%nspcs,2))
     nx=1
     do i=1,this%nspcs
-       call this%amber%set_amber(this%spcs(i))
-       e1=this%amber%prms_vdw(2)
-       s1=this%amber%prms_vdw(1)
+       do k=1,this%amber%get_natp()
+          if(this%spcs(i).eq.this%amber%atp(k))then
+             e1=this%amber%prms_vdw(k,2)
+             s1=this%amber%prms_vdw(k,1)
+          end if
+       end do
+!       call this%amber%set_amber(this%spcs(i))
        if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
           do j=i,this%nspcs
-             call this%amber%set_amber(this%spcs(j))
-             e2=this%amber%prms_vdw(2)
-             s2=this%amber%prms_vdw(1)
+             do k=1,this%amber%get_natp()
+                if(this%spcs(j).eq.this%amber%atp(k))then
+                   e2=this%amber%prms_vdw(k,2)
+                   s2=this%amber%prms_vdw(k,1)
+                end if
+             end do
+!             call this%amber%set_amber(this%spcs(j))
              if(e2.ge.1.d-4.and.s2.ge.1.d-1)then
                 this%parvdw(nx,1)=sqrt(e1*e2)
                 this%parvdw(nx,2)=s1+s2
@@ -208,8 +213,8 @@ contains
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
           !          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
-          do k=1,62
-             do l=1,62
+          do k=1,this%amber%get_natp()
+             do l=1,this%amber%get_natp()
                 if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
                      this%amber%atp(l).eq.this%tpmol(i,i2))then
                    do m=1,2
@@ -236,9 +241,9 @@ contains
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
-          do k=1,62
-             do l=1,62
-                do m=1,62
+          do k=1,this%amber%get_natp()
+             do l=1,this%amber%get_natp()
+                do m=1,this%amber%get_natp()
                    if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
                         this%amber%atp(l).eq.this%tpmol(i,i2).and.&
                         this%amber%atp(m).eq.this%tpmol(i,i3))then
@@ -323,8 +328,8 @@ contains
     call this%set_itorsmax()
     allocate(this%itorscnt(this%get_nmol()))
     allocate(this%molitors(this%get_nmol(),this%itorsmax,4))
-    allocate(this%titors(this%get_nmol(),this%itorsmax))
     allocate(this%paritors(this%get_nmol(),this%itorsmax,4))
+    allocate(this%titors(this%get_nmol(),this%itorsmax))
     if(this%itorsmax.eq.0)goto 3
 1   read(5,*,end=3)key
     if(key.ne.'&FORCE_FIELD')goto 1
@@ -371,7 +376,12 @@ contains
 2         continue
        end do
     end do
-3   rewind(5)
+    rewind(5)
+    return
+3   do i=1,this%get_nmol()
+       this%itorscnt(i)=0
+    end do
+    rewind(5)
   end subroutine set_paritors
 
   subroutine set_extra_parvdw(this)
