@@ -59,6 +59,7 @@ contains
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
     call constructor%amber%set_ambertypes()
+    call constructor%amber%set_amberbonds()
   end function constructor
 
   subroutine check(this)

@@ -197,16 +197,28 @@ contains
 
   subroutine set_parbnd(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2
+    integer                          :: i,j,k,l,m,i1,i2
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
     call this%forcefield_init()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
-          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
-          do k=1,2
-             this%parbnd(i,j,k)=this%amber%prms_bonds(k)
+          !          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
+          do k=1,62
+             do l=1,62
+                if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
+                     this%amber%atp(l).eq.this%tpmol(i,i2))then
+                   do m=1,2
+                      this%parbnd(i,j,m)=this%amber%prms_bonds(k,l,m)
+                   end do
+                elseif(this%amber%atp(k).eq.this%tpmol(i,i2).and.&
+                     this%amber%atp(l).eq.this%tpmol(i,i1))then
+                   do m=1,2
+                      this%parbnd(i,j,m)=this%amber%prms_bonds(k,l,m)
+                   end do
+                end if
+             end do
           end do
        end do
     end do
