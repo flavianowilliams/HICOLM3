@@ -477,6 +477,9 @@ contains
           this%v(i,j)=this%v(i,j)/this%get_rconv()
        end do
     end do
+    call this%set_a(this%get_a()/this%get_rconv())
+    call this%set_b(this%get_b()/this%get_rconv())
+    call this%set_c(this%get_c()/this%get_rconv())
     do i=1,this%get_natom()
        this%xa(i)=this%xa(i)/this%get_rconv()
        this%ya(i)=this%ya(i)/this%get_rconv()
