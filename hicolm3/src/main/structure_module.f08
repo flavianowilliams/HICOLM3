@@ -73,8 +73,11 @@ module structure_module
      procedure          :: set_volume2
      procedure          :: set_nfree
      procedure          :: get_nfree
+     procedure          :: set_a
      procedure          :: get_a
+     procedure          :: set_b
      procedure          :: get_b
+     procedure          :: set_c
      procedure          :: get_c
      procedure          :: get_alpha
      procedure          :: get_beta
@@ -200,15 +203,36 @@ contains
     get_volume=this%volume
   end function get_volume
 
+  subroutine set_a(this,a)
+    implicit none
+    class(structure), intent(inout) :: this
+    real(8), intent(in)             :: a
+    this%a=a
+  end subroutine set_a
+
   double precision function get_a(this)
     class(structure), intent(in) :: this
     get_a=this%a
   end function get_a
 
+  subroutine set_b(this,b)
+    implicit none
+    class(structure), intent(inout) :: this
+    real(8), intent(in)             :: b
+    this%b=b
+  end subroutine set_b
+
   double precision function get_b(this)
     class(structure), intent(in) :: this
     get_b=this%b
   end function get_b
+
+  subroutine set_c(this,c)
+    implicit none
+    class(structure), intent(inout) :: this
+    real(8), intent(in)             :: c
+    this%c=c
+  end subroutine set_c
 
   double precision function get_c(this)
     class(structure), intent(in) :: this
