@@ -227,10 +227,10 @@ program HICOLM
         call cpu_time(t3)
         write(6,'(5x,a19)')'CPU time evaluation'
         write(6,'(4x,84a1)')('-',i=1,84)
-        write(6,'(5x,a18,1x,f8.4)')'Preparing system =',(t2-t1)
-        write(6,'(5x,7x,a11,1x,f8.4)')'MD(cycle) =',(t3-t2)/md%get_nstep()
+        write(6,'(5x,a21,1x,f8.4)')'To preparing system =',(t2-t1)
+        write(6,'(5x,10x,a11,1x,f8.4)')'MD(cycle) =',(t3-t2)/md%get_nstep()
         write(6,'(4x,84a1)')('-',i=1,84)
-        write(6,'(5x,4x,a14,1x,f8.4,1x,a7)')'Elapsed time =',(t3-t1),'seconds'
+        write(6,'(5x,7x,a14,1x,f8.4,1x,a7)')'Elapsed time =',(t3-t1),'seconds'
         write(6,*)
         lval=.true.
      end if
