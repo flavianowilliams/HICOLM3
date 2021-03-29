@@ -157,9 +157,9 @@ program HICOLM
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
         if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
-        call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
+        call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%set_mmolar()                     ! calculando massa molecular
         call md%set_global()                     ! calculando a carga total do sistema
         call md%set_zat()                        ! atribuindo numero atomico
