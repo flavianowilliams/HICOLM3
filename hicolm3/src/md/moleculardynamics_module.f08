@@ -175,7 +175,7 @@ contains
     write(2,'(a9)')'PRIMCOORD'
     write(2,'(2i5)')this%get_natom(),1
     do i=1,this%get_natom()
-       write(1,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
+       write(2,'(i5,3f14.8,2x,3f14.8,2x,3f14.8)')this%zat(i),&
             this%xa(i)*this%get_rconv(),&
             this%ya(i)*this%get_rconv(),&
             this%za(i)*this%get_rconv(),&
