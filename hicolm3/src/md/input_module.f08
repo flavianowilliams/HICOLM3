@@ -484,6 +484,12 @@ contains
        this%xa(i)=this%xa(i)/this%get_rconv()
        this%ya(i)=this%ya(i)/this%get_rconv()
        this%za(i)=this%za(i)/this%get_rconv()
+!       this%vax(i)=this%vax(i)/(this%get_rconv()/this%get_tconv())
+!       this%vay(i)=this%vay(i)/(this%get_rconv()/this%get_tconv())
+!       this%vaz(i)=this%vaz(i)/(this%get_rconv()/this%get_tconv())
+!       this%fax(i)=this%fax(i)/(this%get_econv()/this%get_rconv())
+!       this%fay(i)=this%fay(i)/(this%get_econv()/this%get_rconv())
+!       this%faz(i)=this%faz(i)/(this%get_econv()/this%get_rconv())
     end do
     do i=1,this%get_nmol()
        do j=1,this%nxmol(i)

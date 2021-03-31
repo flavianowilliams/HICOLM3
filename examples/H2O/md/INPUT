@@ -12,7 +12,7 @@
  timestep 0.000000001
  pressure 1.0
  temperature 300
- rcutoff 9.0 0.1
+ rcutoff 8.0 0.1
  ensemble npt berendsen 0.5 1.0
- restart 0
+ restart 1
 &END

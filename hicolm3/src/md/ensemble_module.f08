@@ -118,9 +118,9 @@ contains
        this%vax(i)=this%vax(i)+this%fax(i)*(0.5d0*this%get_timestep())/this%mass(i)
        this%vay(i)=this%vay(i)+this%fay(i)*(0.5d0*this%get_timestep())/this%mass(i)
        this%vaz(i)=this%vaz(i)+this%faz(i)*(0.5d0*this%get_timestep())/this%mass(i)
-       this%xa(i)=this%xa(i)+eta*this%vax(i)*this%get_timestep()
-       this%ya(i)=this%ya(i)+eta*this%vay(i)*this%get_timestep()
-       this%za(i)=this%za(i)+eta*this%vaz(i)*this%get_timestep()
+       this%xa(i)=this%xa(i)*eta+this%vax(i)*this%get_timestep()
+       this%ya(i)=this%ya(i)*eta+this%vay(i)*this%get_timestep()
+       this%za(i)=this%za(i)*eta+this%vaz(i)*this%get_timestep()
     end do
     do i=1,3
        do j=1,3
