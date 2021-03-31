@@ -173,8 +173,9 @@ program HICOLM
         call md%set_vdwcorr()                    ! calculando correção de Van der Waals
         call md%print()                          ! imprimindo parametros da MD
         call md%set_velocity()                   ! atribuindo velocidades iniciais
-        call md%set_ekinetic()                   ! atribuindo velocidades iniciais
-        call md%set_pressure()                   ! atribuindo velocidades iniciais
+        call md%set_ekinetic()                   ! atribuindo energia cinecita
+        call md%set_pressure()                   ! atribuindo pressao
+        call md%set_temperature()                ! atribuindo temperatura
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%interaction_prepare()            ! preparando campo de forca
