@@ -405,9 +405,9 @@ contains
        xvz=this%v(1,1)+this%v(2,1)+this%v(3,1)
        yvz=this%v(1,2)+this%v(2,2)+this%v(3,2)
        zvz=this%v(1,3)+this%v(2,3)+this%v(3,3)
-       this%xa(i)=this%xa(i)-xvz*anint(this%xa(i)/xvz)
-       this%ya(i)=this%ya(i)-yvz*anint(this%ya(i)/yvz)
-       this%za(i)=this%za(i)-zvz*anint(this%za(i)/zvz)
+       this%xa(i)=this%xa(i)-xvz*nint(this%xa(i)/xvz)
+       this%ya(i)=this%ya(i)-yvz*nint(this%ya(i)/yvz)
+       this%za(i)=this%za(i)-zvz*nint(this%za(i)/zvz)
     end do
   end subroutine ccp
 
