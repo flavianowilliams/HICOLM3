@@ -293,8 +293,8 @@ contains
        envdw_corr=envdw_corr+es*natp1*natp2
        virvdw_corr=virvdw_corr+vs*natp1*natp2
     end do
-    this%encorr=2.d0*envdw_corr*this%get_pi()/this%get_volume()
-    this%vircorr=2.d0*virvdw_corr*this%get_pi()/this%get_volume()
+    this%encorr=2.0d0*this%get_pi()*envdw_corr/this%get_volume()
+    this%vircorr=-2.0d0*this%get_pi()*virvdw_corr/this%get_volume()
   end subroutine set_vdwcorr
 
   double precision function get_encorr(this)

@@ -343,13 +343,11 @@ contains
           case('amber')
              write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),&
-                  this%parbend(i,j,1)*this%get_econv()/this%get_aconv()**2,&
-                  this%parbend(i,j,2)*this%get_aconv()
+                  this%parbend(i,j,1)*this%get_econv(),this%parbend(i,j,2)*this%get_aconv()
           case('harm')
              write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),&
-                  this%parbend(i,j,1)*this%get_econv()/this%get_aconv()**2,&
-                  this%parbend(i,j,2)*this%get_aconv()
+                  this%parbend(i,j,1)*this%get_econv(),this%parbend(i,j,2)*this%get_aconv()
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)

@@ -505,10 +505,10 @@ contains
        do j=1,this%bendscnt(i)
           select case(this%tbends(i,j))
           case('amber')
-             this%parbend(i,j,1)=this%parbend(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           case('harm')
-             this%parbend(i,j,1)=this%parbend(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           end select
        end do
