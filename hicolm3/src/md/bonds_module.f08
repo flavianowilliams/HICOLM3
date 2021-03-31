@@ -74,7 +74,7 @@ contains
     implicit none
     class(bonds), intent(inout) :: this
     real(8), intent(in)         :: fr,dr
-    this%virbond=-fr*dr
+    this%virbond=-fr*dr**2
   end subroutine set_virbond
 
   double precision function get_virbond(this)

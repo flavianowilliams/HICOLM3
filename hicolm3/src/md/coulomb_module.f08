@@ -100,7 +100,7 @@ contains
     implicit none
     class(coulomb), intent(inout) :: this
     real(8), intent(in)           :: fr,dr
-    this%vircoul=-fr*dr
+    this%vircoul=-fr*dr**2
   end subroutine set_vircoul
 
   double precision function get_vircoul(this)

@@ -85,7 +85,7 @@ contains
     implicit none
     class(vanderwaals), intent(inout) :: this
     real(8), intent(in)               :: fr,dr
-    this%virvdw=-fr*dr
+    this%virvdw=-fr*dr**2
   end subroutine set_virvdw
 
   double precision function get_virvdw(this)
