@@ -40,6 +40,7 @@ module moleculardynamics_module
      procedure :: print
      procedure :: set_time
      procedure :: get_time
+     procedure :: convert_units
   end type moleculardynamics
 
   interface moleculardynamics
@@ -84,6 +85,87 @@ contains
     class(moleculardynamics), intent(inout) :: this
     get_time=this%time
   end function get_time
+
+  subroutine convert_units(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+    integer                                 :: i,j
+    do i=1,3
+       do j=1,3
+          this%v(i,j)=this%v(i,j)/this%get_rconv()
+       end do
+    end do
+    call this%set_a(this%get_a()/this%get_rconv())
+    call this%set_b(this%get_b()/this%get_rconv())
+    call this%set_c(this%get_c()/this%get_rconv())
+    do i=1,this%get_natom()
+       this%xa(i)=this%xa(i)/this%get_rconv()
+       this%ya(i)=this%ya(i)/this%get_rconv()
+       this%za(i)=this%za(i)/this%get_rconv()
+       this%vax(i)=this%vax(i)/(this%get_rconv()/this%get_tconv())
+       this%vay(i)=this%vay(i)/(this%get_rconv()/this%get_tconv())
+       this%vaz(i)=this%vaz(i)/(this%get_rconv()/this%get_tconv())
+       this%fax(i)=this%fax(i)/(this%get_econv()/this%get_rconv())
+       this%fay(i)=this%fay(i)/(this%get_econv()/this%get_rconv())
+       this%faz(i)=this%faz(i)/(this%get_econv()/this%get_rconv())
+    end do
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
+          this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
+       end do
+    end do
+    do i=1,this%get_nmol()
+       do j=1,this%bondscnt(i)
+          select case(this%tbonds(i,j))
+          case('amber')
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          case('harm')
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          end select
+       end do
+       do j=1,this%bendscnt(i)
+          select case(this%tbends(i,j))
+          case('amber')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          case('harm')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          end select
+       end do
+       do j=1,this%torscnt(i)
+          select case(this%ttors(i,j))
+          case('amber')
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_econv()
+             this%partors(i,j,3)=this%partors(i,j,3)/this%get_aconv()
+          case('harm')
+             this%partors(i,j,1)=this%partors(i,j,1)/(this%get_econv()/this%get_aconv()**2)
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
+          end select
+       end do
+    end do
+    do i=1,this%get_nvdw()
+       select case(this%tvdw(i))
+       case('amber')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       case('lj')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       end select
+    end do
+    call this%set_timestep(this%get_timestep()/this%get_tconv())
+    call this%set_temp(this%get_temp()/this%get_teconv())
+    call this%set_press(this%get_press()/this%get_pconv())
+    call this%set_tstat(this%get_tstat()/this%get_tconv())
+    call this%set_pstat(this%get_pstat()/this%get_tconv())
+    call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
+    call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
+    call this%set_bfactor(this%get_bfactor()*this%get_pconv())
+  end subroutine convert_units
 
   subroutine read_geometry(this)
     implicit none

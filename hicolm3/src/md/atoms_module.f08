@@ -125,12 +125,18 @@ contains
   subroutine set_velocity(this)
     implicit none
     class(atoms), intent(inout) :: this
-    integer                     :: i
+    integer                     :: i,j,k,nx
     allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
-    do i=1,this%get_natom()
-       this%vax(i)=sqrt(this%get_temp()/this%mass(i))
-       this%vay(i)=sqrt(this%get_temp()/this%mass(i))
-       this%vaz(i)=sqrt(this%get_temp()/this%mass(i))
+    nx=1
+    do i=1,this%get_nmol()
+       do j=1,this%ntmol(i)
+          do k=1,this%nxmol(i)
+             this%vax(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+             this%vay(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+             this%vaz(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+             nx=nx+1
+          end do
+       end do
     end do
   end subroutine set_velocity
 

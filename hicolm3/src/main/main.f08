@@ -156,6 +156,8 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
+        call md%interaction_prepare()            ! preparando campo de forca
+        call md%set_velocity()                   ! atribuindo velocidades iniciais
         if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
@@ -172,13 +174,11 @@ program HICOLM
         call md%set_volume()                     ! calculando volume da supercelula
         call md%set_vdwcorr()                    ! calculando correção de Van der Waals
         call md%print()                          ! imprimindo parametros da MD
-        call md%set_velocity()                   ! atribuindo velocidades iniciais
         call md%set_ekinetic()                   ! atribuindo energia cinecita
         call md%set_pressure()                   ! atribuindo pressao
         call md%set_temperature()                ! atribuindo temperatura
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
-        call md%interaction_prepare()            ! preparando campo de forca
         call md%print_out()                      ! imprimindo valores em hicolm.out
         call md%set_sigma()                      ! atribuindo sigma para o termostato Berendsen
         call md%set_forcefield()                 ! calculo das interacoes moleculares
