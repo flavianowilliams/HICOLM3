@@ -186,6 +186,15 @@ program HICOLM
         call md%set_time(0.d0)                   ! setando instante inicial
         call cpu_time(t2)
 
+        write(6,*)('#',i=1,93)
+        write(6,*)('MD (CYCLE) ',i=1,8)
+        write(6,*)('#',i=1,93)
+        write(6,*)
+        write(6,'(2x,a27,f12.6,1x,a8)')'  Correction of VdW energy:',&
+             md%get_encorr()*md%get_econv(),'kcal/mol'
+        write(6,'(2x,a27,f12.6,1x,a3)')'Correction of VdW pressure:',&
+             (md%get_vircorr()/(3.d0*md%get_volume()))*md%get_pconv(),'atm'
+        write(6,*)
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'
         write(6,'(4x,111a1)')('-',i=1,84)
