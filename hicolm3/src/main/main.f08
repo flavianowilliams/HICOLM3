@@ -193,7 +193,7 @@ program HICOLM
         write(6,'(2x,a27,f12.6,1x,a8)')'  Correction of VdW energy:',&
              md%get_encorr()*md%get_econv(),'kcal/mol'
         write(6,'(2x,a27,f12.6,1x,a3)')'Correction of VdW pressure:',&
-             (md%get_vircorr()/(3.d0*md%get_volume()))*md%get_pconv(),'atm'
+             (-md%get_vircorr()/(3.d0*md%get_volume()))*md%get_pconv(),'atm'
         write(6,*)
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,10)'##','STEP','TIME','VOLUME','TEMPERATURE' ,'PRESSURE','E(TOTAL)'

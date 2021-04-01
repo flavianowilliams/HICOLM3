@@ -535,9 +535,6 @@ contains
          this%get_drcutoff()*this%get_rconv(),'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
-    write(6,'(2x,a27,f12.6)')'  Correction of VdW energy:',this%get_encorr()*this%get_econv()
-    write(6,'(2x,a27,f12.6)')'Correction of VdW pressure:',this%get_vircorr()*this%get_econv()
-    write(6,*)
   end subroutine print
 
 end module moleculardynamics_module
