@@ -137,6 +137,7 @@ contains
        this%vay(i)=this%vay(i)+this%fay(i)*0.5d0*this%get_timestep()/this%mass(i)
        this%vaz(i)=this%vaz(i)+this%faz(i)*0.5d0*this%get_timestep()/this%mass(i)
     end do
+    call this%set_ekinetic()
     qui=sqrt(1.d0+this%get_timestep()*&
          (this%get_sigma()/this%get_ekinetic()-1.d0)/this%get_tstat())
     do i=1,this%get_natom()
