@@ -168,7 +168,6 @@ contains
              s1=this%amber%prms_vdw(k,1)
           end if
        end do
-!       call this%amber%set_amber(this%spcs(i))
        if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
           do j=i,this%nspcs
              do k=1,this%amber%get_natp()
@@ -177,7 +176,6 @@ contains
                    s2=this%amber%prms_vdw(k,1)
                 end if
              end do
-!             call this%amber%set_amber(this%spcs(j))
              if(e2.ge.1.d-4.and.s2.ge.1.d-1)then
                 this%parvdw(nx,1)=sqrt(e1*e2)
                 this%parvdw(nx,2)=s1+s2
@@ -212,7 +210,6 @@ contains
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
-          !          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2))
           do k=1,this%amber%get_natp()
              do l=1,this%amber%get_natp()
                 if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
@@ -260,10 +257,6 @@ contains
                 end do
              end do
           end do
-!          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
-!          do k=1,2
-!             this%parbend(i,j,k)=this%amber%prms_bends(k)
-!          end do
        end do
     end do
   end subroutine set_parbend
@@ -432,7 +425,7 @@ contains
     call this%set_nvdw(nvdw)
 3   rewind(5)
     return
-4   write(6,*)'ERROR: The type does not match with that defined in TOPOLOGY file!'
+4   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
   end subroutine set_extra_parvdw

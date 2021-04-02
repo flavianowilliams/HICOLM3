@@ -38,7 +38,7 @@ module interaction_module
      type(angles)                  :: tht
      type(coulomb)                 :: coul
      type(vanderwaals)             :: vdw
-     integer, private              :: nbonds
+!     integer, private              :: nbonds
      real(8), private              :: enpot
      real(8), private              :: virtot
      real(8), private              :: encorr
@@ -59,8 +59,8 @@ module interaction_module
      procedure :: set_vdwcorr
      procedure :: get_encorr
      procedure :: get_vircorr
-     procedure :: set_nbonds
-     procedure :: get_nbonds
+!     procedure :: set_nbonds
+!     procedure :: get_nbonds
   end type interaction
 
 contains
@@ -69,7 +69,7 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
-    call this%set_nbonds()
+!    call this%set_nbonds()
   end subroutine interaction_prepare
 
   subroutine set_forcefield(this)
@@ -163,22 +163,22 @@ contains
     call this%set_virtot(virtot+this%get_vircorr())
   end subroutine set_forcefield
 
-  subroutine set_nbonds(this)
-    implicit none
-    class(interaction), intent(inout) :: this
-    integer                           :: nx,i
-    nx=0
-    do i=1,this%get_nmol()
-       nx=nx+this%ntmol(i)*this%bondscnt(i)
-    end do
-    this%nbonds=nx
-  end subroutine set_nbonds
+!  subroutine set_nbonds(this)
+!    implicit none
+!    class(interaction), intent(inout) :: this
+!    integer                           :: nx,i
+!    nx=0
+!    do i=1,this%get_nmol()
+!       nx=nx+this%ntmol(i)*this%bondscnt(i)
+!    end do
+!    this%nbonds=nx
+!  end subroutine set_nbonds
 
-  integer function get_nbonds(this)
-    implicit none
-    class(interaction), intent(inout) :: this
-    get_nbonds=this%nbonds
-  end function get_nbonds
+!  integer function get_nbonds(this)
+!    implicit none
+!    class(interaction), intent(inout) :: this
+!    get_nbonds=this%nbonds
+!  end function get_nbonds
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
     implicit none
