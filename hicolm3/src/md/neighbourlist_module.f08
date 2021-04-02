@@ -58,7 +58,7 @@ contains
     implicit none
     class(neighbourlist), intent(inout) :: this
     integer                             :: i,j,k,l,m,n,n1,n2,nx
-    real(8)                             :: xvz,yvz,zvz,dr2
+    real(8)                             :: xvz,yvz,zvz,dr
     n1=1
     n2=1+this%nxmol(1)
     do i=1,this%get_nmol()
@@ -67,8 +67,8 @@ contains
              nx=1
              do l=n2,this%get_natom()
                 call this%mic(n1,l,xvz,yvz,zvz)
-                dr2=xvz**2+yvz**2+zvz**2
-                if(dr2.le.this%get_rcutoff()**2)then
+                dr=sqrt(xvz**2+yvz**2+zvz**2)
+                if(dr.le.this%get_rcutoff())then
                    this%ilist(n1,nx)=l
                    nx=nx+1
                 end if
