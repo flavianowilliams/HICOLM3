@@ -96,27 +96,27 @@ then
     rm $exe_dir/hftir
 fi
 #
-#cd $path/contrib/ftir
+cd $path/contrib/ftir
 #
-#if [ -f "hftir" ]
-#then
-#    rm hftir
-#fi
-#make -s clean
-#make -s all
-#if [ ! -f "hftir" ]
-#then
-#    echo
-#    echo -e "\e[31mError in compiling hftir. The installation will be finish!"
-#    echo
-#    exit
-#fi
-#make -s clean
+if [ -f "hftir" ]
+then
+    rm hftir
+fi
+make -s clean
+make -s all
+if [ ! -f "hftir" ]
+then
+    echo
+    echo -e "\e[31mError in compiling hftir. The installation will be finish!"
+    echo
+    exit
+fi
+make -s clean
 #
 cp $path/src/HICOLM $exe_dir/HICOLM.bin
 cp -r $path/contrib/R/report/*.R $aux_dir/HICOLM/hicolm/R/report/.
 cp -r $path/contrib/R/report/*.Rmd $aux_dir/HICOLM/hicolm/R/report/.
-#mv $path/contrib/ftir/hftir $exe_dir/hftir
+mv $path/contrib/ftir/hftir $exe_dir/hftir
 mv $path/contrib/properties/hproperties $exe_dir/hproperties
 mv $path/contrib/system/hsystem $exe_dir/hsystem
 #

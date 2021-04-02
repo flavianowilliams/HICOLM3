@@ -162,7 +162,7 @@ contains
   subroutine set_topology(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2,i,j,k,nx,nxx
+    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2,i,j,k,nx
     real(8)                     :: f1,f2
     character(2)                :: mtd,spcvdw1,spcvdw2
     character(4)                :: coulop
