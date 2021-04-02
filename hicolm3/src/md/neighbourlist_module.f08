@@ -66,7 +66,7 @@ contains
           do k=1,this%nxmol(i)
              nx=1
              do l=n2,this%get_natom()
-                call this%mic(n1,n2,xvz,yvz,zvz)
+                call this%mic(n1,l,xvz,yvz,zvz)
                 dr=sqrt(xvz**2+yvz**2+zvz**2)
                 if(dr.le.this%get_rcutoff())then
                    this%ilist(n1,nx)=l
