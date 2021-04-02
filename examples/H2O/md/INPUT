@@ -6,7 +6,7 @@
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &MD
- nstep 100
+ nstep 1000
  nrelax 0
  nframes 1
  timestep 0.0001
