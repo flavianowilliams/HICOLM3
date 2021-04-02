@@ -135,6 +135,7 @@ contains
           nj=this%ilist(i,j)
           call this%mic(ni,nj,xvz,yvz,zvz)
           dr=sqrt(xvz**2+yvz**2+zvz**2)
+          if(dr.le.1.d-6)print*,dr
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())

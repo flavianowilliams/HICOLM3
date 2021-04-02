@@ -72,9 +72,9 @@ contains
     integer                        :: i
     real(8)                        :: qui
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)+this%fax(i)*(0.5d0*this%get_timestep())/this%mass(i)
-       this%vay(i)=this%vay(i)+this%fay(i)*(0.5d0*this%get_timestep())/this%mass(i)
-       this%vaz(i)=this%vaz(i)+this%faz(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vax(i)=this%vax(i)+this%fax(i)*0.5d0*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+this%fay(i)*0.5d0*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+this%faz(i)*0.5d0*this%get_timestep()/this%mass(i)
        this%xa(i)=this%xa(i)+this%vax(i)*this%get_timestep()
        this%ya(i)=this%ya(i)+this%vay(i)*this%get_timestep()
        this%za(i)=this%za(i)+this%vaz(i)*this%get_timestep()
@@ -82,9 +82,9 @@ contains
     call this%ccp()
     call this%set_forcefield()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)+this%fax(i)*(0.5d0*this%get_timestep())/this%mass(i)
-       this%vay(i)=this%vay(i)+this%fay(i)*(0.5d0*this%get_timestep())/this%mass(i)
-       this%vaz(i)=this%vaz(i)+this%faz(i)*(0.5d0*this%get_timestep())/this%mass(i)
+       this%vax(i)=this%vax(i)+this%fax(i)*0.5d0*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+this%fay(i)*0.5d0*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+this%faz(i)*0.5d0*this%get_timestep()/this%mass(i)
     end do
     call this%set_ekinetic()
     qui=sqrt(1.d0+this%get_timestep()*(this%get_sigma()/&

@@ -7,14 +7,20 @@
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
 &SYS
- cell 25.0 25.0 25.0
- nmol 1
- H2O 309 3
+ cell 21.0 21.0 21.0
+ nmol 2
+ H2O 300 3
+ H2O2 9 3
 &END
 
 &FORCE_FIELD
  electrostatic fscs
  molecule H2O
+  8 1 1
+  OW HW HW
+ -0.834 0.417 0.417
+ end_molecule
+ molecule H2O2
   8 1 1
   OW HW HW
  -0.834 0.417 0.417

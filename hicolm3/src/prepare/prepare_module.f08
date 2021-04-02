@@ -307,7 +307,7 @@ contains
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
-       write(6,'(2x,a10,1x,i5)')'Dihedrals:',this%torscnt(i)+this%itorscnt(i)
+       write(6,'(2x,a10,1x,i5)')'Dihedrals:',this%torscnt(i)!+this%itorscnt(i)
        write(6,'(2x,111a1)')('-',j=1,90)
        write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
