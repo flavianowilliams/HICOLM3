@@ -437,10 +437,10 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(2x,a10,1x,i5)')'Dihedrals:',this%torscnt(i)
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,90a1)')('-',j=1,90)
        write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,90a1)')('-',j=1,90)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('amber')
@@ -457,9 +457,30 @@ contains
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           end select
        end do
-       write(6,'(2x,111a1)')('-',j=1,90)
        write(6,*)
-       write(6,'(2x,111a1)')('*',j=1,90)
+       write(6,'(3x,a19,1x,i5)')'Improper dihedrals:',this%torscnt(i)
+       write(6,'(2x,90a1)')('-',j=1,90)
+       write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
+            ' i ','Site','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,90a1)')('-',j=1,90)
+       do j=1,this%torscnt(i)
+          select case(this%ttors(i,j))
+          case('amber')
+             i1=nint(this%partors(i,j,1))
+             f1=this%partors(i,j,2)*this%get_econv()
+             f2=this%partors(i,j,3)*this%get_aconv()
+             i2=nint(this%partors(i,j,4))
+             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')j,&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
+          case('harm')
+             f1=this%partors(i,j,1)*this%get_econv()/this%get_aconv()**2
+             f2=this%partors(i,j,2)*this%get_aconv()
+             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
+          end select
+       end do
+       write(6,*)
+       write(6,'(2x,90a1)')('*',j=1,90)
        write(6,*)
     end do
     write(6,'(39x,a14)')'INTERMOLECULAR'
