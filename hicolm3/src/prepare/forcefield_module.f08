@@ -36,7 +36,6 @@ module forcefield_module
      type(amber)               :: amber
      integer, private          :: nspcs
      integer, private          :: nvdw
-     integer, private          :: itorsmax
      integer, allocatable      :: itorscnt(:)
      integer, allocatable      :: molitors(:,:,:)
      character(4), private     :: coulop
@@ -70,7 +69,6 @@ module forcefield_module
      procedure          :: get_nvdw
      procedure          :: set_coulop
      procedure          :: get_coulop
-     procedure          :: set_itorsmax
   end type forcefield
 
   interface forcefield
@@ -90,6 +88,7 @@ contains
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
+    allocate(this%titors(this%get_nmol(),this%get_torsmax()))
     allocate(this%tvdw(this%nspcs))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
@@ -100,6 +99,9 @@ contains
        end do
        do j=1,this%get_torsmax()
           this%ttors(i,j)='amber'
+       end do
+       do j=1,this%get_torsmax()
+          this%titors(i,j)='amber'
        end do
     end do
     do i=1,this%nspcs
@@ -264,7 +266,7 @@ contains
   subroutine set_partors(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4
-    allocate(this%partors(this%get_nmol(),this%get_bendmax(),4))
+    allocate(this%partors(this%get_nmol(),this%get_torsmax(),4))
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
           i1=this%moltors(i,j,1)
@@ -280,101 +282,23 @@ contains
     end do
   end subroutine set_partors
 
-  subroutine set_itorsmax(this)
-    class(forcefield), intent(inout) :: this
-    integer                          :: i1,nxx
-    character(12)                    :: key
-    nxx=0
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'idihedrals')then
-                   backspace(5)
-                   read(5,*)key,i1
-                end if
-             end do
-          end if
-2         continue
-       end do
-       nxx=max(nxx,i1)
-    end do
-    this%itorsmax=nxx
-    call this%set_torsmax(this%get_torsmax()+this%itorsmax)
-3   rewind(5)
-  end subroutine set_itorsmax
-
   subroutine set_paritors(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i2,i3
-    character(12)                    :: key
-    character(10)                    :: cvar
-    i3=0
-    call this%set_itorsmax()
-    allocate(this%itorscnt(this%get_nmol()))
-    allocate(this%molitors(this%get_nmol(),this%itorsmax,4))
-    allocate(this%paritors(this%get_nmol(),this%itorsmax,4))
-    allocate(this%titors(this%get_nmol(),this%itorsmax))
-    if(this%itorsmax.eq.0)goto 3
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             backspace(5)
-             read(5,*)key,cvar
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))then
-                   i3=k
-                end if
-             end do
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'idihedrals')then
-                   backspace(5)
-                   read(5,*)key,this%itorscnt(i3)
-                   do k=1,this%itorscnt(i3)
-                      read(5,*)i2
-                      backspace(5)
-                      read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
-                           this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2)
-                      backspace(5)
-                      select case(this%titors(i3,i2))
-                      case('amber')
-                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
-                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
-                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,4)
-                      case('harm')
-                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
-                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
-                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,2)
-                      end select
-                   end do
-                end if
-             end do
-          end if
-2         continue
+    integer                          :: i1,i2,i3,i4
+    allocate(this%paritors(this%get_nmol(),this%get_torsmax(),4))
+    do i=1,this%get_nmol()
+       do j=1,this%itorscnt(i)
+          i1=this%molitors(i,j,1)
+          i2=this%molitors(i,j,2)
+          i3=this%molitors(i,j,3)
+          i4=this%molitors(i,j,4)
+          call this%amber%set_amber&
+               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
+          do k=1,4
+             this%paritors(i,j,k)=this%amber%prms_tors(k)
+          end do
        end do
     end do
-    rewind(5)
-    return
-3   do i=1,this%get_nmol()
-       this%itorscnt(i)=0
-    end do
-    rewind(5)
   end subroutine set_paritors
 
   subroutine set_extra_parvdw(this)
