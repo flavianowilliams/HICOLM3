@@ -30,6 +30,7 @@ module amber_module
   type :: amber
      integer                  :: natp
      real(8), allocatable     :: prms_vdw(:,:)
+     real(8), allocatable     :: prms_itors(:,:,:,:,:)
      real(8), allocatable     :: prms_tors(:,:,:,:,:)
      real(8), allocatable     :: prms_angles(:,:,:,:)
      real(8), allocatable     :: prms_bonds(:,:,:)
@@ -40,6 +41,7 @@ module amber_module
      procedure :: set_amberbonds
      procedure :: set_amberangles
      procedure :: set_amberdihedrals
+     procedure :: set_amberidihedrals
      procedure :: set_ambervdw
      procedure :: set_ambertypes
   end type amber
@@ -126,7 +128,15 @@ contains
 
   subroutine set_amberbonds(this)
     class(amber), intent(inout) :: this
+    integer                     :: i,j,k
     allocate(this%prms_bonds(this%get_natp(),this%get_natp(),2))
+    do i=1,this%get_natp()
+       do j=1,this%get_natp()
+          do k=1,2
+             this%prms_bonds(i,j,k)=0.d0
+          end do
+       end do
+    end do
     this%prms_bonds(1,5,1)=172.0d0
     this%prms_bonds(1,5,2)=1.8900d0
     this%prms_bonds(1,16,1)=159.0d0
@@ -361,7 +371,17 @@ contains
 
   subroutine set_amberangles(this)
     class(amber), intent(inout) :: this
+    integer                     :: i,j,k,l
     allocate(this%prms_angles(this%get_natp(),this%get_natp(),this%get_natp(),2))
+    do i=1,this%get_natp()
+       do j=1,this%get_natp()
+          do k=1,this%get_natp()
+             do l=1,2
+                this%prms_angles(i,j,k,l)=0.d0
+             end do
+          end do
+       end do
+    end do
     this%prms_angles(1,5,5,1)= 70.0d0
     this%prms_angles(1,5,5,2)= 118.8d0
     this%prms_angles(1,16,16,1)= 50.0d0
@@ -928,49 +948,57 @@ contains
 
   subroutine set_amberdihedrals(this)
     class(amber), intent(inout) :: this
+    integer                     :: i,j,k,l,m
     allocate(&
-         this%prms_tors(this%get_natp(),this%get_natp(),this%get_natp(),this%get_natp(),3))
+         this%prms_tors(this%get_natp(),this%get_natp(),this%get_natp(),this%get_natp(),4))
+    do i=1,this%get_natp()
+       do j=1,this%get_natp()
+          do k=1,this%get_natp()
+             do l=1,this%get_natp()
+                do m=1,4
+                   this%prms_tors(i,j,k,l,m)=0.d0
+                end do
+             end do
+          end do
+       end do
+    end do
     this%prms_tors(30,5,5,30,1)= 0.03d0
     this%prms_tors(30,5,5,30,2)= 1
     this%prms_tors(30,5,5,30,3)= 180.0d0
+    this%prms_tors(30,5,5,30,4)= 0.0
   end subroutine set_amberdihedrals
 
-    !  subroutine set_amberdihedrals(this,p1,p2,p3,p4)
-    !    class(amber), intent(inout) :: this
-!    integer                     :: i
-!    real(4) x1,x2,x3,x4
-  !    character(2) pa,pb,pc,pd,p1,p2,p3,p4
-  !    open(12,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
-!    open(13,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
-!    this%prms_tors(1)=0.d0
-!    this%prms_tors(2)=0.d0
-!    this%prms_tors(3)=0.d0
-!    this%prms_tors(4)=0.d0
-!    do i=1,63
-!       read(12,*,end=1)pa,pb,pc,pd,x1,x2,x3,x4
-!       if(pb.eq.p2.and.pc.eq.p3.or.pb.eq.p3.and.pc.eq.p2)then
-!          this%prms_tors(1)=dble(x1)
-!          this%prms_tors(2)=dble(x2)
-!          this%prms_tors(3)=dble(x3)
-!          this%prms_tors(4)=dble(x4)
-!       end if
-!    end do
-!1   do i=1,100
-!       read(13,*,end=2)pa,pb,pc,pd,x1,x2,x3,x4
-!       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
-!          this%prms_tors(1)=dble(x1)
-!          this%prms_tors(2)=dble(x2)
-!          this%prms_tors(3)=dble(x3)
-!          this%prms_tors(4)=dble(x4)
-!       end if
-!    end do
-!2   close(12)
-!    close(13)
-!  end subroutine set_amberdihedrals
+  subroutine set_amberidihedrals(this)
+    class(amber), intent(inout) :: this
+    integer                     :: i,j,k,l,m
+    allocate(&
+         this%prms_itors(this%get_natp(),this%get_natp(),this%get_natp(),this%get_natp(),4))
+    do i=1,this%get_natp()
+       do j=1,this%get_natp()
+          do k=1,this%get_natp()
+             do l=1,this%get_natp()
+                do m=1,4
+                   this%prms_itors(i,j,k,l,m)=0.d0
+                end do
+             end do
+          end do
+       end do
+    end do
+    this%prms_itors(30,5,5,30,1)= 0.03d0
+    this%prms_itors(30,5,5,30,2)= 1
+    this%prms_itors(30,5,5,30,3)= 180.0d0
+    this%prms_itors(30,5,5,30,4)= 0.0
+  end subroutine set_amberidihedrals
 
   subroutine set_ambervdw(this)
     class(amber), intent(inout) :: this
+    integer                     :: i,j
     allocate(this%prms_vdw(this%get_natp(),2))
+    do i=1,this%get_natp()
+       do j=1,2
+          this%prms_vdw(i,j)=0.d0
+       end do
+    end do
     this%prms_vdw(1,1)=2.2200d0
     this%prms_vdw(1,2)=0.3200d0
     this%prms_vdw(2,1)=1.9080d0

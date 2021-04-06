@@ -36,6 +36,7 @@ module zmatrix_module
      integer, private     :: bondmax
      integer, private     :: bendmax
      integer, private     :: torsmax
+     integer, private     :: itorsmax
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
@@ -55,6 +56,8 @@ module zmatrix_module
      procedure          :: get_bendmax
      procedure          :: set_torsmax
      procedure          :: get_torsmax
+     procedure          :: set_itorsmax
+     procedure          :: get_itorsmax
      procedure          :: set_zmatrix_tol
      procedure          :: get_zmatrix_tol
   end type zmatrix
@@ -256,6 +259,17 @@ contains
     class(zmatrix), intent(in) :: this
     get_torsmax=this%torsmax
   end function get_torsmax
+
+  subroutine set_itorsmax(this,itorsmax)
+    class(zmatrix), intent(inout) :: this
+    integer                       :: itorsmax
+    this%itorsmax=itorsmax
+  end subroutine set_itorsmax
+
+  integer function get_itorsmax(this)
+    class(zmatrix), intent(in) :: this
+    get_itorsmax=this%itorsmax
+  end function get_itorsmax
 
   subroutine set_zmatrix_tol(this)
     class(zmatrix), intent(inout) :: this
