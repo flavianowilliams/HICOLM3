@@ -58,7 +58,7 @@ contains
     call constructor%set_bondmax(100)
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
-    call constructor%set_itorsmax(13)
+    call constructor%set_itorsmax(1000)
     call constructor%amber%set_natp(62)
     call constructor%amber%set_ambertypes()
     call constructor%amber%set_amberbonds()
