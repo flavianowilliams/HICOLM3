@@ -57,7 +57,7 @@ contains
   subroutine verlet_list(this)
     implicit none
     class(neighbourlist), intent(inout) :: this
-    integer                             :: i,j,k,l,m,n,n1,n2,nx
+    integer                             :: i,j,k,l,n1,n2,nx
     real(8)                             :: xvz,yvz,zvz,dr
     n1=1
     n2=1+this%nxmol(1)
