@@ -265,18 +265,29 @@ contains
 
   subroutine set_partors(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3,i4
-    allocate(this%partors(this%get_nmol(),this%get_torsmax(),4))
+    integer                          :: i1,i2,i3,i4,i,j,k,l,m,n,o
+    allocate(this%partors(this%get_nmol(),this%get_torsmax(),3))
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
           i1=this%moltors(i,j,1)
           i2=this%moltors(i,j,2)
           i3=this%moltors(i,j,3)
           i4=this%moltors(i,j,4)
-          call this%amber%set_amber&
-               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
-          do k=1,4
-             this%partors(i,j,k)=this%amber%prms_tors(k)
+          do k=1,this%amber%get_natp()
+             do l=1,this%amber%get_natp()
+                do m=1,this%amber%get_natp()
+                   do n=1,this%amber%get_natp()
+                      if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
+                           this%amber%atp(l).eq.this%tpmol(i,i2).and.&
+                           this%amber%atp(m).eq.this%tpmol(i,i3).and.&
+                           this%amber%atp(n).eq.this%tpmol(i,i4))then
+                         do o=1,3
+                            this%partors(i,j,o)=this%amber%prms_tors(k,l,m,n,o)
+                         end do
+                      end if
+                   end do
+                end do
+             end do
           end do
        end do
     end do
@@ -292,11 +303,11 @@ contains
           i2=this%molitors(i,j,2)
           i3=this%molitors(i,j,3)
           i4=this%molitors(i,j,4)
-          call this%amber%set_amber&
-               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
-          do k=1,4
-             this%paritors(i,j,k)=this%amber%prms_tors(k)
-          end do
+!          call this%amber%set_amber(this%tpmol(i,i1),this%tpmol(i,i2),&
+!               this%tpmol(i,i3),this%tpmol(i,i4))
+!          do k=1,4
+!             this%paritors(i,j,k)=this%amber%prms_tors(k)
+!          end do
        end do
     end do
   end subroutine set_paritors

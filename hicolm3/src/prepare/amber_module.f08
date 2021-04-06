@@ -29,8 +29,8 @@ module amber_module
 
   type :: amber
      integer                  :: natp
-     real(8)                  :: prms_tors(4)
      real(8), allocatable     :: prms_vdw(:,:)
+     real(8), allocatable     :: prms_tors(:,:,:,:,:)
      real(8), allocatable     :: prms_angles(:,:,:,:)
      real(8), allocatable     :: prms_bonds(:,:,:)
      character(2),allocatable :: atp(:)
@@ -42,7 +42,6 @@ module amber_module
      procedure :: set_amberdihedrals
      procedure :: set_ambervdw
      procedure :: set_ambertypes
-     generic   :: set_amber => set_amberdihedrals
   end type amber
 
 contains
@@ -927,76 +926,47 @@ contains
     this%prms_angles(1,14,5,2)= 120.0d0
   end subroutine set_amberangles
 
-!  subroutine set_amberbonds(this,p1,p2)
-!    class(amber), intent(inout) :: this
-!    integer                     :: i
-!    real(4) x1,x2
-!    character(2) pa,pb,p1,p2
-!    open(12,file='/tmp/amber/amber_bonds.prm',status='old')
-!    this%prms_bonds(1)=0.d0
-!    this%prms_bonds(2)=0.d0
-!    do i=1,115
-!       read(12,*,end=1)pa,pb,x1,x2
-!       if(pa.eq.p1.and.pb.eq.p2.or.pa.eq.p2.and.pb.eq.p1)then
-!          this%prms_bonds(1)=dble(x1)
-!          this%prms_bonds(2)=dble(x2)
-!       end if
-!    end do
-!1   close(12)
-!  end subroutine set_amberbonds
-
-!  subroutine set_amberbends(this,p1,p2,p3)
-!    class(amber), intent(inout) :: this
-!    integer                     :: i
-!    real(4) x1,x2
-!    character(2) pa,pb,pc,p1,p2,p3
-!    open(12,file='/tmp/amber/amber_angles.prm',status='old')
-!    this%prms_bends(1)=0.d0
-!    this%prms_bends(2)=0.d0
-!    do i=1,281
-!       read(12,*,end=1)pa,pb,pc,x1,x2
-!       if(pa.eq.p1.and.pc.eq.p3.or.pa.eq.p3.and.pc.eq.p1)then
-!          if(pb.eq.p2)then
-!             this%prms_bends(1)=dble(x1)
-!             this%prms_bends(2)=dble(x2)
-!          end if
-!       end if
-!    end do
-!1   close(12)
-!  end subroutine set_amberbends
-
-  subroutine set_amberdihedrals(this,p1,p2,p3,p4)
+  subroutine set_amberdihedrals(this)
     class(amber), intent(inout) :: this
-    integer                     :: i
-    real(4) x1,x2,x3,x4
-    character(2) pa,pb,pc,pd,p1,p2,p3,p4
-    open(12,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
-    open(13,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
-    this%prms_tors(1)=0.d0
-    this%prms_tors(2)=0.d0
-    this%prms_tors(3)=0.d0
-    this%prms_tors(4)=0.d0
-    do i=1,63
-       read(12,*,end=1)pa,pb,pc,pd,x1,x2,x3,x4
-       if(pb.eq.p2.and.pc.eq.p3.or.pb.eq.p3.and.pc.eq.p2)then
-          this%prms_tors(1)=dble(x1)
-          this%prms_tors(2)=dble(x2)
-          this%prms_tors(3)=dble(x3)
-          this%prms_tors(4)=dble(x4)
-       end if
-    end do
-1   do i=1,100
-       read(13,*,end=2)pa,pb,pc,pd,x1,x2,x3,x4
-       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
-          this%prms_tors(1)=dble(x1)
-          this%prms_tors(2)=dble(x2)
-          this%prms_tors(3)=dble(x3)
-          this%prms_tors(4)=dble(x4)
-       end if
-    end do
-2   close(12)
-    close(13)
+    allocate(&
+         this%prms_tors(this%get_natp(),this%get_natp(),this%get_natp(),this%get_natp(),3))
+    this%prms_tors(30,5,5,30,1)= 0.03d0
+    this%prms_tors(30,5,5,30,2)= 1
+    this%prms_tors(30,5,5,30,3)= 180.0d0
   end subroutine set_amberdihedrals
+
+    !  subroutine set_amberdihedrals(this,p1,p2,p3,p4)
+    !    class(amber), intent(inout) :: this
+!    integer                     :: i
+!    real(4) x1,x2,x3,x4
+  !    character(2) pa,pb,pc,pd,p1,p2,p3,p4
+  !    open(12,file='/tmp/amber/amber_dihedrals_general.prm',status='old')
+!    open(13,file='/tmp/amber/amber_dihedrals_proper.prm',status='old')
+!    this%prms_tors(1)=0.d0
+!    this%prms_tors(2)=0.d0
+!    this%prms_tors(3)=0.d0
+!    this%prms_tors(4)=0.d0
+!    do i=1,63
+!       read(12,*,end=1)pa,pb,pc,pd,x1,x2,x3,x4
+!       if(pb.eq.p2.and.pc.eq.p3.or.pb.eq.p3.and.pc.eq.p2)then
+!          this%prms_tors(1)=dble(x1)
+!          this%prms_tors(2)=dble(x2)
+!          this%prms_tors(3)=dble(x3)
+!          this%prms_tors(4)=dble(x4)
+!       end if
+!    end do
+!1   do i=1,100
+!       read(13,*,end=2)pa,pb,pc,pd,x1,x2,x3,x4
+!       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
+!          this%prms_tors(1)=dble(x1)
+!          this%prms_tors(2)=dble(x2)
+!          this%prms_tors(3)=dble(x3)
+!          this%prms_tors(4)=dble(x4)
+!       end if
+!    end do
+!2   close(12)
+!    close(13)
+!  end subroutine set_amberdihedrals
 
   subroutine set_ambervdw(this)
     class(amber), intent(inout) :: this
@@ -1088,23 +1058,5 @@ contains
     this%prms_vdw(62,1)=1.1000d0
     this%prms_vdw(62,2)=0.0125d0
   end subroutine set_ambervdw
-
-!  subroutine set_ambervdw(this,p1)
-!    class(amber), intent(inout) :: this
-!    integer                     :: i
-!    real(4) x1,x2
-!    character(2) pa,p1
-!    open(12,file='/tmp/amber/amber_vdw.prm',status='old')
-!    this%prms_vdw(1)=0.d0
-!    this%prms_vdw(2)=0.d0
-!    do i=1,43
-!       read(12,*,end=1)pa,x1,x2
-!       if(pa.eq.p1)then
-!          this%prms_vdw(1)=dble(x1)
-!          this%prms_vdw(2)=dble(x2)
-!       end if
-!    end do
-!1   close(12)
-!  end subroutine set_ambervdw
 
 end module amber_module

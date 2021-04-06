@@ -63,6 +63,7 @@ contains
     call constructor%amber%set_amberbonds()
     call constructor%amber%set_amberangles()
     call constructor%amber%set_ambervdw()
+    call constructor%amber%set_amberdihedrals()
   end function constructor
 
   subroutine check(this)
@@ -165,7 +166,7 @@ contains
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
        end do
-       write(11,'(1x,a9,1x,i3)')'dihedrals',(this%torscnt(i)+this%itorscnt(i))
+       write(11,'(1x,a9,1x,i3)')'dihedrals',this%torscnt(i)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('amber')
@@ -182,22 +183,22 @@ contains
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
-       do j=1,this%itorscnt(i)
-          select case(this%titors(i,j))
-          case('amber')
-             i1=nint(this%paritors(i,j,1))
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             i2=nint(this%paritors(i,j,4))
-             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
-                  this%titors(i,j),i1,f1,f2,i2
-          case('harm')
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
-                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
-          end select
-       end do
+!       do j=1,this%itorscnt(i)
+!          select case(this%titors(i,j))
+!          case('amber')
+!             i1=nint(this%paritors(i,j,1))
+!             f1=this%paritors(i,j,2)
+!             f2=this%paritors(i,j,3)
+!             i2=nint(this%paritors(i,j,4))
+!             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
+!                  this%titors(i,j),i1,f1,f2,i2
+!          case('harm')
+!             f1=this%paritors(i,j,2)
+!             f2=this%paritors(i,j,3)
+!             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
+!                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
+!          end select
+!       end do
     end do
     write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
     do i=1,this%get_nvdw()
@@ -331,23 +332,23 @@ contains
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
-       do j=1,this%itorscnt(i)
-          select case(this%titors(i,j))
-          case('amber')
-             i1=nint(this%paritors(i,j,1))
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             i2=nint(this%paritors(i,j,4))
-             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')(j+this%torscnt(i)),&
-                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
-          case('harm')
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')(j+this%torscnt(i)),&
-                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),this%paritors(i,j,1),&
-                  this%paritors(i,j,2)
-          end select
-       end do
+!       do j=1,this%itorscnt(i)
+!          select case(this%titors(i,j))
+!          case('amber')
+!             i1=nint(this%paritors(i,j,1))
+!             f1=this%paritors(i,j,2)
+!             f2=this%paritors(i,j,3)
+!             i2=nint(this%paritors(i,j,4))
+!             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')(j+this%torscnt(i)),&
+!                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
+!          case('harm')
+!             f1=this%paritors(i,j,2)
+!             f2=this%paritors(i,j,3)
+!             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')(j+this%torscnt(i)),&
+!                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),this%paritors(i,j,1),&
+!                  this%paritors(i,j,2)
+!          end select
+!       end do
        write(6,'(2x,111a1)')('-',j=1,90)
        write(6,*)
        write(6,'(2x,111a1)')('*',j=1,90)
