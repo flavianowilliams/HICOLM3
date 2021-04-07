@@ -88,7 +88,7 @@ contains
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
-    allocate(this%titors(this%get_nmol(),this%get_torsmax()))
+    allocate(this%titors(this%get_nmol(),this%get_itorsmax()))
     allocate(this%tvdw(this%nspcs))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
@@ -100,7 +100,7 @@ contains
        do j=1,this%get_torsmax()
           this%ttors(i,j)='amber'
        end do
-       do j=1,this%get_torsmax()
+       do j=1,this%get_itorsmax()
           this%titors(i,j)='amber'
        end do
     end do
@@ -304,11 +304,11 @@ contains
           do j=1,this%amber%get_natp()
              if(this%amber%atp(j).eq.this%tpmol(i,i1))n1=j
           end do
-          do i2=1,i1-1
+          do i2=i1+1,this%nxmol(i)
              do j=1,this%amber%get_natp()
                 if(this%amber%atp(j).eq.this%tpmol(i,i2))n2=j
              end do
-             do i3=1,i2-1
+             do i3=i2+1,this%nxmol(i)
                 do j=1,this%amber%get_natp()
                    if(this%amber%atp(j).eq.this%tpmol(i,i3))n3=j
                 end do
@@ -316,15 +316,11 @@ contains
                    do j=1,this%amber%get_natp()
                       if(this%amber%atp(j).eq.this%tpmol(i,i4))n4=j
                    end do
-!          i1=this%moltors(i,j,1)
-!          i2=this%moltors(i,j,2)
-!          i3=this%moltors(i,j,3)
-!          i4=this%moltors(i,j,4)
                    if(this%amber%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
                       do l=1,4
                          this%paritors(i,nx,l)=this%amber%prms_itors(n1,n2,n3,n4,l)
                       end do
-                      print*,n1,n2,n3,n4
+                      print*,i1,i2,i3,i4
                       nx=nx+1
                    end if
                 end do
@@ -336,7 +332,7 @@ contains
                       do l=1,4
                          this%paritors(i,nx,l)=this%amber%prms_itors(n1,n2,n3,n4,l)
                       end do
-                      print*,n1,n2,n3,n4
+                      print*,i1,i2,i3,i4
                       nx=nx+1
                    end if
                 end do
