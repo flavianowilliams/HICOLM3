@@ -168,7 +168,7 @@ contains
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
        end do
-       write(11,'(1x,a9,1x,i3)')'dihedrals',this%torscnt(i)
+       write(11,'(1x,a9,1x,i3)')'dihedrals',(this%torscnt(i)+this%itorscnt(i))
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('amber')
@@ -185,22 +185,22 @@ contains
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
-!       do j=1,this%itorscnt(i)
-!          select case(this%titors(i,j))
-!          case('amber')
-!             i1=nint(this%paritors(i,j,1))
-!             f1=this%paritors(i,j,2)
-!             f2=this%paritors(i,j,3)
-!             i2=nint(this%paritors(i,j,4))
-!             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
-!                  this%titors(i,j),i1,f1,f2,i2
-!          case('harm')
-!             f1=this%paritors(i,j,2)
-!             f2=this%paritors(i,j,3)
-!             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
-!                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
-!          end select
-!       end do
+       do j=1,this%itorscnt(i)
+          select case(this%titors(i,j))
+          case('amber')
+             i1=nint(this%paritors(i,j,1))
+             f1=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
+             i2=nint(this%paritors(i,j,4))
+             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
+                  this%titors(i,j),i1,f1,f2,i2
+          case('harm')
+             f1=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
+             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
+                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
+          end select
+       end do
     end do
     write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
     do i=1,this%get_nvdw()
@@ -253,13 +253,13 @@ contains
          'Type','Qty','Sites','bonds','bends','dihdl','idihd'
     write(6,'(15x,111a1)')('-',i=1,62)
     do i=1,this%get_nmol()
-       write(6,'(17x,a6,1x,i5,4(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
-            this%bondscnt(i),this%bendscnt(i),this%torscnt(i)!,this%itorscnt(i)
+       write(6,'(17x,a6,1x,i5,5(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
+            this%bondscnt(i),this%bendscnt(i),this%torscnt(i),this%itorscnt(i)
     end do
     write(6,'(15x,111a1)')('-',i=1,62)
     write(6,'(17x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
          sum(this%bondscnt*this%ntmol),sum(this%bendscnt*this%ntmol),&
-         sum(this%torscnt*this%ntmol)!,sum(this%itorscnt*this%ntmol)
+         sum(this%torscnt*this%ntmol),sum(this%itorscnt*this%ntmol)
     write(6,*)
     do i=1,this%get_nmol()
        write(6,'(42x,a6)')this%namemol(i)
@@ -313,7 +313,7 @@ contains
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
-       write(6,'(2x,a10,1x,i5)')'Dihedrals:',this%torscnt(i)!+this%itorscnt(i)
+       write(6,'(2x,a17,1x,i5)')'Proper dihedrals:',this%torscnt(i)
        write(6,'(2x,111a1)')('-',j=1,90)
        write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
@@ -334,23 +334,29 @@ contains
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
-!       do j=1,this%itorscnt(i)
-!          select case(this%titors(i,j))
-!          case('amber')
-!             i1=nint(this%paritors(i,j,1))
-!             f1=this%paritors(i,j,2)
-!             f2=this%paritors(i,j,3)
-!             i2=nint(this%paritors(i,j,4))
-!             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')(j+this%torscnt(i)),&
-!                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
-!          case('harm')
-!             f1=this%paritors(i,j,2)
-!             f2=this%paritors(i,j,3)
-!             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')(j+this%torscnt(i)),&
-!                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),this%paritors(i,j,1),&
-!                  this%paritors(i,j,2)
-!          end select
-!       end do
+       write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(2x,a19,1x,i5)')'Improper dihedrals:',this%itorscnt(i)
+       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
+            ' i ','Site','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,111a1)')('-',j=1,90)
+       do j=1,this%itorscnt(i)
+          select case(this%titors(i,j))
+          case('amber')
+             i1=nint(this%paritors(i,j,1))
+             f1=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
+             i2=nint(this%paritors(i,j,4))
+             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
+          case('harm')
+             f1=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
+             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,(this%molitors(i,j,k),k=1,4),&
+                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
+          end select
+       end do
        write(6,'(2x,111a1)')('-',j=1,90)
        write(6,*)
        write(6,'(2x,111a1)')('*',j=1,90)

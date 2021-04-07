@@ -298,50 +298,62 @@ contains
     integer                          :: i1,i2,i3,i4,i,j,nx,n1,n2,n3,n4
     allocate(this%paritors(this%get_nmol(),this%get_itorsmax(),4))
     allocate(this%itorscnt(this%get_nmol()))
+    allocate(this%molitors(this%get_nmol(),this%get_itorsmax(),4))
     do i=1,this%get_nmol()
        nx=1
        do i1=1,this%nxmol(i)
           do j=1,this%amber%get_natp()
              if(this%amber%atp(j).eq.this%tpmol(i,i1))n1=j
           end do
-          do i2=i1+1,this%nxmol(i)
-             do j=1,this%amber%get_natp()
-                if(this%amber%atp(j).eq.this%tpmol(i,i2))n2=j
-             end do
-             do i3=i2+1,this%nxmol(i)
+          do i2=1,this%nxmol(i)
+             if(i2.ne.i1)then
                 do j=1,this%amber%get_natp()
-                   if(this%amber%atp(j).eq.this%tpmol(i,i3))n3=j
+                   if(this%amber%atp(j).eq.this%tpmol(i,i2))n2=j
                 end do
-                do i4=1,i3-1
-                   do j=1,this%amber%get_natp()
-                      if(this%amber%atp(j).eq.this%tpmol(i,i4))n4=j
-                   end do
-                   if(this%amber%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
-                      do l=1,4
-                         this%paritors(i,nx,l)=this%amber%prms_itors(n1,n2,n3,n4,l)
+                do i3=1,this%nxmol(i)
+                   if(i3.ne.i2.and.i3.ne.i1)then
+                      do j=1,this%amber%get_natp()
+                         if(this%amber%atp(j).eq.this%tpmol(i,i3))n3=j
                       end do
-                      print*,i1,i2,i3,i4
-                      nx=nx+1
+                      do i4=1,this%nxmol(i)
+                         if(i4.ne.i3.and.i4.ne.i2.and.i4.ne.i1)then
+                            do j=1,this%amber%get_natp()
+                               if(this%amber%atp(j).eq.this%tpmol(i,i4))n4=j
+                            end do
+                            if(this%amber%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
+                               if(n1.eq.n4.and.n2.eq.n3)then
+                                  if(i1.lt.i4)then
+                                     do k=1,4
+                                        this%paritors(i,nx,k)=&
+                                             this%amber%prms_itors(n1,n2,n3,n4,k)
+                                        this%molitors(i,nx,1)=i1
+                                        this%molitors(i,nx,2)=i2
+                                        this%molitors(i,nx,3)=i3
+                                        this%molitors(i,nx,4)=i4
+                                     end do
+                                     nx=nx+1
+                                  end if
+                               else
+                                  do k=1,4
+                                     this%paritors(i,nx,k)=&
+                                          this%amber%prms_itors(n1,n2,n3,n4,k)
+                                     this%molitors(i,nx,1)=i1
+                                     this%molitors(i,nx,2)=i2
+                                     this%molitors(i,nx,3)=i3
+                                     this%molitors(i,nx,4)=i4
+                                  end do
+                                  nx=nx+1
+                               end if
+                            end if
+                         end if
+                      end do
                    end if
                 end do
-                do i4=i3+1,this%nxmol(i)
-                   do j=1,this%amber%get_natp()
-                      if(this%amber%atp(j).eq.this%tpmol(i,i4))n4=j
-                   end do
-                   if(this%amber%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
-                      do l=1,4
-                         this%paritors(i,nx,l)=this%amber%prms_itors(n1,n2,n3,n4,l)
-                      end do
-                      print*,i1,i2,i3,i4
-                      nx=nx+1
-                   end if
-                end do
-             end do
+             end if
           end do
        end do
        this%itorscnt(i)=nx-1
     end do
-    stop
   end subroutine set_paritors
 
   subroutine set_extra_parvdw(this)
