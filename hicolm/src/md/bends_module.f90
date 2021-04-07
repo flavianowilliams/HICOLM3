@@ -76,10 +76,10 @@ contains
        do j=1,bendscnt(i)
           select case(bends(i,j))
           case(1)
-             parbend(i,j,1)=parbend(i,j,1)/(econv/aconv**2)
+             parbend(i,j,1)=parbend(i,j,1)/econv
              parbend(i,j,2)=parbend(i,j,2)/aconv
           case(2)
-             parbend(i,j,1)=parbend(i,j,1)/(econv/aconv**2)
+             parbend(i,j,1)=parbend(i,j,1)/econv
              parbend(i,j,2)=parbend(i,j,2)/aconv
           end select
        end do
