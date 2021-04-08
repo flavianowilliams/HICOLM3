@@ -45,10 +45,10 @@ contains
   subroutine set_bonds(this,dr,prm,ptrm)
     implicit none
     class(bonds), intent(inout) :: this
-    character(5), intent(in)    :: ptrm
+    character(6), intent(in)    :: ptrm
     real(8), intent(in)         :: dr,prm(2)
     select case(ptrm)
-    case('amber')
+    case('charmm')
        this%enbond=prm(1)*(dr-prm(2))**2
        this%force=-2.d0*prm(1)*(dr-prm(2))/dr
     case('harm')

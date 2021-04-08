@@ -16,7 +16,7 @@
  electrostatic fscs
  molecule H2O
   8 1 1
-  OW HW HW
+  OCTIP3 HCTIP3 HCTIP3
  -0.834 0.417 0.417
  end_molecule
 &END

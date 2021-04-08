@@ -39,7 +39,7 @@ module atoms_module
      real(8), allocatable      :: fax(:)
      real(8), allocatable      :: fay(:)
      real(8), allocatable      :: faz(:)
-     character(2), allocatable :: tpa(:)
+     character(6), allocatable :: tpa(:)
    contains
      procedure :: set_zat
      procedure :: set_mass
@@ -48,15 +48,7 @@ module atoms_module
      procedure :: set_velocity
   end type atoms
 
-!  interface atoms
-!     module procedure constructor
-!  end interface modelo
-
 contains
-
-!  type(modelo) function constructor()
-!    implicit none
-!  end function constructor
 
   subroutine set_zat(this)
     implicit none

@@ -69,7 +69,6 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
-!    call this%set_nbonds()
   end subroutine interaction_prepare
 
   subroutine set_forcefield(this)
@@ -78,7 +77,7 @@ contains
     integer                           :: i,j,k,l,ni,nj,nk,nx
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
     real(8)                           :: prm(2),drij(3),drik(3)
-    character(5)                      :: ptrm
+    character(6)                      :: ptrm
     do i=1,this%get_natom()
        this%fax(i)=0.d0
        this%fay(i)=0.d0
@@ -162,23 +161,6 @@ contains
     call this%set_enpot(enpot+this%get_encorr())
     call this%set_virtot(virtot+this%get_vircorr())
   end subroutine set_forcefield
-
-!  subroutine set_nbonds(this)
-!    implicit none
-!    class(interaction), intent(inout) :: this
-!    integer                           :: nx,i
-!    nx=0
-!    do i=1,this%get_nmol()
-!       nx=nx+this%ntmol(i)*this%bondscnt(i)
-!    end do
-!    this%nbonds=nx
-!  end subroutine set_nbonds
-
-!  integer function get_nbonds(this)
-!    implicit none
-!    class(interaction), intent(inout) :: this
-!    get_nbonds=this%nbonds
-!  end function get_nbonds
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
     implicit none

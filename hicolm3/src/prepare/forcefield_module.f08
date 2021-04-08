@@ -23,7 +23,7 @@ module forcefield_module
   !*******************************************************************************************
 
   use zmatrix_module
-  use amber_module
+  use charmm_module
 
   implicit none
 
@@ -33,7 +33,7 @@ module forcefield_module
   public :: forcefield
 
   type, extends(zmatrix) :: forcefield
-     type(amber)               :: amber
+     type(charmm)              :: charmm
      integer, private          :: nspcs
      integer, private          :: nvdw
      integer, allocatable      :: itorscnt(:)
@@ -44,13 +44,13 @@ module forcefield_module
      real(8), allocatable      :: partors(:,:,:)
      real(8), allocatable      :: paritors(:,:,:)
      real(8), allocatable      :: parvdw(:,:)
-     character(2), allocatable :: spcs(:)
-     character(2), allocatable :: spcvdw(:,:)
-     character(5), allocatable :: tbonds(:,:)
-     character(5), allocatable :: tbends(:,:)
-     character(5), allocatable :: ttors(:,:)
-     character(5), allocatable :: titors(:,:)
-     character(5), allocatable :: tvdw(:)
+     character(6), allocatable :: spcs(:)
+     character(6), allocatable :: spcvdw(:,:)
+     character(6), allocatable :: tbonds(:,:)
+     character(6), allocatable :: tbends(:,:)
+     character(6), allocatable :: ttors(:,:)
+     character(6), allocatable :: titors(:,:)
+     character(6), allocatable :: tvdw(:)
    contains
      procedure, private :: forcefield_init
      procedure          :: set_spcs
@@ -92,20 +92,20 @@ contains
     allocate(this%tvdw(this%nspcs))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
-          this%tbonds(i,j)='amber'
+          this%tbonds(i,j)='charmm'
        end do
        do j=1,this%get_bendmax()
-          this%tbends(i,j)='amber'
+          this%tbends(i,j)='charmm'
        end do
        do j=1,this%get_torsmax()
-          this%ttors(i,j)='amber'
+          this%ttors(i,j)='charmm'
        end do
        do j=1,this%get_itorsmax()
-          this%titors(i,j)='amber'
+          this%titors(i,j)='charmm'
        end do
     end do
     do i=1,this%nspcs
-       this%tvdw(i)='amber'
+       this%tvdw(i)='charmm'
     end do
   end subroutine forcefield_init
 
@@ -164,21 +164,21 @@ contains
     allocate(this%parvdw(this%nspcs,2),this%spcvdw(this%nspcs,2))
     nx=1
     do i=1,this%nspcs
-       do k=1,this%amber%get_natp()
-          if(this%spcs(i).eq.this%amber%atp(k))then
-             e1=this%amber%prms_vdw(k,2)
-             s1=this%amber%prms_vdw(k,1)
+       do k=1,this%charmm%get_natp()
+          if(this%spcs(i).eq.this%charmm%atp(k))then
+             e1=this%charmm%prms_vdw(k,1)
+             s1=this%charmm%prms_vdw(k,2)
           end if
        end do
-       if(e1.ge.1.d-4.and.s1.ge.1.d-1)then
+       if(e1.ge.1.d-4.and.s1.ge.5.d-1)then
           do j=i,this%nspcs
-             do k=1,this%amber%get_natp()
-                if(this%spcs(j).eq.this%amber%atp(k))then
-                   e2=this%amber%prms_vdw(k,2)
-                   s2=this%amber%prms_vdw(k,1)
+             do k=1,this%charmm%get_natp()
+                if(this%spcs(j).eq.this%charmm%atp(k))then
+                   e2=this%charmm%prms_vdw(k,1)
+                   s2=this%charmm%prms_vdw(k,2)
                 end if
              end do
-             if(e2.ge.1.d-4.and.s2.ge.1.d-1)then
+             if(e2.ge.1.d-4.and.s2.ge.5.d-1)then
                 this%parvdw(nx,1)=sqrt(e1*e2)
                 this%parvdw(nx,2)=s1+s2
                 this%spcvdw(nx,1)=this%spcs(i)
@@ -212,17 +212,17 @@ contains
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
-          do k=1,this%amber%get_natp()
-             do l=1,this%amber%get_natp()
-                if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
-                     this%amber%atp(l).eq.this%tpmol(i,i2))then
+          do k=1,this%charmm%get_natp()
+             do l=1,this%charmm%get_natp()
+                if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
+                     this%charmm%atp(l).eq.this%tpmol(i,i2))then
                    do m=1,2
-                      this%parbnd(i,j,m)=this%amber%prms_bonds(k,l,m)
+                      this%parbnd(i,j,m)=this%charmm%prms_bonds(k,l,m)
                    end do
-                elseif(this%amber%atp(k).eq.this%tpmol(i,i2).and.&
-                     this%amber%atp(l).eq.this%tpmol(i,i1))then
+                elseif(this%charmm%atp(k).eq.this%tpmol(i,i2).and.&
+                     this%charmm%atp(l).eq.this%tpmol(i,i1))then
                    do m=1,2
-                      this%parbnd(i,j,m)=this%amber%prms_bonds(k,l,m)
+                      this%parbnd(i,j,m)=this%charmm%prms_bonds(k,l,m)
                    end do
                 end if
              end do
@@ -240,20 +240,20 @@ contains
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
-          do k=1,this%amber%get_natp()
-             do l=1,this%amber%get_natp()
-                do m=1,this%amber%get_natp()
-                   if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
-                        this%amber%atp(l).eq.this%tpmol(i,i2).and.&
-                        this%amber%atp(m).eq.this%tpmol(i,i3))then
+          do k=1,this%charmm%get_natp()
+             do l=1,this%charmm%get_natp()
+                do m=1,this%charmm%get_natp()
+                   if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
+                        this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
+                        this%charmm%atp(m).eq.this%tpmol(i,i3))then
                       do n=1,2
-                         this%parbend(i,j,n)=this%amber%prms_angles(k,l,m,n)
+                         this%parbend(i,j,n)=this%charmm%prms_angles(k,l,m,n)
                       end do
-                   elseif(this%amber%atp(k).eq.this%tpmol(i,i3).and.&
-                        this%amber%atp(l).eq.this%tpmol(i,i2).and.&
-                        this%amber%atp(m).eq.this%tpmol(i,i1))then
+                   elseif(this%charmm%atp(k).eq.this%tpmol(i,i3).and.&
+                        this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
+                        this%charmm%atp(m).eq.this%tpmol(i,i1))then
                       do n=1,2
-                         this%parbend(i,j,n)=this%amber%prms_angles(k,l,m,n)
+                         this%parbend(i,j,n)=this%charmm%prms_angles(k,l,m,n)
                       end do
                    end if
                 end do
@@ -273,16 +273,16 @@ contains
           i2=this%moltors(i,j,2)
           i3=this%moltors(i,j,3)
           i4=this%moltors(i,j,4)
-          do k=1,this%amber%get_natp()
-             do l=1,this%amber%get_natp()
-                do m=1,this%amber%get_natp()
-                   do n=1,this%amber%get_natp()
-                      if(this%amber%atp(k).eq.this%tpmol(i,i1).and.&
-                           this%amber%atp(l).eq.this%tpmol(i,i2).and.&
-                           this%amber%atp(m).eq.this%tpmol(i,i3).and.&
-                           this%amber%atp(n).eq.this%tpmol(i,i4))then
+          do k=1,this%charmm%get_natp()
+             do l=1,this%charmm%get_natp()
+                do m=1,this%charmm%get_natp()
+                   do n=1,this%charmm%get_natp()
+                      if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
+                           this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
+                           this%charmm%atp(m).eq.this%tpmol(i,i3).and.&
+                           this%charmm%atp(n).eq.this%tpmol(i,i4))then
                          do o=1,3
-                            this%partors(i,j,o)=this%amber%prms_tors(k,l,m,n,o)
+                            this%partors(i,j,o)=this%charmm%prms_tors(k,l,m,n,o)
                          end do
                       end if
                    end do
@@ -302,30 +302,30 @@ contains
     do i=1,this%get_nmol()
        nx=1
        do i1=1,this%nxmol(i)
-          do j=1,this%amber%get_natp()
-             if(this%amber%atp(j).eq.this%tpmol(i,i1))n1=j
+          do j=1,this%charmm%get_natp()
+             if(this%charmm%atp(j).eq.this%tpmol(i,i1))n1=j
           end do
           do i2=1,this%nxmol(i)
              if(i2.ne.i1)then
-                do j=1,this%amber%get_natp()
-                   if(this%amber%atp(j).eq.this%tpmol(i,i2))n2=j
+                do j=1,this%charmm%get_natp()
+                   if(this%charmm%atp(j).eq.this%tpmol(i,i2))n2=j
                 end do
                 do i3=1,this%nxmol(i)
                    if(i3.ne.i2.and.i3.ne.i1)then
-                      do j=1,this%amber%get_natp()
-                         if(this%amber%atp(j).eq.this%tpmol(i,i3))n3=j
+                      do j=1,this%charmm%get_natp()
+                         if(this%charmm%atp(j).eq.this%tpmol(i,i3))n3=j
                       end do
                       do i4=1,this%nxmol(i)
                          if(i4.ne.i3.and.i4.ne.i2.and.i4.ne.i1)then
-                            do j=1,this%amber%get_natp()
-                               if(this%amber%atp(j).eq.this%tpmol(i,i4))n4=j
+                            do j=1,this%charmm%get_natp()
+                               if(this%charmm%atp(j).eq.this%tpmol(i,i4))n4=j
                             end do
-                            if(this%amber%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
+                            if(this%charmm%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
                                if(n1.eq.n4.and.n2.eq.n3)then
                                   if(i1.lt.i4)then
                                      do k=1,4
                                         this%paritors(i,nx,k)=&
-                                             this%amber%prms_itors(n1,n2,n3,n4,k)
+                                             this%charmm%prms_itors(n1,n2,n3,n4,k)
                                         this%molitors(i,nx,1)=i1
                                         this%molitors(i,nx,2)=i2
                                         this%molitors(i,nx,3)=i3
@@ -336,7 +336,7 @@ contains
                                else
                                   do k=1,4
                                      this%paritors(i,nx,k)=&
-                                          this%amber%prms_itors(n1,n2,n3,n4,k)
+                                          this%charmm%prms_itors(n1,n2,n3,n4,k)
                                      this%molitors(i,nx,1)=i1
                                      this%molitors(i,nx,2)=i2
                                      this%molitors(i,nx,3)=i3
@@ -444,7 +444,7 @@ contains
                            this%tbonds(i3,i2)
                       backspace(5)
                       select case(this%tbonds(i3,i2))
-                      case('amber')
+                      case('charmm')
                          read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
                               this%tbonds(i3,i2),(this%parbnd(i3,i2,l),l=1,2)
                       case('harm')
@@ -497,7 +497,7 @@ contains
                            this%molbend(i3,i2,3),this%tbends(i3,i2)
                       backspace(5)
                       select case(this%tbends(i3,i2))
-                      case('amber')
+                      case('charmm')
                          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
                               this%molbend(i3,i2,3),this%tbends(i3,i2),&
                               (this%parbend(i3,i2,l),l=1,2)
@@ -552,7 +552,7 @@ contains
                            this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2)
                       backspace(5)
                       select case(this%ttors(i3,i2))
-                      case('amber')
+                      case('charmm')
                          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
                               (this%partors(i3,i2,l),l=1,4)

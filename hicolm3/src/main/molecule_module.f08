@@ -40,7 +40,7 @@ module molecule_module
      real(8), allocatable      :: qatmol(:,:)
      real(8), allocatable      :: massmol(:,:)
      real(8), allocatable      :: mmolar(:)
-     character(2), allocatable :: tpmol(:,:)
+     character(6), allocatable :: tpmol(:,:)
    contains
      procedure, private :: molecule_init
      procedure          :: molecule_prepare

@@ -59,13 +59,13 @@ contains
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
     call constructor%set_itorsmax(1000)
-    call constructor%amber%set_natp(62)
-    call constructor%amber%set_ambertypes()
-    call constructor%amber%set_amberbonds()
-    call constructor%amber%set_amberangles()
-    call constructor%amber%set_ambervdw()
-    call constructor%amber%set_amberdihedrals()
-    call constructor%amber%set_amberidihedrals()
+    call constructor%charmm%set_natp(58)
+    call constructor%charmm%set_charmmtypes()
+    call constructor%charmm%set_charmmbonds()
+    call constructor%charmm%set_charmmangles()
+    call constructor%charmm%set_charmmdihedrals()
+    call constructor%charmm%set_charmmidihedrals()
+    call constructor%charmm%set_charmmvdw()
   end function constructor
 
   subroutine check(this)
@@ -143,61 +143,61 @@ contains
     do i=1,this%get_nmol()
        write(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
        write(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
-       write(11,'(15(1x,a2))')(this%tpmol(i,j),j=1,this%nxmol(i))
+       write(11,'(15(1x,a8))')(this%tpmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,f8.4))')(this%massmol(i,j),j=1,this%nxmol(i))
        write(11,'(15(1x,f8.4))')(this%qatmol(i,j),j=1,this%nxmol(i))
        write(11,'(1x,a5,1x,i3)')'bonds',this%bondscnt(i)
        do j=1,this%bondscnt(i)
           select case(this%tbonds(i,j))
-          case('amber')
-             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+          case('charmm')
+             write(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
                   this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           case('harm')
-             write(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+             write(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
                   this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           end select
        end do
        write(11,'(1x,a5,1x,i3)')'bends',this%bendscnt(i)
        do j=1,this%bendscnt(i)
           select case(this%tbends(i,j))
-          case('amber')
-             write(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
+          case('charmm')
+             write(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           case('harm')
-             write(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
+             write(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
        end do
        write(11,'(1x,a9,1x,i3)')'dihedrals',(this%torscnt(i)+this%itorscnt(i))
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
-          case('amber')
+          case('charmm')
              i1=nint(this%partors(i,j,1))
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
              i2=nint(this%partors(i,j,4))
-             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')&
+             write(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
-             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
+             write(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('amber')
+          case('charmm')
              i1=nint(this%paritors(i,j,1))
              f1=this%paritors(i,j,2)
              f2=this%paritors(i,j,3)
              i2=nint(this%paritors(i,j,4))
-             write(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
+             write(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
                   this%titors(i,j),i1,f1,f2,i2
           case('harm')
              f1=this%paritors(i,j,2)
              f2=this%paritors(i,j,3)
-             write(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
+             write(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
                   this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
           end select
        end do
@@ -205,11 +205,11 @@ contains
     write(11,'(1x,a3,1x,i3)')'vdw',this%get_nvdw()
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
-       case('amber')
-          write(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+       case('charmm')
+          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        case('lj')
-          write(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        end select
     end do
@@ -287,11 +287,11 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%bondscnt(i)
           select case(this%tbonds(i,j))
-          case('amber')
-             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
+          case('charmm')
+             write(6,'(2x,3(i3,3x),a6,2f9.2)')&
                   j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           case('harm')
-             write(6,'(2x,3(i3,3x),a5,2f9.2)')&
+             write(6,'(2x,3(i3,3x),a4,2f9.2)')&
                   j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           end select
        end do
@@ -303,11 +303,11 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%bendscnt(i)
           select case(this%tbends(i,j))
-          case('amber')
-             write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')&
+          case('charmm')
+             write(6,'(2x,4(i3,2x),a6,1x,2f8.1)')&
                   j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           case('harm')
-             write(6,'(2x,4(i3,2x),a5,1x,2f8.1)')&
+             write(6,'(2x,4(i3,2x),a4,1x,2f8.1)')&
                   j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
        end do
@@ -320,12 +320,12 @@ contains
        write(6,'(2x,111a1)')('-',j=1,90)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
-          case('amber')
+          case('charmm')
              i1=nint(this%partors(i,j,1))
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
              i2=nint(this%partors(i,j,4))
-             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')j,&
+             write(6,'(2x,5(i3,2x),a6,2x,i2,f8.2,f8.1,1x,i2)')j,&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
           case('harm')
              f1=this%partors(i,j,2)
@@ -343,12 +343,12 @@ contains
        write(6,'(2x,111a1)')('-',j=1,90)
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('amber')
+          case('charmm')
              i1=nint(this%paritors(i,j,1))
              f1=this%paritors(i,j,2)
              f2=this%paritors(i,j,3)
              i2=nint(this%paritors(i,j,4))
-             write(6,'(2x,5(i3,2x),a5,2x,i2,f8.2,f8.1,1x,i2)')&
+             write(6,'(2x,5(i3,2x),a6,2x,i2,f8.2,f8.1,1x,i2)')&
                   j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
           case('harm')
              f1=this%paritors(i,j,2)
@@ -390,15 +390,15 @@ contains
     end if
     write(6,'(20x,a15,i5)')'Van der Waals:',this%get_nvdw()
     write(6,'(20x,111a1)')('-',i=1,52)
-    write(6,'(20x,a4,2x,a4,3x,a4,6x,a10)')'Site','Site','Type','Parameters'
+    write(6,'(22x,a4,4x,a4,5x,a4,6x,a10)')'Site','Site','Type','Parameters'
     write(6,'(20x,111a1)')('-',i=1,52)
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
-       case('amber')
-          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+       case('charmm')
+          write(6,'(21x,a6,2x,a6,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        case('lj')
-          write(6,'(21x,a2,4x,a2,4x,a5,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+          write(6,'(21x,a6,2x,a6,4x,a2,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        end select
     end do

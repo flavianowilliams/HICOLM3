@@ -56,10 +56,10 @@ contains
   subroutine set_vanderwaals(this,dr,prm,ptrm)
     implicit none
     class(vanderwaals), intent(inout) :: this
-    character(5), intent(in)          :: ptrm
+    character(6), intent(in)          :: ptrm
     real(8), intent(in)               :: dr,prm(2)
     select case(ptrm)
-    case('amber')
+    case('charmm')
        this%envdw=prm(1)*((prm(2)/dr)**12-2.d0*(prm(2)/dr)**6)
        this%force=12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr**2
     case('lj')

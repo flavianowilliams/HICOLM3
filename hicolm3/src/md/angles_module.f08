@@ -45,10 +45,10 @@ contains
   subroutine set_angles(this,theta,prm,ptrm)
     implicit none
     class(angles), intent(inout) :: this
-    character(5), intent(in)     :: ptrm
+    character(6), intent(in)     :: ptrm
     real(8), intent(in)          :: theta,prm(2)
     select case(ptrm)
-    case('amber')
+    case('charmm')
        this%enbend=prm(1)*(theta-prm(2))**2
        this%force=2.d0*prm(1)*(theta-prm(2))
     case('harm')
