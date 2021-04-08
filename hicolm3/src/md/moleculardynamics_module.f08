@@ -511,15 +511,15 @@ contains
     end if
     write(6,'(20x,a15,i5)')'Van der Waals:',this%get_nvdw()
     write(6,'(20x,111a1)')('-',i=1,52)
-    write(6,'(20x,a4,2x,a4,3x,a4,6x,a10)')'Site','Site','Type','Parameters'
+    write(6,'(22x,a4,4x,a4,5x,a4,6x,a10)')'Site','Site','Type','Parameters'
     write(6,'(20x,111a1)')('-',i=1,52)
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
        case('charmm')
-          write(6,'(21x,a2,4x,a2,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+          write(6,'(21x,a6,2x,a6,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1)*this%get_econv(),this%parvdw(i,2)*this%get_rconv()
        case('lj')
-          write(6,'(21x,a2,4x,a2,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
+          write(6,'(21x,a6,2x,a6,4x,a2,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1)*this%get_econv(),this%parvdw(i,2)*this%get_rconv()
        end select
     end do

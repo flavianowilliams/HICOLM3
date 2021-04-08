@@ -164,9 +164,9 @@ contains
     class(input), intent(inout) :: this
     integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2,i,j,k,nx
     real(8)                     :: f1,f2
-    character(2)                :: mtd,spcvdw1,spcvdw2
+    character(2)                :: mtd
     character(4)                :: coulop
-    character(6)                :: ttors,tvdw
+    character(6)                :: ttors,tvdw,spcvdw1,spcvdw2
     character(10), allocatable  :: namemol(:)
     logical                     :: chk
     open(11,file='TOPOLOGY',status='old')
