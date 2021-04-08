@@ -166,7 +166,7 @@ contains
     real(8)                     :: f1,f2
     character(2)                :: mtd,spcvdw1,spcvdw2
     character(4)                :: coulop
-    character(5)                :: ttors,tvdw
+    character(6)                :: ttors,tvdw
     character(10), allocatable  :: namemol(:)
     logical                     :: chk
     open(11,file='TOPOLOGY',status='old')
@@ -199,26 +199,26 @@ contains
 1         backspace(11)
           read(11,'(1x,a10,2(1x,f8.6))')this%namemol(nx),this%sf_coul(nx),this%sf_vdw(nx)
           read(11,'(15(1x,i2))')(this%zatmol(nx,j),j=1,this%nxmol(nx))
-          read(11,'(15(1x,a2))')(this%tpmol(nx,j),j=1,this%nxmol(nx))
+          read(11,'(15(1x,a8))')(this%tpmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(15(1x,f8.4))')(this%massmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(15(1x,f8.4))')(this%qatmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(7x,i3)')this%bondscnt(nx)
           do j=1,this%bondscnt(nx)
-             read(11,'(2(1x,i3),1x,a5,2(1x,f9.4))')this%molbond(nx,j,1),this%molbond(nx,j,2),&
+             read(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(nx,j,1),this%molbond(nx,j,2),&
                   this%tbonds(nx,j),(this%parbnd(nx,j,k),k=1,2)
           end do
           read(11,'(7x,i3)')this%bendscnt(nx)
           do j=1,this%bendscnt(nx)
-             read(11,'(3(1x,i3),1x,a5,2(1x,f9.4))')(this%molbend(nx,j,k),k=1,3),&
+             read(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(nx,j,k),k=1,3),&
                   this%tbends(nx,j),(this%parbend(nx,j,k),k=1,2)
           end do
           read(11,'(11x,i3)')this%torscnt(nx)
           do j=1,this%torscnt(nx)
-             read(11,'(17x,a5)')ttors
+             read(11,'(17x,a6)')ttors
              select case(ttors)
-             case('amber')
+             case('charmm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a5,2x,i2,f8.2,f8.1,1x,i2)')&
+                read(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')&
                      (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),i1,f1,f2,i2
                 this%partors(nx,j,1)=i1
                 this%partors(nx,j,2)=f1
@@ -226,7 +226,7 @@ contains
                 this%partors(nx,j,4)=i2
              case('harm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a5,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
+                read(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
                      this%ttors(nx,j),this%partors(nx,j,1),this%partors(nx,j,2)
              end select
           end do
@@ -237,14 +237,14 @@ contains
        call this%set_spcs()
        allocate(this%spcvdw(nvdw,2),this%parvdw(nvdw,2))
        do i=1,nvdw
-          read(11,'(2(1x,a2),1x,a5)')spcvdw1,spcvdw2,tvdw
+          read(11,'(2(1x,a6),1x,a6)')spcvdw1,spcvdw2,tvdw
           backspace(11)
           select case(tvdw)
-          case('amber')
-             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+          case('charmm')
+             read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
                   spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
           case('lj')
-             read(11,'(2(1x,a2),1x,a5,2(1x,f9.4))')&
+             read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
                   spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
           end select
           this%spcvdw(i,1)=spcvdw1

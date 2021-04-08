@@ -270,12 +270,12 @@ contains
        write(6,'(2x,a24,3x,f7.4)')'1-4 sf (Van der Waals):',this%sf_vdw(i)
        write(6,*)
        if(this%nxmol(i).le.10)then
-          write(6,'(7x,a6,10(1x,a2))')'Sites:',(this%tpmol(i,j),j=1,this%nxmol(i))
+          write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,this%nxmol(i))
           write(6,*)
           write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(this%qatmol(i,j),j=1,this%nxmol(i))
        else
-          write(6,'(7x,a6,10(1x,a2))')'Sites:',(this%tpmol(i,j),j=1,10)
-          write(6,'(13x,10(1x,a2))')(this%tpmol(i,j),j=11,this%nxmol(i))
+          write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,10)
+          write(6,'(13x,10(1x,a6))')(this%tpmol(i,j),j=11,this%nxmol(i))
           write(6,*)
           write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(this%qatmol(i,j),j=1,10)
           write(6,'(13x,10(1x,f6.3))')(this%qatmol(i,j),j=11,this%nxmol(i))
@@ -379,7 +379,7 @@ contains
     write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
-       write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
+       write(6,'(2x,a18,i3,2x,a2,10(1x,a6))')&
             'Total of species:',this%get_nspcs(),'->',(this%spcs(i),i=1,this%get_nspcs())
        write(6,*)
     else
