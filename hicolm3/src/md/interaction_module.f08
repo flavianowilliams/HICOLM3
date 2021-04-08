@@ -250,7 +250,7 @@ contains
     virvdw_corr=0.d0
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
-       case('amber')
+       case('charmm')
           do j=1,2
              prm(j)=this%parvdw(i,j)
           end do
