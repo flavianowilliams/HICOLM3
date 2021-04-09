@@ -266,7 +266,7 @@ contains
   subroutine set_partors(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4,i,j,k,l,m,n,o
-    allocate(this%partors(this%get_nmol(),this%get_torsmax(),4))
+    allocate(this%partors(this%get_nmol(),this%get_torsmax(),3))
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
           i1=this%moltors(i,j,1)
