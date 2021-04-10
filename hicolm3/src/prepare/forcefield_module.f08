@@ -84,12 +84,20 @@ contains
   subroutine forcefield_init(this)
     implicit none
     class(forcefield), intent(inout) :: this
+    integer                          :: i,j,nx
     call this%set_nspcs()
+    nx=0
+    do i=1,this%nspcs
+       do j=i,this%nspcs
+          nx=nx+1
+       end do
+    end do
+    call this%set_nvdw(nx)
     allocate(this%tbonds(this%get_nmol(),this%get_bondmax()))
     allocate(this%tbends(this%get_nmol(),this%get_bendmax()))
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
     allocate(this%titors(this%get_nmol(),this%get_itorsmax()))
-    allocate(this%tvdw(this%nspcs))
+    allocate(this%tvdw(this%get_nvdw()))
     do i=1,this%get_nmol()
        do j=1,this%get_bondmax()
           this%tbonds(i,j)='charmm'
@@ -104,7 +112,7 @@ contains
           this%titors(i,j)='charmm'
        end do
     end do
-    do i=1,this%nspcs
+    do i=1,this%get_nvdw()
        this%tvdw(i)='charmm'
     end do
   end subroutine forcefield_init
@@ -156,12 +164,24 @@ contains
     end do
   end subroutine set_spcs
 
+  subroutine set_nvdw(this,nvdw)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer, intent(in)              :: nvdw
+    this%nvdw=nvdw
+  end subroutine set_nvdw
+
+  integer function get_nvdw(this)
+    class(forcefield), intent(in) :: this
+    get_nvdw=this%nvdw
+  end function get_nvdw
+
   subroutine set_parvdw(this)
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,k,nx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
-    allocate(this%parvdw(this%nspcs,2),this%spcvdw(this%nspcs,2))
+    allocate(this%parvdw(this%get_nvdw(),2),this%spcvdw(this%get_nvdw(),2))
     nx=1
     do i=1,this%nspcs
        do k=1,this%charmm%get_natp()
@@ -188,84 +208,75 @@ contains
           end do
        end if
     end do
-    this%nvdw=nx-1
+    call this%set_nvdw(nx-1)
   end subroutine set_parvdw
-
-  subroutine set_nvdw(this,nvdw)
-    implicit none
-    class(forcefield), intent(inout) :: this
-    integer, intent(in)              :: nvdw
-    this%nvdw=nvdw
-  end subroutine set_nvdw
-
-  integer function get_nvdw(this)
-    class(forcefield), intent(in) :: this
-    get_nvdw=this%nvdw
-  end function get_nvdw
 
   subroutine set_parbnd(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i,j,k,l,m,i1,i2
+    integer                          :: i,j,k,m,i1,i2,n1,n2
+    logical                          :: check
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
     call this%forcefield_init()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
+          n1=1
+          n2=1
           do k=1,this%charmm%get_natp()
-             do l=1,this%charmm%get_natp()
-                if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
-                     this%charmm%atp(l).eq.this%tpmol(i,i2))then
-                   do m=1,2
-                      this%parbnd(i,j,m)=this%charmm%prms_bonds(k,l,m)
-                   end do
-                elseif(this%charmm%atp(k).eq.this%tpmol(i,i2).and.&
-                     this%charmm%atp(l).eq.this%tpmol(i,i1))then
-                   do m=1,2
-                      this%parbnd(i,j,m)=this%charmm%prms_bonds(k,l,m)
-                   end do
-                end if
-             end do
+             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
           end do
+          check=.true.
+          do m=1,2
+             this%parbnd(i,j,m)=this%charmm%prms_bonds(n1,n2,m)
+             if(this%parbnd(i,j,m).lt.1.d-8)check=.false.
+          end do
+          if(check.eqv..false.)then
+             do m=1,2
+                this%parbnd(i,j,m)=this%charmm%prms_bonds(n2,n1,m)
+             end do
+          end if
        end do
     end do
   end subroutine set_parbnd
 
   subroutine set_parbend(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i,j,k,l,m,n,i1,i2,i3
+    integer                          :: i,j,k,m,i1,i2,i3,n1,n2,n3
+    logical                          :: check
     allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
     do i=1,this%get_nmol()
        do j=1,this%bendscnt(i)
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
+          n1=1
+          n2=1
+          n3=1
           do k=1,this%charmm%get_natp()
-             do l=1,this%charmm%get_natp()
-                do m=1,this%charmm%get_natp()
-                   if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
-                        this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
-                        this%charmm%atp(m).eq.this%tpmol(i,i3))then
-                      do n=1,2
-                         this%parbend(i,j,n)=this%charmm%prms_angles(k,l,m,n)
-                      end do
-                   elseif(this%charmm%atp(k).eq.this%tpmol(i,i3).and.&
-                        this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
-                        this%charmm%atp(m).eq.this%tpmol(i,i1))then
-                      do n=1,2
-                         this%parbend(i,j,n)=this%charmm%prms_angles(k,l,m,n)
-                      end do
-                   end if
-                end do
-             end do
+             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i3))n3=k
           end do
+          check=.true.
+          do m=1,2
+             this%parbend(i,j,m)=this%charmm%prms_angles(n1,n2,n3,m)
+             if(this%parbend(i,j,m).lt.1.d-8)check=.false.
+          end do
+          if(check.eqv..false.)then
+             do m=1,2
+                this%parbend(i,j,m)=this%charmm%prms_angles(n3,n2,n1,m)
+             end do
+          end if
        end do
     end do
   end subroutine set_parbend
 
   subroutine set_partors(this)
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3,i4,i,j,k,l,m,n,o
+    integer                          :: i1,i2,i3,i4,i,j,k,m,n1,n2,n3,n4
+    logical                          :: check
     allocate(this%partors(this%get_nmol(),this%get_torsmax(),3))
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
@@ -273,22 +284,27 @@ contains
           i2=this%moltors(i,j,2)
           i3=this%moltors(i,j,3)
           i4=this%moltors(i,j,4)
+          n1=1
+          n2=1
+          n3=1
+          n4=1
           do k=1,this%charmm%get_natp()
-             do l=1,this%charmm%get_natp()
-                do m=1,this%charmm%get_natp()
-                   do n=1,this%charmm%get_natp()
-                      if(this%charmm%atp(k).eq.this%tpmol(i,i1).and.&
-                           this%charmm%atp(l).eq.this%tpmol(i,i2).and.&
-                           this%charmm%atp(m).eq.this%tpmol(i,i3).and.&
-                           this%charmm%atp(n).eq.this%tpmol(i,i4))then
-                         do o=1,3
-                            this%partors(i,j,o)=this%charmm%prms_tors(k,l,m,n,o)
-                         end do
-                      end if
-                   end do
-                end do
-             end do
+             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i3))n3=k
+             if(this%charmm%atp(k).eq.this%tpmol(i,i4))n4=k
           end do
+          check=.true.
+          do m=1,2
+             this%partors(i,j,m)=this%charmm%prms_tors(n1,n2,n3,n4,m)
+             if(this%partors(i,j,m).lt.1.d-8)check=.false.
+          end do
+          this%partors(i,j,3)=this%charmm%prms_tors(n1,n2,n3,n4,3)
+          if(check.eqv..false.)then
+             do m=1,3
+                this%partors(i,j,m)=this%charmm%prms_tors(n4,n3,n2,n1,m)
+             end do
+          end if
        end do
     end do
   end subroutine set_partors

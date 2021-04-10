@@ -162,7 +162,7 @@ contains
   subroutine set_topology(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i2,i,j,k,nx
+    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i,j,k,nx
     real(8)                     :: f1,f2
     character(2)                :: mtd
     character(4)                :: coulop
@@ -218,12 +218,11 @@ contains
              select case(ttors)
              case('charmm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')&
-                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),i1,f1,f2,i2
-                this%partors(nx,j,1)=i1
-                this%partors(nx,j,2)=f1
+                read(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,i1,f2
+                this%partors(nx,j,1)=f1
+                this%partors(nx,j,2)=i1
                 this%partors(nx,j,3)=f2
-                this%partors(nx,j,4)=i2
              case('harm')
                 backspace(11)
                 read(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&

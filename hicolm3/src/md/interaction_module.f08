@@ -38,7 +38,6 @@ module interaction_module
      type(angles)                  :: tht
      type(coulomb)                 :: coul
      type(vanderwaals)             :: vdw
-!     integer, private              :: nbonds
      real(8), private              :: enpot
      real(8), private              :: virtot
      real(8), private              :: encorr
@@ -59,8 +58,6 @@ module interaction_module
      procedure :: set_vdwcorr
      procedure :: get_encorr
      procedure :: get_vircorr
-!     procedure :: set_nbonds
-!     procedure :: get_nbonds
   end type interaction
 
 contains

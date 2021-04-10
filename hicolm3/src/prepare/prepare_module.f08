@@ -133,7 +133,7 @@ contains
   subroutine print_top(this)
     implicit none
     class(prepare), intent(inout) :: this
-    integer                       :: i1,i2,i,j,k
+    integer                       :: i1,i,j,k
     real(8)                       :: f1,f2
     open(11,file='TOPOLOGY',status='unknown')
     write(11,'(1x,a2)')'MM'
@@ -172,12 +172,11 @@ contains
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('charmm')
-             i1=nint(this%partors(i,j,1))
-             f1=this%partors(i,j,2)
+             f1=this%partors(i,j,1)
+             i1=nint(this%partors(i,j,2))
              f2=this%partors(i,j,3)
-             i2=nint(this%partors(i,j,4))
-             write(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')&
-                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
+             write(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
@@ -188,12 +187,11 @@ contains
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
           case('charmm')
-             i1=nint(this%paritors(i,j,1))
-             f1=this%paritors(i,j,2)
+             f1=this%paritors(i,j,1)
+             i1=nint(this%paritors(i,j,2))
              f2=this%paritors(i,j,3)
-             i2=nint(this%paritors(i,j,4))
-             write(11,'(4(1x,i3),1x,a6,2x,i2,f8.2,f8.1,1x,i2)')(this%molitors(i,j,k),k=1,4),&
-                  this%titors(i,j),i1,f1,f2,i2
+             write(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
           case('harm')
              f1=this%paritors(i,j,2)
              f2=this%paritors(i,j,3)
@@ -218,7 +216,7 @@ contains
   subroutine print_out(this)
     implicit none
     class(prepare), intent(inout) :: this
-    integer                       :: i1,i2,i,j,k
+    integer                       :: i1,i,j,k
     real(8)                       :: f1,f2
     write(6,*)('#',i=1,93)
     write(6,*)('SYSTEM ',i=1,13)
@@ -315,18 +313,17 @@ contains
        write(6,*)
        write(6,'(2x,a17,1x,i5)')'Proper dihedrals:',this%torscnt(i)
        write(6,'(2x,111a1)')('-',j=1,90)
-       write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
+       write(6,'(2x,5(a4,1x),a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,90)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('charmm')
-             i1=nint(this%partors(i,j,1))
-             f1=this%partors(i,j,2)
+             f1=this%partors(i,j,1)
+             i1=nint(this%partors(i,j,2))
              f2=this%partors(i,j,3)
-             i2=nint(this%partors(i,j,4))
-             write(6,'(2x,5(i3,2x),a6,2x,i2,f8.2,f8.1,1x,i2)')j,&
-                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),i1,f1,f2,i2
+             write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
@@ -338,18 +335,17 @@ contains
        write(6,*)
        write(6,'(2x,a19,1x,i5)')'Improper dihedrals:',this%itorscnt(i)
        write(6,'(2x,111a1)')('-',j=1,90)
-       write(6,'(2x,5(a4,1x),1x,a4,4x,a10)')&
+       write(6,'(2x,5(a4,1x),a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,90)
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
           case('charmm')
-             i1=nint(this%paritors(i,j,1))
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             i2=nint(this%paritors(i,j,4))
-             write(6,'(2x,5(i3,2x),a6,2x,i2,f8.2,f8.1,1x,i2)')&
-                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),i1,f1,f2,i2
+             f1=this%partors(i,j,1)
+             i1=nint(this%partors(i,j,2))
+             f2=this%partors(i,j,3)
+             write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
           case('harm')
              f1=this%paritors(i,j,2)
              f2=this%paritors(i,j,3)
