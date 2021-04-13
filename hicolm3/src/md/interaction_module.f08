@@ -26,6 +26,7 @@ module interaction_module
   use bonds_module
   use angles_module
   use coulomb_module
+  use dihedrals_module
   use vanderwaals_module
 
   implicit none
@@ -37,6 +38,7 @@ module interaction_module
      type(bonds)                   :: bnd
      type(angles)                  :: tht
      type(coulomb)                 :: coul
+     type(dihedrals)               :: dih
      type(vanderwaals)             :: vdw
      real(8), private              :: enpot
      real(8), private              :: virtot
@@ -50,7 +52,8 @@ module interaction_module
      procedure :: set_forcefield
      procedure :: set_force2
      procedure :: set_force3
-     generic   :: set_force => set_force2, set_force3
+     procedure :: set_force4
+     generic   :: set_force => set_force2, set_force3, set_force4
      procedure :: set_enpot
      procedure :: get_enpot
      procedure :: set_virtot
@@ -71,9 +74,10 @@ contains
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: i,j,k,l,ni,nj,nk,nx
+    integer                           :: i,j,k,l,ni,nj,nk,nl,nx
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
-    real(8)                           :: prm(2),drij(3),drik(3)
+    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3)
+    real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
     character(6)                      :: ptrm
     do i=1,this%get_natom()
        this%fax(i)=0.d0
@@ -121,6 +125,29 @@ contains
              call this%tht%set_virbend(this%fbj,this%fbk,drij,drik)
              enpot=enpot+this%tht%get_enbend()
              virtot=virtot+this%tht%get_virbend()
+          end do
+          do k=1,this%torscnt(i)
+             ni=nx+this%moltors(i,k,1)
+             nj=nx+this%moltors(i,k,2)
+             nk=nx+this%moltors(i,k,3)
+             nl=nx+this%moltors(i,k,4)
+             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             call this%mic(nj,nk,drjk(1),drjk(2),drjk(3))
+             call this%mic(nk,nl,drkl(1),drkl(2),drkl(3))
+             vc1x=drij(2)*drjk(3)-drij(3)*drjk(2)
+             vc1y=drij(3)*drjk(1)-drij(1)*drjk(3)
+             vc1z=drij(1)*drjk(2)-drij(2)*drjk(1)
+             vc2x=drjk(2)*drkl(3)-drjk(3)*drkl(2)
+             vc2y=drjk(3)*drkl(1)-drjk(1)*drkl(3)
+             vc2z=drjk(1)*drkl(2)-drjk(2)*drkl(1)
+             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rij x rjk|
+             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|rjk x rkn|
+             phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dr1*dr2))
+             do l=1,3
+                prm(l)=this%partors(i,k,l)
+             end do
+             ptrm=this%ttors(i,k)
+             call this%dih%set_dihedrals(phi,prm,ptrm)
           end do
           nx=nx+this%nxmol(i)
        end do
@@ -211,6 +238,15 @@ contains
     this%faz(i3)=this%faz(i3)+this%fbk(3)
   end subroutine set_force3
 
+  subroutine set_force4(this,i1,i2,i3,i4,drij,drjk,drkl,dr1,dr2,phi,fd)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer, intent(in)               :: i1,i2,i3,i4
+    integer                           :: ix(4),i,j
+    real(8), intent(in)               :: fd,dr1,dr2,phi
+    real(8), intent(in)               :: drij(3),drjk(3),drkl(3)
+  end subroutine set_force4
+
   subroutine set_enpot(this,enpot)
     implicit none
     class(interaction), intent(inout) :: this
@@ -293,5 +329,40 @@ contains
     integer, intent(in)               :: i,j
     kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
   end function kronij
+
+  double precision function dfunc1(i1,i2,i3,i4,drij,drjk,drkn,i,j)
+    implicit none
+    integer i,j,i1,i2,i3,i4
+    real(8) drij(3),drjk(3),drkn(3)
+    dfunc1=drij(j)*acomt(drjk,drjk,j)*(kronij(i,i3)-kronij(i,i4)) &
+         +drij(j)*acomt(drjk,drkn,j)*(kronij(i,i3)-kronij(i,i2)) &
+         +drjk(j)*acomt(drij,drjk,j)*(kronij(i,i4)-kronij(i,i3)) &
+         +drjk(j)*acomt(drjk,drkn,j)*(kronij(i,i2)-kronij(i,i1)) &
+         +drkn(j)*acomt(drij,drjk,j)*(kronij(i,i3)-kronij(i,i2)) &
+         +drkn(j)*acomt(drjk,drjk,j)*(kronij(i,i1)-kronij(i,i2)) &
+         +2.d0*drjk(j)*acomt(drij,drkn,j)*(kronij(i,i2)-kronij(i,i3))
+  end function dfunc1
+
+  double precision function dfunc2(i1,i2,i3,dri1,dri2,i,j)
+    implicit none
+    integer i,j,i1,i2,i3
+    real(8) dri1(3),dri2(3)
+    dfunc2=dri1(j)*acomt(dri2,dri2,j)*(kronij(i,i2)-kronij(i,i1)) &
+         +dri1(j)*acomt(dri1,dri2,j)*(kronij(i,i2)-kronij(i,i3)) &
+         +dri2(j)*acomt(dri1,dri1,j)*(kronij(i,i3)-kronij(i,i2)) &
+         +dri2(j)*acomt(dri1,dri2,j)*(kronij(i,i1)-kronij(i,i2))
+    dfunc2=2.d0*dfunc2
+  end function dfunc2
+
+  double precision function acomt(x1,x2,k)
+    implicit none
+    integer i,k
+    real(8) sum,x1(3),x2(3)
+    sum=0.d0
+    do i=1,3
+       sum=sum+(1.d0-kronij(i,k))*x1(i)*x2(i)
+    end do
+    acomt=sum
+  end function acomt
 
 end module interaction_module

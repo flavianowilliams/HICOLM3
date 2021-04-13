@@ -188,6 +188,23 @@ contains
        allocate(this%partors(nmol,torsmax,4))
        allocate(namemol(this%get_nmol()))
        do i=1,this%get_nmol()
+          do j=1,bondmax
+             do k=1,2
+                this%parbnd(i,j,k)=0.d0
+             end do
+          end do
+          do j=1,bendmax
+             do k=1,2
+                this%parbend(i,j,k)=0.d0
+             end do
+          end do
+          do j=1,torsmax
+             do k=1,4
+                this%partors(i,j,k)=0.d0
+             end do
+          end do
+       end do
+       do i=1,this%get_nmol()
           read(11,'(1x,a10,2(1x,f8.6))')namemol(i)
           do j=1,this%get_nmol()
              if(namemol(i).eq.this%namemol(j))then
