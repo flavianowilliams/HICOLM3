@@ -141,6 +141,9 @@ contains
           case('charmm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,3)=this%partors(i,j,3)/this%get_aconv()
+          case('icharmm')
+             this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
           case('harm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
@@ -449,10 +452,15 @@ contains
              f2=this%partors(i,j,3)*this%get_aconv()
              write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')j,&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
+          case('icharmm')
+             f1=this%partors(i,j,1)*this%get_econv()
+             f2=this%partors(i,j,2)*this%get_aconv()
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')j,&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           case('harm')
              f1=this%partors(i,j,1)*this%get_econv()
              f2=this%partors(i,j,2)*this%get_aconv()
-             write(6,'(2x,5(i3,2x),a4,1x,2f8.1)')&
+             write(6,'(2x,5(i3,2x),a4,2x,2f8.1)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           end select
        end do

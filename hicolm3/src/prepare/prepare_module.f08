@@ -175,28 +175,22 @@ contains
              f1=this%partors(i,j,1)
              i1=nint(this%partors(i,j,2))
              f2=this%partors(i,j,3)
-             write(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
+             write(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
-             write(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
+             write(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('charmm')
+          case('icharmm')
              f1=this%paritors(i,j,1)
-             i1=nint(this%paritors(i,j,2))
-             f2=this%paritors(i,j,3)
-             write(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
-                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
-          case('harm')
-             f1=this%paritors(i,j,2)
-             f2=this%paritors(i,j,3)
-             write(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
-                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
+             f2=this%paritors(i,j,2)
+             write(11,'(4(1x,i3),1x,a7,2(1x,f8.4))')&
+                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
           end select
        end do
     end do
@@ -341,14 +335,19 @@ contains
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
           case('charmm')
-             f1=this%partors(i,j,1)
-             i1=nint(this%partors(i,j,2))
-             f2=this%partors(i,j,3)
-             write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
-                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
-          case('harm')
-             f1=this%paritors(i,j,2)
+             f1=this%paritors(i,j,1)
+             i1=nint(this%paritors(i,j,2))
              f2=this%paritors(i,j,3)
+             write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
+          case('icharmm')
+             f1=this%paritors(i,j,1)
+             f2=this%paritors(i,j,2)
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
+          case('harm')
+             f1=this%paritors(i,j,1)
+             f2=this%paritors(i,j,2)
              write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,(this%molitors(i,j,k),k=1,4),&
                   this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
           end select

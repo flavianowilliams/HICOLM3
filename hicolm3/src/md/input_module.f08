@@ -166,7 +166,8 @@ contains
     real(8)                     :: f1,f2
     character(2)                :: mtd
     character(4)                :: coulop
-    character(6)                :: ttors,tvdw,spcvdw1,spcvdw2
+    character(6)                :: tvdw,spcvdw1,spcvdw2
+    character(7)                :: ttors
     character(10), allocatable  :: namemol(:)
     logical                     :: chk
     open(11,file='TOPOLOGY',status='old')
@@ -231,18 +232,24 @@ contains
           end do
           read(11,'(11x,i3)')this%torscnt(nx)
           do j=1,this%torscnt(nx)
-             read(11,'(17x,a6)')ttors
+             read(11,'(17x,a7)')ttors
              select case(ttors)
              case('charmm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a6,1x,f8.4,1x,i2,1x,f8.4)')&
+                read(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
                      (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,i1,f2
                 this%partors(nx,j,1)=f1
                 this%partors(nx,j,2)=i1
                 this%partors(nx,j,3)=f2
+             case('icharmm')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,f8.4)')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,f2
+                this%partors(nx,j,1)=f1
+                this%partors(nx,j,2)=f2
              case('harm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a6,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
+                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
                      this%ttors(nx,j),this%partors(nx,j,1),this%partors(nx,j,2)
              end select
           end do

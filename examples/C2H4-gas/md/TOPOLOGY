@@ -19,11 +19,9 @@
    1   2   6 charmm   34.5000  110.1000
    3   1   4 charmm   35.5000  109.0000
    5   2   6 charmm   35.5000  109.0000
- dihedrals   4
-   3   1   2   5 charmm   0.1900  3   0.0000
-   3   1   2   6 charmm   0.1900  3   0.0000
-   4   1   2   5 charmm   0.1900  3   0.0000
-   4   1   2   6 charmm   0.1900  3   0.0000
+ dihedrals   2
+   3   1   2   5 icharmm  100.1900 180.0000
+   3   1   2   6 icharmm  100.1900   0.0000
  vdw   3
  CC321C CC321C charmm    0.0560    4.0200
  CC321C HCA2   charmm    0.0443    3.3500

@@ -45,12 +45,18 @@ contains
   subroutine set_dihedrals(this,phi,prm,ptrm)
     implicit none
     class(dihedrals), intent(inout) :: this
-    character(6), intent(in)        :: ptrm
+    character(7), intent(in)        :: ptrm
     real(8), intent(in)             :: phi,prm(3)
     select case(ptrm)
     case('charmm')
        this%entors=prm(1)*(1.0d0+cos(prm(2)*phi-prm(3)))
        this%force=-prm(1)*sin(prm(2)*phi-prm(3))
+    case('icharmm')
+       this%entors=prm(1)*(phi-prm(2))**2
+       this%force=2.0d0*prm(1)*(phi-prm(2))
+    case('harm')
+       this%entors=0.5d0*prm(1)*(phi-prm(2))**2
+       this%force=prm(1)*(phi-prm(2))
     end select
   end subroutine set_dihedrals
 

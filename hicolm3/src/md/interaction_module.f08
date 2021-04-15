@@ -78,7 +78,7 @@ contains
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
     real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3)
     real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
-    character(6)                      :: ptrm
+    character(7)                      :: ptrm
     do i=1,this%get_natom()
        this%fax(i)=0.d0
        this%fay(i)=0.d0
@@ -148,6 +148,8 @@ contains
              end do
              ptrm=this%ttors(i,k)
              call this%dih%set_dihedrals(phi,prm,ptrm)
+             call this%set_force&
+                  (ni,nj,nk,nl,drij,drjk,drkl,dr1,dr2,phi,this%dih%get_force())
           end do
           nx=nx+this%nxmol(i)
        end do
@@ -243,9 +245,10 @@ contains
     class(interaction), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3,i4
     integer                           :: ix(4),i,j
-    real(8)                           :: dvc(4,3),fbi(3),fbj(3),fbk(3),fbl(3)
+    real(8)                           :: dvc(4,3),fbi(3),fbj(3),fbk(3),fbl(3),phi2
     real(8), intent(in)               :: fd,dr1,dr2,phi
     real(8), intent(in)               :: drij(3),drjk(3),drkl(3)
+    phi2=max(phi,1.d-8)
     ix(1)=i1 !-i
     ix(2)=i2 !-j
     ix(3)=i3 !-k
@@ -253,22 +256,22 @@ contains
     do i=1,4
        do j=1,3
           dvc(i,j)=dfunc1(i1,i2,i3,i4,drij,drjk,drkl,ix(i),j)/(dr1*dr2) &
-               -0.5d0*cos(phi)*(dfunc2(i1,i2,i3,drij,drjk,ix(i),j)/dr1**2 &
+               -0.5d0*cos(phi2)*(dfunc2(i1,i2,i3,drij,drjk,ix(i),j)/dr1**2 &
                +dfunc2(i2,i3,i4,drjk,drkl,ix(i),j)/dr2**2)
        end do
     end do
-    fbi(1)=fd*dvc(1,1)/sin(phi)
-    fbi(2)=fd*dvc(1,2)/sin(phi)
-    fbi(3)=fd*dvc(1,3)/sin(phi)
-    fbj(1)=fd*dvc(2,1)/sin(phi)
-    fbj(2)=fd*dvc(2,2)/sin(phi)
-    fbj(3)=fd*dvc(2,3)/sin(phi)
-    fbk(1)=fd*dvc(3,1)/sin(phi)
-    fbk(2)=fd*dvc(3,2)/sin(phi)
-    fbk(3)=fd*dvc(3,3)/sin(phi)
-    fbl(1)=fd*dvc(4,1)/sin(phi)
-    fbl(2)=fd*dvc(4,2)/sin(phi)
-    fbl(3)=fd*dvc(4,3)/sin(phi)
+    fbi(1)=fd*dvc(1,1)/sin(phi2)
+    fbi(2)=fd*dvc(1,2)/sin(phi2)
+    fbi(3)=fd*dvc(1,3)/sin(phi2)
+    fbj(1)=fd*dvc(2,1)/sin(phi2)
+    fbj(2)=fd*dvc(2,2)/sin(phi2)
+    fbj(3)=fd*dvc(2,3)/sin(phi2)
+    fbk(1)=fd*dvc(3,1)/sin(phi2)
+    fbk(2)=fd*dvc(3,2)/sin(phi2)
+    fbk(3)=fd*dvc(3,3)/sin(phi2)
+    fbl(1)=fd*dvc(4,1)/sin(phi2)
+    fbl(2)=fd*dvc(4,2)/sin(phi2)
+    fbl(3)=fd*dvc(4,3)/sin(phi2)
     this%fax(i1)=this%fax(i1)+fbi(1)
     this%fay(i1)=this%fay(i1)+fbi(2)
     this%faz(i1)=this%faz(i1)+fbi(3)

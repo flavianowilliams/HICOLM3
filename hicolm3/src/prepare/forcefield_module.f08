@@ -48,8 +48,8 @@ module forcefield_module
      character(6), allocatable :: spcvdw(:,:)
      character(6), allocatable :: tbonds(:,:)
      character(6), allocatable :: tbends(:,:)
-     character(6), allocatable :: ttors(:,:)
-     character(6), allocatable :: titors(:,:)
+     character(7), allocatable :: ttors(:,:)
+     character(7), allocatable :: titors(:,:)
      character(6), allocatable :: tvdw(:)
    contains
      procedure, private :: forcefield_init
@@ -63,6 +63,7 @@ module forcefield_module
      procedure          :: set_extra_parbnd
      procedure          :: set_extra_parbend
      procedure          :: set_extra_partors
+     procedure          :: set_extra_paritors
      procedure          :: set_extra_parvdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
@@ -109,7 +110,7 @@ contains
           this%ttors(i,j)='charmm'
        end do
        do j=1,this%get_itorsmax()
-          this%titors(i,j)='charmm'
+          this%titors(i,j)='icharmm'
        end do
     end do
     do i=1,this%get_nvdw()
@@ -587,6 +588,60 @@ contains
 3   rewind(5)
     return
   end subroutine set_extra_partors
+
+  subroutine set_extra_paritors(this)
+    class(forcefield), intent(inout) :: this
+    integer                          :: i1,i2,i3,nx
+    character(12)                    :: key
+    character(10)                    :: cvar
+    i3=0
+1   read(5,*,end=3)key
+    if(key.ne.'&FORCE_FIELD')goto 1
+    nx=0
+    do j=1,this%get_nmol()
+       do while (key.ne.'&END')
+          read(5,*)key
+          if(key.eq.'molecule')then
+             backspace(5)
+             read(5,*)key,cvar
+             do k=1,this%get_nmol()
+                if(cvar.eq.this%namemol(k))then
+                   i3=k
+                end if
+             end do
+             read(5,*)
+             read(5,*)
+             read(5,*)
+             do while (key.ne.'end_molecule')
+                read(5,*)key
+                if(key.eq.'end_molecule')goto 2
+                if(key.eq.'idihedrals')then
+                   backspace(5)
+                   read(5,*)key,i1
+                   do k=1,i1
+                      read(5,*)i2
+                      backspace(5)
+                      read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+                           this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2)
+                      backspace(5)
+                      select case(this%titors(i3,i2))
+                      case('icharmm')
+                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
+                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,2)
+                         nx=nx+1
+                      end select
+                   end do
+                end if
+             end do
+             this%itorscnt(i3)=nx-1
+          end if
+2         continue
+       end do
+    end do
+3   rewind(5)
+    return
+  end subroutine set_extra_paritors
 
   subroutine set_coulop(this,coulop)
     class(forcefield), intent(inout) :: this
