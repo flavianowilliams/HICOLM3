@@ -51,6 +51,8 @@ module interaction_module
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
+     procedure :: set_intraff
+     procedure :: set_interff
      procedure :: set_force2
      procedure :: set_force3
      procedure :: set_force4
@@ -75,12 +77,7 @@ contains
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: i,j,k,l,m,n,o,ni,nj,nk,nl,nx
-    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
-    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3),ri(3),rj(3)
-    real(8)                           :: rk(3),rl(3)
-    real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
-    character(7)                      :: ptrm
+    integer                           :: i
     do i=1,this%get_natom()
        this%fax(i)=0.d0
        this%fay(i)=0.d0
@@ -88,6 +85,21 @@ contains
     end do
     call this%coul%coulomb_prepare&
          (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
+    call this%set_enpot(this%get_encorr())
+    call this%set_virtot(this%get_vircorr())
+    call this%set_intraff()
+    call this%set_interff()
+  end subroutine set_forcefield
+
+  subroutine set_intraff(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer                           :: i,j,k,l,m,n,o,ni,nj,nk,nl,nx
+    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
+    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3),ri(3),rj(3)
+    real(8)                           :: rk(3),rl(3)
+    real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
+    character(7)                      :: ptrm
     nx=0
     enpot=0.d0
     virtot=0.d0
@@ -218,6 +230,17 @@ contains
        end do
 2      continue
     end do
+    call this%set_enpot(enpot+this%get_enpot())
+    call this%set_virtot(virtot+this%get_virtot())
+  end subroutine set_intraff
+
+  subroutine set_interff(this)
+    implicit none
+    class(interaction), intent(inout) :: this
+    integer                           :: i,j,k,l,ni,nj
+    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
+    real(8)                           :: prm(3)
+    character(7)                      :: ptrm
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
           ni=i
@@ -247,9 +270,9 @@ contains
           end do
        end do
     end do
-    call this%set_enpot(enpot+this%get_encorr())
-    call this%set_virtot(virtot+this%get_vircorr())
-  end subroutine set_forcefield
+    call this%set_enpot(enpot+this%get_enpot())
+    call this%set_virtot(virtot+this%get_virtot())
+  end subroutine set_interff
 
   subroutine set_force2(this,ni,nj,xvz,yvz,zvz,fr)
     implicit none
