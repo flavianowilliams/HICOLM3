@@ -73,12 +73,17 @@ contains
     get_entors=this%entors
   end function get_entors
 
-  subroutine set_virtors(this,fbj,fbk,drij,drik)
+  subroutine set_virtors(this,fbi,fbj,fbk,fbl,ri,rj,rk,rl)
     implicit none
     class(dihedrals), intent(inout) :: this
-    real(8), intent(in)          :: fbj(3),fbk(3),drij(3),drik(3)
-    this%virtors=-((fbj(1)*drij(1)+fbj(2)*drij(2)+fbj(3)*drij(3))&
-         +(fbk(1)*drik(1)+fbk(2)*drik(2)+fbk(3)*drik(3)))
+    integer                         :: i
+    real(8), intent(in)             :: fbi(3),fbj(3),fbk(3),fbl(3),ri(3),rj(3),rk(3),rl(3)
+    real(8)                         :: virtors
+    virtors=0.d0
+    do i=1,3
+       virtors=virtors-(fbi(i)*ri(i)+fbj(i)*rj(i)+fbk(i)*rk(i)+fbl(i)*rl(i))
+    end do
+    this%virtors=virtors
   end subroutine set_virtors
 
   double precision function get_virtors(this)

@@ -5022,7 +5022,33 @@ contains
           end do
        end do
     end do
-  end subroutine set_charmmidihedrals
+    this%prms_itors(1,28,40,41,1)=120.000d0
+    this%prms_itors(1,28,40,41,2)=0.0d0
+    this%prms_itors(2,5,42,42,1)=96.000d0
+    this%prms_itors(2,5,42,42,2)=0.0d0
+    this%prms_itors(2,8,42,42,1)=96.000d0
+    this%prms_itors(2,8,42,42,2)=0.0d0
+    this%prms_itors(2,19,42,42,1)=96.000d0
+    this%prms_itors(2,19,42,42,2)=0.0d0
+    this%prms_itors(2,20,42,42,1)=96.000d0
+    this%prms_itors(2,20,42,42,2)=0.0d0
+    this%prms_itors(4,11,44,38,1)=50.000d0
+    this%prms_itors(4,11,44,38,2)=0.0d0
+    this%prms_itors(4,28,44,38,1)=50.000d0
+    this%prms_itors(4,28,44,38,2)=0.0d0
+    this%prms_itors(40,1,7,36,1)=20.000d0
+    this%prms_itors(40,1,7,36,2)=0.0d0
+    this%prms_itors(40,1,8,36,1)=20.000d0
+    this%prms_itors(40,1,8,36,2)=0.0d0
+    this%prms_itors(40,1,17,36,1)=20.000d0
+    this%prms_itors(40,1,17,36,2)=0.0d0
+    this%prms_itors(40,1,28,36,1)=20.000d0
+    this%prms_itors(40,1,28,36,2)=0.0d0
+    this%prms_itors(43,11,23,3,1)=70.000d0
+    this%prms_itors(43,11,23,3,2)=0.0d0
+    this%prms_itors(43,28,28,3,1)=70.000d0
+    this%prms_itors(43,28,28,3,2)=0.0d0
+ end subroutine set_charmmidihedrals
 
   subroutine set_charmmvdw(this)
     class(charmm), intent(inout) :: this

@@ -177,6 +177,11 @@ contains
              f2=this%partors(i,j,3)
              write(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
+          case('icharmm')
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
+             write(11,'(4(1x,i3),1x,a7,2(1x,f8.4))')&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
@@ -306,10 +311,10 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(2x,a17,1x,i5)')'Proper dihedrals:',this%torscnt(i)
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,111a1)')('-',j=1,52)
        write(6,'(2x,5(a4,1x),a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('charmm')
@@ -318,6 +323,11 @@ contains
              f2=this%partors(i,j,3)
              write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
+          case('icharmm')
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           case('harm')
              f1=this%partors(i,j,2)
              f2=this%partors(i,j,3)
@@ -328,31 +338,20 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(2x,a19,1x,i5)')'Improper dihedrals:',this%itorscnt(i)
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,111a1)')('-',j=1,52)
        write(6,'(2x,5(a4,1x),a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('charmm')
-             f1=this%paritors(i,j,1)
-             i1=nint(this%paritors(i,j,2))
-             f2=this%paritors(i,j,3)
-             write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
-                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
           case('icharmm')
              f1=this%paritors(i,j,1)
              f2=this%paritors(i,j,2)
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
                   j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
-          case('harm')
-             f1=this%paritors(i,j,1)
-             f2=this%paritors(i,j,2)
-             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,(this%molitors(i,j,k),k=1,4),&
-                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
           end select
        end do
-       write(6,'(2x,111a1)')('-',j=1,90)
+       write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)

@@ -47,6 +47,7 @@ module interaction_module
      real(8), private              :: fbi(3)
      real(8), private              :: fbj(3)
      real(8), private              :: fbk(3)
+     real(8), private              :: fbl(3)
    contains
      procedure :: interaction_prepare
      procedure :: set_forcefield
@@ -74,9 +75,10 @@ contains
   subroutine set_forcefield(this)
     implicit none
     class(interaction), intent(inout) :: this
-    integer                           :: i,j,k,l,ni,nj,nk,nl,nx
+    integer                           :: i,j,k,l,m,n,o,ni,nj,nk,nl,nx
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
-    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3)
+    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3),ri(3),rj(3)
+    real(8)                           :: rk(3),rl(3)
     real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
     character(7)                      :: ptrm
     do i=1,this%get_natom()
@@ -150,9 +152,71 @@ contains
              call this%dih%set_dihedrals(phi,prm,ptrm)
              call this%set_force&
                   (ni,nj,nk,nl,drij,drjk,drkl,dr1,dr2,phi,this%dih%get_force())
+             ri(1)=this%xa(ni)
+             ri(2)=this%ya(ni)
+             ri(3)=this%za(ni)
+             rj(1)=this%xa(nj)
+             rj(2)=this%ya(nj)
+             rj(3)=this%za(nj)
+             rk(1)=this%xa(nk)
+             rk(2)=this%ya(nk)
+             rk(3)=this%za(nk)
+             rl(1)=this%xa(nl)
+             rl(2)=this%ya(nl)
+             rl(3)=this%za(nl)
+             call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             virtot=virtot+this%dih%get_virtors()
           end do
           nx=nx+this%nxmol(i)
        end do
+       nx=0
+       if(this%nxmol(i).lt.4)goto 2
+       do j=1,this%ntmol(i)
+          do k=1,this%nxmol(i)
+             ni=nx+k
+             do l=k+1,this%nxmol(i)
+                nj=nx+l
+                do m=1,this%bendscnt(i)
+                   do n=1,3
+                      do o=n+1,3
+                         if(ni.eq.this%molbend(i,m,n).and.nj.eq.this%molbend(i,m,o))goto 1
+                         if(ni.eq.this%molbend(i,m,o).and.nj.eq.this%molbend(i,m,n))goto 1
+                      end do
+                   end do
+                end do
+                call this%mic(ni,nj,xvz,yvz,zvz)
+                dr=sqrt(xvz**2+yvz**2+zvz**2)
+                if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+                   call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
+                   call this%set_force&
+                        (ni,nj,xvz,yvz,zvz,this%coul%get_force()*this%sf_coul(i))
+                   call this%coul%set_vircoul(this%coul%get_force()*this%sf_coul(i),dr)
+                   enpot=enpot+this%coul%get_encoul()*this%sf_coul(i)
+                   virtot=virtot+this%coul%get_vircoul()
+                end if
+                do m=1,this%get_nvdw()
+                   if(this%tpa(ni).eq.this%spcvdw(m,1).and.&
+                        this%tpa(nj).eq.this%spcvdw(m,2).or.&
+                        this%tpa(ni).eq.this%spcvdw(m,2).and.&
+                        this%tpa(nj).eq.this%spcvdw(m,1))then
+                      do n=1,2
+                         prm(n)=this%parvdw(m,n)
+                      end do
+                      ptrm='charmm'
+                      call this%vdw%set_vanderwaals(dr,prm,ptrm)
+                      call this%set_force&
+                           (ni,nj,xvz,yvz,zvz,this%vdw%get_force()*this%sf_vdw(i))
+                      call this%vdw%set_virvdw(this%vdw%get_force()*this%sf_vdw(i),dr)
+                      enpot=enpot+this%vdw%get_envdw()*this%sf_vdw(i)
+                      virtot=virtot+this%vdw%get_virvdw()
+                   end if
+                end do
+1               continue
+             end do
+          end do
+          nx=nx+this%nxmol(i)
+       end do
+2      continue
     end do
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
@@ -160,7 +224,6 @@ contains
           nj=this%ilist(i,j)
           call this%mic(ni,nj,xvz,yvz,zvz)
           dr=sqrt(xvz**2+yvz**2+zvz**2)
-          if(dr.le.1.d-6)print*,dr
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
@@ -193,12 +256,18 @@ contains
     class(interaction), intent(inout) :: this
     integer, intent(in)               :: ni,nj
     real(8), intent(in)               :: fr,xvz,yvz,zvz
-    this%fax(ni)=this%fax(ni)-fr*xvz
-    this%fay(ni)=this%fay(ni)-fr*yvz
-    this%faz(ni)=this%faz(ni)-fr*zvz
-    this%fax(nj)=this%fax(nj)+fr*xvz
-    this%fay(nj)=this%fay(nj)+fr*yvz
-    this%faz(nj)=this%faz(nj)+fr*zvz
+    this%fbi(1)=-fr*xvz
+    this%fbi(2)=-fr*yvz
+    this%fbi(3)=-fr*zvz
+    this%fbj(1)=+fr*xvz
+    this%fbj(2)=+fr*yvz
+    this%fbj(3)=+fr*zvz
+    this%fax(ni)=this%fax(ni)+this%fbi(1)
+    this%fay(ni)=this%fay(ni)+this%fbi(2)
+    this%faz(ni)=this%faz(ni)+this%fbi(3)
+    this%fax(nj)=this%fax(nj)+this%fbj(1)
+    this%fay(nj)=this%fay(nj)+this%fbj(2)
+    this%faz(nj)=this%faz(nj)+this%fbj(3)
   end subroutine set_force2
 
   subroutine set_force3(this,i1,i2,i3,drij,drik,dr1,dr2,theta,fa)
@@ -245,7 +314,7 @@ contains
     class(interaction), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3,i4
     integer                           :: ix(4),i,j
-    real(8)                           :: dvc(4,3),fbi(3),fbj(3),fbk(3),fbl(3),phi2
+    real(8)                           :: dvc(4,3),phi2
     real(8), intent(in)               :: fd,dr1,dr2,phi
     real(8), intent(in)               :: drij(3),drjk(3),drkl(3)
     phi2=max(phi,1.d-8)
@@ -260,30 +329,30 @@ contains
                +dfunc2(i2,i3,i4,drjk,drkl,ix(i),j)/dr2**2)
        end do
     end do
-    fbi(1)=fd*dvc(1,1)/sin(phi2)
-    fbi(2)=fd*dvc(1,2)/sin(phi2)
-    fbi(3)=fd*dvc(1,3)/sin(phi2)
-    fbj(1)=fd*dvc(2,1)/sin(phi2)
-    fbj(2)=fd*dvc(2,2)/sin(phi2)
-    fbj(3)=fd*dvc(2,3)/sin(phi2)
-    fbk(1)=fd*dvc(3,1)/sin(phi2)
-    fbk(2)=fd*dvc(3,2)/sin(phi2)
-    fbk(3)=fd*dvc(3,3)/sin(phi2)
-    fbl(1)=fd*dvc(4,1)/sin(phi2)
-    fbl(2)=fd*dvc(4,2)/sin(phi2)
-    fbl(3)=fd*dvc(4,3)/sin(phi2)
-    this%fax(i1)=this%fax(i1)+fbi(1)
-    this%fay(i1)=this%fay(i1)+fbi(2)
-    this%faz(i1)=this%faz(i1)+fbi(3)
-    this%fax(i2)=this%fax(i2)+fbj(1)
-    this%fay(i2)=this%fay(i2)+fbj(2)
-    this%faz(i2)=this%faz(i2)+fbj(3)
-    this%fax(i3)=this%fax(i3)+fbk(1)
-    this%fay(i3)=this%fay(i3)+fbk(2)
-    this%faz(i3)=this%faz(i3)+fbk(3)
-    this%fax(i4)=this%fax(i4)+fbl(1)
-    this%fay(i4)=this%fay(i4)+fbl(2)
-    this%faz(i4)=this%faz(i4)+fbl(3)
+    this%fbi(1)=fd*dvc(1,1)/sin(phi2)
+    this%fbi(2)=fd*dvc(1,2)/sin(phi2)
+    this%fbi(3)=fd*dvc(1,3)/sin(phi2)
+    this%fbj(1)=fd*dvc(2,1)/sin(phi2)
+    this%fbj(2)=fd*dvc(2,2)/sin(phi2)
+    this%fbj(3)=fd*dvc(2,3)/sin(phi2)
+    this%fbk(1)=fd*dvc(3,1)/sin(phi2)
+    this%fbk(2)=fd*dvc(3,2)/sin(phi2)
+    this%fbk(3)=fd*dvc(3,3)/sin(phi2)
+    this%fbl(1)=fd*dvc(4,1)/sin(phi2)
+    this%fbl(2)=fd*dvc(4,2)/sin(phi2)
+    this%fbl(3)=fd*dvc(4,3)/sin(phi2)
+    this%fax(i1)=this%fax(i1)+this%fbi(1)
+    this%fay(i1)=this%fay(i1)+this%fbi(2)
+    this%faz(i1)=this%faz(i1)+this%fbi(3)
+    this%fax(i2)=this%fax(i2)+this%fbj(1)
+    this%fay(i2)=this%fay(i2)+this%fbj(2)
+    this%faz(i2)=this%faz(i2)+this%fbj(3)
+    this%fax(i3)=this%fax(i3)+this%fbk(1)
+    this%fay(i3)=this%fay(i3)+this%fbk(2)
+    this%faz(i3)=this%faz(i3)+this%fbk(3)
+    this%fax(i4)=this%fax(i4)+this%fbl(1)
+    this%fay(i4)=this%fay(i4)+this%fbl(2)
+    this%faz(i4)=this%faz(i4)+this%fbl(3)
   end subroutine set_force4
 
   subroutine set_enpot(this,enpot)

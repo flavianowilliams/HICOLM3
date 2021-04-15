@@ -133,7 +133,7 @@ program HICOLM
         call prp%set_extra_parbnd()              ! alterando potenciais de ligacao
         call prp%set_extra_parbend()             ! alterando potenciais angulares
         call prp%set_extra_partors()             ! alterando diedros
-        call prp%set_extra_paritors()            ! alterando diedros improprios
+!        call prp%set_extra_paritors()            ! alterando diedros improprios
         call prp%set_extra_parvdw()              ! alterando potenciais de Van der Waals
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais

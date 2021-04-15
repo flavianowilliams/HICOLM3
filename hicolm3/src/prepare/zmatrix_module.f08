@@ -246,7 +246,6 @@ contains
        this%torscnt(imol)=nx-1
        nxx=max(nxx,this%torscnt(imol))
     end do
-    this%torsmax=nxx
   end subroutine set_torsion
 
   subroutine set_torsmax(this,torsmax)

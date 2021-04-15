@@ -63,7 +63,6 @@ module forcefield_module
      procedure          :: set_extra_parbnd
      procedure          :: set_extra_parbend
      procedure          :: set_extra_partors
-     procedure          :: set_extra_paritors
      procedure          :: set_extra_parvdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
@@ -343,22 +342,22 @@ contains
                                      do k=1,4
                                         this%paritors(i,nx,k)=&
                                              this%charmm%prms_itors(n1,n2,n3,n4,k)
-                                        this%molitors(i,nx,1)=i1
-                                        this%molitors(i,nx,2)=i2
-                                        this%molitors(i,nx,3)=i3
-                                        this%molitors(i,nx,4)=i4
                                      end do
+                                     this%molitors(i,nx,1)=i1
+                                     this%molitors(i,nx,2)=i2
+                                     this%molitors(i,nx,3)=i3
+                                     this%molitors(i,nx,4)=i4
                                      nx=nx+1
                                   end if
                                else
                                   do k=1,4
                                      this%paritors(i,nx,k)=&
                                           this%charmm%prms_itors(n1,n2,n3,n4,k)
-                                     this%molitors(i,nx,1)=i1
-                                     this%molitors(i,nx,2)=i2
-                                     this%molitors(i,nx,3)=i3
-                                     this%molitors(i,nx,4)=i4
                                   end do
+                                  this%molitors(i,nx,1)=i1
+                                  this%molitors(i,nx,2)=i2
+                                  this%molitors(i,nx,3)=i3
+                                  this%molitors(i,nx,4)=i4
                                   nx=nx+1
                                end if
                             end if
@@ -572,13 +571,18 @@ contains
                       case('charmm')
                          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
-                              (this%partors(i3,i2,l),l=1,4)
+                              (this%partors(i3,i2,l),l=1,3)
+                      case('icharmm')
+                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),&
+                              this%ttors(i3,i2),(this%partors(i3,i2,l),l=1,2)
                       case('harm')
                          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
                               (this%partors(i3,i2,l),l=1,2)
                       end select
                    end do
+                   if(i2.gt.this%torscnt(i3))this%torscnt(i3)=this%torscnt(i3)+1
                 end if
              end do
           end if
@@ -588,60 +592,6 @@ contains
 3   rewind(5)
     return
   end subroutine set_extra_partors
-
-  subroutine set_extra_paritors(this)
-    class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3,nx
-    character(12)                    :: key
-    character(10)                    :: cvar
-    i3=0
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    nx=0
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             backspace(5)
-             read(5,*)key,cvar
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))then
-                   i3=k
-                end if
-             end do
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'idihedrals')then
-                   backspace(5)
-                   read(5,*)key,i1
-                   do k=1,i1
-                      read(5,*)i2
-                      backspace(5)
-                      read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
-                           this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2)
-                      backspace(5)
-                      select case(this%titors(i3,i2))
-                      case('icharmm')
-                         read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
-                              this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
-                              this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,2)
-                         nx=nx+1
-                      end select
-                   end do
-                end if
-             end do
-             this%itorscnt(i3)=nx-1
-          end if
-2         continue
-       end do
-    end do
-3   rewind(5)
-    return
-  end subroutine set_extra_paritors
 
   subroutine set_coulop(this,coulop)
     class(forcefield), intent(inout) :: this
