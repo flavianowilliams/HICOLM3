@@ -241,6 +241,8 @@ contains
     real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
     real(8)                           :: prm(3)
     character(7)                      :: ptrm
+    enpot=0.d0
+    virtot=0.d0
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
           ni=i

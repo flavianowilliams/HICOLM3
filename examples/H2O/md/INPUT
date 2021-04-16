@@ -14,5 +14,5 @@
  temperature 300
  rcutoff 9.5 0.1
  ensemble npt berendsen 0.5 0.5
- restart 0
+ restart 1
 &END
