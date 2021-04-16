@@ -190,7 +190,7 @@ contains
              s1=this%charmm%prms_vdw(k,2)
           end if
        end do
-       if(e1.ge.1.d-4.and.s1.ge.5.d-1)then
+       if(e1.ge.1.d-4.and.s1.ge.5.d-4)then
           do j=i,this%nspcs
              do k=1,this%charmm%get_natp()
                 if(this%spcs(j).eq.this%charmm%atp(k))then
@@ -198,7 +198,7 @@ contains
                    s2=this%charmm%prms_vdw(k,2)
                 end if
              end do
-             if(e2.ge.1.d-4.and.s2.ge.5.d-1)then
+             if(e2.ge.1.d-4.and.s2.ge.5.d-4)then
                 this%parvdw(nx,1)=sqrt(e1*e2)
                 this%parvdw(nx,2)=s1+s2
                 this%spcvdw(nx,1)=this%spcs(i)
