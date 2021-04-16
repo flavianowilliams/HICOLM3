@@ -179,6 +179,7 @@ program HICOLM
         call md%set_pressure()                   ! atribuindo pressao
         call md%set_temperature()                ! atribuindo temperatura
         call md%set_sigma()                      ! atribuindo sigma para o termostato Berend.
+        call md%set_qmass()                      ! atribuindo massa do termostato
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call md%print_out()                      ! imprimindo valores em hicolm.out
@@ -221,6 +222,8 @@ program HICOLM
            elseif(md%get_ensble().eq.'nvt')then
               if(md%get_ensble_mt().eq.'berendsen')then
                  call md%set_nvt_berendsen()
+              elseif(md%get_ensble_mt().eq.'hoover')then
+                 call md%set_nvt_nosehoover()
               end if
            elseif(md%get_ensble().eq.'npt')then
               if(md%get_ensble_mt().eq.'berendsen')then

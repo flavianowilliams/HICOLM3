@@ -30,16 +30,32 @@ module ensemble_module
   public :: ensemble
 
   type, extends(thermodynamics) :: ensemble
+     real(8), private :: frictioncoefficient
    contains
      procedure :: set_nve
      procedure :: set_nvt_berendsen
      procedure :: set_npt_berendsen
      procedure :: set_nvt_nosehoover
      procedure :: set_npt_nosehoover
+     procedure :: set_frictioncoefficient
+     procedure :: get_frictioncoefficient
      procedure :: check_lattice
   end type ensemble
 
 contains
+
+  subroutine set_frictioncoefficient(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    this%frictioncoefficient=this%frictioncoefficient+0.5d0*this%get_timestep()*&
+         (this%get_ekinetic()-this%get_sigma())/this%get_qmass()
+  end subroutine set_frictioncoefficient
+
+  double precision function get_frictioncoefficient(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    get_frictioncoefficient=this%frictioncoefficient
+  end function get_frictioncoefficient
 
   subroutine set_nve(this)
     implicit none
@@ -105,6 +121,32 @@ contains
     class(ensemble), intent(inout) :: this
     integer                        :: i
     real(8)                        :: qui
+    call this%set_frictioncoefficient()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
+    end do
+    call this%set_ekinetic()
+    call this%set_frictioncoefficient()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
+       this%xa(i)=this%xa(i)+this%get_timestep()*this%vax(i)
+       this%ya(i)=this%ya(i)+this%get_timestep()*this%vay(i)
+       this%za(i)=this%za(i)+this%get_timestep()*this%vaz(i)
+    end do
+    call this%set_forcefield()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
+    end do
+    call this%set_ekinetic()
+    call this%set_etotal()
+    call this%set_temperature()
+    call this%set_pressure()
   end subroutine set_nvt_nosehoover
 
   subroutine set_npt_berendsen(this)
