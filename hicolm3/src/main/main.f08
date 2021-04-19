@@ -175,15 +175,15 @@ program HICOLM
         call md%set_volume()                     ! calculando volume da supercelula
         call md%set_vdwcorr()                    ! calculando correção de Van der Waals
         call md%print()                          ! imprimindo parametros da MD
+        call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
+        call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
+        call md%print_out()                      ! imprimindo valores em hicolm.out
+        call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_ekinetic()                   ! atribuindo energia cinecita
         call md%set_pressure()                   ! atribuindo pressao
         call md%set_temperature()                ! atribuindo temperatura
         call md%set_sigma()                      ! atribuindo sigma para o termostato Berend.
         call md%set_qmass()                      ! atribuindo massa do termostato
-        call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
-        call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
-        call md%print_out()                      ! imprimindo valores em hicolm.out
-        call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_nhist()                      ! definindo quantidade de frames
         call md%set_time(0.d0)                   ! setando instante inicial
         call cpu_time(t2)

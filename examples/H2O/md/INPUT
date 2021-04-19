@@ -9,10 +9,10 @@
  nstep 100
  nrelax 0
  nframes 10
- timestep 0.000001
+ timestep 0.001
  pressure 1.0
- temperature 300
+ temperature 298
  rcutoff 9.5 0.1
- ensemble nvt hoover 0.5 0.5
- restart 1
+ ensemble npt berendsen 0.5 1.0
+ restart 3
 &END
