@@ -8,7 +8,7 @@
 &MD
  nstep 100
  nrelax 0
- nframes 90
+ nframes 10
  timestep 0.000001
  pressure 1.0
  temperature 300
