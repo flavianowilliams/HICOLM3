@@ -36,6 +36,7 @@ module thermodynamics_module
      real(8)   :: etotal
      real(8)   :: sigma
      real(8)   :: qmass
+     real(8)   :: pmass
    contains
      procedure :: set_temperature
      procedure :: get_temperature
@@ -49,6 +50,8 @@ module thermodynamics_module
      procedure :: get_sigma
      procedure :: set_qmass
      procedure :: get_qmass
+     procedure :: set_pmass
+     procedure :: get_pmass
   end type thermodynamics
 
 contains
@@ -130,5 +133,17 @@ contains
     class(thermodynamics), intent(inout) :: this
     get_qmass = this%qmass
   end function get_qmass
+
+  subroutine set_pmass(this)
+    implicit none
+    class(thermodynamics), intent(inout) :: this
+    this%pmass = (this%get_nfree()+3)*this%get_temp()*this%get_pstat()**2
+  end subroutine set_pmass
+
+  double precision function get_pmass(this)
+    implicit none
+    class(thermodynamics), intent(inout) :: this
+    get_pmass = this%pmass
+  end function get_pmass
 
 end module thermodynamics_module

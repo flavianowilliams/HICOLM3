@@ -183,7 +183,8 @@ program HICOLM
         call md%set_pressure()                   ! atribuindo pressao
         call md%set_temperature()                ! atribuindo temperatura
         call md%set_sigma()                      ! atribuindo sigma para o termostato Berend.
-        call md%set_qmass()                      ! atribuindo massa do termostato
+        call md%set_qmass()                      ! atribuindo massa do calorimetro
+        call md%set_pmass()                      ! atribuindo massa do barostato
         call md%set_nhist()                      ! definindo quantidade de frames
         call md%set_time(0.d0)                   ! setando instante inicial
         call cpu_time(t2)
@@ -228,6 +229,8 @@ program HICOLM
            elseif(md%get_ensble().eq.'npt')then
               if(md%get_ensble_mt().eq.'berendsen')then
                  call md%set_npt_berendsen()
+              elseif(md%get_ensble_mt().eq.'hoover')then
+                 call md%set_npt_nosehoover()
               end if
            end if
            call md%print_geometry(i)

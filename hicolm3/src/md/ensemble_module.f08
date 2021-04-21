@@ -30,40 +30,73 @@ module ensemble_module
   public :: ensemble
 
   type, extends(thermodynamics) :: ensemble
-     real(8), private :: fcnvt
+     real(8), private :: tfcnvt
+     real(8), private :: tfcnpt
+     real(8), private :: bfc
    contains
+     procedure :: ensemble_init
      procedure :: set_nve
      procedure :: set_nvt_berendsen
      procedure :: set_npt_berendsen
      procedure :: set_nvt_nosehoover
      procedure :: set_npt_nosehoover
-     procedure :: set_fcnvt
-     procedure :: get_fcnvt
-     procedure :: set_fcnvt2
+     procedure :: set_tfcnvt
+     procedure :: get_tfcnvt
+     procedure :: set_tfcnpt
+     procedure :: get_tfcnpt
+     procedure :: set_bfc
+     procedure :: get_bfc
      procedure :: check_lattice
   end type ensemble
 
 contains
 
-  subroutine set_fcnvt2(this,fcnvt)
+  subroutine ensemble_init(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    real(8), intent(in)            :: fcnvt
-    this%fcnvt=fcnvt
-  end subroutine set_fcnvt2
+    this%tfcnvt=0.d0
+    this%tfcnpt=0.d0
+    this%bfc=0.d0
+  end subroutine ensemble_init
 
-  subroutine set_fcnvt(this)
+  subroutine set_tfcnvt(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    this%fcnvt=this%fcnvt+0.5d0*this%get_timestep()*&
+    this%tfcnvt=this%tfcnvt+0.5d0*this%get_timestep()*&
          (this%get_ekinetic()-this%get_sigma())/this%get_qmass()
-  end subroutine set_fcnvt
+  end subroutine set_tfcnvt
 
-  double precision function get_fcnvt(this)
+  double precision function get_tfcnvt(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    get_fcnvt=this%fcnvt
-  end function get_fcnvt
+    get_tfcnvt=this%tfcnvt
+  end function get_tfcnvt
+
+  subroutine set_tfcnpt(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    this%tfcnpt=this%tfcnpt+0.125d0*this%get_timestep()*(2.0d0*this%get_ekinetic()&
+         +this%get_pmass()*this%get_bfc()**2-2.0d0*this%get_sigma()-this%get_temp())&
+         /this%get_qmass()
+  end subroutine set_tfcnpt
+
+  double precision function get_tfcnpt(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    get_tfcnpt= this%tfcnpt
+  end function get_tfcnpt
+
+  subroutine set_bfc(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    this%bfc=this%bfc
+  end subroutine set_bfc
+
+  double precision function get_bfc(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    get_bfc=this%bfc
+  end function get_bfc
 
   subroutine set_nve(this)
     implicit none
@@ -128,15 +161,14 @@ contains
     implicit none
     class(ensemble), intent(inout) :: this
     integer                        :: i
-    real(8)                        :: qui
-    call this%set_fcnvt()
+    call this%set_tfcnvt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
     end do
     call this%set_ekinetic()
-    call this%set_fcnvt()
+    call this%set_tfcnvt()
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
        this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
@@ -153,14 +185,14 @@ contains
        this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
     end do
     call this%set_ekinetic()
-    call this%set_fcnvt()
+    call this%set_tfcnvt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
     end do
     call this%set_ekinetic()
-    call this%set_fcnvt()
+    call this%set_tfcnvt()
     call this%set_etotal()
     call this%set_temperature()
     call this%set_pressure()
@@ -214,6 +246,14 @@ contains
     implicit none
     class(ensemble), intent(inout) :: this
     integer                        :: i
+    call this%set_tfcnpt()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+    end do
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
   end subroutine set_npt_nosehoover
 
   subroutine check_lattice(this)
