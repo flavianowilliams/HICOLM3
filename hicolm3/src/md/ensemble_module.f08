@@ -145,6 +145,7 @@ contains
        this%ya(i)=this%ya(i)+this%get_timestep()*this%vay(i)
        this%za(i)=this%za(i)+this%get_timestep()*this%vaz(i)
     end do
+    call this%ccp()
     call this%set_forcefield()
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
