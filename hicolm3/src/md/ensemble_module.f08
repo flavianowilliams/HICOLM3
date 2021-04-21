@@ -30,32 +30,40 @@ module ensemble_module
   public :: ensemble
 
   type, extends(thermodynamics) :: ensemble
-     real(8), private :: frictioncoefficient
+     real(8), private :: fcnvt
    contains
      procedure :: set_nve
      procedure :: set_nvt_berendsen
      procedure :: set_npt_berendsen
      procedure :: set_nvt_nosehoover
      procedure :: set_npt_nosehoover
-     procedure :: set_frictioncoefficient
-     procedure :: get_frictioncoefficient
+     procedure :: set_fcnvt
+     procedure :: get_fcnvt
+     procedure :: set_fcnvt2
      procedure :: check_lattice
   end type ensemble
 
 contains
 
-  subroutine set_frictioncoefficient(this)
+  subroutine set_fcnvt2(this,fcnvt)
     implicit none
     class(ensemble), intent(inout) :: this
-    this%frictioncoefficient=this%frictioncoefficient+0.5d0*this%get_timestep()*&
-         (this%get_ekinetic()-this%get_sigma())/this%get_qmass()
-  end subroutine set_frictioncoefficient
+    real(8), intent(in)            :: fcnvt
+    this%fcnvt=fcnvt
+  end subroutine set_fcnvt2
 
-  double precision function get_frictioncoefficient(this)
+  subroutine set_fcnvt(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    get_frictioncoefficient=this%frictioncoefficient
-  end function get_frictioncoefficient
+    this%fcnvt=this%fcnvt+0.5d0*this%get_timestep()*&
+         (this%get_ekinetic()-this%get_sigma())/this%get_qmass()
+  end subroutine set_fcnvt
+
+  double precision function get_fcnvt(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    get_fcnvt=this%fcnvt
+  end function get_fcnvt
 
   subroutine set_nve(this)
     implicit none
@@ -121,14 +129,14 @@ contains
     class(ensemble), intent(inout) :: this
     integer                        :: i
     real(8)                        :: qui
-    call this%set_frictioncoefficient()
+    call this%set_fcnvt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_frictioncoefficient()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
     end do
     call this%set_ekinetic()
-    call this%set_frictioncoefficient()
+    call this%set_fcnvt()
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
        this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
@@ -144,6 +152,14 @@ contains
        this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
     end do
     call this%set_ekinetic()
+    call this%set_fcnvt()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_fcnvt()*this%get_timestep())
+    end do
+    call this%set_ekinetic()
+    call this%set_fcnvt()
     call this%set_etotal()
     call this%set_temperature()
     call this%set_pressure()

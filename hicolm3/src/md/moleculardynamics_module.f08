@@ -61,6 +61,7 @@ contains
     call constructor%set_drcutoff(0.1d0)
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
+    call constructor%set_fcnvt2(0.0d0)
   end function constructor
 
   subroutine check(this)

@@ -13,6 +13,6 @@
  pressure 1.0
  temperature 298
  rcutoff 9.5 0.1
- ensemble npt berendsen 0.5 1.0
+ ensemble nvt hoover 0.5 1.0
  restart 3
 &END
