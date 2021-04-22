@@ -46,6 +46,7 @@ module ensemble_module
      procedure :: get_tfcnpt
      procedure :: set_bfc
      procedure :: get_bfc
+     procedure :: set_bfc2
      procedure :: check_lattice
   end type ensemble
 
@@ -89,7 +90,8 @@ contains
   subroutine set_bfc(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    this%bfc=this%bfc
+    this%bfc=this%bfc+0.75d0*this%get_timestep()&
+         *(this%get_pressure()-this%get_press())*this%get_volume()/this%get_pmass()
   end subroutine set_bfc
 
   double precision function get_bfc(this)
@@ -97,6 +99,13 @@ contains
     class(ensemble), intent(inout) :: this
     get_bfc=this%bfc
   end function get_bfc
+
+  subroutine set_bfc2(this,bfc)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    real(8), intent(in)            :: bfc
+    this%bfc=this%bfc*exp(-0.125d0*this%get_tfcnpt()*this%get_timestep())
+  end subroutine set_bfc2
 
   subroutine set_nve(this)
     implicit none
@@ -246,6 +255,7 @@ contains
     implicit none
     class(ensemble), intent(inout) :: this
     integer                        :: i
+    real(8)                        :: eta
     call this%set_tfcnpt()
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
@@ -254,6 +264,16 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_tfcnpt()
+    call this%set_bfc2()
+    call this%set_bfc()
+    call this%set_bfc2()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+    end do
+    call this%set_bfc2()
+    call this%set_bfc()
   end subroutine set_npt_nosehoover
 
   subroutine check_lattice(this)
