@@ -83,7 +83,7 @@ contains
 
   double precision function get_time(this)
     implicit none
-    class(moleculardynamics), intent(inout) :: this
+    class(moleculardynamics), intent(in) :: this
     get_time=this%time
   end function get_time
 

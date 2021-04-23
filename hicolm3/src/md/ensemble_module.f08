@@ -33,6 +33,8 @@ module ensemble_module
      real(8), private :: tfcnvt
      real(8), private :: tfcnpt
      real(8), private :: bfc
+     real(8), private :: rcm(3)
+     real(8), private :: vcm(3)
    contains
      procedure :: ensemble_init
      procedure :: set_nve
@@ -48,6 +50,8 @@ module ensemble_module
      procedure :: get_bfc
      procedure :: set_bfc2
      procedure :: check_lattice
+     procedure :: set_rcm
+     procedure :: set_vcm
   end type ensemble
 
 contains
@@ -69,7 +73,7 @@ contains
 
   double precision function get_tfcnvt(this)
     implicit none
-    class(ensemble), intent(inout) :: this
+    class(ensemble), intent(in) :: this
     get_tfcnvt=this%tfcnvt
   end function get_tfcnvt
 
@@ -83,7 +87,7 @@ contains
 
   double precision function get_tfcnpt(this)
     implicit none
-    class(ensemble), intent(inout) :: this
+    class(ensemble), intent(in) :: this
     get_tfcnpt= this%tfcnpt
   end function get_tfcnpt
 
@@ -96,14 +100,13 @@ contains
 
   double precision function get_bfc(this)
     implicit none
-    class(ensemble), intent(inout) :: this
+    class(ensemble), intent(in) :: this
     get_bfc=this%bfc
   end function get_bfc
 
-  subroutine set_bfc2(this,bfc)
+  subroutine set_bfc2(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    real(8), intent(in)            :: bfc
     this%bfc=this%bfc*exp(-0.125d0*this%get_tfcnpt()*this%get_timestep())
   end subroutine set_bfc2
 
@@ -201,10 +204,10 @@ contains
        this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnvt()*this%get_timestep())
     end do
     call this%set_ekinetic()
-    call this%set_tfcnvt()
     call this%set_etotal()
     call this%set_temperature()
     call this%set_pressure()
+    call this%set_tfcnvt()
   end subroutine set_nvt_nosehoover
 
   subroutine set_npt_berendsen(this)
@@ -254,8 +257,9 @@ contains
   subroutine set_npt_nosehoover(this)
     implicit none
     class(ensemble), intent(inout) :: this
-    integer                        :: i
+    integer                        :: i,j
     real(8)                        :: eta
+    call this%set_rcm()
     call this%set_tfcnpt()
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
@@ -268,12 +272,87 @@ contains
     call this%set_bfc()
     call this%set_bfc2()
     do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+    end do
+    call this%set_bfc2()
+    call this%set_bfc()
+    call this%set_bfc2()
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    do i=1,this%get_natom()
        this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
        this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
        this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
     end do
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
+    end do
+    eta=exp(this%get_bfc()*this%get_timestep())
+    do i=1,3
+       do j=1,3
+          this%v(i,j)=this%v(i,j)*eta
+       end do
+    end do
+    call this%set_lattice_constants()
+    call this%set_volume2(this%get_volume()*eta**3)
+    call this%check_lattice()
+    do i=1,this%get_natom()
+       this%xa(i)=(this%xa(i)-this%rcm(1))+this%get_timestep()*this%vax(i)+this%rcm(1)
+       this%ya(i)=(this%ya(i)-this%rcm(2))+this%get_timestep()*this%vay(i)+this%rcm(2)
+       this%za(i)=(this%za(i)-this%rcm(3))+this%get_timestep()*this%vaz(i)+this%rcm(3)
+    end do
+    call this%ccp()
+    call this%set_forcefield()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)+0.5d0*this%fax(i)*this%get_timestep()/this%mass(i)
+       this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
+       this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
+    end do
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+    end do
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    call this%set_pressure()
     call this%set_bfc2()
     call this%set_bfc()
+    call this%set_bfc2()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_bfc()*this%get_timestep())
+    end do
+    call this%set_bfc2()
+    call this%set_bfc()
+    call this%set_bfc2()
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+    end do
+    call this%set_ekinetic()
+    call this%set_tfcnpt()
+    call this%set_vcm()
+    do i=1,this%get_natom()
+       this%vax(i)=this%vax(i)-this%vcm(1)
+       this%vay(i)=this%vay(i)-this%vcm(2)
+       this%vaz(i)=this%vaz(i)-this%vcm(3)
+    end do
+    call this%set_ekinetic()
+    call this%set_etotal()
+    call this%set_temperature()
   end subroutine set_npt_nosehoover
 
   subroutine check_lattice(this)
@@ -285,5 +364,41 @@ contains
        stop
     end if
   end subroutine check_lattice
+
+  subroutine set_rcm(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    integer                        :: i
+    real(8)                        :: rcm(3)
+    rcm(1)=0.d0
+    rcm(2)=0.d0
+    rcm(3)=0.d0
+    do i=1,this%get_natom()
+       rcm(1)=rcm(1)+this%mass(i)*this%xa(i)
+       rcm(2)=rcm(2)+this%mass(i)*this%ya(i)
+       rcm(3)=rcm(3)+this%mass(i)*this%za(i)
+    end do
+    this%rcm(1)=rcm(1)/this%sys%get_mtotal()
+    this%rcm(2)=rcm(2)/this%sys%get_mtotal()
+    this%rcm(3)=rcm(3)/this%sys%get_mtotal()
+  end subroutine set_rcm
+
+  subroutine set_vcm(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    integer                        :: i
+    real(8)                        :: vcm(3)
+    vcm(1)=0.d0
+    vcm(2)=0.d0
+    vcm(3)=0.d0
+    do i=1,this%get_natom()
+       vcm(1)=vcm(1)+this%mass(i)*this%vax(i)
+       vcm(2)=vcm(2)+this%mass(i)*this%vay(i)
+       vcm(3)=vcm(3)+this%mass(i)*this%vaz(i)
+    end do
+    this%vcm(1)=vcm(1)/this%sys%get_mtotal()
+    this%vcm(2)=vcm(2)/this%sys%get_mtotal()
+    this%vcm(3)=vcm(3)/this%sys%get_mtotal()
+  end subroutine set_vcm
 
 end module ensemble_module

@@ -77,7 +77,7 @@ contains
 
   double precision function get_envdw(this)
     implicit none
-    class(vanderwaals), intent(inout) :: this
+    class(vanderwaals), intent(in) :: this
     get_envdw=this%envdw
   end function get_envdw
 
@@ -90,13 +90,13 @@ contains
 
   double precision function get_virvdw(this)
     implicit none
-    class(vanderwaals), intent(inout) :: this
+    class(vanderwaals), intent(in) :: this
     get_virvdw=this%virvdw
   end function get_virvdw
 
   double precision function get_force(this)
     implicit none
-    class(vanderwaals), intent(inout) :: this
+    class(vanderwaals), intent(in) :: this
     get_force=this%force
   end function get_force
 

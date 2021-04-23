@@ -66,7 +66,7 @@ contains
 
   double precision function get_enbend(this)
     implicit none
-    class(angles), intent(inout) :: this
+    class(angles), intent(in) :: this
     get_enbend=this%enbend
   end function get_enbend
 
@@ -80,13 +80,13 @@ contains
 
   double precision function get_virbend(this)
     implicit none
-    class(angles), intent(inout) :: this
+    class(angles), intent(in) :: this
     get_virbend=this%virbend
   end function get_virbend
 
   double precision function get_force(this)
     implicit none
-    class(angles), intent(inout) :: this
+    class(angles), intent(in) :: this
     get_force=this%force
   end function get_force
 

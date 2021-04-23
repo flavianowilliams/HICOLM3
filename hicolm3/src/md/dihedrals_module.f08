@@ -69,7 +69,7 @@ contains
 
   double precision function get_entors(this)
     implicit none
-    class(dihedrals), intent(inout) :: this
+    class(dihedrals), intent(in) :: this
     get_entors=this%entors
   end function get_entors
 
@@ -88,13 +88,13 @@ contains
 
   double precision function get_virtors(this)
     implicit none
-    class(dihedrals), intent(inout) :: this
+    class(dihedrals), intent(in) :: this
     get_virtors=this%virtors
   end function get_virtors
 
   double precision function get_force(this)
     implicit none
-    class(dihedrals), intent(inout) :: this
+    class(dihedrals), intent(in) :: this
     get_force=this%force
   end function get_force
 

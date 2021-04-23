@@ -55,7 +55,7 @@ contains
   end subroutine set_natp
 
   integer function get_natp(this)
-    class(charmm), intent(inout) :: this
+    class(charmm), intent(in) :: this
     get_natp=this%natp
   end function get_natp
 

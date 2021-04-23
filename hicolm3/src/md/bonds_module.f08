@@ -66,7 +66,7 @@ contains
 
   double precision function get_enbond(this)
     implicit none
-    class(bonds), intent(inout) :: this
+    class(bonds), intent(in) :: this
     get_enbond=this%enbond
   end function get_enbond
 
@@ -79,13 +79,13 @@ contains
 
   double precision function get_virbond(this)
     implicit none
-    class(bonds), intent(inout) :: this
+    class(bonds), intent(in) :: this
     get_virbond=this%virbond
   end function get_virbond
 
   double precision function get_force(this)
     implicit none
-    class(bonds), intent(inout) :: this
+    class(bonds), intent(in) :: this
     get_force=this%force
   end function get_force
 

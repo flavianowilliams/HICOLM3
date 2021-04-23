@@ -389,7 +389,7 @@ contains
 
   double precision function get_enpot(this)
     implicit none
-    class(interaction), intent(inout) :: this
+    class(interaction), intent(in) :: this
     get_enpot=this%enpot
   end function get_enpot
 
@@ -402,7 +402,7 @@ contains
 
   double precision function get_virtot(this)
     implicit none
-    class(interaction), intent(inout) :: this
+    class(interaction), intent(in) :: this
     get_virtot=this%virtot
   end function get_virtot
 
@@ -448,13 +448,13 @@ contains
 
   double precision function get_encorr(this)
     implicit none
-    class(interaction), intent(inout) :: this
+    class(interaction), intent(in) :: this
     get_encorr=this%encorr
   end function get_encorr
 
   double precision function get_vircorr(this)
     implicit none
-    class(interaction), intent(inout) :: this
+    class(interaction), intent(in) :: this
     get_vircorr=this%vircorr
   end function get_vircorr
 

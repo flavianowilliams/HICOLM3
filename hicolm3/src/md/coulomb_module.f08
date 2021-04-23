@@ -92,7 +92,7 @@ contains
 
   double precision function get_encoul(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(coulomb), intent(in) :: this
     get_encoul=this%encoul
   end function get_encoul
 
@@ -105,13 +105,13 @@ contains
 
   double precision function get_vircoul(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(coulomb), intent(in) :: this
     get_vircoul=this%vircoul
   end function get_vircoul
 
   double precision function get_force(this)
     implicit none
-    class(coulomb), intent(inout) :: this
+    class(coulomb), intent(in) :: this
     get_force=this%force
   end function get_force
 

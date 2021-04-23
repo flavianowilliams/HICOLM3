@@ -612,7 +612,7 @@ contains
   end subroutine set_coulop
 
   character(4) function get_coulop(this)
-    class(forcefield), intent(inout) :: this
+    class(forcefield), intent(in) :: this
     get_coulop=this%coulop
   end function get_coulop
 

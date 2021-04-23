@@ -64,7 +64,7 @@ contains
 
   double precision function get_temperature(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_temperature=this%temperature
   end function get_temperature
 
@@ -76,7 +76,7 @@ contains
 
   double precision function get_pressure(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_pressure = this%pressure
   end function get_pressure
 
@@ -94,7 +94,7 @@ contains
 
   double precision function get_ekinetic(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_ekinetic = this%ekinetic
   end function get_ekinetic
 
@@ -106,7 +106,7 @@ contains
 
   double precision function get_etotal(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_etotal = this%etotal
   end function get_etotal
 
@@ -118,7 +118,7 @@ contains
 
   double precision function get_sigma(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_sigma = this%sigma
   end function get_sigma
 
@@ -130,7 +130,7 @@ contains
 
   double precision function get_qmass(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_qmass = this%qmass
   end function get_qmass
 
@@ -142,7 +142,7 @@ contains
 
   double precision function get_pmass(this)
     implicit none
-    class(thermodynamics), intent(inout) :: this
+    class(thermodynamics), intent(in) :: this
     get_pmass = this%pmass
   end function get_pmass
 
