@@ -260,7 +260,7 @@ contains
     integer                        :: i,j
     real(8)                        :: eta
     call this%set_rcm()
-    call this%set_tfcnpt()
+    call this%set_tfcnpt() !thermostat
     do i=1,this%get_natom()
        this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
        this%vay(i)=this%vay(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
@@ -268,7 +268,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_tfcnpt()
-    call this%set_bfc2()
+    call this%set_bfc2() !barostat
     call this%set_bfc()
     call this%set_bfc2()
     do i=1,this%get_natom()
@@ -279,12 +279,12 @@ contains
     call this%set_bfc2()
     call this%set_bfc()
     call this%set_bfc2()
-    call this%set_ekinetic()
+    call this%set_ekinetic() !thermostat
     call this%set_tfcnpt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
     end do
     call this%set_ekinetic()
     call this%set_tfcnpt()
@@ -303,9 +303,9 @@ contains
     call this%set_volume2(this%get_volume()*eta**3)
     call this%check_lattice()
     do i=1,this%get_natom()
-       this%xa(i)=(this%xa(i)-this%rcm(1))+this%get_timestep()*this%vax(i)+this%rcm(1)
-       this%ya(i)=(this%ya(i)-this%rcm(2))+this%get_timestep()*this%vay(i)+this%rcm(2)
-       this%za(i)=(this%za(i)-this%rcm(3))+this%get_timestep()*this%vaz(i)+this%rcm(3)
+       this%xa(i)=(this%xa(i)-this%rcm(1))*eta+this%get_timestep()*this%vax(i)+this%rcm(1)
+       this%ya(i)=(this%ya(i)-this%rcm(2))*eta+this%get_timestep()*this%vay(i)+this%rcm(2)
+       this%za(i)=(this%za(i)-this%rcm(3))*eta+this%get_timestep()*this%vaz(i)+this%rcm(3)
     end do
     call this%ccp()
     call this%set_forcefield()
@@ -314,16 +314,16 @@ contains
        this%vay(i)=this%vay(i)+0.5d0*this%fay(i)*this%get_timestep()/this%mass(i)
        this%vaz(i)=this%vaz(i)+0.5d0*this%faz(i)*this%get_timestep()/this%mass(i)
     end do
-    call this%set_ekinetic()
+    call this%set_ekinetic() !thermostat
     call this%set_tfcnpt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
     end do
     call this%set_ekinetic()
     call this%set_tfcnpt()
-    call this%set_pressure()
+    call this%set_pressure() !barostat
     call this%set_bfc2()
     call this%set_bfc()
     call this%set_bfc2()
@@ -335,12 +335,12 @@ contains
     call this%set_bfc2()
     call this%set_bfc()
     call this%set_bfc2()
-    call this%set_ekinetic()
+    call this%set_ekinetic() !thermostat
     call this%set_tfcnpt()
     do i=1,this%get_natom()
-       this%vax(i)=this%vax(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vay(i)=this%vay(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
-       this%vaz(i)=this%vaz(i)*exp(-0.5d0*this%get_tfcnpt()*this%get_timestep())
+       this%vax(i)=this%vax(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vay(i)=this%vay(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
+       this%vaz(i)=this%vaz(i)*exp(-0.25d0*this%get_tfcnpt()*this%get_timestep())
     end do
     call this%set_ekinetic()
     call this%set_tfcnpt()
