@@ -49,7 +49,7 @@ module interaction_module
      real(8), private              :: fbk(3)
      real(8), private              :: fbl(3)
    contains
-     procedure :: interaction_prepare
+     procedure :: interaction_init
      procedure :: set_forcefield
      procedure :: set_intraff
      procedure :: set_interff
@@ -68,11 +68,11 @@ module interaction_module
 
 contains
 
-  subroutine interaction_prepare(this)
+  subroutine interaction_init(this)
     implicit none
     class(interaction), intent(inout) :: this
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
-  end subroutine interaction_prepare
+  end subroutine interaction_init
 
   subroutine set_forcefield(this)
     implicit none

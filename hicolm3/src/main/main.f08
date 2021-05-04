@@ -157,7 +157,7 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
-        call md%interaction_prepare()            ! preparando campo de forca
+        call md%interaction_init()               ! preparando campo de forca
         call md%set_velocity()                   ! atribuindo velocidades iniciais
         if(md%get_restart().gt.0)call md%read_geometry() ! reiniciando simulação
         call md%check()                          ! checando parametros de entrada
