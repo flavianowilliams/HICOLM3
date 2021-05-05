@@ -71,8 +71,8 @@ contains
   subroutine interaction_init(this)
     implicit none
     class(interaction), intent(inout) :: this
-    if(this%get_coulop().eq.'fscs')call this%coul%coulomb_init(&
-         this%get_coulop(),this%get_fscsalpha(),this%get_rcutoff(),this%get_pi())
+    if(this%get_coulop().eq.'fscs')call this%coul%coulomb_init&
+         (this%get_coulop(),this%get_fscsalpha(),this%get_rcutoff(),this%get_pi())
   end subroutine interaction_init
 
   subroutine set_forcefield(this)
