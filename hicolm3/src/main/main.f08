@@ -161,9 +161,6 @@ program HICOLM
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
         call md%interaction_init()               ! preparando campo de forca
-!        if(md%get_restart().ne.'velocity')then
-!           call md%set_velocity()                ! atribuindo velocidades iniciais
-!        end if
         call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%set_mmolar()                     ! calculando massa molecular
         call md%set_global()                     ! calculando a carga total do sistema

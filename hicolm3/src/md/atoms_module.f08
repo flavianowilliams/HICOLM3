@@ -45,7 +45,6 @@ module atoms_module
      procedure :: set_mass
      procedure :: set_qat
      procedure :: set_tpa
-!     procedure :: set_velocity
   end type atoms
 
 contains
@@ -113,22 +112,5 @@ contains
        end do
     end do
   end subroutine set_tpa
-
-!  subroutine set_velocity(this)
-!    implicit none
-!    class(atoms), intent(inout) :: this
-!    integer                     :: i,j,k,nx
-!    nx=1
-!    do i=1,this%get_nmol()
-!       do j=1,this%ntmol(i)
-!          do k=1,this%nxmol(i)
-!             this%vax(nx)=sqrt(this%get_temp()/this%massmol(i,k))
-!             this%vay(nx)=sqrt(this%get_temp()/this%massmol(i,k))
-!             this%vaz(nx)=sqrt(this%get_temp()/this%massmol(i,k))
-!             nx=nx+1
-!          end do
-!       end do
-!    end do
-!  end subroutine set_velocity
 
 end module atoms_module

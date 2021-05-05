@@ -74,6 +74,12 @@ contains
        write(6,*)'Hint: Check the input in the &MD section.'
        stop
     end if
+    if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position'&
+         .and.this%get_restart().ne.'velocity')then
+       write(6,*)'ERROR: The notifyed restart directive is not a option!'
+       write(6,*)'Hint: Check the input in the &SYSTEM section.'
+       stop
+    end if
   end subroutine check
 
   subroutine set_time(this,time)
@@ -556,22 +562,22 @@ contains
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,'(28x,a16,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
     if(this%get_ensble().eq.'nvt')then
-       write(6,'(28x,a16,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+       write(6,'(28x,a16,1x,f4.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
     elseif(this%get_ensble().eq.'npt')then
-       write(6,'(28x,a16,5x,f8.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
+       write(6,'(28x,a16,1x,f4.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
        if(this%get_ensble_mt().eq.'berendsen')then
-          write(6,'(28x,a16,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
+          write(6,'(28x,a16,1x,f4.2)')'Barostat:',this%get_pstat()*this%get_tconv()
        elseif(this%get_ensble_mt().eq.'hoover')then
-          write(6,'(28x,a16,5x,f8.2)')'Barostat:',this%get_pstat()*this%get_tconv()
+          write(6,'(28x,a16,1x,f4.2)')'Barostat:',this%get_pstat()*this%get_tconv()
        end if
     end if
-    write(6,'(28x,a16,5x,f9.3,1x,a1)')'Temperature:',this%get_temp()*this%get_teconv(),'K'
-    write(6,'(28x,a16,5x,f9.3,1x,a3)')'Pressure:',this%get_press()*this%get_pconv(),'atm'
-    write(6,'(28x,a16,6x,i10)')'Number of steps:',this%get_nstep()
-    write(6,'(28x,a16,6x,i10)')'Number of relax:',this%get_nrelax()
+    write(6,'(28x,a16,1x,f6.2,1x,a1)')'Temperature:',this%get_temp()*this%get_teconv(),'K'
+    write(6,'(28x,a16,1x,f6.2,1x,a3)')'Pressure:',this%get_press()*this%get_pconv(),'atm'
+    write(6,'(28x,a16,1x,i10)')'Number of steps:',this%get_nstep()
+    write(6,'(28x,a16,1x,i10)')'Number of relax:',this%get_nrelax()
     write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
-    write(6,'(28x,a16,8x,es10.3,1x,a2)')'Timestep:',this%get_timestep()*this%get_tconv(),'ps'
-    write(6,'(28x,a16,8x,2f6.3,1x,a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
+    write(6,'(28x,a16,1x,es10.3,1x,a2)')'Timestep:',this%get_timestep()*this%get_tconv(),'ps'
+    write(6,'(28x,a16,1x,2(f4.2,1x),a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
          this%get_drcutoff()*this%get_rconv(),'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)
