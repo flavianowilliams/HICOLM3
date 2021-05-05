@@ -55,6 +55,7 @@ contains
     end do
     constructor%zmatrix_tol=0.5d0
     call constructor%set_coulop('fscs')
+    call constructor%set_fscsalpha(0.1d0)
     call constructor%set_bondmax(100)
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
@@ -137,7 +138,11 @@ contains
     real(8)                       :: f1,f2
     open(11,file='TOPOLOGY',status='unknown')
     write(11,'(1x,a2)')'MM'
-    write(11,'(1x,a4)')this%get_coulop()
+    if(this%get_coulop().eq.'fscs')then
+       write(11,'(1x,a4,1x,f5.3)')this%get_coulop(),this%get_fscsalpha()
+    elseif(this%get_coulop().eq.'coul')then
+       write(11,'(1x,a4)')this%get_coulop()
+    end if
     write(11,'(1x,i2,4(1x,i3))')this%get_nmol(),this%get_bondmax(),this%get_bendmax(),&
          this%get_torsmax(),this%get_nspcs()
     do i=1,this%get_nmol()
@@ -359,17 +364,6 @@ contains
     write(6,'(39x,a14)')'INTERMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
-    select case(this%get_coulop())
-    case('coul')
-       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
-       write(6,*)
-    case('fscs')
-       write(6,'(2x,a53)')'Electrostatic interaction: Force-Shifted Coulomb Sum'
-       write(6,*)
-    case('escl')
-       write(6,'(2x,a53)')'Electrostatic interaction: Coulomb scaled potencial'
-       write(6,*)
-    end select
     write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
@@ -382,6 +376,17 @@ contains
        write(6,'(27x,10(1x,a2))')(this%spcs(i),i=11,this%get_nspcs())
        write(*,*)
     end if
+    select case(this%get_coulop())
+    case('coul')
+       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
+       write(6,*)
+    case('fscs')
+       write(6,'(20x,a41)')'Electrostatic: Force-Shifted Coulomb Sum'
+       write(6,'(20x,52a1)')('-',i=1,52)
+       write(6,'(20x,a6,1x,f5.3)')'alpha:',this%get_fscsalpha()
+       write(6,'(20x,52a1)')('-',i=1,52)
+       write(6,*)
+    end select
     write(6,'(20x,a15,i5)')'Van der Waals:',this%get_nvdw()
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,'(22x,a4,4x,a4,5x,a4,6x,a10)')'Site','Site','Type','Parameters'

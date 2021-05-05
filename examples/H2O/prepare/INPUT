@@ -13,7 +13,7 @@
 &END
 
 &FORCE_FIELD
- electrostatic fscs
+ electrostatic fscs 0.15
  molecule H2O
   8 1 1
   OCTIP3 HCTIP3 HCTIP3

@@ -45,20 +45,19 @@ module coulomb_module
      procedure :: get_encoul
      procedure :: set_vircoul
      procedure :: get_vircoul
-     procedure :: set_alcoul
-     procedure :: get_alcoul
      procedure :: get_force
   end type coulomb
 
 contains
 
-  subroutine coulomb_init(this,coulop,rcutoff,pi)
+  subroutine coulomb_init(this,coulop,alcoul,rcutoff,pi)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: rcutoff,pi
+    real(8), intent(in)           :: rcutoff,pi,alcoul
     character(4), intent(in)      :: coulop
     this%coulop=coulop
     this%rcutoff=rcutoff
+    this%alcoul=alcoul
     this%pi=pi
   end subroutine coulomb_init
 
@@ -73,7 +72,7 @@ contains
        this%force=-qi*qj/dr**2
        this%force=-this%force/dr
     case('fscs')
-       alcoul=this%get_alcoul()
+       alcoul=this%alcoul
        this%encoul=qi*qj*(erfc(alcoul*dr)/dr-erfc(alcoul*this%rcutoff)/this%rcutoff &
             +(erfc(alcoul*this%rcutoff)/this%rcutoff**2+(2.d0*alcoul) &
             *exp(-(alcoul*this%rcutoff)**2)/(sqrt(this%pi)*this%rcutoff))*(dr-this%rcutoff))
@@ -116,18 +115,5 @@ contains
     class(coulomb), intent(in) :: this
     get_force=this%force
   end function get_force
-
-  subroutine set_alcoul(this,alcoul)
-    implicit none
-    class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: alcoul
-    this%alcoul=alcoul
-  end subroutine set_alcoul
-
-  double precision function get_alcoul(this)
-    implicit none
-    class(coulomb), intent(in) :: this
-    get_alcoul=this%alcoul
-  end function get_alcoul
 
 end module coulomb_module

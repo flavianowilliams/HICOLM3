@@ -163,7 +163,7 @@ contains
     implicit none
     class(input), intent(inout) :: this
     integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i,j,k,nx
-    real(8)                     :: f1,f2
+    real(8)                     :: f1,f2,fscsalpha
     character(2)                :: mtd
     character(4)                :: coulop
     character(6)                :: tvdw,spcvdw1,spcvdw2
@@ -174,6 +174,11 @@ contains
     read(11,'(1x,a2)')mtd
     if(mtd.eq.'MM')then
        read(11,'(1x,a4)')coulop
+       if(coulop.eq.'fscs')then
+          backspace(11)
+          read(11,'(1x,a4,1x,f5.3)')coulop,fscsalpha
+          call this%set_fscsalpha(fscsalpha)
+       end if
        call this%set_coulop(coulop)
        read(11,'(1x,i2,4(1x,i3))')nmol,bondmax,bendmax,torsmax,nspcs
        call this%set_nmol(nmol)

@@ -39,6 +39,7 @@ module forcefield_module
      integer, allocatable      :: itorscnt(:)
      integer, allocatable      :: molitors(:,:,:)
      character(4), private     :: coulop
+     real(8), private          :: fscsalpha
      real(8), allocatable      :: parbnd(:,:,:)
      real(8), allocatable      :: parbend(:,:,:)
      real(8), allocatable      :: partors(:,:,:)
@@ -67,8 +68,11 @@ module forcefield_module
      procedure          :: set_parvdw
      procedure          :: set_nvdw
      procedure          :: get_nvdw
+     procedure          :: set_fscsalpha
+     procedure          :: get_fscsalpha
      procedure          :: set_coulop
      procedure          :: get_coulop
+     procedure          :: set_coulop2
   end type forcefield
 
   interface forcefield
@@ -118,6 +122,7 @@ contains
   end subroutine forcefield_init
 
   subroutine set_nspcs(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: nx
     logical                          :: check
@@ -141,6 +146,7 @@ contains
   end subroutine set_nspcs
 
   integer function get_nspcs(this)
+    implicit none
     class(forcefield), intent(in) :: this
     get_nspcs=this%nspcs
   end function get_nspcs
@@ -172,11 +178,13 @@ contains
   end subroutine set_nvdw
 
   integer function get_nvdw(this)
+    implicit none
     class(forcefield), intent(in) :: this
     get_nvdw=this%nvdw
   end function get_nvdw
 
   subroutine set_parvdw(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,k,nx
     real(8)                          :: e1,e2,s1,s2
@@ -212,6 +220,7 @@ contains
   end subroutine set_parvdw
 
   subroutine set_parbnd(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,k,m,i1,i2,n1,n2
     logical                          :: check
@@ -242,6 +251,7 @@ contains
   end subroutine set_parbnd
 
   subroutine set_parbend(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,k,m,i1,i2,i3,n1,n2,n3
     logical                          :: check
@@ -274,6 +284,7 @@ contains
   end subroutine set_parbend
 
   subroutine set_partors(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4,i,j,k,m,n1,n2,n3,n4
     logical                          :: check
@@ -310,6 +321,7 @@ contains
   end subroutine set_partors
 
   subroutine set_paritors(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4,i,j,nx,n1,n2,n3,n4
     allocate(this%paritors(this%get_nmol(),this%get_itorsmax(),4))
@@ -426,6 +438,7 @@ contains
   end subroutine set_extra_parvdw
 
   subroutine set_extra_parbnd(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
     character(12)                    :: key
@@ -479,6 +492,7 @@ contains
   end subroutine set_extra_parbnd
 
   subroutine set_extra_parbend(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
     character(12)                    :: key
@@ -534,6 +548,7 @@ contains
   end subroutine set_extra_parbend
 
   subroutine set_extra_partors(this)
+    implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3
     character(12)                    :: key
@@ -594,26 +609,54 @@ contains
   end subroutine set_extra_partors
 
   subroutine set_coulop(this,coulop)
+    implicit none
     class(forcefield), intent(inout) :: this
+    character(4), intent(in)         :: coulop
+    this%coulop=coulop
+  end subroutine set_coulop
+
+  subroutine set_coulop2(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    real(8)                          :: fscsalpha
     character(4)                     :: coulop
     character(13)                    :: key
-    this%coulop=coulop
 1   read(5,*,end=2)key
     if(key.ne.'&FORCE_FIELD')goto 1
     do while (key.ne.'&END')
        read(5,*)key
        if(key.eq.'electrostatic')then
           backspace(5)
-          read(5,*)key,this%coulop
+          read(5,*)key,coulop
+          this%coulop=coulop
+          if(coulop.eq.'fscs')then
+             backspace(5)
+             read(5,*)key,coulop,fscsalpha
+             this%fscsalpha=fscsalpha
+          end if
           goto 2
        end if
     end do
 2   rewind(5)
-  end subroutine set_coulop
+  end subroutine set_coulop2
 
   character(4) function get_coulop(this)
+    implicit none
     class(forcefield), intent(in) :: this
     get_coulop=this%coulop
   end function get_coulop
+
+  subroutine set_fscsalpha(this,fscsalpha)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    real(8), intent(in)              :: fscsalpha
+    this%fscsalpha=fscsalpha
+  end subroutine set_fscsalpha
+
+  double precision function get_fscsalpha(this)
+    implicit none
+    class(forcefield), intent(in) :: this
+    get_fscsalpha=this%fscsalpha
+  end function get_fscsalpha
 
 end module forcefield_module

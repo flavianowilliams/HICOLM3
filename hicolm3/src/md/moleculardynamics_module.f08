@@ -63,7 +63,6 @@ contains
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
     call constructor%ensemble_init()
-    call constructor%coul%set_alcoul(1.d-1)
   end function constructor
 
   subroutine check(this)
@@ -177,7 +176,7 @@ contains
     call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
     call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
     call this%set_bfactor(this%get_bfactor()*this%get_pconv())
-    call this%coul%set_alcoul(this%coul%get_alcoul()/this%get_kconv())
+    call this%set_fscsalpha(this%get_fscsalpha()/this%get_kconv())
   end subroutine convert_units
 
   subroutine set_canonicalvariables(this)
@@ -508,17 +507,17 @@ contains
     write(6,'(39x,a14)')'INTERMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
-    select case(this%get_coulop())
-    case('coul')
-       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
-       write(6,*)
-    case('fscs')
-       write(6,'(2x,a53)')'Electrostatic interaction: Force-Shifted Coulomb Sum'
-       write(6,*)
-    case('escl')
-       write(6,'(2x,a53)')'Electrostatic interaction: Coulomb scaled potencial'
-       write(6,*)
-    end select
+!    select case(this%get_coulop())
+!    case('coul')
+!       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
+!       write(6,*)
+!    case('fscs')
+!       write(6,'(2x,a53)')'Electrostatic interaction: Force-Shifted Coulomb Sum'
+!       write(6,*)
+!    case('escl')
+!       write(6,'(2x,a53)')'Electrostatic interaction: Coulomb scaled potencial'
+!       write(6,*)
+!    end select
     write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
@@ -531,6 +530,17 @@ contains
        write(6,'(27x,10(1x,a2))')(this%spcs(i),i=11,this%get_nspcs())
        write(*,*)
     end if
+    select case(this%get_coulop())
+    case('coul')
+       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
+       write(6,*)
+    case('fscs')
+       write(6,'(20x,a41)')'Electrostatic: Force-Shifted Coulomb Sum'
+       write(6,'(20x,52a1)')('-',i=1,52)
+       write(6,'(20x,a6,1x,f5.3)')'alpha:',this%get_fscsalpha()*this%get_kconv()
+       write(6,'(20x,52a1)')('-',i=1,52)
+       write(6,*)
+    end select
     write(6,'(20x,a15,i5)')'Van der Waals:',this%get_nvdw()
     write(6,'(20x,111a1)')('-',i=1,52)
     write(6,'(22x,a4,4x,a4,5x,a4,6x,a10)')'Site','Site','Type','Parameters'

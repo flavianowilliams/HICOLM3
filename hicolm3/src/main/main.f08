@@ -124,6 +124,7 @@ program HICOLM
         call prp%set_mmolar()                    ! calculando massa molecular
         call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
+        call prp%set_coulop2()                   ! atribuindo potencial eletrostatico
         call prp%set_parbnd()                    ! atribuindo potenciais de ligacao
         call prp%set_parbend()                   ! atribuindo potenciais angulares
         call prp%set_partors()                   ! atribuindo potenciais de torsão
