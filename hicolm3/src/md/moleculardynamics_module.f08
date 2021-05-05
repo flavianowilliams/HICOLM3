@@ -407,19 +407,18 @@ contains
     write(6,'(39x,a14)')'INTRAMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
-    write(6,'(16x,a9)')'Molecules'
-    write(6,'(15x,111a1)')('-',i=1,62)
-    write(6,'(16x,a4,6x,a3,5x,a6,5(4x,a5))')&
-         'Type','Qty','Sites','bonds','bends','dihdl','idihd'
-    write(6,'(15x,111a1)')('-',i=1,62)
+    write(6,'(21x,a9)')'Molecules'
+    write(6,'(20x,111a1)')('-',i=1,53)
+    write(6,'(21x,a4,6x,a3,5x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
+    write(6,'(20x,111a1)')('-',i=1,53)
     do i=1,this%get_nmol()
-       write(6,'(17x,a6,1x,i5,4(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
-            this%bondscnt(i),this%bendscnt(i),this%torscnt(i)!,this%itorscnt(i)
+       write(6,'(22x,a6,1x,i5,4(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
+            this%bondscnt(i),this%bendscnt(i),this%torscnt(i)
     end do
-    write(6,'(15x,111a1)')('-',i=1,62)
-    write(6,'(17x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
+    write(6,'(20x,111a1)')('-',i=1,53)
+    write(6,'(22x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
          sum(this%bondscnt*this%ntmol),sum(this%bendscnt*this%ntmol),&
-         sum(this%torscnt*this%ntmol)!,sum(this%itorscnt*this%ntmol)
+         sum(this%torscnt*this%ntmol)
     write(6,*)
     do i=1,this%get_nmol()
        write(6,'(42x,a6)')this%namemol(i)
