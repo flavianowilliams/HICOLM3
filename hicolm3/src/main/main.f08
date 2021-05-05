@@ -157,7 +157,7 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
-        call md%set_canonicalvariables()         ! reiniciando simulação
+        call md%set_canonicalvariables()         ! atribuindo valores iniciais para var. canon.
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
         call md%interaction_init()               ! preparando campo de forca
