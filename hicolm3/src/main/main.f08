@@ -157,11 +157,13 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
-        call md%read_geometry()                  ! reiniciando simulação
+        call md%set_canonicalvariables()         ! reiniciando simulação
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
         call md%interaction_init()               ! preparando campo de forca
-        call md%set_velocity()                   ! atribuindo velocidades iniciais
+!        if(md%get_restart().ne.'velocity')then
+!           call md%set_velocity()                ! atribuindo velocidades iniciais
+!        end if
         call md%ccp()                            ! aplicando condicoes de contorno periodicas
         call md%set_mmolar()                     ! calculando massa molecular
         call md%set_global()                     ! calculando a carga total do sistema

@@ -35,7 +35,7 @@ module moleculardynamics_module
      procedure :: check
      procedure :: print_geometry
      procedure :: print_dataframes
-     procedure :: read_geometry
+     procedure :: set_canonicalvariables
      procedure :: print_out
      procedure :: print
      procedure :: set_time
@@ -174,15 +174,38 @@ contains
     call this%coul%set_alcoul(this%coul%get_alcoul()/this%get_kconv())
   end subroutine convert_units
 
-  subroutine read_geometry(this)
+  subroutine set_canonicalvariables(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
-    integer                                 :: i,j
+    integer                                 :: i,j,k,nx
     open(1,file='hicolm.xsf',status='old')
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
     allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     select case(this%get_restart())
+    case('undefine')
+       nx=1
+       do i=1,this%get_nmol()
+          do j=1,this%ntmol(i)
+             do k=1,this%nxmol(i)
+                this%vax(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                this%vay(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                this%vaz(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                nx=nx+1
+             end do
+          end do
+       end do
     case('position')
+       nx=1
+       do i=1,this%get_nmol()
+          do j=1,this%ntmol(i)
+             do k=1,this%nxmol(i)
+                this%vax(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                this%vay(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                this%vaz(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                nx=nx+1
+             end do
+          end do
+       end do
        do i=1,13
           read(1,*)
        end do
@@ -209,7 +232,7 @@ contains
        end do
     end select
     close(1)
-  end subroutine read_geometry
+  end subroutine set_canonicalvariables
 
   subroutine print_geometry(this,mdstp)
     implicit none
