@@ -76,7 +76,7 @@ contains
     end if
     if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position'&
          .and.this%get_restart().ne.'velocity')then
-       write(6,*)'ERROR: The notifyed restart directive is not a option!'
+       write(6,*)'ERROR: The notifyed restart directive is not an option!'
        write(6,*)'Hint: Check the input in the &SYSTEM section.'
        stop
     end if
