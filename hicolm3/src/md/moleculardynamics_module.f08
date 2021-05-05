@@ -51,6 +51,7 @@ contains
 
   type(moleculardynamics) function constructor()
     implicit none
+    call constructor%set_restart('undefine')
     call constructor%set_nstep(1)
     call constructor%set_nrelax(1)
     call constructor%set_nframes(1)
@@ -62,6 +63,7 @@ contains
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
     call constructor%ensemble_init()
+    call constructor%coul%set_alcoul(1.d-1)
   end function constructor
 
   subroutine check(this)
@@ -169,6 +171,7 @@ contains
     call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
     call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
     call this%set_bfactor(this%get_bfactor()*this%get_pconv())
+    call this%coul%set_alcoul(this%coul%get_alcoul()/this%get_kconv())
   end subroutine convert_units
 
   subroutine read_geometry(this)
@@ -176,28 +179,33 @@ contains
     class(moleculardynamics), intent(inout) :: this
     integer                                 :: i,j
     open(1,file='hicolm.xsf',status='old')
-    do i=1,13
-       read(1,*)
-    end do
-    do i=1,3
-       read(1,'(3(3x,f14.8))')(this%v(i,j),j=1,3)
-    end do
-    read(1,*)
-    read(1,*)
+    allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
+    allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     select case(this%get_restart())
-    case(1)
-       do i=1,this%get_natom()
-          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i)
+    case('position')
+       do i=1,13
+          read(1,*)
        end do
-    case(2)
-       do i=1,this%get_natom()
-          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i),&
-               this%fax(i),this%fay(i),this%faz(i)
+       do i=1,3
+          read(1,'(3(3x,f14.8))')(this%v(i,j),j=1,3)
        end do
-    case(3)
+       read(1,*)
+       read(1,*)
        do i=1,this%get_natom()
-          read(1,'(5x,3f14.8,2(2x,3f14.8))')this%xa(i),this%ya(i),this%za(i),&
-               this%fax(i),this%fay(i),this%faz(i),this%vax(i),this%vay(i),this%vaz(i)
+          read(1,'(5x,3f14.8)')this%xa(i),this%ya(i),this%za(i)
+       end do
+    case('velocity')
+       do i=1,13
+          read(1,*)
+       end do
+       do i=1,3
+          read(1,'(3(3x,f14.8))')(this%v(i,j),j=1,3)
+       end do
+       read(1,*)
+       read(1,*)
+       do i=1,this%get_natom()
+          read(1,'(5x,3f14.8,48x,3f14.8)')&
+               this%xa(i),this%ya(i),this%za(i),this%vax(i),this%vay(i),this%vaz(i)
        end do
     end select
     close(1)
@@ -538,7 +546,7 @@ contains
     write(6,'(28x,a16,5x,f9.3,1x,a3)')'Pressure:',this%get_press()*this%get_pconv(),'atm'
     write(6,'(28x,a16,6x,i10)')'Number of steps:',this%get_nstep()
     write(6,'(28x,a16,6x,i10)')'Number of relax:',this%get_nrelax()
-    write(6,'(28x,a16,9x,i1)')'Restart:',this%get_restart()
+    write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
     write(6,'(28x,a16,8x,es10.3,1x,a2)')'Timestep:',this%get_timestep()*this%get_tconv(),'ps'
     write(6,'(28x,a16,8x,2f6.3,1x,a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
          this%get_drcutoff()*this%get_rconv(),'A'

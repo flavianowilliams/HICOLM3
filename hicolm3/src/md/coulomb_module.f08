@@ -36,29 +36,31 @@ module coulomb_module
      real(8), private      :: kconv
      real(8), private      :: pi
      real(8), private      :: force
+     real(8), private      :: alcoul
      character(4), private :: coulop
    contains
      procedure :: set_coulomb
-     procedure :: coulomb_prepare
+     procedure :: coulomb_init
      procedure :: set_encoul
      procedure :: get_encoul
      procedure :: set_vircoul
      procedure :: get_vircoul
+     procedure :: set_alcoul
+     procedure :: get_alcoul
      procedure :: get_force
   end type coulomb
 
 contains
 
-  subroutine coulomb_prepare(this,coulop,kconv,rcutoff,pi)
+  subroutine coulomb_init(this,coulop,rcutoff,pi)
     implicit none
     class(coulomb), intent(inout) :: this
-    real(8), intent(in)           :: rcutoff,kconv,pi
+    real(8), intent(in)           :: rcutoff,pi
     character(4), intent(in)      :: coulop
     this%coulop=coulop
-    this%kconv=kconv
     this%rcutoff=rcutoff
     this%pi=pi
-  end subroutine coulomb_prepare
+  end subroutine coulomb_init
 
   subroutine set_coulomb(this,dr,qi,qj)
     implicit none
@@ -71,7 +73,7 @@ contains
        this%force=-qi*qj/dr**2
        this%force=-this%force/dr
     case('fscs')
-       alcoul=1.d-1/this%kconv
+       alcoul=this%get_alcoul()
        this%encoul=qi*qj*(erfc(alcoul*dr)/dr-erfc(alcoul*this%rcutoff)/this%rcutoff &
             +(erfc(alcoul*this%rcutoff)/this%rcutoff**2+(2.d0*alcoul) &
             *exp(-(alcoul*this%rcutoff)**2)/(sqrt(this%pi)*this%rcutoff))*(dr-this%rcutoff))
@@ -114,5 +116,18 @@ contains
     class(coulomb), intent(in) :: this
     get_force=this%force
   end function get_force
+
+  subroutine set_alcoul(this,alcoul)
+    implicit none
+    class(coulomb), intent(inout) :: this
+    real(8), intent(in)           :: alcoul
+    this%alcoul=alcoul
+  end subroutine set_alcoul
+
+  double precision function get_alcoul(this)
+    implicit none
+    class(coulomb), intent(in) :: this
+    get_alcoul=this%alcoul
+  end function get_alcoul
 
 end module coulomb_module

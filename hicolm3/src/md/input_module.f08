@@ -34,7 +34,6 @@ module input_module
      integer, private       :: nrelax
      integer, private       :: nframes
      integer, private       :: nhist
-     integer, private       :: restart
      real(8), private       :: timestep
      real(8), private       :: press
      real(8), private       :: temp
@@ -43,6 +42,7 @@ module input_module
      real(8), private       :: pstat
      real(8), private       :: tstat
      real(8), private       :: bfactor
+     character(8), private  :: restart
      character(3), private  :: ensble
      character(9), private  :: ensble_mt
    contains
@@ -493,11 +493,11 @@ contains
   subroutine set_restart(this,restart)
     implicit none
     class(input), intent(inout) :: this
-    integer, intent(in)         :: restart
+    character(8), intent(in)    :: restart
     this%restart=restart
   end subroutine set_restart
 
-  integer function get_restart(this)
+  character(8) function get_restart(this)
     implicit none
     class(input), intent(in) :: this
     get_restart=this%restart

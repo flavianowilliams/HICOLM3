@@ -71,7 +71,8 @@ contains
   subroutine interaction_init(this)
     implicit none
     class(interaction), intent(inout) :: this
-    allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
+    if(this%get_coulop().eq.'fscs')&
+         call this%coul%coulomb_init(this%get_coulop(),this%get_rcutoff(),this%get_pi())
   end subroutine interaction_init
 
   subroutine set_forcefield(this)
@@ -83,8 +84,6 @@ contains
        this%fay(i)=0.d0
        this%faz(i)=0.d0
     end do
-    call this%coul%coulomb_prepare&
-         (this%get_coulop(),this%get_kconv(),this%get_rcutoff(),this%get_pi())
     call this%set_enpot(this%get_encorr())
     call this%set_virtot(this%get_vircorr())
     call this%set_intraff()

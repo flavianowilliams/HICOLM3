@@ -118,7 +118,6 @@ contains
     implicit none
     class(atoms), intent(inout) :: this
     integer                     :: i,j,k,nx
-    allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     nx=1
     do i=1,this%get_nmol()
        do j=1,this%ntmol(i)
