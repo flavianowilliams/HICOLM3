@@ -17,6 +17,13 @@
  molecule H2O
   8 1 1
   OCTIP3 HCTIP3 HCTIP3
- -0.834 0.417 0.417
+ -0.820 0.410 0.410
+  bonds 2
+  1 1 2 harm 1059.162 1.012
+  2 1 3 harm 1059.162 1.012
+  bends 1
+  1 2 1 3 harm 75.90 113.24
+  vdw 1
+  OCTIP3 OCTIP3 lj 0.155425 3.1655
  end_molecule
 &END

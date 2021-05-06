@@ -389,7 +389,7 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: nvdw
     real(8)                          :: p1,p2
-    character(2)                     :: spcs1,spcs2
+    character(6)                     :: spcs1,spcs2
     character(12)                    :: key
     character(5)                     :: tvdw
     nvdw=this%get_nvdw()
