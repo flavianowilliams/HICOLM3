@@ -55,7 +55,7 @@ contains
     end do
     constructor%zmatrix_tol=0.5d0
     call constructor%set_coulop('fscs')
-    call constructor%set_fscsalpha(0.1d0)
+    call constructor%set_fscsalpha(0.25d0)
     call constructor%set_bondmax(100)
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
