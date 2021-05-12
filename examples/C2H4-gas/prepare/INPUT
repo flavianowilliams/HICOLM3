@@ -16,7 +16,7 @@
  electrostatic fscs 0.25
  molecule C2H4
   6 6 1 1 1 1
-  CC321C CC321C HCA2 HCA2 HCA2 HCA2
+  CC321 CC321 HCA2 HCA2 HCA2 HCA2
   0.0 0.0 0.0 0.0 0.0 0.0
  end_molecule
 &END

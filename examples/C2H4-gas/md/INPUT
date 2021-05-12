@@ -9,7 +9,7 @@
  nstep 100000
  nrelax 0
  nframes 200
- timestep 0.001
+ timestep 0.00001
  pressure 1.0
  temperature 0.0
  ensemble nvt berendsen 0.5 1.0
