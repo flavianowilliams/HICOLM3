@@ -56,8 +56,8 @@ contains
     call constructor%set_nrelax(1)
     call constructor%set_nframes(1)
     call constructor%set_timestep(0.001d0)
-    call constructor%set_press(1.d0)
-    call constructor%set_temp(298.d0)
+    call constructor%set_press(1.0d0)
+    call constructor%set_temp(0.0d0)
     call constructor%set_rcutoff(8.0d0)
     call constructor%set_drcutoff(0.1d0)
     call constructor%set_ensble('nve')
@@ -507,17 +507,6 @@ contains
     write(6,'(39x,a14)')'INTERMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
-!    select case(this%get_coulop())
-!    case('coul')
-!       write(6,'(2x,a53)')'Electrostatic interaction: Direct Coulomb Sum'
-!       write(6,*)
-!    case('fscs')
-!       write(6,'(2x,a53)')'Electrostatic interaction: Force-Shifted Coulomb Sum'
-!       write(6,*)
-!    case('escl')
-!       write(6,'(2x,a53)')'Electrostatic interaction: Coulomb scaled potencial'
-!       write(6,*)
-!    end select
     write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
@@ -569,7 +558,11 @@ contains
     write(6,*)
     write(6,'(31x,a30)')'Molecular dynamics information'
     write(6,'(28x,36a1)')('-',j=1,36)
-    write(6,'(28x,a16,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
+    if(this%get_ensble().eq.'nve')then
+       write(6,'(28x,a16,1x,a3)')'Ensemble:',this%get_ensble()
+    else
+       write(6,'(28x,a16,1x,a3,1x,a9)')'Ensemble:',this%get_ensble(),this%get_ensble_mt()
+    end if
     if(this%get_ensble().eq.'nvt')then
        write(6,'(28x,a16,1x,f4.2)')'Thermostat:',this%get_tstat()*this%get_tconv()
     elseif(this%get_ensble().eq.'npt')then

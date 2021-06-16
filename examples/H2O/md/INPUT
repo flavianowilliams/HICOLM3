@@ -13,6 +13,6 @@
  pressure 1.0
  temperature 298
  rcutoff 9.5 0.1
- ensemble npt hoover 0.5 0.5
+ ensemble npe hoover 0.5 0.5
  restart velocity
 &END
