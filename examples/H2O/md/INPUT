@@ -7,12 +7,5 @@
 
 &MD
  nstep 100
- nrelax 0
- nframes 20
- timestep 0.001
- pressure 1.0
- temperature 298
- rcutoff 9.5 0.1
- ensemble npe hoover 0.5 0.5
- restart velocity
+ restart position
 &END
