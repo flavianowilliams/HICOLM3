@@ -50,6 +50,7 @@ module ensemble_module
      procedure :: get_bfc
      procedure :: set_bfc2
      procedure :: check_lattice
+     procedure :: check_energy
      procedure :: set_rcm
      procedure :: set_vcm
   end type ensemble
@@ -131,6 +132,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_etotal()
+    call this%check_energy()
     call this%set_temperature()
     call this%set_pressure()
   end subroutine set_nve
@@ -165,6 +167,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_etotal()
+    call this%check_energy()
     call this%set_temperature()
     call this%set_pressure()
   end subroutine set_nvt_berendsen
@@ -205,6 +208,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_etotal()
+    call this%check_energy()
     call this%set_temperature()
     call this%set_pressure()
     call this%set_tfcnvt()
@@ -250,6 +254,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_etotal()
+    call this%check_energy()
     call this%set_temperature()
     call this%set_pressure()
   end subroutine set_npt_berendsen
@@ -352,6 +357,7 @@ contains
     end do
     call this%set_ekinetic()
     call this%set_etotal()
+    call this%check_energy()
     call this%set_temperature()
   end subroutine set_npt_nosehoover
 
@@ -364,6 +370,18 @@ contains
        stop
     end if
   end subroutine check_lattice
+
+  subroutine check_energy(this)
+    implicit none
+    class(ensemble), intent(inout) :: this
+    if(this%get_etotal()/this%get_natom().ge.this%get_checkenergy())then
+       write(6,*)
+       write(6,'(a42,es7.1,a61)')'ERROR: The energy per atom is higher than ',&
+            this%get_checkenergy()*this%get_econv(),&
+            ' kcal/mol! The simulation was interrupted to avoid explosion.'
+       stop
+    end if
+  end subroutine check_energy
 
   subroutine set_rcm(this)
     implicit none

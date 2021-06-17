@@ -7,5 +7,5 @@
 
 &MD
  nstep 100
- restart position
+ timestep 0.0000001
 &END

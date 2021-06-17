@@ -42,6 +42,7 @@ module input_module
      real(8), private       :: pstat
      real(8), private       :: tstat
      real(8), private       :: bfactor
+     real(8), private       :: checkenergy
      character(8), private  :: restart
      character(3), private  :: ensble
      character(9), private  :: ensble_mt
@@ -80,6 +81,8 @@ module input_module
      procedure :: get_ensble_mt
      procedure :: set_bfactor
      procedure :: get_bfactor
+     procedure :: set_checkenergy
+     procedure :: get_checkenergy
   end type input
 
 contains
@@ -520,5 +523,18 @@ contains
     class(input), intent(in) :: this
     get_bfactor=this%bfactor
   end function get_bfactor
+
+  subroutine set_checkenergy(this,checkenergy)
+    implicit none
+    class(input), intent(inout) :: this
+    real(8), intent(in)         :: checkenergy
+    this%checkenergy=checkenergy
+  end subroutine set_checkenergy
+
+  double precision function get_checkenergy(this)
+    implicit none
+    class(input), intent(in) :: this
+    get_checkenergy=this%checkenergy
+  end function get_checkenergy
 
 end module input_module

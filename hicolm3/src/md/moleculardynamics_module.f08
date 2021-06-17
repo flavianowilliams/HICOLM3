@@ -63,18 +63,21 @@ contains
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
     call constructor%ensemble_init()
+    call constructor%set_checkenergy(1.0d8)
   end function constructor
 
   subroutine check(this)
     implicit none
     class(moleculardynamics), intent(inout) :: this
     if(this%get_nframes().ge.(this%get_nstep()-this%get_nrelax()))then
+       write(6,*)
        write(6,*)'ERROR: The number of frames does not be higher than the (nstep-nrelax)!'
        write(6,*)'Hint: Check the input in the &MD section.'
        stop
     end if
     if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position'&
          .and.this%get_restart().ne.'velocity')then
+       write(6,*)
        write(6,*)'ERROR: The notifyed restart directive is not an option!'
        write(6,*)'Hint: Check the input in the &SYSTEM section.'
        stop
@@ -177,6 +180,7 @@ contains
     call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
     call this%set_bfactor(this%get_bfactor()*this%get_pconv())
     call this%set_fscsalpha(this%get_fscsalpha()/this%get_kconv())
+    call this%set_checkenergy(this%get_checkenergy()/this%get_econv())
   end subroutine convert_units
 
   subroutine set_canonicalvariables(this)
