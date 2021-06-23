@@ -7,14 +7,14 @@ OBJ_MD = input_module.o atoms_module.o neighbourlist_module.o bonds_module.o ang
 	dihedrals_module.o coulomb_module.o vanderwaals_module.o interaction_module.o \
 	thermodynamics_module.o ensemble_module.o moleculardynamics_module.o
 #
-OBJ_OPT = optimize.o
+OBJ_OPT = optimize_module.o
 #
 OBJ_MAIN = main.o
 #=====================================================================================
 ODIR1=main
 ODIR2=prepare
 ODIR3=md
-ODIR4=opt
+ODIR4=optimize
 #
 $(OBJ_GEN):
 	$(FC) -c $(FFLAGS) $(ODIR1)/$*.f08
@@ -31,12 +31,10 @@ $(OBJ_OPT):
 $(OBJ_MAIN):
 	$(FC) -c $(FFLAGS) $(ODIR1)/$*.f08
 #
-all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_MAIN)
-	$(FC) -o HICOLM3 $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_MAIN)
+all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
+	$(FC) -o HICOLM3 $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
 #
 clean:
-	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.dat *.out *.md
-#
-#clean:
-#	rm -f $(OBJ_GEN) $(OBJ_MAIN) $(OBJ_MD) *.dat *.out *.md
+#	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.md
+	rm -f $(OBJ_GEN) $(OBJ_MAIN) $(OBJ_MD) $(OBJ_OPT) *.md
 #==========================================================================

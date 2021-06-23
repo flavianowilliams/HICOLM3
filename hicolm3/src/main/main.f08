@@ -25,6 +25,7 @@ program HICOLM
 
   use prepare_module           ! prepare class to prepare the physical environment
   use moleculardynamics_module ! prepare class to molecular dynamics procedure
+  use optimize_module          ! prepare class to molecular dynamics procedure
 
   implicit none
 
@@ -33,11 +34,13 @@ program HICOLM
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drx,dry,drz,drmax
   character(10) :: host,time
-  character(8)  :: date,in
+  character(8)  :: date
+  character(9)  :: in
   logical       :: lval
 
   type(prepare)           :: prp ! instanciating prepare object
   type(moleculardynamics) :: md  ! instanciating molecular dynamics object
+  type(optimize)          :: opt ! instanciating optimize object
 
   call cpu_time(t0)
 
@@ -250,13 +253,18 @@ program HICOLM
         write(6,'(5x,11x,a14,1x,i8,1x,a7)')'Elapsed time =',nint(t3-t1),'seconds'
         write(6,*)
         lval=.true.
+     elseif(in.eq.'@OPTIMIZE')then
+        call cpu_time(t1)
+        write(6,*)'Error: The optimization procedure is under construction!'
+        stop
+        lval=.true.
      end if
   end do
 
   goto 2
 
 1 write(6,*)'ERROR: Method does not found!'
-  write(6,*)'Hint: You must choose one of the following methods: @PREPARE or @MD'
+  write(6,*)'Hint: You must choose one of the following methods: @PREPARE, @OPTIMIZE or @MD'
   stop
 
 10 format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
