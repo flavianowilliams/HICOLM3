@@ -8,4 +8,5 @@
 &OPTIMIZATION
  nstep 1001
  tolerance 0.0005
+ restart position
 &END

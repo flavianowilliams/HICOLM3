@@ -33,6 +33,7 @@ module optimize_module
    contains
      procedure :: print
      procedure :: convert_units
+     procedure :: set_canonicalvariables
   end type optimize
 
   interface optimize
@@ -53,17 +54,17 @@ contains
     integer                        :: i,j
     do i=1,3
        do j=1,3
-!          this%v(i,j)=this%v(i,j)/this%get_rconv()
+          this%v(i,j)=this%v(i,j)/this%get_rconv()
        end do
     end do
-!    call this%set_a(this%get_a()/this%get_rconv())
-!    call this%set_b(this%get_b()/this%get_rconv())
-!    call this%set_c(this%get_c()/this%get_rconv())
-!    do i=1,this%get_natom()
-!       this%xa(i)=this%xa(i)/this%get_rconv()
-!       this%ya(i)=this%ya(i)/this%get_rconv()
-!       this%za(i)=this%za(i)/this%get_rconv()
-!    end do
+    call this%set_a(this%get_a()/this%get_rconv())
+    call this%set_b(this%get_b()/this%get_rconv())
+    call this%set_c(this%get_c()/this%get_rconv())
+    do i=1,this%get_natom()
+       this%xa(i)=this%xa(i)/this%get_rconv()
+       this%ya(i)=this%ya(i)/this%get_rconv()
+       this%za(i)=this%za(i)/this%get_rconv()
+    end do
 !    do i=1,this%get_nmol()
 !       do j=1,this%nxmol(i)
 !          this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
@@ -116,6 +117,27 @@ contains
 !    end do
     call this%set_tolerance(this%get_tolerance()/(this%get_econv()/this%get_rconv()))
   end subroutine convert_units
+
+  subroutine set_canonicalvariables(this)
+    implicit none
+    class(optimize), intent(inout) :: this
+    integer                        :: i,j
+    open(1,file='hicolm.xsf',status='old')
+    select case(this%get_restart())
+    case('position')
+       do i=1,13
+          read(1,*)
+       end do
+       do i=1,3
+          read(1,'(3(3x,f14.8))')(this%v(i,j),j=1,3)
+       end do
+       read(1,*)
+       read(1,*)
+       do i=1,this%get_natom()
+          read(1,'(5x,3f14.8)')this%xa(i),this%ya(i),this%za(i)
+       end do
+    end select
+  end subroutine set_canonicalvariables
 
   subroutine print(this)
     implicit none

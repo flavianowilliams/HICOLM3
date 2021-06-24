@@ -171,6 +171,7 @@ contains
     class(input), intent(inout) :: this
     integer                     :: nstep
     real(8)                     :: tolerance
+    character(8)                :: restart
     character(13)               :: key
 1   read(5,*,end=2)key
     if(key.ne.'&OPTIMIZATION')goto 1
@@ -185,6 +186,11 @@ contains
           backspace(5)
           read(5,*)key,tolerance
           call this%set_tolerance(tolerance)
+       end if
+       if(key.eq.'restart')then
+          backspace(5)
+          read(5,*)key,restart
+          call this%set_restart(restart)
        end if
     end do
 2   rewind(5)
