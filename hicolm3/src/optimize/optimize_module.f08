@@ -41,6 +41,8 @@ contains
 
   type(optimize) function constructor()
     implicit none
+    call constructor%set_nstep(1000)
+    call constructor%set_eps(0.001d0)
   end function constructor
 
 end module optimize_module
