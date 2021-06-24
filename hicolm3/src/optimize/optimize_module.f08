@@ -31,6 +31,7 @@ module optimize_module
 
   type, extends(input) :: optimize
    contains
+     procedure :: check
      procedure :: print
      procedure :: convert_units
      procedure :: set_canonicalvariables
@@ -47,6 +48,17 @@ contains
     call constructor%set_nstep(1000)
     call constructor%set_tolerance(0.001d0)
   end function constructor
+
+  subroutine check(this)
+    implicit none
+    class(optimize), intent(inout) :: this
+    if(this%get_restart().ne.'position')then
+       write(6,*)
+       write(6,*)'ERROR: The notifyed restart directive is not an option!'
+       write(6,*)'Hint: Check the input in the &OPTIMIZATION section.'
+       stop
+    end if
+  end subroutine check
 
   subroutine convert_units(this)
     implicit none

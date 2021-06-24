@@ -267,12 +267,15 @@ program HICOLM
         call opt%set_molecules()                  ! lendo tipos e qde de moleculas
         call opt%set_natom()                      ! calculando qde de sitios atomicos
         call opt%set_nfree()                      ! atribuindo graus de liberdade
+        call opt%set_topology()                   ! lendo parametros do campo de forca
+        call opt%check()                          ! checando parametros de entrada
         call opt%set_canonicalvariables()         ! atribuindo valores iniciais para var. can.
         call opt%convert_units()                  ! convertendo unidades de medida
         call opt%set_lattice_constants()          ! calculando constantes de rede
         call opt%set_lattice_angles()             ! calculando angulos de rede
         call opt%set_symmetry()                   ! calculando grupo de simetria
         call opt%set_volume()                     ! calculando volume da supercelula
+        call opt%ccp()                            ! aplicando condicoes de contorno periodicas
         !...
         call opt%print()                          ! imprimindo parametros da otimizacao
         !...
