@@ -256,9 +256,22 @@ program HICOLM
      elseif(in.eq.'@OPTIMIZE')then
         call cpu_time(t1)
         !
-        opt=optimize()                   ! set default values
+        opt=optimize()                            ! set default values
         !
-        call md%constants_prepare()              ! definindo constantes
+        call opt%constants_prepare()              ! definindo constantes
+        call opt%set_inopt()                      ! lendo parametros de entrada em INPUT
+        !...
+        !..... continua aqui
+        !...
+        call opt%set_molecules()                  ! lendo tipos e qde de moleculas
+        call opt%set_natom()                      ! calculando qde de sitios atomicos
+        call opt%set_nfree()                      ! atribuindo graus de liberdade
+        call opt%convert_units()                  ! convertendo unidades de medida
+        !...
+        call opt%print()                          ! imprimindo parametros da otimizacao
+        !...
+        !..... continua aqui
+        !...
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.

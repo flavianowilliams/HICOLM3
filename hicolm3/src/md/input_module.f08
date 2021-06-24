@@ -43,11 +43,13 @@ module input_module
      real(8), private       :: tstat
      real(8), private       :: bfactor
      real(8), private       :: checkenergy
+     real(8), private       :: tolerance
      character(8), private  :: restart
      character(3), private  :: ensble
      character(9), private  :: ensble_mt
    contains
      procedure :: set_input
+     procedure :: set_inopt
      procedure :: set_topology
      procedure :: set_molecules
      procedure :: set_latticevectors
@@ -83,6 +85,8 @@ module input_module
      procedure :: get_bfactor
      procedure :: set_checkenergy
      procedure :: get_checkenergy
+     procedure :: set_tolerance
+     procedure :: get_tolerance
   end type input
 
 contains
@@ -161,6 +165,30 @@ contains
     end do
 2   rewind(5)
   end subroutine set_input
+
+  subroutine set_inopt(this)
+    implicit none
+    class(input), intent(inout) :: this
+    integer                     :: nstep
+    real(8)                     :: tolerance
+    character(13)               :: key
+1   read(5,*,end=2)key
+    if(key.ne.'&OPTIMIZATION')goto 1
+    do while (key.ne.'&END')
+       read(5,*)key
+       if(key.eq.'nstep')then
+          backspace(5)
+          read(5,*)key,nstep
+          call this%set_nstep(nstep)
+       end if
+       if(key.eq.'tolerance')then
+          backspace(5)
+          read(5,*)key,tolerance
+          call this%set_tolerance(tolerance)
+       end if
+    end do
+2   rewind(5)
+  end subroutine set_inopt
 
   subroutine set_topology(this)
     implicit none
@@ -536,5 +564,18 @@ contains
     class(input), intent(in) :: this
     get_checkenergy=this%checkenergy
   end function get_checkenergy
+
+  subroutine set_tolerance(this,tolerance)
+    implicit none
+    class(input), intent(inout) :: this
+    real(8), intent(in)         :: tolerance
+    this%tolerance=tolerance
+  end subroutine set_tolerance
+
+  double precision function get_tolerance(this)
+    implicit none
+    class(input), intent(inout) :: this
+    get_tolerance=this%tolerance
+  end function get_tolerance
 
 end module input_module

@@ -5,3 +5,7 @@
 
 # Structure settings. Type the coordinates of the lattice vectors of the unit cell.
 
+&OPTIMIZATION
+ nstep 1001
+ tolerance 0.0005
+&END
