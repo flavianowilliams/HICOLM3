@@ -7,7 +7,7 @@ OBJ_MD = input_module.o atoms_module.o neighbourlist_module.o bonds_module.o ang
 	dihedrals_module.o coulomb_module.o vanderwaals_module.o interaction_module.o \
 	thermodynamics_module.o ensemble_module.o moleculardynamics_module.o
 #
-OBJ_OPT = optimize_module.o
+OBJ_OPT = inopt_module.o optimize_module.o
 #
 OBJ_MAIN = main.o
 #=====================================================================================

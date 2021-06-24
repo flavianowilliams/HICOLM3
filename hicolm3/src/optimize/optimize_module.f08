@@ -22,15 +22,25 @@ module optimize_module
   !*******************************************************************************************
   !*******************************************************************************************
 
+  use inopt_module
+
   implicit none
 
   private
   public :: optimize
 
-  type :: optimize
+  type, extends(inopt) :: optimize
    contains
   end type optimize
 
+  interface optimize
+     module procedure constructor
+  end interface optimize
+
 contains
+
+  type(optimize) function constructor()
+    implicit none
+  end function constructor
 
 end module optimize_module

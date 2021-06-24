@@ -149,9 +149,9 @@ program HICOLM
         open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
-!
+        !
         md=moleculardynamics()                   ! set default values
-!
+        !
         call md%constants_prepare()              ! definindo constantes
         call md%set_input()                      ! lendo parametros de entrada em INPUT
         call md%set_latticevectors()             ! lendo coordenadas da celula unitaria
@@ -255,6 +255,10 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@OPTIMIZE')then
         call cpu_time(t1)
+        !
+        opt=optimize()                   ! set default values
+        !
+        call md%constants_prepare()              ! definindo constantes
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.
