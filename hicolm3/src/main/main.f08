@@ -276,8 +276,14 @@ program HICOLM
         call opt%set_symmetry()                   ! calculando grupo de simetria
         call opt%set_volume()                     ! calculando volume da supercelula
         call opt%ccp()                            ! aplicando condicoes de contorno periodicas
-        !...
+        call opt%set_mmolar()                     ! calculando massa molecular
+        call opt%set_global()                     ! calculando a carga total do sistema
+        call opt%set_zat()                        ! atribuindo numero atomico
+        call opt%set_qat()                        ! atribuindo cargas atomicas
+        call opt%set_tpa()                        ! atribuindo tipos atomicos
+        call opt%gd_init()                        ! preparando otimizacao
         call opt%print()                          ! imprimindo parametros da otimizacao
+        call opt%set_gd()                         ! calculando residuo e hessiana
         !...
         !..... continua aqui
         !...
