@@ -47,12 +47,13 @@ contains
     implicit none
     call constructor%set_nstep(1000)
     call constructor%set_tolerance(0.001d0)
+    call constructor%set_restart('undefine')
   end function constructor
 
   subroutine check(this)
     implicit none
     class(optimize), intent(inout) :: this
-    if(this%get_restart().ne.'position')then
+    if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position')then
        write(6,*)
        write(6,*)'ERROR: The notifyed restart directive is not an option!'
        write(6,*)'Hint: Check the input in the &OPTIMIZATION section.'
@@ -135,9 +136,9 @@ contains
     implicit none
     class(optimize), intent(inout) :: this
     integer                        :: i,j
-    open(1,file='hicolm.xsf',status='old')
     select case(this%get_restart())
     case('position')
+       open(1,file='hicolm.xsf',status='old')
        do i=1,13
           read(1,*)
        end do

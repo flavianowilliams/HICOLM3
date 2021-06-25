@@ -9,4 +9,5 @@
  nstep 100
  nframes 90
  timestep 0.0000001
+ restart velocity
 &END

@@ -33,6 +33,7 @@ program HICOLM
   real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drx,dry,drz,drmax
+  real(8)       :: dgg0,q,gg
   character(10) :: host,time
   character(8)  :: date
   character(9)  :: in
@@ -261,9 +262,6 @@ program HICOLM
         call opt%constants_prepare()              ! definindo constantes
         call opt%set_inopt()                      ! lendo parametros de entrada em INPUT
         call opt%set_latticevectors()             ! lendo coordenadas da celula unitaria
-        !...
-        !..... continua aqui
-        !...
         call opt%set_molecules()                  ! lendo tipos e qde de moleculas
         call opt%set_natom()                      ! calculando qde de sitios atomicos
         call opt%set_nfree()                      ! atribuindo graus de liberdade
@@ -284,9 +282,16 @@ program HICOLM
         call opt%gd_init()                        ! preparando otimizacao
         call opt%print()                          ! imprimindo parametros da otimizacao
         call opt%set_gd()                         ! calculando residuo e hessiana
-        !...
-        !..... continua aqui
-        !...
+        dgg0=0.d0
+        do i=1,opt%get_nmatrix()
+           q=0.d0
+           do j=1,opt%get_nmatrix()
+              q=q+opt%hess(i,j)*opt%res(j)
+           end do
+           gg=gg+opt%res(i)*q
+           dgg0=dgg0+opt%res(i)
+        end do
+        print*,dgg0*(opt%get_econv()/opt%get_rconv())**2
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.
