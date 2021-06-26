@@ -29,11 +29,11 @@ program HICOLM
 
   implicit none
 
-  integer       :: i,j,i0
+  integer       :: i,j,k,i0
   real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drx,dry,drz,drmax
-  real(8)       :: dgg0,q,gg
+  real(8)       :: dgg0,dgg,q,gg,alpha
   character(10) :: host,time
   character(8)  :: date
   character(9)  :: in
@@ -256,6 +256,7 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@OPTIMIZE')then
         call cpu_time(t1)
+        open(4,file='optimize.dat',status='unknown')       ! imprimindo data frame da otimz.
         !
         opt=optimize()                            ! set default values
         !
@@ -282,17 +283,62 @@ program HICOLM
         call opt%gd_init()                        ! preparando otimizacao
         call opt%print()                          ! imprimindo parametros da otimizacao
         call opt%set_gd()                         ! calculando residuo e hessiana
-        dgg0=0.d0
-        do i=1,opt%get_nmatrix()
-           q=0.d0
+        call cpu_time(t2)
+!
+        write(6,*)('#',i=1,93)
+        write(6,*)('OPTIMIZING ',i=1,8)
+        write(6,*)('#',i=1,93)
+        write(6,*)
+!        dgg0=0.0d0
+!        do i=1,opt%get_nmatrix()
+!           q=0.d0
+!           do j=1,opt%get_nmatrix()
+!              q=q+opt%hess(i,j)*opt%res(j)
+!           end do
+!           gg=gg+opt%res(i)*q
+!           dgg0=dgg0+opt%res(i)**2
+!        end do
+        do i=1,opt%get_nstep()
+           gg=0.d0
+           dgg=0.d0
            do j=1,opt%get_nmatrix()
-              q=q+opt%hess(i,j)*opt%res(j)
+              q=0.d0
+              do k=1,opt%get_nmatrix()
+                 q=q+opt%hess(j,k)*opt%res(k)
+              end do
+              gg=gg+opt%res(j)*q
+              dgg=dgg+opt%res(j)**2
            end do
-           gg=gg+opt%res(i)*q
-           dgg0=dgg0+opt%res(i)**2
+           if(gg.lt.0.d0)then
+              print*,'Hessian did not positive definite'
+              call opt%ccp()
+              call opt%set_gd()
+              dgg0=0.d0
+              do j=1,opt%get_nmatrix()
+                 q=0.d0
+                 do k=1,opt%get_nmatrix()
+                    q=q+opt%hess(j,k)*opt%res(k)
+                 end do
+                 gg=gg+opt%res(j)*q
+                 dgg0=dgg0+opt%res(j)**2
+              end do
+           end if
+           if(gg.eq.0.d0)stop 'residue reached null value!'
+           alpha=dgg/gg
+           do j=1,opt%get_natom()
+              opt%xa(j)=opt%xa(j)+alpha*opt%res(3*j-2)
+              opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)
+              opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
+           end do
+           call opt%ccp()
+           write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
+           write(6,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2,&
+                dgg0*(opt%get_econv()/opt%get_rconv())**2
+           if(dgg.le.dgg0*opt%get_tolerance()**2)exit
+           call opt%set_gd
+           dgg0=dgg
         end do
         call opt%print_geometry()
-        print*,dgg0*(opt%get_econv()/opt%get_rconv())**2
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.
