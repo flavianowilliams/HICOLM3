@@ -35,6 +35,7 @@ module optimize_module
      procedure :: print
      procedure :: convert_units
      procedure :: set_canonicalvariables
+     procedure :: print_geometry
   end type optimize
 
   interface optimize
@@ -152,6 +153,39 @@ contains
        end do
     end select
   end subroutine set_canonicalvariables
+
+  subroutine print_geometry(this)
+    implicit none
+    class(optimize), intent(inout) :: this
+    integer                        :: i,j
+    open(1,file='hicolm.xsf',status='unknown')
+    write(1,*)'BEGIN_INFO'
+    write(1,*)'  #'
+    write(1,*)'  # This is a XCRYSDEN-Structure-File'
+    write(1,*)'  #'
+    write(1,*)'  # aimed for Visualization of geometry'
+    write(1,*)'  #'
+    write(1,*)'  # Launch as: xcrysden --xsf HICOLM.XSF'
+    write(1,*)'  #'
+    write(1,*)'  #'
+    write(1,*)'END_INFO'
+    write(1,*)'# estrutura final'
+    write(1,'(a7)')'CRYSTAL'
+    write(1,'(a7)')'PRIMVEC'
+    do i=1,3
+       write(1,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
+    end do
+    write(1,'(a9)')'PRIMCOORD'
+    write(1,'(2i5)')this%get_natom(),1
+    do i=1,this%get_natom()
+       write(1,'(i5,3f14.8)')this%zat(i),&
+            this%xa(i)*this%get_rconv(),&
+            this%ya(i)*this%get_rconv(),&
+            this%za(i)*this%get_rconv()
+    end do
+    close(1)
+    return
+  end subroutine print_geometry
 
   subroutine print(this)
     implicit none

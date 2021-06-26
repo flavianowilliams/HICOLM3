@@ -289,8 +289,9 @@ program HICOLM
               q=q+opt%hess(i,j)*opt%res(j)
            end do
            gg=gg+opt%res(i)*q
-           dgg0=dgg0+opt%res(i)
+           dgg0=dgg0+opt%res(i)**2
         end do
+        call opt%print_geometry()
         print*,dgg0*(opt%get_econv()/opt%get_rconv())**2
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
