@@ -289,16 +289,27 @@ program HICOLM
         write(6,*)('OPTIMIZING ',i=1,8)
         write(6,*)('#',i=1,93)
         write(6,*)
-!        dgg0=0.0d0
-!        do i=1,opt%get_nmatrix()
-!           q=0.d0
-!           do j=1,opt%get_nmatrix()
-!              q=q+opt%hess(i,j)*opt%res(j)
-!           end do
-!           gg=gg+opt%res(i)*q
-!           dgg0=dgg0+opt%res(i)**2
-!        end do
-        do i=1,opt%get_nstep()
+3       dgg0=0.0d0
+        do i=1,opt%get_nmatrix()
+           q=0.d0
+           do j=1,opt%get_nmatrix()
+              q=q+opt%hess(i,j)*opt%res(j)
+           end do
+           gg=gg+opt%res(i)*q
+           dgg0=dgg0+opt%res(i)**2
+        end do
+        if(gg.eq.0.d0)stop 'residue reached null value!'
+        alpha=dgg0/gg
+        do j=1,opt%get_natom()
+           opt%xa(j)=opt%xa(j)+alpha*opt%res(3*j-2)
+           opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)
+           opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
+        end do
+        call opt%ccp()
+        call opt%set_gd()
+        write(4,*)i,dgg0*(opt%get_econv()/opt%get_rconv())**2
+        write(6,*)i,dgg0*(opt%get_econv()/opt%get_rconv())**2
+        do i=2,opt%get_nstep()
            gg=0.d0
            dgg=0.d0
            do j=1,opt%get_nmatrix()
@@ -311,17 +322,10 @@ program HICOLM
            end do
            if(gg.lt.0.d0)then
               print*,'Hessian did not positive definite'
+              call opt%random_coordinates()
               call opt%ccp()
               call opt%set_gd()
-              dgg0=0.d0
-              do j=1,opt%get_nmatrix()
-                 q=0.d0
-                 do k=1,opt%get_nmatrix()
-                    q=q+opt%hess(j,k)*opt%res(k)
-                 end do
-                 gg=gg+opt%res(j)*q
-                 dgg0=dgg0+opt%res(j)**2
-              end do
+              goto 3
            end if
            if(gg.eq.0.d0)stop 'residue reached null value!'
            alpha=dgg/gg
@@ -331,11 +335,11 @@ program HICOLM
               opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
            end do
            call opt%ccp()
+           call opt%set_gd()
            write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
            write(6,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2,&
                 dgg0*(opt%get_econv()/opt%get_rconv())**2
            if(dgg.le.dgg0*opt%get_tolerance()**2)exit
-           call opt%set_gd
            dgg0=dgg
         end do
         call opt%print_geometry()

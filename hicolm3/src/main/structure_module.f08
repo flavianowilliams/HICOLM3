@@ -85,6 +85,7 @@ module structure_module
      procedure          :: get_gsym
      procedure          :: ccp
      procedure          :: mic
+     procedure          :: random_coordinates
   end type structure
 
   interface structure
@@ -424,5 +425,20 @@ contains
     yvz=(this%ya(i2)-this%ya(i1))-yy*int(2.d0*(this%ya(i2)-this%ya(i1))/yy)
     zvz=(this%za(i2)-this%za(i1))-zz*int(2.d0*(this%za(i2)-this%za(i1))/zz)
   end subroutine mic
+
+  subroutine random_coordinates(this)
+    implicit none
+    class(structure), intent(inout) :: this
+    integer                         :: i
+    real(8)                         :: srand
+    do i=1,this%get_natom()
+       call random_number(srand)
+       this%xa(i)=this%xa(i)+(2.0d0*srand-1.0d0)*0.1
+       call random_number(srand)
+       this%ya(i)=this%ya(i)+(2.0d0*srand-1.0d0)*0.1
+       call random_number(srand)
+       this%za(i)=this%za(i)+(2.0d0*srand-1.0d0)*0.1
+    end do
+  end subroutine random_coordinates
 
 end module structure_module

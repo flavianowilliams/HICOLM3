@@ -35,6 +35,6 @@ all: $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
 	$(FC) -o HICOLM3 $(LDFLAGS) $(OBJ_GEN) $(OBJ_PRP) $(OBJ_MD) $(OBJ_OPT) $(OBJ_MAIN)
 #
 clean:
-#	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.md
-	rm -f $(OBJ_GEN) $(OBJ_MAIN) $(OBJ_MD) $(OBJ_OPT) *.md
+	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o *.o *.mod *.md
+#	rm -f $(OBJ_GEN) $(OBJ_MAIN) $(OBJ_MD) $(OBJ_OPT) *.md
 #==========================================================================

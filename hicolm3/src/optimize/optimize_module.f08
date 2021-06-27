@@ -151,6 +151,7 @@ contains
        do i=1,this%get_natom()
           read(1,'(5x,3f14.8)')this%xa(i),this%ya(i),this%za(i)
        end do
+       close(1)
     end select
   end subroutine set_canonicalvariables
 

@@ -83,7 +83,7 @@ contains
     do i=1,this%get_natom()
        do j=i+1,this%get_natom()
           call this%mic(i,j,xvz,yvz,zvz)
-          dr=sqrt(xvz**2+yvz**2+zvz**2)
+          dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
           do k=1,this%get_nvdw()
              if(this%tpa(i).eq.this%spcvdw(k,1).and.this%tpa(j).eq.this%spcvdw(k,2).or.&
                   this%tpa(i).eq.this%spcvdw(k,2).and.this%tpa(j).eq.this%spcvdw(k,1))then
