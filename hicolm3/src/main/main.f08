@@ -290,6 +290,7 @@ program HICOLM
         write(6,*)('#',i=1,93)
         write(6,*)
 3       dgg0=0.0d0
+        gg=0.d0
         do i=1,opt%get_nmatrix()
            q=0.d0
            do j=1,opt%get_nmatrix()
@@ -305,6 +306,13 @@ program HICOLM
            opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)
            opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
         end do
+        if(gg.lt.0.d0)then
+           print*,'Hessian did not positive definite'
+           call opt%random_coordinates()
+           call opt%ccp()
+           call opt%set_gd()
+           goto 3
+        end if
         call opt%ccp()
         call opt%set_gd()
         write(4,*)i,dgg0*(opt%get_econv()/opt%get_rconv())**2

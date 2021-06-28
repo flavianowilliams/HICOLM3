@@ -434,10 +434,10 @@ contains
     do i=1,this%get_natom()
        call random_number(srand)
        this%xa(i)=this%xa(i)+(2.0d0*srand-1.0d0)*0.1
-       call random_number(srand)
+!       call random_number(srand)
        this%ya(i)=this%ya(i)+(2.0d0*srand-1.0d0)*0.1
-       call random_number(srand)
-       this%za(i)=this%za(i)+(2.0d0*srand-1.0d0)*0.1
+!       call random_number(srand)
+!       this%za(i)=this%za(i)+(2.0d0*srand-1.0d0)*0.1
     end do
   end subroutine random_coordinates
 
