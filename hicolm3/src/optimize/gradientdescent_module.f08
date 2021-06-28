@@ -92,7 +92,7 @@ contains
                 end do
                 ptrm=this%tvdw(k)
                 call this%set_vanderwaals(dr,prm,ptrm)
-                call this%set_residue(i,j,xvz,yvz,zvz)
+                call this%set_residue(i,j,dr,xvz,yvz,zvz)
                 call this%set_hessian(i,j,dr,xvz,yvz,zvz)
              end if
           end do
@@ -117,14 +117,14 @@ contains
     end select
   end subroutine set_vanderwaals
 
-  subroutine set_residue(this,i1,i2,xvz,yvz,zvz)
+  subroutine set_residue(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)                   :: i1,i2
     integer                               :: ix,ixx
-    real(8), intent(in)                   :: xvz,yvz,zvz
+    real(8), intent(in)                   :: xvz,yvz,zvz,dr
     real(8)                               :: fr
-    fr=-this%h1
+    fr=-this%h1/dr
     ix=3*i1-2
     ixx=3*i2-2
     this%res(ix)=this%res(ix)-fr*xvz

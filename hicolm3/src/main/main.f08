@@ -289,7 +289,7 @@ program HICOLM
         write(6,*)('OPTIMIZING ',i=1,8)
         write(6,*)('#',i=1,93)
         write(6,*)
-3       dgg0=0.0d0
+        dgg0=0.0d0
         gg=0.d0
         do i=1,opt%get_nmatrix()
            q=0.d0
@@ -311,14 +311,13 @@ program HICOLM
            call opt%random_coordinates()
            call opt%ccp()
            call opt%set_gd()
-           goto 3
         end if
         call opt%ccp()
         call opt%set_gd()
         write(4,*)i,dgg0*(opt%get_econv()/opt%get_rconv())**2
         write(6,*)i,dgg0*(opt%get_econv()/opt%get_rconv())**2
         do i=2,opt%get_nstep()
-           gg=0.d0
+3          gg=0.d0
            dgg=0.d0
            do j=1,opt%get_nmatrix()
               q=0.d0
@@ -333,6 +332,16 @@ program HICOLM
               call opt%random_coordinates()
               call opt%ccp()
               call opt%set_gd()
+              gg=0.d0
+              dgg0=0.d0
+              do j=1,opt%get_nmatrix()
+                 q=0.d0
+                 do k=1,opt%get_nmatrix()
+                    q=q+opt%hess(j,k)*opt%res(k)
+                 end do
+                 gg=gg+opt%res(j)*q
+                 dgg0=dgg0+opt%res(j)**2
+              end do
               goto 3
            end if
            if(gg.eq.0.d0)stop 'residue reached null value!'

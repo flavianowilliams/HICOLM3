@@ -429,15 +429,29 @@ contains
   subroutine random_coordinates(this)
     implicit none
     class(structure), intent(inout) :: this
-    integer                         :: i
-    real(8)                         :: srand
-    do i=1,this%get_natom()
-       call random_number(srand)
-       this%xa(i)=this%xa(i)+(2.0d0*srand-1.0d0)*0.1
-!       call random_number(srand)
-       this%ya(i)=this%ya(i)+(2.0d0*srand-1.0d0)*0.1
-!       call random_number(srand)
-!       this%za(i)=this%za(i)+(2.0d0*srand-1.0d0)*0.1
+    integer                         :: i,j,k,nx
+    real(8)                         :: srand,vx,vy,vz,vr,dr
+    dr=0.1d0
+    nx=1
+    do i=1,this%get_nmol()
+       do j=1,this%ntmol(i)
+          call random_number(srand)
+          vx=(2.0d0*srand-1.0d0)*dr
+          call random_number(srand)
+          vy=(2.0d0*srand-1.0d0)*dr
+          call random_number(srand)
+          vz=(2.0d0*srand-1.0d0)*dr
+          vr=sqrt(vx**2+vy**2+vz**2)
+          vx=vx*dr/vr
+          vy=vy*dr/vr
+          vz=vz*dr/vr
+          do k=1,this%nxmol(i)
+             this%xa(nx)=this%xa(nx)+vx
+             this%ya(nx)=this%ya(nx)+vy
+             this%za(nx)=this%za(nx)+vz
+             nx=nx+1
+          end do
+       end do
     end do
   end subroutine random_coordinates
 
