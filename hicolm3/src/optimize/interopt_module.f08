@@ -31,10 +31,13 @@ module interopt_module
 
   type, extends(gradientdescent) :: interopt
      real(8), private :: maxforce
+     real(8), private :: enpot
    contains
-     procedure :: set_force
+     procedure :: set_loop
      procedure :: set_maxforce
      procedure :: get_maxforce
+     procedure :: set_enpot
+     procedure :: get_enpot
   end type interopt
 
 contains
@@ -55,13 +58,14 @@ contains
     get_maxforce=this%maxforce
   end function get_maxforce
 
-  subroutine set_force(this)
+  subroutine set_loop(this)
     implicit none
     class(interopt), intent(inout) :: this
     integer                               :: i,j,k,l
     real(8)                               :: xvz,yvz,zvz,dr
     real(8)                               :: prm(3)
     character(7)                          :: ptrm
+    call this%set_enpot(0.d0)
     do i=1,this%get_nmatrix()
        this%res(i)=0.d0
        do j=1,this%get_nmatrix()
@@ -82,6 +86,7 @@ contains
                 call this%set_vanderwaals(dr,prm,ptrm)
                 call this%set_residue(i,j,dr,xvz,yvz,zvz)
                 call this%set_hessian(i,j,dr,xvz,yvz,zvz)
+                call this%set_enpot(this%get_en())
              end if
           end do
        end do
@@ -91,6 +96,19 @@ contains
           this%hess(j,i)=this%hess(i,j)
        end do
     end do
-  end subroutine set_force
+  end subroutine set_loop
+
+  subroutine set_enpot(this,enpot)
+    implicit none
+    class(interopt), intent(inout) :: this
+    real(8), intent(in)            :: enpot
+    this%enpot=this%enpot+enpot
+  end subroutine set_enpot
+
+  double precision function get_enpot(this)
+    implicit none
+    class(interopt), intent(in) :: this
+    get_enpot=this%enpot
+  end function get_enpot
 
 end module interopt_module

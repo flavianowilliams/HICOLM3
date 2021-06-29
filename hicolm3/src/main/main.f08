@@ -282,7 +282,7 @@ program HICOLM
         call opt%set_tpa()                        ! atribuindo tipos atomicos
         call opt%gd_init()                        ! preparando otimizacao
         call opt%print()                          ! imprimindo parametros da otimizacao
-        call opt%set_force()                      ! calculando residuo e hessiana
+        call opt%set_loop()                       ! calculando residuo e hessiana
         call cpu_time(t2)
 !
         write(6,*)('#',i=1,93)
@@ -313,13 +313,14 @@ program HICOLM
            print*,'Hessian did not positive definite'
            call opt%random_coordinates()
            call opt%ccp()
-           call opt%set_force()
+           call opt%set_loop()
         end if
         call opt%ccp()
-        call opt%set_force()
+        call opt%set_loop()
         call opt%set_maxforce()
         write(4,*)1,dgg0
-        write(6,40)'SD',1,dgg0,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
+        write(6,40)'SD',1,opt%get_enpot()*opt%get_econv()&
+             ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
         do i=2,opt%get_nstep()
 3          gg=0.d0
            dgg=0.d0
@@ -335,7 +336,7 @@ program HICOLM
               print*,'Hessian did not positive definite'
               call opt%random_coordinates()
               call opt%ccp()
-              call opt%set_force()
+              call opt%set_loop()
               gg=0.d0
               dgg0=0.d0
               do j=1,opt%get_nmatrix()
@@ -356,11 +357,11 @@ program HICOLM
               opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
            end do
            call opt%ccp()
-           call opt%set_force()
+           call opt%set_loop()
            call opt%set_maxforce()
            write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
-           if(mod(i,25).eq.0)write(6,40)&
-                'SD',i,dgg,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
+           write(6,40)'SD',i,opt%get_enpot()*opt%get_econv()&
+                ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
            if(dgg.le.dgg0*opt%get_tolerance()**2)exit
            dgg0=dgg
         end do

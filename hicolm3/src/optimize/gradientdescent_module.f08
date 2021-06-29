@@ -31,6 +31,7 @@ module gradientdescent_module
 
   type, extends(atoms) :: gradientdescent
      integer, private     :: nmatrix
+     real(8), private     :: en
      real(8), private     :: h1
      real(8), private     :: h2
      real(8), allocatable :: res(:)
@@ -42,6 +43,7 @@ module gradientdescent_module
      procedure :: set_hessian
      procedure :: set_nmatrix
      procedure :: get_nmatrix
+     procedure :: get_en
   end type gradientdescent
 
 contains
@@ -73,6 +75,7 @@ contains
     real(8), intent(in)                   :: dr,prm(2)
     select case(ptrm)
     case('charmm')
+       this%en=prm(1)*((prm(2)/dr)**12-2.0d0*(prm(2)/dr)**6)
        this%h1=-12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr
        this%h2=12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
     end select
@@ -122,5 +125,11 @@ contains
     integer, intent(in) :: i,j
     kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
   end function kronij
+
+  double precision function get_en(this)
+    implicit none
+    class(gradientdescent), intent(in) :: this
+    get_en=this%en
+  end function get_en
 
 end module gradientdescent_module
