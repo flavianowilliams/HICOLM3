@@ -37,7 +37,6 @@ module gradientdescent_module
      real(8), allocatable :: hess(:,:)
    contains
      procedure :: gd_init
-     procedure :: set_gd
      procedure :: set_vanderwaals
      procedure :: set_residue
      procedure :: set_hessian
@@ -66,44 +65,6 @@ contains
     class(gradientdescent), intent(in) :: this
     get_nmatrix=this%nmatrix
   end function get_nmatrix
-
-  subroutine set_gd(this)
-    implicit none
-    class(gradientdescent), intent(inout) :: this
-    integer                               :: i,j,k,l
-    real(8)                               :: xvz,yvz,zvz,dr
-    real(8)                               :: prm(3)
-    character(7)                          :: ptrm
-    do i=1,this%nmatrix
-       this%res(i)=0.d0
-       do j=1,this%nmatrix
-          this%hess(i,j)=0.d0
-       end do
-    end do
-    do i=1,this%get_natom()
-       do j=i+1,this%get_natom()
-          call this%mic(i,j,xvz,yvz,zvz)
-          dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
-          do k=1,this%get_nvdw()
-             if(this%tpa(i).eq.this%spcvdw(k,1).and.this%tpa(j).eq.this%spcvdw(k,2).or.&
-                  this%tpa(i).eq.this%spcvdw(k,2).and.this%tpa(j).eq.this%spcvdw(k,1))then
-                do l=1,2
-                   prm(l)=this%parvdw(k,l)
-                end do
-                ptrm=this%tvdw(k)
-                call this%set_vanderwaals(dr,prm,ptrm)
-                call this%set_residue(i,j,dr,xvz,yvz,zvz)
-                call this%set_hessian(i,j,dr,xvz,yvz,zvz)
-             end if
-          end do
-       end do
-    end do
-    do i=1,this%nmatrix
-       do j=i+1,this%nmatrix
-          this%hess(j,i)=this%hess(i,j)
-       end do
-    end do
-  end subroutine set_gd
 
   subroutine set_vanderwaals(this,dr,prm,ptrm)
     implicit none

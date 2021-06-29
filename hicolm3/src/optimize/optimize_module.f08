@@ -22,14 +22,14 @@ module optimize_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use gradientdescent_module
+  use interopt_module
 
   implicit none
 
   private
   public :: optimize
 
-  type, extends(gradientdescent) :: optimize
+  type, extends(interopt) :: optimize
    contains
      procedure :: check
      procedure :: print
