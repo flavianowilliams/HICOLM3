@@ -130,7 +130,7 @@ contains
        end select
     end do
     call this%set_fscsalpha(this%get_fscsalpha()/this%get_kconv())
-!    call this%set_tolerance(this%get_tolerance()/(this%get_econv()/this%get_rconv()))
+    call this%set_tolerance(this%get_tolerance()/(this%get_econv()/this%get_rconv()))
   end subroutine convert_units
 
   subroutine set_canonicalvariables(this)

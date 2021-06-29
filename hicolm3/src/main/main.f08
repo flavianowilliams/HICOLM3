@@ -290,7 +290,7 @@ program HICOLM
         write(6,*)('#',i=1,93)
         write(6,*)
         write(6,'(4x,111a1)')('-',i=1,84)
-        write(6,30)'##','STEP','E(TOTAL)','MAXFORCE'
+        write(6,30)'##','STEP','LISEARCH','E(TOTAL)','MAXFORCE'
         write(6,'(4x,111a1)')('-',i=1,84)
         dgg0=0.0d0
         gg=0.d0
@@ -319,7 +319,8 @@ program HICOLM
         call opt%set_loop()
         call opt%set_maxforce()
         write(4,*)1,dgg0
-        write(6,40)'SD',1,opt%get_enpot()*opt%get_econv()&
+        write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
+             ,opt%get_enpot()*opt%get_econv()&
              ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
         do i=2,opt%get_nstep()
 3          gg=0.d0
@@ -360,9 +361,10 @@ program HICOLM
            call opt%set_loop()
            call opt%set_maxforce()
            write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
-           write(6,40)'SD',i,opt%get_enpot()*opt%get_econv()&
+           write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
+                ,opt%get_enpot()*opt%get_econv()&
                 ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-           if(dgg.le.dgg0*opt%get_tolerance()**2)exit
+           if(abs(opt%get_maxforce()).le.opt%get_tolerance())exit
            dgg0=dgg
         end do
         call opt%print_geometry()
@@ -380,8 +382,8 @@ program HICOLM
 
 10 format(5x,a2,6x,a4,6x,a5,9x,a6,6x,a10,5x,a8,6x,a8)
 20 format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,3(2x,es12.4))
-30 format(5x,a2,6x,a4,3x,a10,6x,a8,6x,a8)
-40 format(5x,a2,2x,i8,2x,es12.4,2x,es12.4)
+30 format(5x,a2,6x,a4,3x,a10,4x,a10,6x,a8,6x,a8)
+40 format(5x,a2,2x,i8,2x,es12.4,2x,es12.4,2x,es12.4)
 
 2 write(6,'(93a1)')('#',i=1,93)
   write(6,*)('END!',i=1,23)
