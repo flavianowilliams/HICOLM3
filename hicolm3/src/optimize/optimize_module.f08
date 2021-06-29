@@ -194,11 +194,12 @@ contains
     class(optimize), intent(inout) :: this
     integer, intent(in)            :: nx
     if(nx.eq.1)then
-       write(4,5)'step',',','time',',','volume',',','temperature',',','pressure',',',&
-            'kinetic',',','potential',',','energy',',','density'
+       write(4,5)'step',',','lisearch',',','energy',',','maximumforce'
     end if
-    write(4,10)nx,','!,this%get_time()*this%get_tconv(),','
-5   format(5x,a4,a1,10x,a4,a1,9x,a6,a1,6x,a11,a1,4x,a8,a1,5x,a8,a1,7x,a9,a1,6x,a6,a1,7x,a7)
+    write(4,10)nx,',',this%get_lsearch()*this%get_rconv()**2/this%get_econv(),','&
+         ,this%get_enpot()*this%get_econv(),','&
+         ,this%get_maxforce()*this%get_econv()/this%get_rconv()
+5   format(5x,a4,a1,8x,a8,a1,7x,a6,a1,5x,a12)
 10  format(1x,i12,a1,13(e14.6,a1))
   end subroutine print_dataframes
 
