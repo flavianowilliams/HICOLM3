@@ -256,7 +256,7 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@OPTIMIZE')then
         call cpu_time(t1)
-        open(4,file='optimize.dat',status='unknown')       ! imprimindo data frame da otimz.
+        open(4,file='optimize.csv',status='unknown')       ! imprimindo data frame da otimz.
         !
         opt=optimize()                            ! set default values
         !
@@ -318,7 +318,7 @@ program HICOLM
         call opt%ccp()
         call opt%set_loop()
         call opt%set_maxforce()
-        write(4,*)1,dgg0
+        call opt%print_dataframes(1)
         write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
              ,opt%get_enpot()*opt%get_econv()&
              ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
@@ -360,7 +360,8 @@ program HICOLM
            call opt%ccp()
            call opt%set_loop()
            call opt%set_maxforce()
-           write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
+           call opt%print_dataframes(i)
+!           write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
            write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
                 ,opt%get_enpot()*opt%get_econv()&
                 ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
