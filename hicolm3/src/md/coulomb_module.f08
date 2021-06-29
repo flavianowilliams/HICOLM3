@@ -68,8 +68,8 @@ contains
     real(8)                       :: alcoul
     select case(this%coulop)
     case('coul')
-       this%encoul=qi*qj/dr
-       this%force=-qi*qj/dr**2
+       this%encoul=-qi*qj/dr
+       this%force=qi*qj/dr**2
        this%force=-this%force/dr
     case('fscs')
        alcoul=this%alcoul

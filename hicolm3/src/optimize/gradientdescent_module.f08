@@ -40,6 +40,7 @@ module gradientdescent_module
    contains
      procedure :: gd_init
      procedure :: set_vanderwaals
+     procedure :: set_coulomb
      procedure :: set_residue
      procedure :: set_hessian
      procedure :: set_nmatrix
@@ -83,6 +84,15 @@ contains
        this%h2=12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
     end select
   end subroutine set_vanderwaals
+
+  subroutine set_coulomb(this,dr,qi,qj)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    real(8), intent(in)                   :: dr,qi,qj
+    this%en=-qi*qj/dr
+    this%h1=qi*qj/dr**2
+    this%h2=-2.0d0*qi*qj/dr**3
+  end subroutine set_coulomb
 
   subroutine set_residue(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none

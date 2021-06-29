@@ -48,7 +48,7 @@ contains
   type(optimize) function constructor()
     implicit none
     call constructor%set_nstep(1000)
-    call constructor%set_tolerance(0.001d0)
+    call constructor%set_tolerance(2.3d0)
     call constructor%set_restart('undefine')
   end function constructor
 
