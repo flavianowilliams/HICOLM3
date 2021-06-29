@@ -34,6 +34,7 @@ module gradientdescent_module
      real(8), private     :: en
      real(8), private     :: h1
      real(8), private     :: h2
+     real(8), private     :: lsearch
      real(8), allocatable :: res(:)
      real(8), allocatable :: hess(:,:)
    contains
@@ -43,6 +44,8 @@ module gradientdescent_module
      procedure :: set_hessian
      procedure :: set_nmatrix
      procedure :: get_nmatrix
+     procedure :: set_lsearch
+     procedure :: get_lsearch
      procedure :: get_en
   end type gradientdescent
 
@@ -131,5 +134,18 @@ contains
     class(gradientdescent), intent(in) :: this
     get_en=this%en
   end function get_en
+
+  subroutine set_lsearch(this,lsearch)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    real(8), intent(in)                   :: lsearch
+    this%lsearch=lsearch
+  end subroutine set_lsearch
+
+  double precision function get_lsearch(this)
+    implicit none
+    class(gradientdescent), intent(in) :: this
+    get_lsearch=this%lsearch
+  end function get_lsearch
 
 end module gradientdescent_module

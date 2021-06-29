@@ -317,6 +317,7 @@ program HICOLM
         end if
         call opt%ccp()
         call opt%set_loop()
+        call opt%set_lsearch(alpha)
         call opt%set_maxforce()
         call opt%print_dataframes(1)
         write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
@@ -359,6 +360,7 @@ program HICOLM
            end do
            call opt%ccp()
            call opt%set_loop()
+           call opt%set_lsearch(alpha)
            call opt%set_maxforce()
            call opt%print_dataframes(i)
 !           write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
