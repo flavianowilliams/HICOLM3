@@ -317,8 +317,9 @@ program HICOLM
         end if
         call opt%ccp()
         call opt%set_force()
+        call opt%set_maxforce()
         write(4,*)1,dgg0
-        write(6,40)'SD',1,dgg0,dgg0
+        write(6,40)'SD',1,dgg0,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
         do i=2,opt%get_nstep()
 3          gg=0.d0
            dgg=0.d0
@@ -356,8 +357,10 @@ program HICOLM
            end do
            call opt%ccp()
            call opt%set_force()
+           call opt%set_maxforce()
            write(4,*)i,dgg*(opt%get_econv()/opt%get_rconv())**2
-           if(mod(i,25).eq.0)write(6,40)'SD',i,dgg*(opt%get_econv()/opt%get_rconv())**2
+           if(mod(i,25).eq.0)write(6,40)&
+                'SD',i,dgg,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
            if(dgg.le.dgg0*opt%get_tolerance()**2)exit
            dgg0=dgg
         end do
