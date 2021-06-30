@@ -241,6 +241,10 @@ program HICOLM
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
                 md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&
                 md%get_etotal()*md%get_econv()
+           if(mod(i,md%get_verlchk()).eq.0)then
+              call md%verlet_list()
+              call md%set_verlchk()
+           end if
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)

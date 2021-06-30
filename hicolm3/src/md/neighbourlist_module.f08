@@ -36,6 +36,8 @@ module neighbourlist_module
    contains
      procedure :: neighbour_prepare
      procedure :: verlet_list
+     procedure :: set_verlchk
+     procedure :: get_verlchk
   end type neighbourlist
 
 contains
@@ -47,7 +49,6 @@ contains
     numb=this%get_natom()**2
     if(numb.le.0)goto 1
     allocate(this%nlist(this%get_natom()),this%ilist(this%get_natom(),numb))
-    this%verlchk=1
     return
 1   write(6,*)'ERROR: Fail to allocate the neighbour list array!'
     write(6,*)'Hint: Check if the number of atoms is correct.'
@@ -80,5 +81,29 @@ contains
        end do
     end do
   end subroutine verlet_list
+
+  subroutine set_verlchk(this)
+    implicit none
+    class(neighbourlist), intent(inout) :: this
+    integer                             :: i
+    real(8)                             :: drmax,drx,dry,drz
+    drmax=0.d0
+    do i=1,this%get_natom()
+       drx=this%vax(i)*this%get_timestep()&
+            +0.5d0*this%fax(i)*this%get_timestep()**2/this%mass(i)
+       dry=this%vay(i)*this%get_timestep()&
+            +0.5d0*this%fay(i)*this%get_timestep()**2/this%mass(i)
+       drz=this%vaz(i)*this%get_timestep()&
+            +0.5d0*this%faz(i)*this%get_timestep()**2/this%mass(i)
+       drmax=max(drmax,sqrt(drx**2+dry**2+drz**2))
+    end do
+    if(drmax.ge.1.d-8)this%verlchk=nint(this%get_drcutoff()/drmax)
+  end subroutine set_verlchk
+
+  integer function get_verlchk(this)
+    implicit none
+    class(neighbourlist), intent(in) :: this
+    get_verlchk=this%verlchk
+  end function get_verlchk
 
 end module neighbourlist_module
