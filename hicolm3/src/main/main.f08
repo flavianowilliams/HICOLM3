@@ -179,6 +179,7 @@ program HICOLM
         call md%print()                          ! imprimindo parametros da MD
         call md%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
         call md%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
+        call md%set_verlchk()                    ! atribuindo passos p/ atualizacao da lista
         call md%print_out()                      ! imprimindo valores em hicolm.out
         call md%set_forcefield()                 ! calculo das interacoes moleculares
         call md%set_ekinetic()                   ! atribuindo energia cinecita
@@ -244,6 +245,7 @@ program HICOLM
            if(mod(i,md%get_verlchk()).eq.0)then
               call md%verlet_list()
               call md%set_verlchk()
+              print*,md%get_verlchk()
            end if
            call md%set_time(i*md%get_timestep())
         end do
