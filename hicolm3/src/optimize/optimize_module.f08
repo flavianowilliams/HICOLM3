@@ -50,6 +50,7 @@ contains
     call constructor%set_nstep(1000)
     call constructor%set_tolerance(2.3d0)
     call constructor%set_restart('undefine')
+    call constructor%set_rcutoff(8.0d0)
   end function constructor
 
   subroutine check(this)

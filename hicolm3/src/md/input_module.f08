@@ -192,6 +192,10 @@ contains
           read(5,*)key,restart
           call this%set_restart(restart)
        end if
+       if(key.eq.'rcutoff')then
+          backspace(5)
+          read(5,*)key,this%rcutoff
+       end if
     end do
 2   rewind(5)
   end subroutine set_inopt
