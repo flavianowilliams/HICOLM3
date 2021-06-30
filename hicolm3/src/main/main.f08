@@ -245,8 +245,8 @@ program HICOLM
            if(mod(i,md%get_verlchk()).eq.0)then
               call md%verlet_list()
               call md%set_verlchk()
-              print*,md%get_verlchk()
            end if
+           print*,md%get_verlchk()
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
