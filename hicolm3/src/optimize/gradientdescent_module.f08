@@ -39,6 +39,7 @@ module gradientdescent_module
      real(8), allocatable :: hess(:,:)
    contains
      procedure :: gd_init
+     procedure :: set_bondopt
      procedure :: set_vanderwaals
      procedure :: set_coulomb
      procedure :: set_residue
@@ -71,6 +72,23 @@ contains
     class(gradientdescent), intent(in) :: this
     get_nmatrix=this%nmatrix
   end function get_nmatrix
+
+  subroutine set_bondopt(this,dr,prm,ptrm)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    character(6), intent(in)              :: ptrm
+    real(8), intent(in)                   :: dr,prm(3)
+    select case(ptrm)
+    case('charmm')
+       this%en=prm(1)*(dr-prm(2))**2
+       this%h1=2.d0*prm(1)*(dr-prm(2))
+       this%h2=2.d0*prm(1)
+    case('harm')
+       this%en=0.5d0*prm(1)*(dr-prm(2))**2
+       this%h1=prm(1)*(dr-prm(2))
+       this%h2=prm(1)
+    end select
+  end subroutine set_bondopt
 
   subroutine set_vanderwaals(this,dr,prm,ptrm)
     implicit none

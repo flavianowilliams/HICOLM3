@@ -61,15 +61,36 @@ contains
   subroutine set_loop(this)
     implicit none
     class(interopt), intent(inout) :: this
-    integer                               :: i,j,k,l
+    integer                               :: i,j,k,l,ni,nj,nx
     real(8)                               :: xvz,yvz,zvz,dr
     real(8)                               :: prm(3)
     character(7)                          :: ptrm
+    character(6)                          :: ptrm2
     call this%set_enpot(0.d0)
     do i=1,this%get_nmatrix()
        this%res(i)=0.d0
        do j=1,this%get_nmatrix()
           this%hess(i,j)=0.d0
+       end do
+    end do
+    nx=0
+    do i=1,this%get_nmol()
+       do j=1,this%ntmol(i)
+          do k=1,this%bondscnt(i)
+             ni=nx+this%molbond(i,k,1)
+             nj=nx+this%molbond(i,k,2)
+             call this%mic(ni,nj,xvz,yvz,zvz)
+             dr=sqrt(xvz**2+yvz**2+zvz**2)
+             do l=1,2
+                prm(l)=this%parbnd(i,k,l)
+             end do
+             ptrm2=this%tbonds(i,k)
+             call this%set_bondopt(dr,prm,ptrm2)
+             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_enpot(this%get_en())
+          end do
+          nx=nx+this%nxmol(i)
        end do
     end do
     do i=1,this%get_natom()
