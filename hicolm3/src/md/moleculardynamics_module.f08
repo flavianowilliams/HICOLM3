@@ -51,7 +51,7 @@ contains
 
   type(moleculardynamics) function constructor()
     implicit none
-    call constructor%set_restart('undefine')
+    call constructor%set_restart('position')
     call constructor%set_nstep(1)
     call constructor%set_nrelax(1)
     call constructor%set_nframes(1)

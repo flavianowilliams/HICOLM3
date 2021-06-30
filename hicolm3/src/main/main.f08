@@ -32,7 +32,7 @@ program HICOLM
   integer       :: i,j,k,i0
   real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
-  real(8)       :: drx,dry,drz,drmax
+  real(8)       :: drmax
   real(8)       :: dgg0,dgg,q,gg,alpha
   character(10) :: host,time
   character(8)  :: date
@@ -207,20 +207,6 @@ program HICOLM
         drmax=md%get_drcutoff()
         i0=0
         do i=1,md%get_nstep()
-           if((i-i0).ge.nint(md%get_drcutoff()/drmax))then
-              call md%verlet_list()
-              drmax=0.d0
-              do j=1,md%get_natom()
-                 drx=md%vax(j)*md%get_timestep()+&
-                      0.5d0*md%fax(j)*md%get_timestep()**2/md%mass(j)
-                 dry=md%vay(j)*md%get_timestep()+&
-                      0.5d0*md%fay(j)*md%get_timestep()**2/md%mass(j)
-                 drz=md%vaz(j)*md%get_timestep()+&
-                      0.5d0*md%faz(j)*md%get_timestep()**2/md%mass(j)
-                 drmax=max(drmax,sqrt(drx**2+dry**2+drz**2))
-              end do
-              i0=i
-           end if
            if(md%get_ensble().eq.'nve')then
               call md%set_nve()
            elseif(md%get_ensble().eq.'nvt')then
@@ -236,17 +222,17 @@ program HICOLM
                  call md%set_npt_nosehoover()
               end if
            end if
+           if(mod(i,md%get_verlchk()).eq.0)then
+              call md%verlet_list()
+              call md%set_verlchk()
+           end if
+           call md%set_verlchk()
            call md%print_geometry(i)
            call md%print_dataframes(i)
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
                 md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&
                 md%get_etotal()*md%get_econv()
-           if(mod(i,md%get_verlchk()).eq.0)then
-              call md%verlet_list()
-              call md%set_verlchk()
-           end if
-           print*,md%get_verlchk()
            call md%set_time(i*md%get_timestep())
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
@@ -379,7 +365,7 @@ program HICOLM
            if(abs(opt%get_maxforce()).le.opt%get_tolerance())exit
            dgg0=dgg
         end do
-        call opt%print_geometry()
+        call opt%print_xsf()
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.

@@ -35,7 +35,7 @@ module optimize_module
      procedure :: print
      procedure :: convert_units
      procedure :: set_canonicalvariables
-     procedure :: print_geometry
+     procedure :: print_xsf
      procedure :: print_dataframes
   end type optimize
 
@@ -157,7 +157,7 @@ contains
     end select
   end subroutine set_canonicalvariables
 
-  subroutine print_geometry(this)
+  subroutine print_xsf(this)
     implicit none
     class(optimize), intent(inout) :: this
     integer                        :: i,j
@@ -188,7 +188,7 @@ contains
     end do
     close(1)
     return
-  end subroutine print_geometry
+  end subroutine print_xsf
 
   subroutine print_dataframes(this,nx)
     implicit none

@@ -49,6 +49,7 @@ contains
     numb=this%get_natom()**2
     if(numb.le.0)goto 1
     allocate(this%nlist(this%get_natom()),this%ilist(this%get_natom(),numb))
+    this%verlchk=1
     return
 1   write(6,*)'ERROR: Fail to allocate the neighbour list array!'
     write(6,*)'Hint: Check if the number of atoms is correct.'
@@ -97,7 +98,7 @@ contains
             +0.5d0*this%faz(i)*this%get_timestep()**2/this%mass(i)
        drmax=max(drmax,sqrt(drx**2+dry**2+drz**2))
     end do
-    if(drmax.ge.1.d-8)this%verlchk=nint(this%get_drcutoff()/drmax)
+    if(drmax.ge.1.d-8)this%verlchk=max(1,nint(this%get_drcutoff()/drmax))
   end subroutine set_verlchk
 
   integer function get_verlchk(this)
