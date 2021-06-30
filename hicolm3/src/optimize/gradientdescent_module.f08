@@ -22,14 +22,14 @@ module gradientdescent_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use atoms_module
+  use neighbourlist_module
 
   implicit none
 
   private
   public :: gradientdescent
 
-  type, extends(atoms) :: gradientdescent
+  type, extends(neighbourlist) :: gradientdescent
      integer, private     :: nmatrix
      real(8), private     :: en
      real(8), private     :: h1

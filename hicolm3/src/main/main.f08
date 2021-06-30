@@ -282,6 +282,8 @@ program HICOLM
         call opt%set_tpa()                        ! atribuindo tipos atomicos
         call opt%gd_init()                        ! preparando otimizacao
         call opt%print()                          ! imprimindo parametros da otimizacao
+        call opt%neighbour_prepare()              ! preparando lista de vizinhos de Verlet
+        call opt%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call opt%set_loop()                       ! calculando residuo e hessiana
         call cpu_time(t2)
 !
@@ -316,6 +318,7 @@ program HICOLM
            call opt%set_loop()
         end if
         call opt%ccp()
+        call opt%verlet_list()
         call opt%set_loop()
         call opt%set_lsearch(alpha)
         call opt%set_maxforce()
@@ -359,6 +362,7 @@ program HICOLM
               opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
            end do
            call opt%ccp()
+           call opt%verlet_list()
            call opt%set_loop()
            call opt%set_lsearch(alpha)
            call opt%set_maxforce()

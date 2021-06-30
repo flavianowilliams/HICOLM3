@@ -94,25 +94,27 @@ contains
        end do
     end do
     do i=1,this%get_natom()
-       do j=i+1,this%get_natom()
-          call this%mic(i,j,xvz,yvz,zvz)
+       do j=1,this%nlist(i)
+          ni=i
+          nj=this%ilist(i,j)
+          call this%mic(ni,nj,xvz,yvz,zvz)
           dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
-          if(abs(this%qat(i)*this%qat(j)).gt.1.d-8)then
-             call this%set_coulomb(dr,this%qat(i),this%qat(j))
-             call this%set_residue(i,j,dr,xvz,yvz,zvz)
-             call this%set_hessian(i,j,dr,xvz,yvz,zvz)
+          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+             call this%set_coulomb(dr,this%qat(ni),this%qat(nj))
+             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
              call this%set_enpot(this%get_en())
           end if
           do k=1,this%get_nvdw()
-             if(this%tpa(i).eq.this%spcvdw(k,1).and.this%tpa(j).eq.this%spcvdw(k,2).or.&
-                  this%tpa(i).eq.this%spcvdw(k,2).and.this%tpa(j).eq.this%spcvdw(k,1))then
+             if(this%tpa(ni).eq.this%spcvdw(k,1).and.this%tpa(nj).eq.this%spcvdw(k,2).or.&
+                  this%tpa(ni).eq.this%spcvdw(k,2).and.this%tpa(nj).eq.this%spcvdw(k,1))then
                 do l=1,2
                    prm(l)=this%parvdw(k,l)
                 end do
                 ptrm=this%tvdw(k)
                 call this%set_vanderwaals(dr,prm,ptrm)
-                call this%set_residue(i,j,dr,xvz,yvz,zvz)
-                call this%set_hessian(i,j,dr,xvz,yvz,zvz)
+                call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+                call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
                 call this%set_enpot(this%get_en())
              end if
           end do
