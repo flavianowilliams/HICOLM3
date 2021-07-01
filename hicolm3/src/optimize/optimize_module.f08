@@ -35,7 +35,7 @@ module optimize_module
      procedure :: print
      procedure :: convert_units
      procedure :: set_canonicalvariables
-     procedure :: print_xsf
+     procedure :: print_geometry
      procedure :: print_dataframes
   end type optimize
 
@@ -157,7 +157,7 @@ contains
     end select
   end subroutine set_canonicalvariables
 
-  subroutine print_xsf(this)
+  subroutine print_geometry(this)
     implicit none
     class(optimize), intent(inout) :: this
     integer                        :: i,j
@@ -188,7 +188,7 @@ contains
     end do
     close(1)
     return
-  end subroutine print_xsf
+  end subroutine print_geometry
 
   subroutine print_dataframes(this,nx)
     implicit none
@@ -218,6 +218,7 @@ contains
     write(6,'(28x,a16,1x,i10)')'Number of steps:',this%get_nstep()
     write(6,'(28x,a16,1x,es10.3,1x,a10)')'      Tolerance:',&
          this%get_tolerance()*(this%get_econv()/this%get_rconv()),'kcal/mol*A'
+    write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
     write(6,'(28x,38a1)')('-',j=1,38)
     write(6,*)
     write(6,*)('#',i=1,93)

@@ -365,7 +365,7 @@ program HICOLM
            if(abs(opt%get_maxforce()).le.opt%get_tolerance())exit
            dgg0=dgg
         end do
-        call opt%print_xsf()
+        call opt%print_geometry()
         write(6,*)'Error: The optimization procedure is under construction!'
         stop
         lval=.true.
