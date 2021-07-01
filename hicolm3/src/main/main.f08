@@ -29,7 +29,7 @@ program HICOLM
 
   implicit none
 
-  integer       :: i,j,k,i0
+  integer       :: i,j,k,i0,nx
   real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drmax
@@ -286,7 +286,8 @@ program HICOLM
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,30)'##','STEP','LISEARCH','E(TOTAL)','MAXFORCE'
         write(6,'(4x,111a1)')('-',i=1,84)
-        dgg0=0.0d0
+        nx=1
+3       dgg0=0.0d0
         gg=0.d0
         do i=1,opt%get_nmatrix()
            q=0.d0
@@ -314,12 +315,12 @@ program HICOLM
         call opt%set_loop()
         call opt%set_lsearch(alpha)
         call opt%set_maxforce()
-        call opt%print_dataframes(1)
+        call opt%print_dataframes(nx)
         write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
              ,opt%get_enpot()*opt%get_econv()&
              ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-        do i=2,opt%get_nstep()
-3          gg=0.d0
+        do i=2,30!opt%get_nstep()
+           gg=0.d0
            dgg=0.d0
            do j=1,opt%get_nmatrix()
               q=0.d0
@@ -333,17 +334,8 @@ program HICOLM
               print*,'Hessian did not positive definite'
               call opt%random_coordinates()
               call opt%ccp()
+              call opt%verlet_list()
               call opt%set_loop()
-              gg=0.d0
-              dgg0=0.d0
-              do j=1,opt%get_nmatrix()
-                 q=0.d0
-                 do k=1,opt%get_nmatrix()
-                    q=q+opt%hess(j,k)*opt%res(k)
-                 end do
-                 gg=gg+opt%res(j)*q
-                 dgg0=dgg0+opt%res(j)**2
-              end do
               goto 3
            end if
            if(gg.eq.0.d0)stop 'residue reached null value!'
@@ -358,16 +350,25 @@ program HICOLM
            call opt%set_loop()
            call opt%set_lsearch(alpha)
            call opt%set_maxforce()
-           call opt%print_dataframes(i)
+           call opt%print_dataframes(nx)
            write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
                 ,opt%get_enpot()*opt%get_econv()&
                 ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-           if(abs(opt%get_maxforce()).le.opt%get_tolerance())exit
+           if(opt%get_enpot().le.opt%get_tolerance()*opt%get_natom())then
+              write(6,*)
+              write(6,*)&
+                   'SUCCESS! The optimization procedure reached the convergence criteria.'
+              write(6,*)
+              goto 2
+           end if
            dgg0=dgg
+           nx=nx+1
         end do
+        if(nx.lt.opt%get_nstep())goto 3
         call opt%print_geometry()
-        write(6,*)'Error: The optimization procedure is under construction!'
-        stop
+        write(6,*)
+        write(6,*)'Warning: The optimization did not converge to the convergence criteria.'
+        write(6,*)
         lval=.true.
      end if
   end do
