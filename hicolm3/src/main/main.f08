@@ -319,7 +319,7 @@ program HICOLM
         write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
              ,opt%get_enpot()*opt%get_econv()&
              ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-        do i=2,30!opt%get_nstep()
+        do i=2,30
            gg=0.d0
            dgg=0.d0
            do j=1,opt%get_nmatrix()
@@ -331,7 +331,7 @@ program HICOLM
               dgg=dgg+opt%res(j)**2
            end do
            if(gg.lt.0.d0)then
-              print*,'Hessian did not positive definite'
+              print*,'Hessian did not positive definite. Randomrizing positions...'
               call opt%random_coordinates()
               call opt%ccp()
               call opt%verlet_list()
@@ -364,7 +364,10 @@ program HICOLM
            dgg0=dgg
            nx=nx+1
         end do
-        if(nx.lt.opt%get_nstep())goto 3
+        if(nx.lt.opt%get_nstep())then
+           write(6,*)'Restarting linear search...'
+           goto 3
+        end if
         call opt%print_geometry()
         write(6,*)
         write(6,*)'Warning: The optimization did not converge to the convergence criteria.'
