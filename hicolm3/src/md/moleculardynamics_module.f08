@@ -63,7 +63,7 @@ contains
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
     call constructor%ensemble_init()
-    call constructor%set_checkenergy(1.0d4)
+    call constructor%set_checkenergy(1.0d6)
   end function constructor
 
   subroutine check(this)
