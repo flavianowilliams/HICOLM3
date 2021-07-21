@@ -431,7 +431,7 @@ contains
     class(structure), intent(inout) :: this
     integer                         :: i,j,k,nx
     real(8)                         :: srand,vx,vy,vz,vr,dr
-    dr=0.5d0
+    dr=0.1d0
     nx=1
     do i=1,this%get_nmol()
        do j=1,this%ntmol(i)

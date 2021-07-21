@@ -287,7 +287,7 @@ program HICOLM
         write(6,30)'##','STEP','LISEARCH','E(TOTAL)','MAXFORCE'
         write(6,'(4x,111a1)')('-',i=1,84)
         nx=1
-3       dgg0=0.0d0
+        dgg0=0.0d0
         gg=0.d0
         do i=1,opt%get_nmatrix()
            q=0.d0
@@ -298,28 +298,7 @@ program HICOLM
            dgg0=dgg0+opt%res(i)**2
         end do
         if(gg.eq.0.d0)stop 'residue reached null value!'
-        alpha=dgg0/gg
-        do j=1,opt%get_natom()
-           opt%xa(j)=opt%xa(j)+alpha*opt%res(3*j-2)
-           opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)
-           opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
-        end do
-        if(gg.lt.0.d0)then
-           print*,'Hessian did not positive definite'
-           call opt%random_coordinates()
-           call opt%ccp()
-           call opt%set_loop()
-        end if
-        call opt%ccp()
-        call opt%verlet_list()
-        call opt%set_loop()
-        call opt%set_lsearch(alpha)
-        call opt%set_maxforce()
-        call opt%print_dataframes(nx)
-        write(6,40)'SD',1,alpha*opt%get_rconv()**2/opt%get_econv()&
-             ,opt%get_enpot()*opt%get_econv()&
-             ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-        do i=2,30
+        do i=1,opt%get_nstep()
            gg=0.d0
            dgg=0.d0
            do j=1,opt%get_nmatrix()
@@ -336,7 +315,16 @@ program HICOLM
               call opt%ccp()
               call opt%verlet_list()
               call opt%set_loop()
-              goto 3
+              gg=0.d0
+              dgg=0.d0
+              do j=1,opt%get_nmatrix()
+                 q=0.d0
+                 do k=1,opt%get_nmatrix()
+                    q=q+opt%hess(j,k)*opt%res(k)
+                 end do
+                 gg=gg+opt%res(j)*q
+                 dgg=dgg+opt%res(j)**2
+              end do
            end if
            if(gg.eq.0.d0)stop 'residue reached null value!'
            alpha=dgg/gg
@@ -364,10 +352,6 @@ program HICOLM
            dgg0=dgg
            nx=nx+1
         end do
-        if(nx.lt.opt%get_nstep())then
-           write(6,*)'Restarting linear search...'
-           goto 3
-        end if
         call opt%print_geometry()
         write(6,*)
         write(6,*)'Warning: The optimization did not converge to the convergence criteria.'
