@@ -6,7 +6,6 @@
 *.o
 *.mod
 *.old
-*.dia
 *.atoms
 *.thermodynamics
 *.lattice
