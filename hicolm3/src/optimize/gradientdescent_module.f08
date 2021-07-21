@@ -22,14 +22,14 @@ module gradientdescent_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use neighbourlist_module
+  use interaction_module
 
   implicit none
 
   private
   public :: gradientdescent
 
-  type, extends(neighbourlist) :: gradientdescent
+  type, extends(interaction) :: gradientdescent
      integer, private     :: nmatrix
      real(8), private     :: en
      real(8), private     :: h1
