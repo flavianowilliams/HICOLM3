@@ -1,0 +1,153 @@
+@startuml
+class Constants{
+    - pi: double precision
+    - kb: double precision
+    + get_pi()
+    + get_kb()
+}
+class Structure{
+    - nmol: integer
+    - natom: integer
+    - system_init()
+    + sites()
+    + molecules()
+}
+Constants <|- Structure
+class Molecule{
+    - nmol: integer
+    - natom: integer
+    - system_init()
+    + sites()
+    + molecules()
+}
+Structure <|- Molecule
+class System{
+    - qtotal: double precision
+    + set_qtotal()
+    + get_qtotal()
+}
+Molecule --o System
+class Zmatrix{
+    - zmatrix_tol: double precision
+    - zmatrix_init()
+    + set_bonds()
+    + get_bonds()
+}
+Molecule <|- Zmatrix
+class ForceField{
+    - nspcs: integer
+    - nvdw: integer
+    + itorscnt[]: integer
+    + molitors[]: integer
+    - coulop: character
+    - fscsalpha: double precision
+    + parbnd[]: double precision
+    + parbend[]: double precision
+    + paritors[]: double precision
+    + parvdw[]: double precision
+    + spcs[]: character
+    + spcvdw[]: character
+    + tbonds[]: character
+    + tbends[]: character
+    + ttors[]: character
+    + titors[]: character
+    + tvdw[]: character
+    - forcefield_init()
+    + set_spcs()
+    + set_nspcs()
+    + get_nspcs()
+    + set_parbnd()
+    + set_parbend()
+    + set_partors()
+    + set_paritors()
+    + set_extra_parbnd()
+    + set_extra_parbend()
+    + set_extra_partors()
+    + set_extra_parvdw()
+    + set_parvdw()
+    + set_nvdw()
+    + get_nvdw()
+    + set_fscsalpha()
+    + get_fscsalpha()
+    + set_coulop()
+    + get_coulop()
+    + set_coulop2()
+}
+Zmatrix <|- ForceField
+class Amber{
+    + prms_bonds: xxxx
+    + set_amber()
+}
+ForceField -* Amber
+class Prepare{
+    + check()
+    + print_sys()
+    + print_top()
+    + print_out()
+}
+ForceField <|-- Prepare
+class Input{
+    - nstep: integer
+    - nrelax: integer
+}
+Input --|> ForceField
+class Atoms{
+    + zat: integer
+    + set_zat()
+}
+Atoms -|> Input
+class NeighbourList{
+    - verlchk: integer
+    + ilist[]: integer
+    + nlist[]: integer
+    + neighbour_prepare()
+    + verlet_list()
+    + set_verlchk()
+    + get_verlchk()
+}
+NeighbourList -|> Atoms
+class Interaction{
+    - enpot: double precision
+    - virtot: double precision
+    - encorr: double precision
+    - vircorr: double precision
+    - fbi[]: double precision
+    - fbj[]: double precision
+    - fbk[]: double precision
+    - fbl[]: double precision
+}
+Interaction -|> NeighbourList
+class Thermodynamics{
+    - temperature: double precision
+    - pressure: double precision
+}
+Thermodynamics -|> Interaction
+class Ensemble{
+    + set_nve()
+}
+Ensemble <|- Thermodynamics
+class MolecularDynamics{
+    - time: double precision   
+}
+MolecularDynamics <|- Ensemble
+'
+' classes de otimizacao
+class GradientDescent{
+    - nmatrix: integer
+}
+GradientDescent --|> Interaction
+class Interopt{
+    - maxforce: double precision
+    - enpot: double precision
+    + set_loop()
+    + set_maxforce()
+    + get_maxforce()
+    + set_enpot()
+    + get_enpot()
+}
+GradientDescent <|- Interopt
+class Optimize{
+    + check()
+}
+Interopt <|- Optimize
+@enduml
