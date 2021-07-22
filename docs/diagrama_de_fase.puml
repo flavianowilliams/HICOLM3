@@ -467,6 +467,8 @@ class Interopt{
     + set_coulomb()
     + get_d1bond()
     + get_d2bond()
+    + get_d1bend()
+    + get_d2bend()
 }
 Interopt --|> NeighbourList
 class GradientDescent{
@@ -481,6 +483,7 @@ class GradientDescent{
     + set_coulomb()
     + set_residue()
     + set_residue2()
+    + set_residue3()
     + set_hessian()
     + set_nmatrix()
     + get_nmatrix()

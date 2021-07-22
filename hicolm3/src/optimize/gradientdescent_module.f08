@@ -40,7 +40,8 @@ module gradientdescent_module
      procedure :: gd_init
      procedure :: set_loop
      procedure :: set_residue2
-     procedure :: set_residue => set_residue2
+     procedure :: set_residue3
+     generic   :: set_residue => set_residue2, set_residue3
      procedure :: set_hessian
      procedure :: set_nmatrix
      procedure :: get_nmatrix
@@ -120,6 +121,7 @@ contains
              end do
              ptrm=this%tbends(i,k)
              call this%set_angleopt(theta,prm,ptrm,en)
+             call this%set_residue(ni,nj,nk,drij,drik,dr1,dr2,theta)
              enpot=enpot+en
           end do
           nx=nx+this%nxmol(i)
@@ -190,6 +192,40 @@ contains
     this%res(ixx+1)=this%res(ixx+1)+fr*yvz
     this%res(ixx+2)=this%res(ixx+2)+fr*zvz
   end subroutine set_residue2
+
+  subroutine set_residue3(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    integer, intent(in)               :: i1,i2,i3
+    integer                           :: ix(3),ix1,ix2,ix3,i,j
+    real(8), intent(in)               :: dr1,dr2,theta
+    real(8), intent(in)               :: drij(3),drik(3)
+    real(8)                           :: derij(3,3),fa
+    ix(1)=i1
+    ix(2)=i2
+    ix(3)=i3
+    do j=1,3
+       do i=1,3
+          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
+               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+       end do
+    end do
+    ix1=3*ix(1)-2
+    ix2=3*ix(2)-2
+    ix3=3*ix(3)-2
+    fa=this%get_d1bend()/sin(theta)
+    this%res(ix1)=this%res(ix1)+fa*derij(1,1)
+    this%res(ix1+1)=this%res(ix1+1)+fa*derij(1,2)
+    this%res(ix1+2)=this%res(ix1+2)+fa*derij(1,3)
+    this%res(ix2)=this%res(ix2)+fa*derij(2,1)
+    this%res(ix2+1)=this%res(ix2+1)+fa*derij(2,2)
+    this%res(ix2+2)=this%res(ix2+2)+fa*derij(2,3)
+    this%res(ix3)=this%res(ix3)+fa*derij(3,1)
+    this%res(ix3+1)=this%res(ix3+1)+fa*derij(3,2)
+    this%res(ix3+2)=this%res(ix3+2)+fa*derij(3,3)
+  end subroutine set_residue3
 
   subroutine set_hessian(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none

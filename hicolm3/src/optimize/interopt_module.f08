@@ -41,6 +41,8 @@ module interopt_module
      procedure :: set_coulomb
      procedure :: get_d1bond
      procedure :: get_d2bond
+     procedure :: get_d1bend
+     procedure :: get_d2bend
   end type interopt
 
 contains
@@ -116,5 +118,17 @@ contains
     class(interopt), intent(in) :: this
     get_d2bond=this%d2bond
   end function get_d2bond
+
+  double precision function get_d1bend(this)
+    implicit none
+    class(interopt), intent(in) :: this
+    get_d1bend=this%d1bend
+  end function get_d1bend
+
+  double precision function get_d2bend(this)
+    implicit none
+    class(interopt), intent(in) :: this
+    get_d2bend=this%d2bend
+  end function get_d2bend
 
 end module interopt_module
