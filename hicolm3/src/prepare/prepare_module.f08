@@ -53,7 +53,7 @@ contains
           constructor%v(i,j)=0.d0
        end do
     end do
-    constructor%zmatrix_tol=0.5d0
+    call constructor%set_zmatrixtol(0.5d0)
     call constructor%set_coulop('fscs')
     call constructor%set_fscsalpha(0.25d0)
     call constructor%set_bondmax(100)
