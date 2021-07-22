@@ -1,9 +1,35 @@
 @startuml
+package main{
 class Constants{
     - pi: double precision
     - kb: double precision
+    - n0: double precision
+    - kelect: double precision
+    - mconv: double precision
+    - aconv: double precision
+    - hcconv: double precision
+    - elconv: double precision
+    - keconv: double precision
+    - econv: double precision
+    - rconv: double precision
+    - pconv: double precision
+    - tconv: double precision
+    + constants_prepare()
     + get_pi()
     + get_kb()
+    + get_n0()
+    + get_kelect()
+    + get_mconv()
+    + get_aconv()
+    + get_hcconv()
+    + get_elconv()
+    + get_keconv()
+    + get_econv()
+    + get_rconv()
+    + get_pconv()
+    + get_tconv()
+    + get_teconv()
+    + get_kconv()
 }
 class Structure{
     - nmol: integer
@@ -86,6 +112,9 @@ class Prepare{
     + print_out()
 }
 ForceField <|-- Prepare
+}
+' Fim do pacote main
+package md {
 class Input{
     - nstep: integer
     - nrelax: integer
@@ -165,9 +194,8 @@ class MolecularDynamics{
     - time: double precision   
 }
 MolecularDynamics <|- Ensemble
-'
-' classes de otimizacao
-'
+}
+package opt {
 class Interopt{
     - d1bond: double precision
     - d2bond: double precision
@@ -199,7 +227,7 @@ class GradientDescent{
     + set_maxforce()
     + get_maxforce()
 }
-Interopt <|- GradientDescent
+GradientDescent -|> Interopt
 class Optimize{
     + check()
     + print()
@@ -208,5 +236,6 @@ class Optimize{
     + print_geometry()
     + print_dataframes()
 }
-GradientDescent <|- Optimize
+Optimize -|> GradientDescent
+}
 @enduml
