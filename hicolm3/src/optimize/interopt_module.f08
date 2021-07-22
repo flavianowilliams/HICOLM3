@@ -32,8 +32,11 @@ module interopt_module
   type, extends(neighbourlist) :: interopt
      real(8), private :: d1bond
      real(8), private :: d2bond
+     real(8), private :: d1bend
+     real(8), private :: d2bend
    contains
      procedure :: set_bondopt
+     procedure :: set_angleopt
      procedure :: set_vanderwaals
      procedure :: set_coulomb
      procedure :: get_d1bond
@@ -59,6 +62,24 @@ contains
        this%d2bond=prm(1)
     end select
   end subroutine set_bondopt
+
+  subroutine set_angleopt(this,dr,prm,ptrm,en)
+    implicit none
+    class(interopt), intent(inout) :: this
+    character(6), intent(in)       :: ptrm
+    real(8), intent(in)            :: dr,prm(3)
+    real(8), intent(out)           :: en
+    select case(ptrm)
+    case('charmm')
+       en=prm(1)*(dr-prm(2))**2
+       this%d1bond=2.d0*prm(1)*(dr-prm(2))
+       this%d2bond=2.d0*prm(1)
+    case('harm')
+       en=0.5d0*prm(1)*(dr-prm(2))**2
+       this%d1bond=prm(1)*(dr-prm(2))
+       this%d2bond=prm(1)
+    end select
+  end subroutine set_angleopt
 
   subroutine set_vanderwaals(this,dr,prm,ptrm,en)
     implicit none
