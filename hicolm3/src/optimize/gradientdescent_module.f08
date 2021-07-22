@@ -39,7 +39,8 @@ module gradientdescent_module
    contains
      procedure :: gd_init
      procedure :: set_loop
-     procedure :: set_residue
+     procedure :: set_residue2
+     procedure :: set_residue => set_residue2
      procedure :: set_hessian
      procedure :: set_nmatrix
      procedure :: get_nmatrix
@@ -76,9 +77,9 @@ contains
   subroutine set_loop(this)
     implicit none
     class(gradientdescent), intent(inout) :: this
-    integer                               :: i,j,k,l,ni,nj,nx
-    real(8)                               :: xvz,yvz,zvz,dr,en,enpot
-    real(8)                               :: prm(3)
+    integer                               :: i,j,k,l,ni,nj,nk,nx
+    real(8)                               :: xvz,yvz,zvz,dr,en,enpot,dr1,dr2,theta
+    real(8)                               :: prm(3),drij(3),drik(3)
     character(7)                          :: ptrm
     character(6)                          :: ptrm2
     enpot=0.d0
@@ -103,6 +104,22 @@ contains
              call this%set_bondopt(dr,prm,ptrm2,en)
              call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
              call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             enpot=enpot+en
+          end do
+          do k=1,this%bendscnt(i)
+             ni=nx+this%molbend(i,k,2)
+             nj=nx+this%molbend(i,k,1)
+             nk=nx+this%molbend(i,k,3)
+             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             call this%mic(ni,nk,drik(1),drik(2),drik(3))
+             dr1=sqrt(drij(1)**2+drij(2)**2+drij(3)**2)
+             dr2=sqrt(drik(1)**2+drik(2)**2+drik(3)**2)
+             theta=acos((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
+             do l=1,2
+                prm(l)=this%parbend(i,k,l)
+             end do
+             ptrm=this%tbends(i,k)
+             call this%set_angleopt(theta,prm,ptrm,en)
              enpot=enpot+en
           end do
           nx=nx+this%nxmol(i)
@@ -156,7 +173,7 @@ contains
     get_enpot=this%enpot
   end function get_enpot
 
-  subroutine set_residue(this,i1,i2,dr,xvz,yvz,zvz)
+  subroutine set_residue2(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)                   :: i1,i2
@@ -172,7 +189,7 @@ contains
     this%res(ixx)=this%res(ixx)+fr*xvz
     this%res(ixx+1)=this%res(ixx+1)+fr*yvz
     this%res(ixx+2)=this%res(ixx+2)+fr*zvz
-  end subroutine set_residue
+  end subroutine set_residue2
 
   subroutine set_hessian(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none

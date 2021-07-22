@@ -459,7 +459,10 @@ package opt {
 class Interopt{
     - d1bond: double precision
     - d2bond: double precision
+    - d1bend: double precision
+    - d2bend: double precision
     + set_bondopt()
+    + set_angleopt()
     + set_vanderwaals()
     + set_coulomb()
     + get_d1bond()
@@ -477,6 +480,7 @@ class GradientDescent{
     + set_loop()
     + set_coulomb()
     + set_residue()
+    + set_residue2()
     + set_hessian()
     + set_nmatrix()
     + get_nmatrix()
