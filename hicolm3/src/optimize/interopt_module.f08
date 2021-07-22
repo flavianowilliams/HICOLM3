@@ -22,122 +22,78 @@ module interopt_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use gradientdescent_module
+  use neighbourlist_module
 
   implicit none
 
   private
   public :: interopt
 
-  type, extends(gradientdescent) :: interopt
-     real(8), private :: maxforce
-     real(8), private :: enpot
+  type, extends(neighbourlist) :: interopt
+     real(8), private :: d1bond
+     real(8), private :: d2bond
    contains
-     procedure :: set_loop
-     procedure :: set_maxforce
-     procedure :: get_maxforce
-     procedure :: set_enpot
-     procedure :: get_enpot
+     procedure :: set_bondopt
+     procedure :: set_vanderwaals
+     procedure :: set_coulomb
+     procedure :: get_d1bond
+     procedure :: get_d2bond
   end type interopt
 
 contains
 
-  subroutine set_maxforce(this)
+  subroutine set_bondopt(this,dr,prm,ptrm,en)
     implicit none
     class(interopt), intent(inout) :: this
-    integer                           :: i
-    this%maxforce=0.d0
-    do i=1,this%get_nmatrix()
-       this%maxforce=max(this%maxforce,abs(this%res(i)))
-    end do
-  end subroutine set_maxforce
+    character(6), intent(in)       :: ptrm
+    real(8), intent(in)            :: dr,prm(3)
+    real(8), intent(out)           :: en
+    select case(ptrm)
+    case('charmm')
+       en=prm(1)*(dr-prm(2))**2
+       this%d1bond=2.d0*prm(1)*(dr-prm(2))
+       this%d2bond=2.d0*prm(1)
+    case('harm')
+       en=0.5d0*prm(1)*(dr-prm(2))**2
+       this%d1bond=prm(1)*(dr-prm(2))
+       this%d2bond=prm(1)
+    end select
+  end subroutine set_bondopt
 
-  double precision function get_maxforce(this)
+  subroutine set_vanderwaals(this,dr,prm,ptrm,en)
+    implicit none
+    class(interopt), intent(inout) :: this
+    character(6), intent(in)       :: ptrm
+    real(8), intent(in)            :: dr,prm(2)
+    real(8), intent(out)           :: en
+    select case(ptrm)
+    case('charmm')
+       en=prm(1)*((prm(2)/dr)**12-2.0d0*(prm(2)/dr)**6)
+       this%d1bond=-12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr
+       this%d2bond=12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
+    end select
+  end subroutine set_vanderwaals
+
+  subroutine set_coulomb(this,dr,qi,qj,en)
+    implicit none
+    class(interopt), intent(inout) :: this
+    real(8), intent(in)            :: dr,qi,qj
+    real(8), intent(out)           :: en
+    en=-qi*qj/dr
+    this%d1bond=qi*qj/dr**2
+    this%d2bond=-2.0d0*qi*qj/dr**3
+  end subroutine set_coulomb
+
+  double precision function get_d1bond(this)
     implicit none
     class(interopt), intent(in) :: this
-    get_maxforce=this%maxforce
-  end function get_maxforce
+    get_d1bond=this%d1bond
+  end function get_d1bond
 
-  subroutine set_loop(this)
-    implicit none
-    class(interopt), intent(inout) :: this
-    integer                               :: i,j,k,l,ni,nj,nx
-    real(8)                               :: xvz,yvz,zvz,dr
-    real(8)                               :: prm(3)
-    character(7)                          :: ptrm
-    character(6)                          :: ptrm2
-    call this%set_enpot(0.d0)
-    do i=1,this%get_nmatrix()
-       this%res(i)=0.d0
-       do j=1,this%get_nmatrix()
-          this%hess(i,j)=0.d0
-       end do
-    end do
-    nx=0
-    do i=1,this%get_nmol()
-       do j=1,this%ntmol(i)
-          do k=1,this%bondscnt(i)
-             ni=nx+this%molbond(i,k,1)
-             nj=nx+this%molbond(i,k,2)
-             call this%mic(ni,nj,xvz,yvz,zvz)
-             dr=sqrt(xvz**2+yvz**2+zvz**2)
-             do l=1,2
-                prm(l)=this%parbnd(i,k,l)
-             end do
-             ptrm2=this%tbonds(i,k)
-             call this%set_bondopt(dr,prm,ptrm2)
-             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_enpot(this%get_en())
-          end do
-          nx=nx+this%nxmol(i)
-       end do
-    end do
-    do i=1,this%get_natom()
-       do j=1,this%nlist(i)
-          ni=i
-          nj=this%ilist(i,j)
-          call this%mic(ni,nj,xvz,yvz,zvz)
-          dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
-          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
-             call this%set_coulomb(dr,this%qat(ni),this%qat(nj))
-             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_enpot(this%get_en())
-          end if
-          do k=1,this%get_nvdw()
-             if(this%tpa(ni).eq.this%spcvdw(k,1).and.this%tpa(nj).eq.this%spcvdw(k,2).or.&
-                  this%tpa(ni).eq.this%spcvdw(k,2).and.this%tpa(nj).eq.this%spcvdw(k,1))then
-                do l=1,2
-                   prm(l)=this%parvdw(k,l)
-                end do
-                ptrm=this%tvdw(k)
-                call this%set_vanderwaals(dr,prm,ptrm)
-                call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-                call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
-                call this%set_enpot(this%get_en())
-             end if
-          end do
-       end do
-    end do
-    do i=1,this%get_nmatrix()
-       do j=i+1,this%get_nmatrix()
-          this%hess(j,i)=this%hess(i,j)
-       end do
-    end do
-  end subroutine set_loop
-
-  subroutine set_enpot(this,enpot)
-    implicit none
-    class(interopt), intent(inout) :: this
-    real(8), intent(in)            :: enpot
-    this%enpot=this%enpot+enpot
-  end subroutine set_enpot
-
-  double precision function get_enpot(this)
+  double precision function get_d2bond(this)
     implicit none
     class(interopt), intent(in) :: this
-    get_enpot=this%enpot
-  end function get_enpot
+    get_d2bond=this%d2bond
+  end function get_d2bond
 
 end module interopt_module

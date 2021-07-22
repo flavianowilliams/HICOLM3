@@ -90,7 +90,7 @@ class Input{
     - nstep: integer
     - nrelax: integer
 }
-Input --|> ForceField
+Input ---|> ForceField
 class Atoms{
     + zat: integer
     + set_zat()
@@ -115,6 +115,21 @@ class Interaction{
     - fbj[]: double precision
     - fbk[]: double precision
     - fbl[]: double precision
+    + interaction_init()
+    + set_forcefield()
+    + set_intraff()
+    + set_interff()
+    + set_force2()
+    + set_force3()
+    + set_force4()
+    + set_force()
+    + set_enpot()
+    + get_enpot()
+    + set_virtot()
+    + get_virtot()
+    + set_vdwcorr()
+    + get_encorr()
+    + get_vircorr()
 }
 Interaction -|> NeighbourList
 class Thermodynamics{
@@ -122,6 +137,26 @@ class Thermodynamics{
     - pressure: double precision
 }
 Thermodynamics -|> Interaction
+class VanderWaals{
+    - envdw: double precision
+}
+Interaction <|-- VanderWaals
+class Coulomb{
+    - encoul: double precision
+}
+Interaction <|-- Coulomb
+class Bonds{
+    - enbond: double precision
+}
+Interaction <|-- Bonds
+class Angles{
+    - enbend: double precision
+}
+Interaction <|-- Angles
+class Dihedrals{
+    - entors: double precision
+}
+Interaction <|-- Dihedrals
 class Ensemble{
     + set_nve()
 }
@@ -132,22 +167,46 @@ class MolecularDynamics{
 MolecularDynamics <|- Ensemble
 '
 ' classes de otimizacao
+'
+class Interopt{
+    - d1bond: double precision
+    - d2bond: double precision
+    + set_bondopt()
+    + set_vanderwaals()
+    + set_coulomb()
+    + get_d1bond()
+    + get_d2bond()
+}
+Interopt --|> NeighbourList
 class GradientDescent{
     - nmatrix: integer
-}
-GradientDescent --|> Interaction
-class Interopt{
-    - maxforce: double precision
+    - lsearch: double precision
     - enpot: double precision
+    - maxforce: double precision
+    + res[]: double precision
+    + hess[]: double precision
+    + gd_init()
     + set_loop()
-    + set_maxforce()
-    + get_maxforce()
+    + set_coulomb()
+    + set_residue()
+    + set_hessian()
+    + set_nmatrix()
+    + get_nmatrix()
+    + set_lsearch()
+    + get_lsearch()
     + set_enpot()
     + get_enpot()
+    + set_maxforce()
+    + get_maxforce()
 }
-GradientDescent <|- Interopt
+Interopt <|- GradientDescent
 class Optimize{
     + check()
+    + print()
+    + convert_units()
+    + set_canonicalvariables()
+    + print_geometry()
+    + print_dataframes()
 }
-Interopt <|- Optimize
+GradientDescent <|- Optimize
 @enduml

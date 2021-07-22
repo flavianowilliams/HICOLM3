@@ -22,33 +22,33 @@ module gradientdescent_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use interaction_module
+  use interopt_module
 
   implicit none
 
   private
   public :: gradientdescent
 
-  type, extends(interaction) :: gradientdescent
+  type, extends(interopt) :: gradientdescent
      integer, private     :: nmatrix
-     real(8), private     :: en
-     real(8), private     :: h1
-     real(8), private     :: h2
      real(8), private     :: lsearch
+     real(8), private     :: enpot
+     real(8), private     :: maxforce
      real(8), allocatable :: res(:)
      real(8), allocatable :: hess(:,:)
    contains
      procedure :: gd_init
-     procedure :: set_bondopt
-     procedure :: set_vanderwaals
-     procedure :: set_coulomb
+     procedure :: set_loop
      procedure :: set_residue
      procedure :: set_hessian
      procedure :: set_nmatrix
      procedure :: get_nmatrix
      procedure :: set_lsearch
      procedure :: get_lsearch
-     procedure :: get_en
+     procedure :: set_enpot
+     procedure :: get_enpot
+     procedure :: set_maxforce
+     procedure :: get_maxforce
   end type gradientdescent
 
 contains
@@ -73,44 +73,88 @@ contains
     get_nmatrix=this%nmatrix
   end function get_nmatrix
 
-  subroutine set_bondopt(this,dr,prm,ptrm)
+  subroutine set_loop(this)
     implicit none
     class(gradientdescent), intent(inout) :: this
-    character(6), intent(in)              :: ptrm
-    real(8), intent(in)                   :: dr,prm(3)
-    select case(ptrm)
-    case('charmm')
-       this%en=prm(1)*(dr-prm(2))**2
-       this%h1=2.d0*prm(1)*(dr-prm(2))
-       this%h2=2.d0*prm(1)
-    case('harm')
-       this%en=0.5d0*prm(1)*(dr-prm(2))**2
-       this%h1=prm(1)*(dr-prm(2))
-       this%h2=prm(1)
-    end select
-  end subroutine set_bondopt
+    integer                               :: i,j,k,l,ni,nj,nx
+    real(8)                               :: xvz,yvz,zvz,dr,en,enpot
+    real(8)                               :: prm(3)
+    character(7)                          :: ptrm
+    character(6)                          :: ptrm2
+    enpot=0.d0
+    do i=1,this%get_nmatrix()
+       this%res(i)=0.d0
+       do j=1,this%get_nmatrix()
+          this%hess(i,j)=0.d0
+       end do
+    end do
+    nx=0
+    do i=1,this%get_nmol()
+       do j=1,this%ntmol(i)
+          do k=1,this%bondscnt(i)
+             ni=nx+this%molbond(i,k,1)
+             nj=nx+this%molbond(i,k,2)
+             call this%mic(ni,nj,xvz,yvz,zvz)
+             dr=sqrt(xvz**2+yvz**2+zvz**2)
+             do l=1,2
+                prm(l)=this%parbnd(i,k,l)
+             end do
+             ptrm2=this%tbonds(i,k)
+             call this%set_bondopt(dr,prm,ptrm2,en)
+             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             enpot=enpot+en
+          end do
+          nx=nx+this%nxmol(i)
+       end do
+    end do
+    do i=1,this%get_natom()
+       do j=1,this%nlist(i)
+          ni=i
+          nj=this%ilist(i,j)
+          call this%mic(ni,nj,xvz,yvz,zvz)
+          dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
+          if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+             call this%set_coulomb(dr,this%qat(ni),this%qat(nj),en)
+             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             enpot=enpot+en
+          end if
+          do k=1,this%get_nvdw()
+             if(this%tpa(ni).eq.this%spcvdw(k,1).and.this%tpa(nj).eq.this%spcvdw(k,2).or.&
+                  this%tpa(ni).eq.this%spcvdw(k,2).and.this%tpa(nj).eq.this%spcvdw(k,1))then
+                do l=1,2
+                   prm(l)=this%parvdw(k,l)
+                end do
+                ptrm=this%tvdw(k)
+                call this%set_vanderwaals(dr,prm,ptrm,en)
+                call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
+                call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+                enpot=enpot+en
+             end if
+          end do
+       end do
+    end do
+    call this%set_enpot(enpot)
+    do i=1,this%get_nmatrix()
+       do j=i+1,this%get_nmatrix()
+          this%hess(j,i)=this%hess(i,j)
+       end do
+    end do
+  end subroutine set_loop
 
-  subroutine set_vanderwaals(this,dr,prm,ptrm)
+  subroutine set_enpot(this,enpot)
     implicit none
     class(gradientdescent), intent(inout) :: this
-    character(6), intent(in)              :: ptrm
-    real(8), intent(in)                   :: dr,prm(2)
-    select case(ptrm)
-    case('charmm')
-       this%en=prm(1)*((prm(2)/dr)**12-2.0d0*(prm(2)/dr)**6)
-       this%h1=-12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr
-       this%h2=12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
-    end select
-  end subroutine set_vanderwaals
+    real(8), intent(in)            :: enpot
+    this%enpot=this%enpot+enpot
+  end subroutine set_enpot
 
-  subroutine set_coulomb(this,dr,qi,qj)
+  double precision function get_enpot(this)
     implicit none
-    class(gradientdescent), intent(inout) :: this
-    real(8), intent(in)                   :: dr,qi,qj
-    this%en=-qi*qj/dr
-    this%h1=qi*qj/dr**2
-    this%h2=-2.0d0*qi*qj/dr**3
-  end subroutine set_coulomb
+    class(gradientdescent), intent(in) :: this
+    get_enpot=this%enpot
+  end function get_enpot
 
   subroutine set_residue(this,i1,i2,dr,xvz,yvz,zvz)
     implicit none
@@ -119,7 +163,7 @@ contains
     integer                               :: ix,ixx
     real(8), intent(in)                   :: xvz,yvz,zvz,dr
     real(8)                               :: fr
-    fr=-this%h1/dr
+    fr=-this%get_d1bond()/dr
     ix=3*i1-2
     ixx=3*i2-2
     this%res(ix)=this%res(ix)-fr*xvz
@@ -139,8 +183,8 @@ contains
     dx(1)=xvz
     dx(2)=yvz
     dx(3)=zvz
-    h1=this%h1
-    h2=this%h2
+    h1=this%get_d1bond()
+    h2=this%get_d2bond()
     ix=3*i1-2
     ixx=3*i2-2
     do i=1,3 !xvz,yvz,zvz
@@ -160,11 +204,21 @@ contains
     kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
   end function kronij
 
-  double precision function get_en(this)
+  subroutine set_maxforce(this)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    integer                           :: i
+    this%maxforce=0.d0
+    do i=1,this%get_nmatrix()
+       this%maxforce=max(this%maxforce,abs(this%res(i)))
+    end do
+  end subroutine set_maxforce
+
+  double precision function get_maxforce(this)
     implicit none
     class(gradientdescent), intent(in) :: this
-    get_en=this%en
-  end function get_en
+    get_maxforce=this%maxforce
+  end function get_maxforce
 
   subroutine set_lsearch(this,lsearch)
     implicit none
