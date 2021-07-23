@@ -1,19 +1,19 @@
 @startuml
 package main{
 class Constants{
-    - pi: double precision
-    - kb: double precision
-    - n0: double precision
-    - kelect: double precision
-    - mconv: double precision
-    - aconv: double precision
-    - hcconv: double precision
-    - elconv: double precision
-    - keconv: double precision
-    - econv: double precision
-    - rconv: double precision
-    - pconv: double precision
-    - tconv: double precision
+    - pi: double
+    - kb: double
+    - n0: double
+    - kelect: double
+    - mconv: double
+    - aconv: double
+    - hcconv: double
+    - elconv: double
+    - keconv: double
+    - econv: double
+    - rconv: double
+    - pconv: double
+    - tconv: double
     + constants_prepare()
     + get_pi()
     + get_kb()
@@ -39,18 +39,18 @@ class Structure{
     + ntmol[]: integer
     + nxmol[]: integer
     + namemol[]: character
-    - volume: double precision
-    - a: double precision
-    - b: double precision
-    - c: double precision
-    - alpha: double precision
-    - beta: double precision
-    - gamma: double precision
-    + xa[]: double precision
-    + ya[]: double precision
-    + za[]: double precision
-    + v[]: double precision
-    + sys_shift[]: double precision
+    - volume: double
+    - a: double
+    - b: double
+    - c: double
+    - alpha: double
+    - beta: double
+    - gamma: double
+    + xa[]: double
+    + ya[]: double
+    + za[]: double
+    + v[]: double
+    + sys_shift[]: double
     - structure_init()
     + sites()
     + molecules()
@@ -90,12 +90,12 @@ class Structure{
 Constants <|- Structure
 class Molecule{
     + zatom[]: integer
-    + sf_coul[]: double precision
-    + sf_vdw[]: double precision
-    + qatmol[]: double precision
-    + massmol[]: double precision
-    + mmolar[]: double precision
-    + tpmol[]: double precision
+    + sf_coul[]: double
+    + sf_vdw[]: double
+    + qatmol[]: double
+    + massmol[]: double
+    + mmolar[]: double
+    + tpmol[]: double
     + molecule_init()
     + molecule_prepare()
     + set_massmol()
@@ -105,8 +105,8 @@ class Molecule{
 }
 Structure <|- Molecule
 class System{
-    - qtotal: double precision
-    - mtotal: double precision
+    - qtotal: double
+    - mtotal: double
     + set_qtotal()
     + get_qtotal()
     + set_mtotal()
@@ -114,7 +114,7 @@ class System{
 }
 Molecule --o System
 class Zmatrix{
-    - zmatrix_tol: double precision
+    - zmatrix_tol: double
     - bondmax: integer
     - bendmax: integer
     - torsmax: integer
@@ -150,11 +150,11 @@ class ForceField{
     + itorscnt[]: integer
     + molitors[]: integer
     - coulop: character
-    - fscsalpha: double precision
-    + parbnd[]: double precision
-    + parbend[]: double precision
-    + paritors[]: double precision
-    + parvdw[]: double precision
+    - fscsalpha: double
+    + parbnd[]: double
+    + parbend[]: double
+    + paritors[]: double
+    + parvdw[]: double
     + spcs[]: character
     + spcvdw[]: character
     + tbonds[]: character
@@ -186,12 +186,12 @@ class ForceField{
 Zmatrix <|- ForceField
 class Charmm{
     + natp: integer
-    + prms_vdw[]: double precision
-    + prms_itors[]: double precision
-    + prms_tors[]: double precision
-    + prms_angles[]: double precision
-    + prms_bonds[]: double precision
-    + atp[]: double precision
+    + prms_vdw[]: double
+    + prms_itors[]: double
+    + prms_tors[]: double
+    + prms_angles[]: double
+    + prms_bonds[]: double
+    + atp[]: double
     + set_natp()
     + get_natp()
     + set_charmmtypes()
@@ -217,16 +217,16 @@ class Input{
     - nrelax: integer
     - nframes: integer
     - nhist: integer
-    - timestep: double precision
-    - press: double precision
-    - temp: double precision
-    - rcutoff: double precision
-    - drcutoff: double precision
-    - pstat: double precision
-    - tstat: double precision
-    - bfactor: double precision
-    - checkenergy: double precision
-    - tolerance: double precision
+    - timestep: double
+    - press: double
+    - temp: double 
+    - rcutoff: double 
+    - drcutoff: double
+    - pstat: double 
+    - tstat: double 
+    - bfactor: double
+    - checkenergy: double
+    - tolerance: double
     - restart: character
     - ensble: character
     - ensble_mt: character
@@ -273,14 +273,14 @@ class Input{
 Input ---|> ForceField
 class Atoms{
     + zat[]: integer
-    + mass[]: double precision
-    + qat[]: double precision
-    + vax[]: double precision
-    + vay[]: double precision
-    + vaz[]: double precision
-    + fax[]: double precision
-    + fay[]: double precision
-    + faz[]: double precision
+    + mass[]: double
+    + qat[]: double
+    + vax[]: double
+    + vay[]: double 
+    + vaz[]: double 
+    + fax[]: double 
+    + fay[]: double 
+    + faz[]: double 
     + tpa[]: character
     + set_zat()
     + set_mass()
@@ -299,14 +299,14 @@ class NeighbourList{
 }
 NeighbourList -|> Atoms
 class Interaction{
-    - enpot: double precision
-    - virtot: double precision
-    - encorr: double precision
-    - vircorr: double precision
-    - fbi[]: double precision
-    - fbj[]: double precision
-    - fbk[]: double precision
-    - fbl[]: double precision
+    - enpot: double 
+    - virtot: double 
+    - encorr: double 
+    - vircorr: double 
+    - fbi[]: double 
+    - fbj[]: double 
+    - fbk[]: double 
+    - fbl[]: double 
     + interaction_init()
     + set_forcefield()
     + set_intraff()
@@ -325,13 +325,13 @@ class Interaction{
 }
 Interaction -|> NeighbourList
 class Thermodynamics{
-    - temperature: double precision
-    - pressure: double precision
-    - ekinetic: double precision
-    - etotal: double precision
-    - sigma: double precision
-    - qmass: double precision
-    - pmass: double precision
+    - temperature: double 
+    - pressure: double 
+    - ekinetic: double 
+    - etotal: double 
+    - sigma: double 
+    - qmass: double 
+    - pmass: double 
     + set_temperature()
     + get_temperature()
     + set_pressure()
@@ -349,10 +349,10 @@ class Thermodynamics{
 }
 Thermodynamics -|> Interaction
 class VanderWaals{
-    - envdw: double precision
-    - virvdw: double precision
-    - rcutoff: double precision
-    - force: double precision
+    - envdw: double
+    - virvdw: double 
+    - rcutoff: double 
+    - force: double 
     + set_vanderwaals()
     + vanderwaals_prepare()
     + set_envdw()
@@ -363,13 +363,13 @@ class VanderWaals{
 }
 Interaction <|-- VanderWaals
 class Coulomb{
-    - encoul: double precision
-    - vircoul: double precision
-    - rcutoff: double precision
-    - kconv: double precision
-    - pi: double precision
-    - force: double precision
-    - alcoul: double precision
+    - encoul: double 
+    - vircoul: double 
+    - rcutoff: double 
+    - kconv: double 
+    - pi: double 
+    - force: double 
+    - alcoul: double 
     - coulop: character
     + set_coulomb()
     + coulomb_init()
@@ -381,9 +381,9 @@ class Coulomb{
 }
 Interaction <|-- Coulomb
 class Bonds{
-    - enbond: double precision
-    - virbond: double precision
-    - force: double precision
+    - enbond: double 
+    - virbond: double 
+    - force: double 
     + set_bonds()
     + set_enbond()
     + get_enbond()
@@ -393,9 +393,9 @@ class Bonds{
 }
 Interaction <|-- Bonds
 class Angles{
-    - enbend: double precision
-    - virbend: double precision
-    - force: double precision
+    - enbend: double 
+    - virbend: double 
+    - force: double 
     + set_angles()
     + set_enbend()
     + get_enbend()
@@ -405,9 +405,9 @@ class Angles{
 }
 Interaction <|-- Angles
 class Dihedrals{
-    - entors: double precision
-    - virtors: double precision
-    - force: double precision
+    - entors: double 
+    - virtors: double 
+    - force: double 
     + set_dihedrals()
     + set_entors()
     + get_entors()
@@ -417,11 +417,11 @@ class Dihedrals{
 }
 Interaction <|-- Dihedrals
 class Ensemble{
-    - tfcnvt: double precision
-    - tfcnpt: double precision
-    - bfc: double precision
-    - rcm[]: double precision
-    - vcm[]: double precision
+    - tfcnvt: double 
+    - tfcnpt: double 
+    - bfc: double 
+    - rcm[]: double 
+    - vcm[]: double 
     + ensemble_init()
     + set_nve()
     + set_nvt_berendsen()
@@ -442,7 +442,7 @@ class Ensemble{
 }
 Ensemble <|- Thermodynamics
 class MolecularDynamics{
-    - time: double precision
+    - time: double 
     + check()
     + print_geometry()
     + print_dataframes()
@@ -457,10 +457,10 @@ MolecularDynamics <|- Ensemble
 }
 package opt {
 class Interopt{
-    - d1bond: double precision
-    - d2bond: double precision
-    - d1bend: double precision
-    - d2bend: double precision
+    - d1bond: double 
+    - d2bond: double 
+    - d1bend: double 
+    - d2bend: double 
     + set_bondopt()
     + set_angleopt()
     + set_vanderwaals()
@@ -473,11 +473,11 @@ class Interopt{
 Interopt --|> NeighbourList
 class GradientDescent{
     - nmatrix: integer
-    - lsearch: double precision
-    - enpot: double precision
-    - maxforce: double precision
-    + res[]: double precision
-    + hess[]: double precision
+    - lsearch: double 
+    - enpot: double 
+    - maxforce: double 
+    + res[]: double 
+    + hess[]: double 
     + gd_init()
     + set_loop()
     + set_coulomb()
