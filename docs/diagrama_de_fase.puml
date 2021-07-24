@@ -87,7 +87,7 @@ class Structure{
     + mic()
     + random_coordinates()
 }
-Constants <|- Structure
+Constants <|-right- Structure
 class Molecule{
     + zatom[]: integer
     + sf_coul[]: double
@@ -103,7 +103,7 @@ class Molecule{
     + set_scale_factor()
     + set_global()
 }
-Structure <|- Molecule
+Structure <|-right- Molecule
 class System{
     - qtotal: double
     - mtotal: double
@@ -143,7 +143,7 @@ class Zmatrix{
     + get_zmatrix_tol()
     + set_zmatrixtol()
 }
-Molecule <|- Zmatrix
+Molecule <|-right- Zmatrix
 class ForceField{
     - nspcs: integer
     - nvdw: integer
@@ -183,7 +183,7 @@ class ForceField{
     + get_coulop()
     + set_coulop2()
 }
-Zmatrix <|- ForceField
+Zmatrix <|-right- ForceField
 class Charmm{
     + natp: integer
     + prms_vdw[]: double
@@ -201,7 +201,7 @@ class Charmm{
     + set_charmmidihedrals()
     + set_charmmvdw()
 }
-ForceField -* Charmm
+ForceField -right-* Charmm
 class Prepare{
     + check()
     + print_sys()
@@ -287,7 +287,7 @@ class Atoms{
     + set_qat()
     + set_tpa()
 }
-Atoms -|> Input
+Atoms -right-|> Input
 class NeighbourList{
     - verlchk: integer
     + ilist[]: integer
@@ -297,7 +297,7 @@ class NeighbourList{
     + set_verlchk()
     + get_verlchk()
 }
-NeighbourList -|> Atoms
+NeighbourList -right-|> Atoms
 class Interaction{
     - enpot: double 
     - virtot: double 
@@ -323,7 +323,7 @@ class Interaction{
     + get_encorr()
     + get_vircorr()
 }
-Interaction -|> NeighbourList
+Interaction -right-|> NeighbourList
 class Thermodynamics{
     - temperature: double 
     - pressure: double 
@@ -347,7 +347,7 @@ class Thermodynamics{
     + set_pmass()
     + get_pmass()
 }
-Thermodynamics -|> Interaction
+Thermodynamics -right-|> Interaction
 class VanderWaals{
     - envdw: double
     - virvdw: double 
@@ -440,7 +440,7 @@ class Ensemble{
     + set_rcm()
     + get_rcm()
 }
-Ensemble <|- Thermodynamics
+Ensemble <|-right- Thermodynamics
 class MolecularDynamics{
     - time: double 
     + check()
@@ -453,7 +453,7 @@ class MolecularDynamics{
     + get_time()
     + convert_units()
 }
-MolecularDynamics <|- Ensemble
+MolecularDynamics <|-right- Ensemble
 }
 package opt {
 class Interopt{
@@ -494,7 +494,7 @@ class GradientDescent{
     + set_maxforce()
     + get_maxforce()
 }
-GradientDescent -|> Interopt
+GradientDescent -right-|> Interopt
 class Optimize{
     + check()
     + print()
@@ -503,6 +503,6 @@ class Optimize{
     + print_geometry()
     + print_dataframes()
 }
-Optimize -|> GradientDescent
+Optimize -left-|> GradientDescent
 }
 @enduml
