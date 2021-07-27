@@ -39,6 +39,7 @@ module gradientdescent_module
    contains
      procedure :: gd_init
      procedure :: set_loop
+     procedure :: set_derij
      procedure :: set_residue2
      procedure :: set_residue3
      generic   :: set_residue => set_residue2, set_residue3
@@ -251,6 +252,11 @@ contains
        end do
     end do
   end subroutine set_hessian
+
+  subroutine set_derij(this)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+  end subroutine set_derij
 
   integer function kronij(i,j)
     integer, intent(in) :: i,j
