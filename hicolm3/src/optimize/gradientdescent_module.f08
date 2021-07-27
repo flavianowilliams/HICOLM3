@@ -243,11 +243,11 @@ contains
     do i=1,3 !xvz,yvz,zvz
        do j=i,3 !xvz,yvz,zvz
           this%hess(ix+i-1,ix+j-1)=this%hess(ix+i-1,ix+j-1)&
-               +(h2/dr**2-h1/dr**2)*dx(i)*dx(j)+h1*kronij(i,j)/dr
+               +(h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr
           this%hess(ix+i-1,ixx+j-1)=this%hess(ix+i-1,ixx+j-1)&
-               -((h2/dr**2-h1/dr**2)*dx(i)*dx(j)+h1*kronij(i,j)/dr)
+               -((h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr)
           this%hess(ixx+i-1,ixx+j-1)=this%hess(ixx+i-1,ixx+j-1)&
-               +(h2/dr**2-h1/dr**2)*dx(i)*dx(j)+h1*kronij(i,j)/dr
+               +(h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr
        end do
     end do
   end subroutine set_hessian
