@@ -482,6 +482,7 @@ class GradientDescent{
     + gd_init()
     + set_loop()
     + set_dralpha()
+    + get_dralpha()
     + set_coulomb()
     + set_residue()
     + set_residue2()
