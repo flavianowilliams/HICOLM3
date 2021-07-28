@@ -487,6 +487,8 @@ class GradientDescent{
     + set_residue2()
     + set_residue3()
     + set_hessian()
+    + set_hessian2()
+    + set_hessian3()
     + set_nmatrix()
     + get_nmatrix()
     + set_lsearch()

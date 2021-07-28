@@ -36,16 +36,17 @@ module gradientdescent_module
      real(8), private     :: maxforce
      real(8), allocatable :: res(:)
      real(8), allocatable :: hess(:,:)
-     real(8)              :: derij(3,3)
+     real(8)              :: dralpha
    contains
      procedure :: gd_init
      procedure :: set_loop
-     procedure :: set_derij
+     procedure :: set_dralpha
      procedure :: set_residue2
      procedure :: set_residue3
      generic   :: set_residue => set_residue2, set_residue3
      procedure :: set_hessian2
-     generic   :: set_hessian => set_hessian2
+     procedure :: set_hessian3
+     generic   :: set_hessian => set_hessian2, set_hessian3
      procedure :: set_nmatrix
      procedure :: get_nmatrix
      procedure :: set_lsearch
@@ -125,8 +126,7 @@ contains
              end do
              ptrm=this%tbends(i,k)
              call this%set_angleopt(theta,prm,ptrm,en)
-             call this%set_derij(ni,nj,nk,drij,drik,dr1,dr2,theta)
-             call this%set_residue(ni,nj,nk,theta)
+             call this%set_residue(ni,nj,nk,drij,drik,dr1,dr2,theta)
              enpot=enpot+en
           end do
           nx=nx+this%nxmol(i)
@@ -200,37 +200,35 @@ contains
     this%res(ixx+2)=this%res(ixx+2)+fr*zvz
   end subroutine set_residue2
 
-  subroutine set_residue3(this,i1,i2,i3,theta)
+  subroutine set_residue3(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3
-    integer                           :: ix1,ix2,ix3
-    real(8), intent(in)               :: theta
+    integer                           :: ix1,ix2,ix3,i,j,ix(3)
+    real(8), intent(in)               :: theta,drij(3),drik(3),dr1,dr2
     real(8)                           :: fa
-!    ix(1)=i1
-!    ix(2)=i2
-!    ix(3)=i3
-!    do j=1,3
-!       do i=1,3
-!          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
-!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
-!               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
-!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
-!       end do
-!    end do
+    ix(1)=i1 !i
+    ix(2)=i2 !j
+    ix(3)=i3 !k
+    fa=this%get_d1bend()/sin(theta)
+    do i=1,3 !x,y,z
+       do j=1,3 !i1,i2,i3
+          call this%set_dralpha(i1,i2,i3,ix(i),drij(j),drik(j),dr1,dr2,theta)
+          this%res(ix(i)+j-1)=this%res(ix(i)+j-1)+fa*this%dralpha
+       end do
+    end do
     ix1=3*i1-2
     ix2=3*i2-2
     ix3=3*i3-2
-    fa=this%get_d1bend()/sin(theta)
-    this%res(ix1)=this%res(ix1)+fa*this%derij(1,1)
-    this%res(ix1+1)=this%res(ix1+1)+fa*this%derij(1,2)
-    this%res(ix1+2)=this%res(ix1+2)+fa*this%derij(1,3)
-    this%res(ix2)=this%res(ix2)+fa*this%derij(2,1)
-    this%res(ix2+1)=this%res(ix2+1)+fa*this%derij(2,2)
-    this%res(ix2+2)=this%res(ix2+2)+fa*this%derij(2,3)
-    this%res(ix3)=this%res(ix3)+fa*this%derij(3,1)
-    this%res(ix3+1)=this%res(ix3+1)+fa*this%derij(3,2)
-    this%res(ix3+2)=this%res(ix3+2)+fa*this%derij(3,3)
+!    this%res(ix1)=this%res(ix1)+fa*this%derij(1,1)
+!    this%res(ix1+1)=this%res(ix1+1)+fa*this%derij(1,2)
+!    this%res(ix1+2)=this%res(ix1+2)+fa*this%derij(1,3)
+!    this%res(ix2)=this%res(ix2)+fa*this%derij(2,1)
+!    this%res(ix2+1)=this%res(ix2+1)+fa*this%derij(2,2)
+!    this%res(ix2+2)=this%res(ix2+2)+fa*this%derij(2,3)
+!    this%res(ix3)=this%res(ix3)+fa*this%derij(3,1)
+!    this%res(ix3+1)=this%res(ix3+1)+fa*this%derij(3,2)
+!    this%res(ix3+2)=this%res(ix3+2)+fa*this%derij(3,3)
   end subroutine set_residue3
 
   subroutine set_hessian2(this,i1,i2,dr,xvz,yvz,zvz)
@@ -246,8 +244,8 @@ contains
     h2=this%get_d2bond()
     ix=3*i1-2
     ixx=3*i2-2
-    do i=1,3 !xvz,yvz,zvz
-       do j=i,3 !xvz,yvz,zvz
+    do i=1,3 !x,y,z
+       do j=i,3 !x,y,z
           this%hess(ix+i-1,ix+j-1)=this%hess(ix+i-1,ix+j-1)&
                +(h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr
           this%hess(ix+i-1,ixx+j-1)=this%hess(ix+i-1,ixx+j-1)&
@@ -258,26 +256,51 @@ contains
     end do
   end subroutine set_hessian2
 
-  subroutine set_derij(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
+  subroutine set_hessian3(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)                   :: i1,i2,i3
-    integer                               :: ix(3),i,j
+    integer                               :: ix1,ix2,ix3,i,j
     real(8), intent(in)                   :: dr1,dr2,theta
     real(8), intent(in)                   :: drij(3),drik(3)
-    ix(1)=i1
-    ix(2)=i2
-    ix(3)=i3
-    do j=1,3
-       do i=1,3
-          this%derij(i,j)=&
-               (kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
-               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
-               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)&
-               /dr1**2+(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+    real(8)                               :: h1,h2
+    h1=this%get_d1bond()
+    h2=this%get_d2bond()
+    ix1=3*i1-2
+    ix2=3*i2-2
+    ix3=3*i3-2
+    do i=1,3 !x,y,z
+       do j=1,3 !x,y,z
+!          call this%set_derij(i1,i2,i3,drij(i),drik(i),dr1,dr2,theta)
+!          call this%set_derij(i1,i2,i3,drij(j),drik(j),dr1,dr2,theta)
+!          this%hess(,)=this%hess(,)&
+!               +(h2-h1*cos(theta)/sin(theta))
        end do
     end do
-  end subroutine set_derij
+  end subroutine set_hessian3
+
+  subroutine set_dralpha(this,ai,aj,ak,aa,drij,drik,dr1,dr2,theta)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    integer, intent(in)                   :: ai,aj,ak,aa
+    real(8), intent(in)                   :: dr1,dr2,theta,drij,drik
+    this%dralpha=drik*(kronij(aa,aj)-kronij(aa,ai))/(dr1*dr2)&
+         +drij*(kronij(aa,ak)-kronij(aa,ai))/(dr1*dr2)&
+         -cos(theta)*(drij*(kronij(aa,aj)-kronij(aa,ai))/drij**2&
+         +drik*(kronij(aa,ak)-kronij(aa,ai))/drik**2)
+!    ix(1)=i1
+!    ix(2)=i2
+!    ix(3)=i3
+!    do j=1,3 !x,y,z
+!       do i=1,3 !i1,i2,i3
+!          this%derij(i,j)=&
+!               (kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
+!               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)&
+!               /dr1**2+(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+!       end do
+!    end do
+  end subroutine set_dralpha
 
   integer function kronij(i,j)
     implicit none
