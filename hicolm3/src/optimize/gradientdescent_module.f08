@@ -254,16 +254,19 @@ contains
     end do
   end subroutine set_hessian
 
-  subroutine set_derij(this)
+  subroutine set_derij(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
     implicit none
     class(gradientdescent), intent(inout) :: this
-
+    integer, intent(in)                   :: i1,i2,i3
+    integer                               :: ix(3),i,j
+    real(8), intent(in)                   :: dr1,dr2,theta
+    real(8), intent(in)                   :: drij(3),drik(3)
     ix(1)=i1
     ix(2)=i2
     ix(3)=i3
     do j=1,3
        do i=1,3
-          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+          this%derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
                +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
                -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
                +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
