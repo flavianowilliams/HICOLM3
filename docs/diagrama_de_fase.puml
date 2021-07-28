@@ -478,10 +478,10 @@ class GradientDescent{
     - maxforce: double 
     + res[]: double 
     + hess[]: double
-    + derij[]: double
+    + dralpha double
     + gd_init()
     + set_loop()
-    + set_derij()
+    + set_dralpha()
     + set_coulomb()
     + set_residue()
     + set_residue2()

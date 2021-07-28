@@ -41,6 +41,7 @@ module gradientdescent_module
      procedure :: gd_init
      procedure :: set_loop
      procedure :: set_dralpha
+     procedure :: get_dralpha
      procedure :: set_residue2
      procedure :: set_residue3
      generic   :: set_residue => set_residue2, set_residue3
@@ -83,7 +84,7 @@ contains
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer                               :: i,j,k,l,ni,nj,nk,nx
-    real(8)                               :: xvz,yvz,zvz,dr,en,enpot,dr1,dr2,theta
+    real(8)                               :: dr,en,enpot,dr1,dr2,theta
     real(8)                               :: prm(3),drij(3),drik(3)
     character(7)                          :: ptrm
     character(6)                          :: ptrm2
@@ -100,15 +101,15 @@ contains
           do k=1,this%bondscnt(i)
              ni=nx+this%molbond(i,k,1)
              nj=nx+this%molbond(i,k,2)
-             call this%mic(ni,nj,xvz,yvz,zvz)
-             dr=sqrt(xvz**2+yvz**2+zvz**2)
+             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             dr=sqrt(drij(1)**2+drij(2)**2+drij(3)**2)
              do l=1,2
                 prm(l)=this%parbnd(i,k,l)
              end do
              ptrm2=this%tbonds(i,k)
              call this%set_bondopt(dr,prm,ptrm2,en)
-             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_residue(ni,nj,dr,drij)
+             call this%set_hessian(ni,nj,dr,drij)
              enpot=enpot+en
           end do
           do k=1,this%bendscnt(i)
@@ -136,12 +137,12 @@ contains
        do j=1,this%nlist(i)
           ni=i
           nj=this%ilist(i,j)
-          call this%mic(ni,nj,xvz,yvz,zvz)
-          dr=max(sqrt(xvz**2+yvz**2+zvz**2),1.d-8)
+          call this%mic(ni,nj,drij(1),drij(2),drij(3))
+          dr=max(sqrt(drij(1)**2+drij(2)**2+drij(3)**2),1.d-8)
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%set_coulomb(dr,this%qat(ni),this%qat(nj),en)
-             call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-             call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+             call this%set_residue(ni,nj,dr,drij)
+             call this%set_hessian(ni,nj,dr,drij)
              enpot=enpot+en
           end if
           do k=1,this%get_nvdw()
@@ -154,8 +155,8 @@ contains
                 end do
                 ptrm=this%tvdw(k)
                 call this%set_vanderwaals(dr,prm,ptrm,en)
-                call this%set_residue(ni,nj,dr,xvz,yvz,zvz)
-                call this%set_hessian(ni,nj,dr,xvz,yvz,zvz)
+                call this%set_residue(ni,nj,dr,drij)
+                call this%set_hessian(ni,nj,dr,drij)
                 enpot=enpot+en
              end if
           end do
@@ -182,70 +183,58 @@ contains
     get_enpot=this%enpot
   end function get_enpot
 
-  subroutine set_residue2(this,i1,i2,dr,xvz,yvz,zvz)
+  subroutine set_residue2(this,i1,i2,dr,drij)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)                   :: i1,i2
-    integer                               :: ix,ixx
-    real(8), intent(in)                   :: xvz,yvz,zvz,dr
+    integer                               :: ix(2),i,j
+    real(8), intent(in)                   :: drij(3),dr
     real(8)                               :: fr
     fr=-this%get_d1bond()/dr
-    ix=3*i1-2
-    ixx=3*i2-2
-    this%res(ix)=this%res(ix)-fr*xvz
-    this%res(ix+1)=this%res(ix+1)-fr*yvz
-    this%res(ix+2)=this%res(ix+2)-fr*zvz
-    this%res(ixx)=this%res(ixx)+fr*xvz
-    this%res(ixx+1)=this%res(ixx+1)+fr*yvz
-    this%res(ixx+2)=this%res(ixx+2)+fr*zvz
+    ix(1)=i1
+    ix(2)=i2
+    do i=1,2 !i1,i2
+       do j=1,3 !x,y,z
+          this%res(3*(ix(i)-1)+j)=this%res(3*(ix(i)-1)+j)&
+               +fr*drij(j)*(kronij(ix(2),ix(i))-kronij(ix(1),ix(i)))
+       end do
+    end do
   end subroutine set_residue2
 
   subroutine set_residue3(this,i1,i2,i3,drij,drik,dr1,dr2,theta)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)               :: i1,i2,i3
-    integer                           :: ix1,ix2,ix3,i,j,ix(3)
+    integer                           :: i,j,ix(3)
     real(8), intent(in)               :: theta,drij(3),drik(3),dr1,dr2
     real(8)                           :: fa
     ix(1)=i1 !i
     ix(2)=i2 !j
     ix(3)=i3 !k
-    fa=this%get_d1bend()/sin(theta)
-    do i=1,3 !x,y,z
-       do j=1,3 !i1,i2,i3
+    fa=-this%get_d1bend()/sin(theta)
+    do i=1,3 !i1,i2,i3
+       do j=1,3 !x,y,z
           call this%set_dralpha(i1,i2,i3,ix(i),drij(j),drik(j),dr1,dr2,theta)
-          this%res(ix(i)+j-1)=this%res(ix(i)+j-1)+fa*this%dralpha
+          this%res(3*(ix(i)-1)+j)=this%res(3*(ix(i)-1)+j)+fa*this%dralpha
        end do
     end do
-    ix1=3*i1-2
-    ix2=3*i2-2
-    ix3=3*i3-2
-!    this%res(ix1)=this%res(ix1)+fa*this%derij(1,1)
-!    this%res(ix1+1)=this%res(ix1+1)+fa*this%derij(1,2)
-!    this%res(ix1+2)=this%res(ix1+2)+fa*this%derij(1,3)
-!    this%res(ix2)=this%res(ix2)+fa*this%derij(2,1)
-!    this%res(ix2+1)=this%res(ix2+1)+fa*this%derij(2,2)
-!    this%res(ix2+2)=this%res(ix2+2)+fa*this%derij(2,3)
-!    this%res(ix3)=this%res(ix3)+fa*this%derij(3,1)
-!    this%res(ix3+1)=this%res(ix3+1)+fa*this%derij(3,2)
-!    this%res(ix3+2)=this%res(ix3+2)+fa*this%derij(3,3)
   end subroutine set_residue3
 
-  subroutine set_hessian2(this,i1,i2,dr,xvz,yvz,zvz)
+  subroutine set_hessian2(this,i1,i2,dr,drij)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer                               :: i1,i2,ix,ixx,i,j
-    real(8), intent(in)                   :: xvz,yvz,zvz,dr
+    real(8), intent(in)                   :: drij(3),dr
     real(8)                               :: h1,h2,dx(3)
-    dx(1)=xvz
-    dx(2)=yvz
-    dx(3)=zvz
+    dx(1)=drij(1)
+    dx(2)=drij(2)
+    dx(3)=drij(3)
     h1=this%get_d1bond()
     h2=this%get_d2bond()
     ix=3*i1-2
     ixx=3*i2-2
-    do i=1,3 !x,y,z
-       do j=i,3 !x,y,z
+    do i=1,3
+       do j=i,3
           this%hess(ix+i-1,ix+j-1)=this%hess(ix+i-1,ix+j-1)&
                +(h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr
           this%hess(ix+i-1,ixx+j-1)=this%hess(ix+i-1,ixx+j-1)&
@@ -286,21 +275,15 @@ contains
     real(8), intent(in)                   :: dr1,dr2,theta,drij,drik
     this%dralpha=drik*(kronij(aa,aj)-kronij(aa,ai))/(dr1*dr2)&
          +drij*(kronij(aa,ak)-kronij(aa,ai))/(dr1*dr2)&
-         -cos(theta)*(drij*(kronij(aa,aj)-kronij(aa,ai))/drij**2&
+         -cos(theta)*(drij*(kronij(aa,aj)-kronij(aa,ai))/drij**2 &
          +drik*(kronij(aa,ak)-kronij(aa,ai))/drik**2)
-!    ix(1)=i1
-!    ix(2)=i2
-!    ix(3)=i3
-!    do j=1,3 !x,y,z
-!       do i=1,3 !i1,i2,i3
-!          this%derij(i,j)=&
-!               (kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
-!               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
-!               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)&
-!               /dr1**2+(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
-!       end do
-!    end do
   end subroutine set_dralpha
+
+  double precision function get_dralpha(this)
+    implicit none
+    class(gradientdescent), intent(in) :: this
+    get_dralpha=this%dralpha
+  end function get_dralpha
 
   integer function kronij(i,j)
     implicit none
