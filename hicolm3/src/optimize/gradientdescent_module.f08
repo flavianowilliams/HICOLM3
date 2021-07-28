@@ -36,6 +36,7 @@ module gradientdescent_module
      real(8), private     :: maxforce
      real(8), allocatable :: res(:)
      real(8), allocatable :: hess(:,:)
+     real(8)              :: derij(3,3)
    contains
      procedure :: gd_init
      procedure :: set_loop
@@ -256,9 +257,22 @@ contains
   subroutine set_derij(this)
     implicit none
     class(gradientdescent), intent(inout) :: this
+
+    ix(1)=i1
+    ix(2)=i2
+    ix(3)=i3
+    do j=1,3
+       do i=1,3
+          derij(i,j)=(kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drik(j)/(dr1*dr2) &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drij(j)/(dr1*dr2) &
+               -cos(theta)*((kronij(ix(i),ix(2))-kronij(ix(i),ix(1)))*drij(j)/dr1**2 &
+               +(kronij(ix(i),ix(3))-kronij(ix(i),ix(1)))*drik(j)/dr2**2)
+       end do
+    end do
   end subroutine set_derij
 
   integer function kronij(i,j)
+    implicit none
     integer, intent(in) :: i,j
     kronij=int((float(i+j)-abs(i-j))/(float(i+j)+abs(i-j)))
   end function kronij

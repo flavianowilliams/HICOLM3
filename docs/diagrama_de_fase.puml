@@ -477,9 +477,11 @@ class GradientDescent{
     - enpot: double 
     - maxforce: double 
     + res[]: double 
-    + hess[]: double 
+    + hess[]: double
+    + derij[]: double
     + gd_init()
     + set_loop()
+    + set_derij()
     + set_coulomb()
     + set_residue()
     + set_residue2()
@@ -503,6 +505,6 @@ class Optimize{
     + print_geometry()
     + print_dataframes()
 }
-Optimize -left-|> GradientDescent
+Optimize -right-|> GradientDescent
 }
 @enduml
