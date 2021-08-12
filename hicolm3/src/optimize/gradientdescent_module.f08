@@ -128,6 +128,7 @@ contains
              ptrm=this%tbends(i,k)
              call this%set_angleopt(theta,prm,ptrm,en)
              call this%set_residue(ni,nj,nk,drij,drik,dr1,dr2,theta)
+             call this%set_hessian(ni,nj,nk,drij,drik,dr1,dr2,theta)
              enpot=enpot+en
           end do
           nx=nx+this%nxmol(i)
