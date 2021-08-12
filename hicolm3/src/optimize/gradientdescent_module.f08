@@ -37,11 +37,14 @@ module gradientdescent_module
      real(8), allocatable :: res(:)
      real(8), allocatable :: hess(:,:)
      real(8)              :: dralpha
+     real(8)              :: drbetaalpha
    contains
      procedure :: gd_init
      procedure :: set_loop
      procedure :: set_dralpha
      procedure :: get_dralpha
+     procedure :: set_drbetaalpha
+     procedure :: get_drbetaalpha
      procedure :: set_residue2
      procedure :: set_residue3
      generic   :: set_residue => set_residue2, set_residue3
