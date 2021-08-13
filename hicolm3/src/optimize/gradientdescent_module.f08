@@ -200,7 +200,7 @@ contains
     do i=1,2 !i,j
        do j=1,3 !x,y,z
           this%res(ix(i)+j-1)=this%res(ix(i)+j-1)&
-               +fr*drij(j)*(kronij(ix(2),ix(i))-kronij(ix(1),ix(i)))
+               +fr*drij(j)*(kronij(2,i)-kronij(1,i))
        end do
     end do
   end subroutine set_residue2
@@ -212,14 +212,14 @@ contains
     integer                           :: i,j,ix(3)
     real(8), intent(in)               :: theta,drij(3),drik(3),dr1,dr2
     real(8)                           :: fa
-    ix(1)=3*i1-2 !i
-    ix(2)=3*i2-2 !j
-    ix(3)=3*i3-2 !k
+    ix(1)=i1 !i
+    ix(2)=i2 !j
+    ix(3)=i3 !k
     fa=-this%get_d1bend()/sin(theta)
     do i=1,3 !i,j,k
        do j=1,3 !x,y,z
           call this%set_dralpha(i1,i2,i3,ix(i),drij(j),drik(j),dr1,dr2,theta)
-          this%res(ix(i)+j-1)=this%res(ix(i)+j-1)+fa*this%dralpha
+          this%res(3*ix(i)+j-3)=this%res(3*ix(i)+j-3)+fa*this%dralpha
        end do
     end do
   end subroutine set_residue3
@@ -243,8 +243,7 @@ contains
              do l=k,2 !alpha, beta
                 this%hess(ix(k)+i-1,ix(l)+j-1)=this%hess(ix(k)+i-1,ix(l)+j-1)&
                      +((h2/dr**2-h1/dr**3)*dx(i)*dx(j)+h1*kronij(i,j)/dr)&
-                     *(kronij(ix(1),ix(l))-kronij(ix(1),ix(k)))&
-                     *(kronij(ix(2),ix(l))-kronij(ix(2),ix(k)))
+                     *(kronij(1,l)-kronij(1,k))*(kronij(2,l)-kronij(2,k))
              end do
           end do
        end do
@@ -258,12 +257,12 @@ contains
     integer                               :: ix(3),i,j,k,l
     real(8), intent(in)                   :: dr1,dr2,theta
     real(8), intent(in)                   :: drij(3),drik(3)
-    real(8)                               :: h1,h2,dalpha,dbeta
+    real(8)                               :: h1,h2,dalpha,dbeta,dbetaalpha
     h1=this%get_d1bond()
     h2=this%get_d2bond()
-    ix(1)=3*i1-2
-    ix(2)=3*i2-2
-    ix(3)=3*i3-2
+    ix(1)=i1
+    ix(2)=i2
+    ix(3)=i3
     do i=1,3 !x,y,z
        do j=1,3 !x,y,z
           do k=1,2 !alpha, beta
@@ -274,8 +273,12 @@ contains
                 call this%set_dralpha&
                      (i1,i2,i3,ix(l),drij(j),drik(j),dr1,dr2,theta)
                 dbeta=this%dralpha
-                this%hess(ix(k)+i-1,ix(l)+j-1)=this%hess(ix(k)+i-1,ix(l)+j-1)&
-                     +(h2-h1*cos(theta)/sin(theta))*dbeta*dalpha/sin(theta)**2
+                call this%set_drbetaalpha(i1,i2,i3,ix(k),ix(l),i,j&
+                     ,drij(i),drik(i),drij(j),drik(j),dr1,dr2,theta)
+                dbetaalpha=this%drbetaalpha
+                this%hess(3*ix(k)+i-3,3*ix(l)+j-3)=this%hess(3*ix(k)&
+                     +i-3,3*ix(l)+j-3)+(h2-h1*cos(theta)/sin(theta))&
+                     *dbeta*dalpha/sin(theta)**2-h1/sin(theta)
              end do
           end do
        end do
@@ -298,6 +301,23 @@ contains
     class(gradientdescent), intent(in) :: this
     get_dralpha=this%dralpha
   end function get_dralpha
+
+  subroutine set_drbetaalpha&
+       (this,ai,aj,ak,aa,ab,xx,xl,drija,drika,drijb,drikb,dr1,dr2,theta)
+    implicit none
+    class(gradientdescent), intent(inout) :: this
+    integer, intent(in)                   :: ai,aj,ak,aa,ab,xx,xl
+    real(8), intent(in)                   :: dr1,dr2,theta,drija,drika,drijb,drikb
+    this%drbetaalpha=((kronij(xx,xl)/(dr1*dr2)-drika*drikb/(dr1*dr2**3))&
+         *(kronij(ab,ak)-kronij(ab,ai))-drika*drijb/(dr1*dr2**3))&
+         *(kronij(ab,aj)-kronij(ab,ai))*(kronij(aa,aj)-kronij(aa,ai))
+  end subroutine set_drbetaalpha
+
+  double precision function get_drbetaalpha(this)
+    implicit none
+    class(gradientdescent), intent(in) :: this
+    get_drbetaalpha=this%drbetaalpha
+  end function get_drbetaalpha
 
   integer function kronij(i,j)
     implicit none
