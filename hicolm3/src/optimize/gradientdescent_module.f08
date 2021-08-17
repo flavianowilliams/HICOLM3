@@ -215,7 +215,7 @@ contains
     ix(1)=i1 !i
     ix(2)=i2 !j
     ix(3)=i3 !k
-    fa=-this%get_d1bend()/sin(theta)
+    fa=this%get_d1bend()/sin(theta)
     do i=1,3 !i,j,k
        do j=1,3 !x,y,z
           call this%set_dralpha(i1,i2,i3,ix(i),drij(j),drik(j),dr1,dr2,theta)
@@ -258,27 +258,28 @@ contains
     real(8), intent(in)                   :: dr1,dr2,theta
     real(8), intent(in)                   :: drij(3),drik(3)
     real(8)                               :: h1,h2,dalpha,dbeta,dbetaalpha
-    h1=this%get_d1bond()
-    h2=this%get_d2bond()
+    h1=this%get_d1bend()
+    h2=this%get_d2bend()
     ix(1)=i1
     ix(2)=i2
     ix(3)=i3
     do i=1,3 !x,y,z
-       do j=1,3 !x,y,z
-          do k=1,2 !alpha, beta
-             do l=k,2 !alpha, beta
+       do j=i,3 !x,y,z
+          do k=1,3 !i1, i2, i3
+             do l=k,3 !i1, i2, i3
                 call this%set_dralpha&
-                     (i1,i2,i3,ix(k),drij(i),drik(i),dr1,dr2,theta)
+                     (ix(1),ix(2),ix(3),ix(k),drij(i),drik(i),dr1,dr2,theta)
                 dalpha=this%dralpha
                 call this%set_dralpha&
-                     (i1,i2,i3,ix(l),drij(j),drik(j),dr1,dr2,theta)
+                     (ix(1),ix(2),ix(3),ix(l),drij(j),drik(j),dr1,dr2,theta)
                 dbeta=this%dralpha
-                call this%set_drbetaalpha(i1,i2,i3,ix(k),ix(l),i,j&
-                     ,drij(i),drik(i),drij(j),drik(j),dr1,dr2,theta)
+                call this%set_drbetaalpha(ix(1),ix(2),ix(3),ix(k),ix(l),i,j,&
+                     drij(i),drik(i),drij(j),drik(j),dr1,dr2,theta)
                 dbetaalpha=this%drbetaalpha
-                this%hess(3*ix(k)+i-3,3*ix(l)+j-3)=this%hess(3*ix(k)&
-                     +i-3,3*ix(l)+j-3)+(h2-h1*cos(theta)/sin(theta))&
-                     *dbeta*dalpha/sin(theta)**2-h1/sin(theta)
+                this%hess(3*ix(k)+i-3,3*ix(l)+j-3)=&
+                     this%hess(3*ix(k)+i-3,3*ix(l)+j-3)&
+                     +(h2-h1*cos(theta)/sin(theta))*dbeta*dalpha/sin(theta)**2&
+                     -h1*dbetaalpha/sin(theta)
              end do
           end do
        end do
@@ -292,8 +293,8 @@ contains
     real(8), intent(in)                   :: dr1,dr2,theta,drij,drik
     this%dralpha=drik*(kronij(aa,aj)-kronij(aa,ai))/(dr1*dr2)&
          +drij*(kronij(aa,ak)-kronij(aa,ai))/(dr1*dr2)&
-         -cos(theta)*(drij*(kronij(aa,aj)-kronij(aa,ai))/drij**2 &
-         +drik*(kronij(aa,ak)-kronij(aa,ai))/drik**2)
+         -cos(theta)*(drij*(kronij(aa,aj)-kronij(aa,ai))/dr1**2 &
+         +drik*(kronij(aa,ak)-kronij(aa,ai))/dr2**2)
   end subroutine set_dralpha
 
   double precision function get_dralpha(this)
@@ -302,15 +303,27 @@ contains
     get_dralpha=this%dralpha
   end function get_dralpha
 
-  subroutine set_drbetaalpha&
+  subroutine set_drbetaalpha &
        (this,ai,aj,ak,aa,ab,xx,xl,drija,drika,drijb,drikb,dr1,dr2,theta)
     implicit none
     class(gradientdescent), intent(inout) :: this
     integer, intent(in)                   :: ai,aj,ak,aa,ab,xx,xl
     real(8), intent(in)                   :: dr1,dr2,theta,drija,drika,drijb,drikb
-    this%drbetaalpha=((kronij(xx,xl)/(dr1*dr2)-drika*drikb/(dr1*dr2**3))&
-         *(kronij(ab,ak)-kronij(ab,ai))-drika*drijb/(dr1*dr2**3))&
-         *(kronij(ab,aj)-kronij(ab,ai))*(kronij(aa,aj)-kronij(aa,ai))
+    real(8)                               :: func
+    func=((kronij(xx,xl)/(dr1*dr2)-drika*drikb/(dr1*dr2**3))&
+         *(kronij(ab,ak)-kronij(ab,ai))-drika*drijb/(dr2*dr1**3)&
+         *(kronij(ab,aj)-kronij(ab,ai)))*(kronij(aa,aj)-kronij(aa,ai))
+    func=func+((kronij(xx,xl)/(dr1*dr2)-drija*drijb/(dr2*dr1**3))&
+         *(kronij(ab,aj)-kronij(ab,ai))-drija*drikb/(dr1*dr2**3)&
+         *(kronij(ab,ak)-kronij(ab,ai)))*(kronij(aa,ak)-kronij(aa,ai))
+    func=func-((kronij(xx,xl)/dr1**2-2.d0*drija*drijb/dr1**4)&
+         *(kronij(ab,aj)-kronij(ab,ai))*(kronij(aa,aj)-kronij(aa,ai))&
+         +(kronij(xx,xl)/dr2**2-2.d0*drika*drikb/dr2**4)&
+         *(kronij(ab,ak)-kronij(ab,ai))*(kronij(aa,ak)-kronij(aa,ai)))*cos(theta)
+    call this%set_dralpha(ai,aj,ak,ab,drijb,drikb,dr1,dr2,theta)
+    func=func-(drija/dr1**2*(kronij(aa,aj)-kronij(aa,ai))+drika/dr2**2&
+         *(kronij(aa,ak)-kronij(aa,ai)))*this%get_dralpha()
+    this%drbetaalpha=func
   end subroutine set_drbetaalpha
 
   double precision function get_drbetaalpha(this)
