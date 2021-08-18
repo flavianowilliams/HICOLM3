@@ -102,9 +102,9 @@ contains
     class(interopt), intent(inout) :: this
     real(8), intent(in)            :: dr,qi,qj
     real(8), intent(out)           :: en
-    en=-qi*qj/dr
-    this%d1bond=qi*qj/dr**2
-    this%d2bond=-2.0d0*qi*qj/dr**3
+    en=qi*qj/dr
+    this%d1bond=-qi*qj/dr**2
+    this%d2bond=2.0d0*qi*qj/dr**3
   end subroutine set_coulomb
 
   double precision function get_d1bond(this)

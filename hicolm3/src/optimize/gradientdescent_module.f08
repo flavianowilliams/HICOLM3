@@ -142,7 +142,6 @@ contains
           ni=i
           nj=this%ilist(i,j)
           call this%mic(ni,nj,drij(1),drij(2),drij(3))
-          print*,ni,nj,dr*this%get_rconv(),this%get_rcutoff()*this%get_rconv()
           dr=max(sqrt(drij(1)**2+drij(2)**2+drij(3)**2),1.d-8)
           if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
              call this%set_coulomb(dr,this%qat(ni),this%qat(nj),en)

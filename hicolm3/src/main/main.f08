@@ -343,6 +343,7 @@ program HICOLM
                 ,opt%get_enpot()*opt%get_econv()&
                 ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
            if(opt%get_enpot().le.opt%get_tolerance()*opt%get_natom())then
+              call opt%print_geometry()
               write(6,*)
               write(6,*)&
                    'SUCCESS! The optimization procedure reached the convergence criteria.'
