@@ -48,7 +48,7 @@ contains
   type(optimize) function constructor()
     implicit none
     call constructor%set_nstep(100)
-    call constructor%set_tolerance(-100.0d0)
+    call constructor%set_tolerance(100.0d0)
     call constructor%set_restart('undefine')
     call constructor%set_rcutoff(8.0d0)
   end function constructor
@@ -132,7 +132,8 @@ contains
        end select
     end do
     call this%set_fscsalpha(this%get_fscsalpha()/this%get_kconv())
-    call this%set_tolerance(this%get_tolerance()/this%get_econv())
+    call this%set_tolerance&
+         (this%get_tolerance()/(this%get_econv()/this%get_rconv()))
     call this%set_rcutoff(this%get_rcutoff()/this%get_rconv())
     call this%set_drcutoff(this%get_drcutoff()/this%get_rconv())
   end subroutine convert_units
@@ -218,8 +219,8 @@ contains
     write(6,'(28x,a38)')'Minimization of the energy information'
     write(6,'(28x,38a1)')('-',j=1,38)
     write(6,'(28x,a16,1x,i10)')'Number of steps:',this%get_nstep()
-    write(6,'(28x,a16,1x,es10.3,1x,a8)')&
-         '      Tolerance:',this%get_tolerance()*this%get_econv(),'kcal/mol'
+    write(6,'(28x,a16,1x,es10.3,1x,a10)')'      Tolerance:',&
+         this%get_tolerance()*this%get_econv()/this%get_rconv(),'kcal/mol*A'
     write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
     write(6,'(28x,38a1)')('-',j=1,38)
     write(6,*)

@@ -342,7 +342,7 @@ program HICOLM
            write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
                 ,opt%get_enpot()*opt%get_econv()&
                 ,opt%get_maxforce()*(opt%get_econv()/opt%get_rconv())
-           if(opt%get_enpot().le.opt%get_tolerance()*opt%get_natom())then
+           if(opt%get_maxforce().le.opt%get_tolerance())then
               call opt%print_geometry()
               write(6,*)
               write(6,*)&
