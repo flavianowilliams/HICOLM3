@@ -278,7 +278,7 @@ program HICOLM
         call opt%verlet_list()                    ! atribuindo lista de vizinhos de Verlet
         call opt%set_loop()                       ! calculando residuo e hessiana
         call cpu_time(t2)
-!
+        !
         write(6,*)('#',i=1,93)
         write(6,*)('OPTIMIZING ',i=1,8)
         write(6,*)('#',i=1,93)
