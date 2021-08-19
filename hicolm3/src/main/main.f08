@@ -160,6 +160,7 @@ program HICOLM
         call md%set_natom()                      ! calculando qde de sitios atomicos
         call md%set_nfree()                      ! atribuindo graus de liberdade
         call md%set_topology()                   ! lendo parametros do campo de forca
+        call md%set_rcutoff2()                   ! atribuindo raio de corte
         call md%set_canonicalvariables()         ! atribuindo valores iniciais para var. can.
         call md%check()                          ! checando parametros de entrada
         call md%convert_units()                  ! convertendo unidades de medida
@@ -253,12 +254,13 @@ program HICOLM
         opt=optimize()                            ! set default values
         !
         call opt%constants_prepare()              ! definindo constantes
-        call opt%set_inopt()                      ! lendo parametros de entrada em INPUT
         call opt%set_latticevectors()             ! lendo coordenadas da celula unitaria
         call opt%set_molecules()                  ! lendo tipos e qde de moleculas
         call opt%set_natom()                      ! calculando qde de sitios atomicos
         call opt%set_nfree()                      ! atribuindo graus de liberdade
+        call opt%set_inopt()                      ! lendo parametros de entrada em INPUT
         call opt%set_topology()                   ! lendo parametros do campo de forca
+        call opt%set_rcutoff2()                   ! atribuindo raio de corte
         call opt%check()                          ! checando parametros de entrada
         call opt%set_canonicalvariables()         ! atribuindo valores iniciais para var. can.
         call opt%convert_units()                  ! convertendo unidades de medida

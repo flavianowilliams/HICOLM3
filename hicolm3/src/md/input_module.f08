@@ -44,7 +44,7 @@ module input_module
      real(8), private       :: bfactor
      real(8), private       :: checkenergy
      real(8), private       :: tolerance
-     character(8), private  :: restart
+     character(9), private  :: restart
      character(3), private  :: ensble
      character(9), private  :: ensble_mt
    contains
@@ -69,6 +69,7 @@ module input_module
      procedure :: get_press
      procedure :: set_temp
      procedure :: get_temp
+     procedure :: set_rcutoff2
      procedure :: set_rcutoff
      procedure :: get_rcutoff
      procedure :: set_drcutoff
@@ -171,7 +172,7 @@ contains
     class(input), intent(inout) :: this
     integer                     :: nstep
     real(8)                     :: tolerance
-    character(8)                :: restart
+    character(9)                :: restart
     character(13)               :: key
 1   read(5,*,end=2)key
     if(key.ne.'&OPTIMIZATION')goto 1
@@ -458,6 +459,20 @@ contains
     get_temp=this%temp
   end function get_temp
 
+  subroutine set_rcutoff2(this)
+    implicit none
+    class(input), intent(inout) :: this
+    integer                     :: i
+    real(8)                     :: drmin
+    if(this%get_rcutoff().le.0.d0)then
+       drmin=this%v(1,1)+this%v(2,1)+this%v(3,1)
+       do i=1,2
+          drmin=min(drmin,this%v(1,i)+this%v(2,i)+this%v(3,i))
+       end do
+       this%rcutoff=0.45d0*drmin
+    end if
+  end subroutine set_rcutoff2
+
   subroutine set_rcutoff(this,rcutoff)
     implicit none
     class(input), intent(inout) :: this
@@ -539,11 +554,11 @@ contains
   subroutine set_restart(this,restart)
     implicit none
     class(input), intent(inout) :: this
-    character(8), intent(in)    :: restart
+    character(*), intent(in)    :: restart
     this%restart=restart
   end subroutine set_restart
 
-  character(8) function get_restart(this)
+  character(9) function get_restart(this)
     implicit none
     class(input), intent(in) :: this
     get_restart=this%restart

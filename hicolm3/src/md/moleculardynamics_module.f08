@@ -58,7 +58,7 @@ contains
     call constructor%set_timestep(0.001d0)
     call constructor%set_press(1.0d0)
     call constructor%set_temp(0.0d0)
-    call constructor%set_rcutoff(8.0d0)
+    call constructor%set_rcutoff(0.0d0)
     call constructor%set_drcutoff(0.1d0)
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
@@ -75,7 +75,7 @@ contains
        write(6,*)'Hint: Check the input in the &MD section.'
        stop
     end if
-    if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position'&
+    if(this%get_restart().ne.'undefined'.and.this%get_restart().ne.'position'&
          .and.this%get_restart().ne.'velocity')then
        write(6,*)
        write(6,*)'ERROR: The notifyed restart directive is not an option!'
@@ -191,7 +191,7 @@ contains
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
     allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     select case(this%get_restart())
-    case('undefine')
+    case('undefined')
        nx=1
        do i=1,this%get_nmol()
           do j=1,this%ntmol(i)
@@ -581,9 +581,9 @@ contains
     write(6,'(28x,a16,1x,f6.2,1x,a3)')'Pressure:',this%get_press()*this%get_pconv(),'atm'
     write(6,'(28x,a16,1x,i10)')'Number of steps:',this%get_nstep()
     write(6,'(28x,a16,1x,i10)')'Number of relax:',this%get_nrelax()
-    write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
+    write(6,'(28x,a16,1x,a9)')'Restart:',this%get_restart()
     write(6,'(28x,a16,1x,es10.3,1x,a2)')'Timestep:',this%get_timestep()*this%get_tconv(),'ps'
-    write(6,'(28x,a16,1x,2(f4.2,1x),a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
+    write(6,'(28x,a16,1x,2(f5.2,1x),a1)')'rcutoff:',this%get_rcutoff()*this%get_rconv(),&
          this%get_drcutoff()*this%get_rconv(),'A'
     write(6,'(28x,36a1)')('-',j=1,36)
     write(6,*)

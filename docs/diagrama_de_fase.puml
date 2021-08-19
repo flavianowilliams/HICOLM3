@@ -251,6 +251,7 @@ class Input{
     + get_press()
     + set_temp()
     + get_temp()
+    + set_rcutoff2()
     + set_rcutoff()
     + get_rcutoff()
     + set_drcutoff()

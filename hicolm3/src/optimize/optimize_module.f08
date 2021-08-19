@@ -49,14 +49,14 @@ contains
     implicit none
     call constructor%set_nstep(100)
     call constructor%set_tolerance(150.0d0)
-    call constructor%set_restart('undefine')
-    call constructor%set_rcutoff(8.0d0)
+    call constructor%set_restart('undefined')
+    call constructor%set_rcutoff(0.0d0)
   end function constructor
 
   subroutine check(this)
     implicit none
     class(optimize), intent(inout) :: this
-    if(this%get_restart().ne.'undefine'.and.this%get_restart().ne.'position')then
+    if(this%get_restart().ne.'undefined'.and.this%get_restart().ne.'position')then
        write(6,*)
        write(6,*)'ERROR: The notifyed restart directive is not an option!'
        write(6,*)'Hint: Check the input in the &OPTIMIZATION section.'
@@ -221,7 +221,9 @@ contains
     write(6,'(28x,a16,1x,i10)')'Number of steps:',this%get_nstep()
     write(6,'(28x,a16,1x,es10.3,1x,a10)')'      Tolerance:',&
          this%get_tolerance()*this%get_econv()/this%get_rconv(),'kcal/mol*A'
-    write(6,'(28x,a16,1x,a8)')'Restart:',this%get_restart()
+    write(6,'(28x,a16,1x,a9)')'Restart:',this%get_restart()
+    write(6,'(28x,a16,1x,1(f5.2,1x),a1)')&
+         'rcutoff:',this%get_rcutoff()*this%get_rconv(),'A'
     write(6,'(28x,38a1)')('-',j=1,38)
     write(6,*)
     write(6,*)('#',i=1,93)
