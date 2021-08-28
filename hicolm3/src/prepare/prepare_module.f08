@@ -52,6 +52,7 @@ contains
        do j=1,3
           constructor%v(i,j)=0.d0
        end do
+       constructor%sys_shift(i)=0.d0
     end do
     call constructor%set_zmatrixtol(0.5d0)
     call constructor%set_coulop('fscs')
@@ -67,6 +68,7 @@ contains
     call constructor%charmm%set_charmmdihedrals()
     call constructor%charmm%set_charmmidihedrals()
     call constructor%charmm%set_charmmvdw()
+    call constructor%set_nmol(5)
   end function constructor
 
   subroutine check(this)
@@ -75,18 +77,18 @@ contains
     integer                       :: i,j
     if(this%get_nmol().le.0)then
        write(6,*)'ERROR: The number of types of molecules does not be zero!'
-       write(6,*)'Hint: Check the input in the &SYS section.'
+       write(6,*)'Hint: Check the input in the &SYSTEM section.'
        stop
     else
        do i=1,this%get_nmol()
           if(this%ntmol(i).le.0)then
              write(6,*)'ERROR: The number of molecules does not be zero!'
-             write(6,*)'Hint: Check the input in the &SYS section.'
+             write(6,*)'Hint: Check the input in the &SYSTEM section.'
              stop
           end if
           if(this%nxmol(i).le.0)then
              write(6,*)'ERROR: The number of sites at each molecule does not be zero!'
-             write(6,*)'Hint: Check the input in the &SYS section.'
+             write(6,*)'Hint: Check the input in the &SYSTEM section.'
              stop
           end if
           do j=1,this%nxmol(i)

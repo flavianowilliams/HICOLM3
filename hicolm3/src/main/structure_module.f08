@@ -52,11 +52,9 @@ module structure_module
      real(8)                    :: v(3,3)
      real(8)                    :: sys_shift(3)
    contains
-     procedure, private :: structure_init
+     procedure          :: set_structure
      procedure          :: sites
-     procedure          :: molecules
      procedure          :: translate
-     procedure          :: set_latticevectors
      procedure          :: set_lattice_constants
      procedure          :: set_lattice_angles
      procedure          :: set_symmetry
@@ -67,7 +65,6 @@ module structure_module
      procedure          :: set_namemol
      procedure          :: set_ntmol
      procedure          :: set_nxmol
-     procedure          :: set_sys_shift
      procedure          :: set_volume
      procedure          :: get_volume
      procedure          :: set_volume2
@@ -88,57 +85,102 @@ module structure_module
      procedure          :: random_coordinates
   end type structure
 
-  interface structure
-     module procedure constructor
-  end interface structure
+!  interface structure
+!     module procedure constructor
+!  end interface structure
 
 contains
 
-  type(structure) function constructor()
-    call constructor%structure_init()
-  end function constructor
+!  type(structure) function constructor()
+!    call constructor%structure_init()
+!  end function constructor
 
-  subroutine structure_init(this)
+  subroutine set_structure(this)
+    implicit none
     class(structure), intent(inout) :: this
-    integer                      :: nx
-    character(4)                 :: key
-    nx=0
-1   read(5,*,end=2)key
-    if(key.ne.'&SYS')goto 1
-    do while (key.ne.'&END')
+    integer                      :: nmol
+    integer, allocatable         :: ntmol(:),nxmol(:)
+    character(10), allocatable   :: namemol(:)
+    character(11)                :: key
+    logical                      :: check
+    allocate(namemol(this%get_nmol()),ntmol(this%get_nmol()),&
+         nxmol(this%get_nmol()))
+    !    read(5,*)key
+!    do while(key.ne.'&SYSTEM'.or.key.ne.'&system')
+!       read(5,*,end=2)key
+!    end do
+!    do while (key.ne.'&END_SYSTEM')
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
+    end do
+    check=.true.
+    do while (check)
        read(5,*)key
+       if(key.eq.'cell')then
+          backspace(5)
+          read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
+       end if
        if(key.eq.'nmol')then
           backspace(5)
-          read(5,*)key,nx
+          read(5,*)key,nmol
+          do i=1,nmol
+             read(5,*)namemol(i),ntmol(i),nxmol(i)
+          end do
+          if(nmol.le.0)goto 2
        end if
-    end do
-    allocate(this%namemol(nx),this%ntmol(nx),this%nxmol(nx))
-    call this%set_nmol(nx)
-2   rewind(5)
-  end subroutine structure_init
-
-  subroutine set_sys_shift(this)
-    class(structure), intent(inout) :: this
-    character(4)                 :: key
-    character(9)                 :: key2
-    do i=1,3
-       this%sys_shift(i)=0.d0
-    end do
-1   read(5,*,end=2)key
-    if(key.ne.'&SYS')goto 1
-    do while (key2.ne.'&END     ')
-       read(5,*)key2
-       if(key2.eq.'translate')then
+       if(key.eq.'translate')then
           backspace(5)
           read(5,*)key,(this%sys_shift(i),i=1,3)
        end if
+       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
     end do
-2   rewind(5)
-  end subroutine set_sys_shift
+    allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
+    call this%set_nmol(nmol)
+    call this%set_namemol(namemol)
+    call this%set_ntmol(ntmol)
+    call this%set_nxmol(nxmol)
+1   rewind(5)
+    return
+2   write(6,*)&
+         'ERROR: The number of molecules does not be zero!'
+    write(6,*)'Hint: Check the input in the &SYSTEM section.'
+    stop
+  end subroutine set_structure
+
+!  subroutine set_sys_shift(this)
+!    class(structure), intent(inout) :: this
+!    character(11)                   :: key
+!    logical                         :: check
+!    do i=1,3
+!       this%sys_shift(i)=0.d0
+!    end do
+!    check=.true.
+!    do while(check)
+!       read(5,*,end=2)key
+!       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
+!    end do
+!    read(5,*)key
+!    do while(key.ne.'&SYSTEM'.or.key.ne.'&system')
+!       read(5,*,end=2)key
+!    end do
+!    do while (key.ne.'&END_SYSTEM')
+!    check=.true.
+!    do while (check)
+!       read(5,*)key
+!       if(key.eq.'translate')then
+!          backspace(5)
+!          read(5,*)key,(this%sys_shift(i),i=1,3)
+!       end if
+!       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
+!    end do
+!2   rewind(5)
+!  end subroutine set_sys_shift
 
   subroutine translate(this)
     class(structure), intent(inout) :: this
-    call this%set_sys_shift()
+!    call this%set_sys_shift()
     do i=1,this%get_natom()
        this%xa(i)=this%xa(i)+1.0d0*this%sys_shift(1)*this%a
        this%ya(i)=this%ya(i)+1.0d0*this%sys_shift(2)*this%b
@@ -148,7 +190,7 @@ contains
 
   subroutine set_nmol(this,nmol)
     class(structure), intent(inout) :: this
-    integer, intent(in)          :: nmol
+    integer, intent(in)             :: nmol
     this%nmol=nmol
   end subroutine set_nmol
 
@@ -157,31 +199,37 @@ contains
     get_nmol=this%nmol
   end function get_nmol
 
-  subroutine set_namemol(this,namemol,i)
+  subroutine set_namemol(this,namemol)
     class(structure), intent(inout) :: this
-    integer, intent(in)          :: i
-    character(10), intent(in)    :: namemol
-    this%namemol(i)=namemol
+    integer                         :: i
+    character(10), intent(in)       :: namemol(:)
+    do i=1,this%get_nmol()
+       this%namemol(i)=namemol(i)
+    end do
   end subroutine set_namemol
 
-  subroutine set_ntmol(this,ntmol,i)
+  subroutine set_ntmol(this,ntmol)
     class(structure), intent(inout) :: this
-    integer, intent(in)          :: i
-    integer, intent(in)          :: ntmol
-    this%ntmol(i)=ntmol
+    integer                         :: i
+    integer, intent(in)             :: ntmol(:)
+    do i=1,this%get_nmol()
+       this%ntmol(i)=ntmol(i)
+    end do
   end subroutine set_ntmol
 
-  subroutine set_nxmol(this,nxmol,i)
+  subroutine set_nxmol(this,nxmol)
     class(structure), intent(inout) :: this
-    integer, intent(in)          :: i
-    integer, intent(in)          :: nxmol
-    this%nxmol(i)=nxmol
+    integer                         :: i
+    integer, intent(in)             :: nxmol(:)
+    do i=1,this%get_nmol()
+       this%nxmol(i)=nxmol(i)
+    end do
   end subroutine set_nxmol
 
   subroutine set_volume(this)
     implicit none
     class(structure), intent(inout) :: this
-    real(8)                      :: volume,vl(3)
+    real(8)                         :: volume,vl(3)
     vl(1)=(this%v(1,2)*this%v(2,3)-this%v(1,3)*this%v(2,2))
     vl(2)=(this%v(1,3)*this%v(2,1)-this%v(1,1)*this%v(2,3))
     vl(3)=(this%v(1,1)*this%v(2,2)-this%v(1,2)*this%v(2,1))
@@ -260,26 +308,33 @@ contains
     get_gsym=this%gsym
   end function get_gsym
 
-  subroutine molecules(this)
-    class(structure), intent(inout) :: this
-    integer                      :: nx
-    character(4)                 :: key
-    call this%structure_init()
-    nx=0
-1   read(5,*,end=2)key
-    if(key.ne.'&SYS')goto 1
-    do while (key.ne.'&END')
-       read(5,*)key
-       if(key.eq.'nmol')then
-          backspace(5)
-          read(5,*)key,nx
-          do i=1,nx
-             read(5,*)this%namemol(i),this%ntmol(i),this%nxmol(i)
-          end do
-       end if
-    end do
-2   rewind(5)
-  end subroutine molecules
+!  subroutine molecules(this)
+!    class(structure), intent(inout) :: this
+!    integer                      :: nx
+!    character(11)                :: key
+!    logical                      :: check
+!    call this%structure_init()
+!    nx=0
+!    check=.true.
+!    do while(check)
+!       read(5,*,end=2)key
+!       print*,key
+!       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
+!    end do
+!    check=.true.
+!    do while (check)
+!       read(5,*)key
+!       if(key.eq.'nmol')then
+!          backspace(5)
+!          read(5,*)key,nx
+!          do i=1,nx
+!             read(5,*)this%namemol(i),this%ntmol(i),this%nxmol(i)
+!          end do
+!       end if
+!       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
+!    end do
+!2   rewind(5)
+!  end subroutine molecules
 
   subroutine set_natom(this)
     class(structure), intent(inout) :: this
@@ -321,25 +376,30 @@ contains
     end do
     return
 1   write(6,*)&
-         'ERROR: The number of atoms in HICOLM.xyz does not match with defined in INPUT file!'
+         'ERROR: The number of atoms in HICOLM.xyz does not match with defined in the INPUT file!'
     write(6,*)'Hint: Change the HICOLM.xyz, or the inputs in INPUT file.'
     stop
   end subroutine sites
 
-  subroutine set_latticevectors(this)
-    class(structure), intent(inout) :: this
-    character(4)                    :: key
-1   read(5,*,end=2)key
-    if(key.ne.'&SYS')goto 1
-    do while (key.ne.'&END')
-       read(5,*)key
-       if(key.eq.'cell')then
-          backspace(5)
-          read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
-       end if
-    end do
-2   rewind(5)
-  end subroutine set_latticevectors
+!  subroutine set_latticevectors(this)
+!    implicit none
+!    class(structure), intent(inout) :: this
+!    character(11)                   :: key
+!    read(5,*)key
+!    do while(key.ne.'&SYSTEM'.or.key.ne.'&system')
+!       read(5,*,end=2)key
+!    end do
+!1   read(5,*,end=2)key
+!    if(key.ne.'&SYSTEM')goto 1
+!    do while (key.ne.'&END_SYSTEM')
+!       read(5,*)key
+!       if(key.eq.'cell')then
+!          backspace(5)
+!          read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
+!       end if
+!    end do
+!2   rewind(5)
+!  end subroutine set_latticevectors
 
   subroutine set_lattice_constants(this)
     class(structure), intent(inout) :: this

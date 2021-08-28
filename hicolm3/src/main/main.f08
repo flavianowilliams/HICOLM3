@@ -114,9 +114,10 @@ program HICOLM
         prp=prepare()                            ! definindo valores default
 !
         call prp%constants_prepare()             ! definindo constantes
-        call prp%molecules()                     ! atribuindo qde moléculas e sitios atomicos
+        call prp%set_structure()                 ! definindo parametros de estrut.
+!        call prp%molecules()                     ! atribuindo qde moléculas e sitios atomicos
         call prp%set_natom()                     ! calculando qde de sitios atomicos
-        call prp%set_latticevectors()            ! lendo coordenadas da celula unitaria
+!        call prp%set_latticevectors()            ! lendo coordenadas da celula unitaria
         call prp%set_lattice_constants()         ! calculando constantes de rede
         call prp%set_lattice_angles()            ! calculando angulos de rede
         call prp%set_volume()                    ! calculando volume da supercelula
