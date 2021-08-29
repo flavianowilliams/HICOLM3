@@ -23,7 +23,7 @@ module molecule_module
   !*******************************************************************************************
 
   use structure_module
-  use system_module
+!  use system_module
 
   implicit none
 
@@ -33,7 +33,7 @@ module molecule_module
   public :: molecule
 
   type, extends(structure) :: molecule
-     type(system)              :: sys
+!     type(system)              :: sys
      integer, allocatable      :: zatmol(:,:)
      real(8), allocatable      :: sf_coul(:)
      real(8), allocatable      :: sf_vdw(:)
@@ -42,82 +42,114 @@ module molecule_module
      real(8), allocatable      :: mmolar(:)
      character(6), allocatable :: tpmol(:,:)
    contains
-     procedure, private :: molecule_init
-     procedure          :: molecule_prepare
+!     procedure, private :: molecule_init
+     procedure          :: set_tpmol
      procedure          :: set_massmol
      procedure          :: set_mmolar
      procedure          :: set_scale_factor
-     procedure          :: set_global
   end type molecule
 
-  interface molecule
-     module procedure constructor
-  end interface molecule
+!  interface molecule
+!     module procedure constructor
+!  end interface molecule
 
 contains
 
-  type(molecule) function constructor()
-    implicit none
-    call constructor%molecule_init()
-  end function constructor
+!  type(molecule) function constructor()
+!    implicit none
+!    call constructor%molecule_init()
+!  end function constructor
 
-  subroutine molecule_init(this)
-    implicit none
+!  subroutine molecule_init(this)
+!    implicit none
+!    class(molecule), intent(inout) :: this
+!    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
+!    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
+!    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
+!    do i=1,this%get_nmol()
+!       do j=1,this%nxmol(i)
+!          this%zatmol(i,j)=1
+!          this%qatmol(i,j)=0.d0
+!          this%tpmol(i,j)='NA'
+!       end do
+!    end do
+!  end subroutine molecule_init
+
+!  subroutine set_molecule(this,nmol)
+!    implicit none
+!    class(molecule), intent(inout) :: this
+!    integer, intent(in)            :: nmol
+!    integer                        :: i,nxmolmax
+!    integer                        :: ntmol(10),nxmol(10),zatmol(10,1000)
+!    character(6)                   :: tpmol(10,1000)
+!    real(8)                        :: qatmol(10,1000)
+!    character(10)                  :: namemol(10)
+!    do i=1,nmol
+!       read(5,*)namemol(i),ntmol(i),nxmol(i)
+!       read(5,*)(zatmol(i,k),k=1,nxmol(i))
+!       read(5,*)(tpmol(i,k),k=1,nxmol(i))
+!       read(5,*)(qatmol(i,k),k=1,nxmol(i))
+!       nxmolmax=max(nxmolmax,nxmol(i))
+!    end do
+!    call this%set_nmol(nmol)
+!    if(this%get_nmol().le.0)goto 1
+!    allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
+!    allocate(this%zatmol(nmol,nxmolmax))
+!    allocate(this%qatmol(nmol,nxmolmax))
+!    allocate(this%tpmol(nmol,nxmolmax))
+!    call this%set_namemol(namemol)
+!    call this%set_ntmol(ntmol)
+!    call this%set_nxmol(nxmol)
+!    return
+!1   write(6,*)'ERROR: The number of molecules does not be zero!'
+!    write(6,*)'Hint: Check the input in the &SYSTEM section.'
+!    stop
+!    call this%molecule_init()
+!1   read(5,*,end=3)key
+!    if(key.ne.'&FORCE_FIELD')goto 1
+!    do j=1,this%get_nmol()
+!       do while (key2.ne.'&END')
+!          read(5,*)key2
+!          if(key2.eq.'molecule')then
+!             backspace(5)
+!             read(5,*)key2,cvar
+!             i3=0
+!             do k=1,this%get_nmol()
+!                if(cvar.eq.this%namemol(k))i3=k
+!             end do
+!             if(i3.eq.0)goto 4
+!             read(5,*)(this%zatmol(i3,k),k=1,this%nxmol(i3))
+!             read(5,*)(this%tpmol(i3,k),k=1,this%nxmol(i3))
+!             read(5,*)(this%qatmol(i3,k),k=1,this%nxmol(i3))
+!             do while (key2.ne.'end_molecule')
+!                read(5,*)key2
+!             end do
+!             nx=nx+1
+!          end if
+!       end do
+!    end do
+!    nx=nx-1
+!    if(nx.lt.this%get_nmol())goto 5
+!3   rewind(5)
+!    return
+!4   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
+!    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+!    stop
+!5   write(6,*)'ERROR: The number of molecules in &FORCE_FIELD section does not match with that ones found in the &SYS section!'
+!    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+!    stop
+!  end subroutine set_molecule
+
+  subroutine set_tpmol(this,tpmol)
     class(molecule), intent(inout) :: this
-    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
-    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
-    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
+    character(6), intent(in)       :: tpmol(:,:)
+    integer                        :: i,j
     do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
-          this%zatmol(i,j)=1
-          this%qatmol(i,j)=0.d0
-          this%tpmol(i,j)='NA'
+          this%tpmol(i,j)=tpmol(i,j)
        end do
     end do
-  end subroutine molecule_init
-
-  subroutine molecule_prepare(this)
-    implicit none
-    class(molecule), intent(inout) :: this
-    integer                        :: i3,nx
-    character(12)                  :: key,key2
-    character(10)                  :: cvar
-    call this%molecule_init()
-    nx=1
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key2.ne.'&END')
-          read(5,*)key2
-          if(key2.eq.'molecule')then
-             backspace(5)
-             read(5,*)key2,cvar
-             i3=0
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))i3=k
-             end do
-             if(i3.eq.0)goto 4
-             read(5,*)(this%zatmol(i3,k),k=1,this%nxmol(i3))
-             read(5,*)(this%tpmol(i3,k),k=1,this%nxmol(i3))
-             read(5,*)(this%qatmol(i3,k),k=1,this%nxmol(i3))
-             do while (key2.ne.'end_molecule')
-                read(5,*)key2
-             end do
-             nx=nx+1
-          end if
-       end do
-    end do
-    nx=nx-1
-    if(nx.lt.this%get_nmol())goto 5
-3   rewind(5)
-    return
-4   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
-    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
-    stop
-5   write(6,*)'ERROR: The number of molecules in &FORCE_FIELD section does not match with that ones found in the &SYS section!'
-    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
-    stop
-  end subroutine molecule_prepare
+  end subroutine set_tpmol
 
   subroutine set_massmol(this)
     implicit none
@@ -392,19 +424,5 @@ contains
        this%sf_vdw(i)=sf_vdw
     end do
   end subroutine set_scale_factor
-
-  subroutine set_global(this)
-    class(molecule), intent(inout) :: this
-    integer                        :: i,j
-    real(8)                        :: mtotal
-    call this%sys%set_qtotal(this%qatmol)
-    mtotal=0.d0
-    do i=1,this%get_nmol()
-       do j=1,this%nxmol(i)
-          mtotal=mtotal+this%ntmol(i)*this%massmol(i,j)
-       end do
-    end do
-    call this%sys%set_mtotal(mtotal)
-  end subroutine set_global
 
 end module molecule_module

@@ -22,7 +22,7 @@ module zmatrix_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use molecule_module
+  use system_module
 
   implicit none
 
@@ -31,7 +31,7 @@ module zmatrix_module
   private
   public :: zmatrix
 
-  type, extends(molecule) :: zmatrix
+  type, extends(system) :: zmatrix
      real(8), private     :: zmatrix_tol
      integer, private     :: bondmax
      integer, private     :: bendmax
@@ -293,19 +293,23 @@ contains
   subroutine set_zmatrix_tol(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx
-    character(7)                  :: key
-    nx=0
-1   read(5,*,end=2)key
-    if(key.ne.'&SYS')goto 1
-    do while (key.ne.'&END')
+    character(11)                 :: key
+    logical                       :: check
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
+    end do
+    check=.true.
+    do while (check)
        read(5,*)key
        if(key.eq.'zmatrix')then
           backspace(5)
           read(5,*)key,this%zmatrix_tol
        end if
+       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
     end do
-2   rewind(5)
+1   rewind(5)
   end subroutine set_zmatrix_tol
 
   double precision function get_zmatrix_tol(this)

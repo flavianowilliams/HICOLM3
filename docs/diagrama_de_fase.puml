@@ -53,11 +53,9 @@ class Structure{
     + sys_shift[]: double
     - structure_init()
     + sites()
-    + molecules()
     + translate()
     + molecules()
     + translate()
-    + set_latticevectors()
     + set_lattice_angles()
     + set_symmetry()
     + set_nmol()
@@ -67,7 +65,6 @@ class Structure{
     + set_namemol()
     + set_ntmol()
     + set_nxmol()
-    + set_sys_shift()
     + set_volume()
     + get_volume()
     + set_volume2()
@@ -97,7 +94,7 @@ class Molecule{
     + mmolar[]: double
     + tpmol[]: double
     + molecule_init()
-    + molecule_prepare()
+    + set_molecule()
     + set_massmol()
     + set_mmolar()
     + set_scale_factor()
@@ -111,8 +108,9 @@ class System{
     + get_qtotal()
     + set_mtotal()
     + get_mtotal()
+    + set_system()
 }
-Molecule --o System
+Molecule <|-right- System
 class Zmatrix{
     - zmatrix_tol: double
     - bondmax: integer
@@ -143,7 +141,7 @@ class Zmatrix{
     + get_zmatrix_tol()
     + set_zmatrixtol()
 }
-Molecule <|-right- Zmatrix
+System <|-right- Zmatrix
 class ForceField{
     - nspcs: integer
     - nvdw: integer

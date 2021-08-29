@@ -366,7 +366,7 @@ contains
             this%get_ekinetic()*this%get_econv(),',',&
             this%get_enpot()*this%get_econv(),',',&
             this%get_etotal()*this%get_econv(),',',&
-            (this%sys%get_mtotal()/this%get_volume())*this%get_mconv()/&
+            (this%get_mtotal()/this%get_volume())*this%get_mconv()/&
             (this%get_n0()*1.d-24*this%get_rconv()**3)
     end if
 5   format(7x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,2x,a4,a1,7x,a4,a1,9x,a6,a1,10x,&
@@ -511,7 +511,7 @@ contains
     write(6,'(39x,a14)')'INTERMOLECULAR'
     write(6,'(39x,a14)')'=============='
     write(6,*)
-    write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%sys%get_qtotal()
+    write(6,'(2x,a14,1x,f7.4)')' Total charge:',this%get_qtotal()
     write(6,*)
     if(this%get_nspcs().le.10)then
        write(6,'(2x,a18,i3,2x,a2,10(1x,a6))')&

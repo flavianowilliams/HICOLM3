@@ -73,6 +73,7 @@ module forcefield_module
      procedure          :: set_coulop
      procedure          :: get_coulop
      procedure          :: set_coulop2
+     procedure          :: set_topology
   end type forcefield
 
   interface forcefield
@@ -120,6 +121,71 @@ contains
        this%tvdw(i)='charmm'
     end do
   end subroutine forcefield_init
+
+  subroutine set_topology(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,i3,nx
+    character(16)                    :: key
+    character(10)                    :: cvar
+    logical                          :: check
+!    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
+!    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
+!    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
+    call this%forcefield_init()
+!    call this%set_parbnd()
+    !    call this%set_parbend()
+    !    call this%set_partors()
+    call this%set_parvdw()
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')check=.false.
+    end do
+    nx=0
+    check=.true.
+    do while(check)
+       read(5,*)key
+       if(key.eq.'molecule')then
+          backspace(5)
+          read(5,*)key,cvar
+          i3=0
+          do k=1,this%get_nmol()
+             if(cvar.eq.this%namemol(k))i3=k
+          end do
+          if(i3.eq.0)goto 2
+          print*,this%get_nvdw()
+          read(5,*)key
+          if(key.eq.'bonds')then
+          end if
+       end if
+       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
+    end do
+    stop
+    rewind(5)
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')check=.false.
+    end do
+    check=.true.
+    do while (check)
+       read(5,*)key
+       if(key.eq.'vdw')then
+          call this%set_extra_parvdw()
+       elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
+          check=.false.
+       end if
+    end do
+1   rewind(5)
+    return
+2   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
+!3   write(6,*)'ERROR: The number of molecules in &FORCE_FIELD section does not match with that ones found in the &SYS section!'
+!    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+!    stop
+  end subroutine set_topology
 
   subroutine set_nspcs(this)
     implicit none
@@ -225,7 +291,7 @@ contains
     integer                          :: i,j,k,m,i1,i2,n1,n2
     logical                          :: check
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
-    call this%forcefield_init()
+!    call this%forcefield_init()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
@@ -390,49 +456,58 @@ contains
     integer                          :: nvdw
     real(8)                          :: p1,p2
     character(6)                     :: spcs1,spcs2
-    character(12)                    :: key
+    character(16)                    :: key
     character(5)                     :: tvdw
+    logical                          :: check
     nvdw=this%get_nvdw()
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do while (key.ne.'&END')
-       read(5,*)key
-       if(key.eq.'vdw')then
-          backspace(5)
-          read(5,*)key,nvdw
-          do i=1,nvdw
-             read(5,*)spcs1,spcs2,tvdw,p1,p2
-             do j=1,this%get_nvdw()
-                if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
-                     spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
-                   this%parvdw(j,1)=p1
-                   this%parvdw(j,2)=p2
-                   this%tvdw(j)=tvdw
-                   goto 2
-                end if
-             end do
-             do j=1,this%get_nspcs()
-                do k=1,this%get_nspcs()
-                   if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
-                      this%parvdw(nvdw+1,1)=p1
-                      this%parvdw(nvdw+1,2)=p2
-                      this%tvdw(nvdw+1)=tvdw
-                      this%spcvdw(nvdw+1,1)=spcs1
-                      this%spcvdw(nvdw+1,2)=spcs2
-                      nvdw=nvdw+1
-                      goto 2
-                   end if
-                end do
-             end do
-             goto 4
-2            continue
+!    check=.true.
+!    do while(check)
+!       read(5,*,end=2)key
+!       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')check=.false.
+!    end do
+!    check=.true.
+!    do while (check)
+!1   read(5,*,end=3)key
+!    if(key.ne.'&FORCE_FIELD')goto 1
+!    do while (key.ne.'&END')
+!       read(5,*)key
+!       if(key.eq.'vdw')then
+    backspace(5)
+    read(5,*)key,nvdw
+    do i=1,nvdw
+       read(5,*)spcs1,spcs2,tvdw,p1,p2
+       do j=1,this%get_nvdw()
+          if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
+               spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
+             this%parvdw(j,1)=p1
+             this%parvdw(j,2)=p2
+             this%tvdw(j)=tvdw
+             goto 1
+          end if
+       end do
+       do j=1,this%get_nspcs()
+          do k=1,this%get_nspcs()
+             if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
+                this%parvdw(nvdw+1,1)=p1
+                this%parvdw(nvdw+1,2)=p2
+                this%tvdw(nvdw+1)=tvdw
+                this%spcvdw(nvdw+1,1)=spcs1
+                this%spcvdw(nvdw+1,2)=spcs2
+                nvdw=nvdw+1
+                goto 1
+             end if
           end do
-       end if
+       end do
+       goto 3
+1      continue
     end do
-    call this%set_nvdw(nvdw)
-3   rewind(5)
+!       end if
+!       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
+!    end do
+       call this%set_nvdw(nvdw)
+2   rewind(5)
     return
-4   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
+3   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
   end subroutine set_extra_parvdw

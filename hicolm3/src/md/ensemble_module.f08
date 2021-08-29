@@ -396,9 +396,9 @@ contains
        rcm(2)=rcm(2)+this%mass(i)*this%ya(i)
        rcm(3)=rcm(3)+this%mass(i)*this%za(i)
     end do
-    this%rcm(1)=rcm(1)/this%sys%get_mtotal()
-    this%rcm(2)=rcm(2)/this%sys%get_mtotal()
-    this%rcm(3)=rcm(3)/this%sys%get_mtotal()
+    this%rcm(1)=rcm(1)/this%get_mtotal()
+    this%rcm(2)=rcm(2)/this%get_mtotal()
+    this%rcm(3)=rcm(3)/this%get_mtotal()
   end subroutine set_rcm
 
   subroutine set_vcm(this)
@@ -414,9 +414,9 @@ contains
        vcm(2)=vcm(2)+this%mass(i)*this%vay(i)
        vcm(3)=vcm(3)+this%mass(i)*this%vaz(i)
     end do
-    this%vcm(1)=vcm(1)/this%sys%get_mtotal()
-    this%vcm(2)=vcm(2)/this%sys%get_mtotal()
-    this%vcm(3)=vcm(3)/this%sys%get_mtotal()
+    this%vcm(1)=vcm(1)/this%get_mtotal()
+    this%vcm(2)=vcm(2)/this%get_mtotal()
+    this%vcm(3)=vcm(3)/this%get_mtotal()
   end subroutine set_vcm
 
 end module ensemble_module
