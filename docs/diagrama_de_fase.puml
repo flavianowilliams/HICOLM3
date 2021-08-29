@@ -93,6 +93,8 @@ class Molecule{
     + massmol[]: double
     + mmolar[]: double
     + tpmol[]: double
+    + set_tpmol()
+    + set_zatmol()
     + molecule_init()
     + set_molecule()
     + set_massmol()

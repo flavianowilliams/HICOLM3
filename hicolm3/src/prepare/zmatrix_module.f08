@@ -109,7 +109,8 @@ contains
                   (this%za(ia)-this%za(ib))**2)
              call this%covalent_radius(imol,i,rca)
              call this%covalent_radius(imol,j,rcb)
-             if(dr.gt.(rca+rcb-this%zmatrix_tol).and.dr.le.(rca+rcb+this%zmatrix_tol))then
+             if(dr.gt.(rca+rcb-this%zmatrix_tol).and.&
+                  dr.le.(rca+rcb+this%zmatrix_tol))then
                 this%molbond(imol,nxx,1)=i
                 this%molbond(imol,nxx,2)=j
                 nxx=nxx+1

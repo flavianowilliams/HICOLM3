@@ -94,6 +94,8 @@ contains
     call this%set_ntmol(ntmol)
     call this%set_nxmol(nxmol)
     call this%set_tpmol(tpmol)
+    call this%set_zatmol(zatmol)
+    call this%set_qatmol(qatmol)
 1   rewind(5)
     return
 2   write(6,*)'ERROR: The number of molecules does not be zero!'

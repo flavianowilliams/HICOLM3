@@ -27,7 +27,7 @@ module molecule_module
 
   implicit none
 
-  integer i,j,k
+!  integer i,j,k
 
   private
   public :: molecule
@@ -44,6 +44,8 @@ module molecule_module
    contains
 !     procedure, private :: molecule_init
      procedure          :: set_tpmol
+     procedure          :: set_zatmol
+     procedure          :: set_qatmol
      procedure          :: set_massmol
      procedure          :: set_mmolar
      procedure          :: set_scale_factor
@@ -151,9 +153,32 @@ contains
     end do
   end subroutine set_tpmol
 
+  subroutine set_zatmol(this,zatmol)
+    class(molecule), intent(inout) :: this
+    integer, intent(in)            :: zatmol(:,:)
+    integer                        :: i,j
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          this%zatmol(i,j)=zatmol(i,j)
+       end do
+    end do
+  end subroutine set_zatmol
+
+  subroutine set_qatmol(this,qatmol)
+    class(molecule), intent(inout) :: this
+    real(8), intent(in)            :: qatmol(:,:)
+    integer                        :: i,j
+    do i=1,this%get_nmol()
+       do j=1,this%nxmol(i)
+          this%qatmol(i,j)=qatmol(i,j)
+       end do
+    end do
+  end subroutine set_qatmol
+
   subroutine set_massmol(this)
     implicit none
     class(molecule), intent(inout) :: this
+    integer                        :: i,j
     real(8)                        :: var
     allocate(this%massmol(this%get_nmol(),this%get_natom()))
     do i=1,this%get_nmol()
@@ -402,6 +427,7 @@ contains
   subroutine set_mmolar(this)
     implicit none
     class(molecule), intent(inout) :: this
+    integer                        :: i,j
     real(8)                        :: var
     allocate(this%mmolar(this%get_nmol()))
     do i=1,this%get_nmol()
@@ -416,6 +442,7 @@ contains
   subroutine set_scale_factor(this,sf_coul,sf_vdw)
     implicit none
     class(molecule), intent(inout) :: this
+    integer                        :: i
     real(8)                        :: sf_coul
     real(8)                        :: sf_vdw
     allocate(this%sf_coul(this%get_nmol()),this%sf_vdw(this%get_nmol()))

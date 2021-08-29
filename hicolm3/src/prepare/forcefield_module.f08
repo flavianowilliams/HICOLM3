@@ -125,7 +125,7 @@ contains
   subroutine set_topology(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i,i3,nx
+    integer                          :: i3,nx
     character(16)                    :: key
     character(10)                    :: cvar
     logical                          :: check
@@ -133,9 +133,10 @@ contains
 !    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
 !    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
     call this%forcefield_init()
-!    call this%set_parbnd()
-    !    call this%set_parbend()
-    !    call this%set_partors()
+    call this%set_parbnd()
+    call this%set_parbend()
+    call this%set_partors()
+    call this%set_paritors()
     call this%set_parvdw()
     check=.true.
     do while(check)
@@ -154,37 +155,18 @@ contains
              if(cvar.eq.this%namemol(k))i3=k
           end do
           if(i3.eq.0)goto 2
-          print*,this%get_nvdw()
           read(5,*)key
           if(key.eq.'bonds')then
           end if
        end if
        if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
     end do
-    stop
-    rewind(5)
-    check=.true.
-    do while(check)
-       read(5,*,end=1)key
-       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')check=.false.
-    end do
-    check=.true.
-    do while (check)
-       read(5,*)key
-       if(key.eq.'vdw')then
-          call this%set_extra_parvdw()
-       elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
-          check=.false.
-       end if
-    end do
 1   rewind(5)
     return
-2   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
+2   write(6,*)&
+         'ERROR: There is a molecule that does not belong to the physical system!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
-!3   write(6,*)'ERROR: The number of molecules in &FORCE_FIELD section does not match with that ones found in the &SYS section!'
-!    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
-!    stop
   end subroutine set_topology
 
   subroutine set_nspcs(this)
@@ -458,7 +440,6 @@ contains
     character(6)                     :: spcs1,spcs2
     character(16)                    :: key
     character(5)                     :: tvdw
-    logical                          :: check
     nvdw=this%get_nvdw()
 !    check=.true.
 !    do while(check)
@@ -505,7 +486,7 @@ contains
 !       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
 !    end do
        call this%set_nvdw(nvdw)
-2   rewind(5)
+    rewind(5)
     return
 3   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
