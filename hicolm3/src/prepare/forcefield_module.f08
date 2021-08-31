@@ -61,9 +61,9 @@ module forcefield_module
      procedure          :: set_parbend
      procedure          :: set_partors
      procedure          :: set_paritors
-     procedure          :: set_extra_parbnd
-     procedure          :: set_extra_parbend
-     procedure          :: set_extra_partors
+     procedure          :: set_extra_bonds
+     procedure          :: set_extra_angles
+     procedure          :: set_extra_dihedrals
      procedure          :: set_extra_parvdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
@@ -157,9 +157,20 @@ contains
           if(i3.eq.0)goto 2
           read(5,*)key
           if(key.eq.'bonds')then
+             backspace(5)
+             call this%set_extra_bonds(i3)
           end if
+          if(key.eq.'angles')then
+             backspace(5)
+             call this%set_extra_angles(i3)
+          end if
+          if(key.eq.'dihedrals')then
+             backspace(5)
+             call this%set_extra_dihedrals(i3)
+          end if
+       elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
+          check=.false.
        end if
-       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
     end do
 1   rewind(5)
     return
@@ -493,176 +504,84 @@ contains
     stop
   end subroutine set_extra_parvdw
 
-  subroutine set_extra_parbnd(this)
+  subroutine set_extra_bonds(this,i3)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3
+    integer, intent(in)              :: i3
+    integer                          :: i,j,i1,i2
     character(12)                    :: key
-    character(10)                    :: cvar
-    i3=0
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             backspace(5)
-             read(5,*)key,cvar
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))then
-                   i3=k
-                end if
-             end do
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'bonds')then
-                   backspace(5)
-                   read(5,*)key,i1
-                   do k=1,i1
-                      read(5,*)i2
-                      backspace(5)
-                      read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                           this%tbonds(i3,i2)
-                      backspace(5)
-                      select case(this%tbonds(i3,i2))
-                      case('charmm')
-                         read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                              this%tbonds(i3,i2),(this%parbnd(i3,i2,l),l=1,2)
-                      case('harm')
-                         read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
-                              this%tbonds(i3,i2),(this%parbnd(i3,i2,l),l=1,2)
-                      end select
-                   end do
-                end if
-             end do
-          end if
-2         continue
-       end do
+    read(5,*)key,i1
+    do i=1,i1
+       read(5,*)i2
+       backspace(5)
+       read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),this%tbonds(i3,i2)
+       backspace(5)
+       select case(this%tbonds(i3,i2))
+       case('charmm')
+          read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+               this%tbonds(i3,i2),(this%parbnd(i3,i2,j),j=1,2)
+       case('harm')
+          read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+               this%tbonds(i3,i2),(this%parbnd(i3,i2,j),j=1,2)
+       end select
     end do
-3   rewind(5)
-    return
-  end subroutine set_extra_parbnd
+  end subroutine set_extra_bonds
 
-  subroutine set_extra_parbend(this)
+  subroutine set_extra_angles(this,i3)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3
+    integer, intent(in)              :: i3
+    integer                          :: i1,i2
     character(12)                    :: key
-    character(10)                    :: cvar
-    i3=0
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             backspace(5)
-             read(5,*)key,cvar
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))then
-                   i3=k
-                end if
-             end do
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'bends')then
-                   backspace(5)
-                   read(5,*)key,i1
-                   do k=1,i1
-                      read(5,*)i2
-                      backspace(5)
-                      read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                           this%molbend(i3,i2,3),this%tbends(i3,i2)
-                      backspace(5)
-                      select case(this%tbends(i3,i2))
-                      case('charmm')
-                         read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                              this%molbend(i3,i2,3),this%tbends(i3,i2),&
-                              (this%parbend(i3,i2,l),l=1,2)
-                      case('harm')
-                         read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
-                              this%molbend(i3,i2,3),this%tbends(i3,i2),&
-                              (this%parbend(i3,i2,l),l=1,2)
-                      end select
-                   end do
-                end if
-             end do
-          end if
-2         continue
-       end do
+    read(5,*)key,i1
+    do k=1,i1
+       read(5,*)i2
+       backspace(5)
+       read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+            this%molbend(i3,i2,3),this%tbends(i3,i2)
+       backspace(5)
+       select case(this%tbends(i3,i2))
+       case('charmm')
+          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+               this%molbend(i3,i2,3),this%tbends(i3,i2),&
+               (this%parbend(i3,i2,l),l=1,2)
+       case('harm')
+          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+               this%molbend(i3,i2,3),this%tbends(i3,i2),&
+               (this%parbend(i3,i2,l),l=1,2)
+       end select
     end do
-3   rewind(5)
-    return
-  end subroutine set_extra_parbend
+  end subroutine set_extra_angles
 
-  subroutine set_extra_partors(this)
+  subroutine set_extra_dihedrals(this,i3)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3
+    integer, intent(in)              :: i3
+    integer                          :: i1,i2,k,l
     character(12)                    :: key
-    character(10)                    :: cvar
-    i3=0
-1   read(5,*,end=3)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do j=1,this%get_nmol()
-       do while (key.ne.'&END')
-          read(5,*)key
-          if(key.eq.'molecule')then
-             backspace(5)
-             read(5,*)key,cvar
-             do k=1,this%get_nmol()
-                if(cvar.eq.this%namemol(k))then
-                   i3=k
-                end if
-             end do
-             read(5,*)
-             read(5,*)
-             read(5,*)
-             do while (key.ne.'end_molecule')
-                read(5,*)key
-                if(key.eq.'end_molecule')goto 2
-                if(key.eq.'dihedrals')then
-                   backspace(5)
-                   read(5,*)key,i1
-                   do k=1,i1
-                      read(5,*)i2
-                      backspace(5)
-                      read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
-                           this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2)
-                      backspace(5)
-                      select case(this%ttors(i3,i2))
-                      case('charmm')
-                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
-                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
-                              (this%partors(i3,i2,l),l=1,3)
-                      case('icharmm')
-                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
-                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),&
-                              this%ttors(i3,i2),(this%partors(i3,i2,l),l=1,2)
-                      case('harm')
-                         read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
-                              this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
-                              (this%partors(i3,i2,l),l=1,2)
-                      end select
-                   end do
-                   if(i2.gt.this%torscnt(i3))this%torscnt(i3)=this%torscnt(i3)+1
-                end if
-             end do
-          end if
-2         continue
-       end do
+    read(5,*)key,i1
+    do k=1,i1
+       read(5,*)i2
+       backspace(5)
+       read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+            this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2)
+       backspace(5)
+       select case(this%ttors(i3,i2))
+       case('charmm')
+          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
+               (this%partors(i3,i2,l),l=1,3)
+       case('icharmm')
+          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+               this%moltors(i3,i2,3),this%moltors(i3,i2,4),&
+               this%ttors(i3,i2),(this%partors(i3,i2,l),l=1,2)
+       case('harm')
+          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
+               (this%partors(i3,i2,l),l=1,2)
+       end select
     end do
-3   rewind(5)
-    return
-  end subroutine set_extra_partors
+  end subroutine set_extra_dihedrals
 
   subroutine set_coulop(this,coulop)
     implicit none
