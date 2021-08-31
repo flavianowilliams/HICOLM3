@@ -128,7 +128,7 @@ contains
     integer                          :: i3,nx
     character(16)                    :: key
     character(10)                    :: cvar
-    logical                          :: check
+    logical                          :: check,check2
 !    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
 !    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
 !    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
@@ -155,19 +155,23 @@ contains
              if(cvar.eq.this%namemol(k))i3=k
           end do
           if(i3.eq.0)goto 2
-          read(5,*)key
-          if(key.eq.'bonds')then
-             backspace(5)
-             call this%set_extra_bonds(i3)
-          end if
-          if(key.eq.'angles')then
-             backspace(5)
-             call this%set_extra_angles(i3)
-          end if
-          if(key.eq.'dihedrals')then
-             backspace(5)
-             call this%set_extra_dihedrals(i3)
-          end if
+          check2=.true.
+          do while(check2)
+             read(5,*)key
+             print*,key
+             if(key.eq.'bonds')then
+                backspace(5)
+                call this%set_extra_bonds(i3)
+             elseif(key.eq.'angles')then
+                backspace(5)
+                call this%set_extra_angles(i3)
+             elseif(key.eq.'dihedrals')then
+                backspace(5)
+                call this%set_extra_dihedrals(i3)
+             elseif(key.eq.'END_MOLECULE'.or.key.eq.'end_molecule')then
+                check2=.false.
+             end if
+          end do
        elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
           check=.false.
        end if
