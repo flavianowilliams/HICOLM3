@@ -178,6 +178,7 @@ class ForceField{
     + set_parvdw()
     + set_nvdw()
     + get_nvdw()
+    + set_check_vdw()
     + set_fscsalpha()
     + get_fscsalpha()
     + set_coulop()
