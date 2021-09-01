@@ -64,7 +64,6 @@ module forcefield_module
      procedure          :: set_extra_bonds
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
-     procedure          :: set_extra_parvdw
      procedure          :: set_extra_vdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
@@ -259,6 +258,8 @@ contains
     allocate(this%parvdw(this%get_nvdw(),2),this%spcvdw(this%get_nvdw(),2))
     nx=1
     do i=1,this%nspcs
+       e1=0.d0
+       s1=0.d0
        do k=1,this%charmm%get_natp()
           if(this%spcs(i).eq.this%charmm%atp(k))then
              e1=this%charmm%prms_vdw(k,1)
@@ -267,6 +268,8 @@ contains
        end do
        if(e1.ge.1.d-4.and.s1.ge.5.d-4)then
           do j=i,this%nspcs
+             e2=0.d0
+             s2=0.d0
              do k=1,this%charmm%get_natp()
                 if(this%spcs(j).eq.this%charmm%atp(k))then
                    e2=this%charmm%prms_vdw(k,1)
@@ -458,11 +461,10 @@ contains
     integer                          :: i,j,k,nx
     real(8)                          :: p1,p2
     character(6)                     :: spcs1,spcs2
-    character(5)                     :: tvdw
-    nx=nvdw
+    character(6)                     :: tvdw
+    nx=this%get_nvdw()
     do i=1,nvdw
        read(5,*)spcs1,spcs2,tvdw,p1,p2
-       print*,spcs1
        do j=1,this%get_nvdw()
           if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
                spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
@@ -489,73 +491,11 @@ contains
 1      continue
     end do
     call this%set_nvdw(nx)
-    rewind(5)
     return
 2   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
   end subroutine set_extra_vdw
-
-  subroutine set_extra_parvdw(this)
-    implicit none
-    class(forcefield), intent(inout) :: this
-    integer                          :: nvdw
-    real(8)                          :: p1,p2
-    character(6)                     :: spcs1,spcs2
-    character(16)                    :: key
-    character(5)                     :: tvdw
-    nvdw=this%get_nvdw()
-!    check=.true.
-!    do while(check)
-!       read(5,*,end=2)key
-!       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')check=.false.
-!    end do
-!    check=.true.
-!    do while (check)
-!1   read(5,*,end=3)key
-!    if(key.ne.'&FORCE_FIELD')goto 1
-!    do while (key.ne.'&END')
-!       read(5,*)key
-!       if(key.eq.'vdw')then
-    backspace(5)
-    read(5,*)key,nvdw
-    do i=1,nvdw
-       read(5,*)spcs1,spcs2,tvdw,p1,p2
-       do j=1,this%get_nvdw()
-          if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
-               spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
-             this%parvdw(j,1)=p1
-             this%parvdw(j,2)=p2
-             this%tvdw(j)=tvdw
-             goto 1
-          end if
-       end do
-       do j=1,this%get_nspcs()
-          do k=1,this%get_nspcs()
-             if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
-                this%parvdw(nvdw+1,1)=p1
-                this%parvdw(nvdw+1,2)=p2
-                this%tvdw(nvdw+1)=tvdw
-                this%spcvdw(nvdw+1,1)=spcs1
-                this%spcvdw(nvdw+1,2)=spcs2
-                nvdw=nvdw+1
-                goto 1
-             end if
-          end do
-       end do
-       goto 3
-1      continue
-    end do
-!       end if
-!       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
-!    end do
-    call this%set_nvdw(nvdw)
-    rewind(5)
-    return
-3   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
-    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
-    stop
-  end subroutine set_extra_parvdw
 
   subroutine set_extra_bonds(this,i3)
     implicit none

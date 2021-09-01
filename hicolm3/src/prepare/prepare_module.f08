@@ -209,11 +209,11 @@ contains
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
        case('charmm')
-          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
-               this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        case('lj')
-          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
-               this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        end select
     end do
   end subroutine print_top
