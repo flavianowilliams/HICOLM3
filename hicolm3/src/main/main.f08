@@ -124,6 +124,7 @@ program HICOLM
         call prp%translate()                     ! aplicando translação do sistema coordenadas
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_topology()
+        call prp%check_vdw()
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
         call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4

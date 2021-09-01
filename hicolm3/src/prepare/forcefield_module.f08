@@ -62,6 +62,7 @@ module forcefield_module
      procedure          :: set_partors
      procedure          :: set_paritors
      procedure          :: set_parvdw
+     procedure          :: check_vdw
      procedure          :: set_extra_bonds
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
@@ -267,28 +268,47 @@ contains
              s1=this%charmm%prms_vdw(k,2)
           end if
        end do
-       if(e1.ge.1.d-4.and.s1.ge.5.d-4)then
-          do j=i,this%nspcs
-             e2=0.d0
-             s2=0.d0
-             do k=1,this%charmm%get_natp()
-                if(this%spcs(j).eq.this%charmm%atp(k))then
-                   e2=this%charmm%prms_vdw(k,1)
-                   s2=this%charmm%prms_vdw(k,2)
-                end if
-             end do
-             if(e2.ge.1.d-4.and.s2.ge.5.d-4)then
-                this%parvdw(nx,1)=sqrt(e1*e2)
-                this%parvdw(nx,2)=s1+s2
-                this%spcvdw(nx,1)=this%spcs(i)
-                this%spcvdw(nx,2)=this%spcs(j)
-                nx=nx+1
+       do j=i,this%nspcs
+          e2=0.d0
+          s2=0.d0
+          do k=1,this%charmm%get_natp()
+             if(this%spcs(j).eq.this%charmm%atp(k))then
+                e2=this%charmm%prms_vdw(k,1)
+                s2=this%charmm%prms_vdw(k,2)
              end if
           end do
-       end if
+          this%parvdw(nx,1)=sqrt(e1*e2)
+          this%parvdw(nx,2)=s1+s2
+          this%spcvdw(nx,1)=this%spcs(i)
+          this%spcvdw(nx,2)=this%spcs(j)
+          nx=nx+1
+       end do
     end do
     call this%set_nvdw(nx-1)
   end subroutine set_parvdw
+
+  subroutine check_vdw(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,nx
+    real(8)                          :: ex,sx
+    character(6)                     :: a1,a2
+    nx=0
+    do i=1,this%get_nvdw()
+       ex=this%parvdw(i,1)
+       sx=this%parvdw(i,2)
+       a1=this%spcvdw(i,1)
+       a2=this%spcvdw(i,2)
+       if(ex.ge.1.d-4.and.sx.ge.5.d-4)then
+          this%parvdw(nx+1,1)=ex
+          this%parvdw(nx+1,2)=sx
+          this%spcvdw(nx+1,1)=a1
+          this%spcvdw(nx+1,2)=a2
+          nx=nx+1
+       end if
+    end do
+    call this%set_nvdw(nx)
+  end subroutine check_vdw
 
   subroutine set_parbnd(this)
     implicit none
@@ -462,31 +482,28 @@ contains
     real(8)                          :: p1,p2
     character(6)                     :: spcs1,spcs2
     character(6)                     :: tvdw
+    nx=1
     nx=this%get_nvdw()
     do i=1,nvdw
        read(5,*)spcs1,spcs2,tvdw,p1,p2
        do j=1,this%get_nvdw()
           if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
                spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
-             if(p1.ge.1.d-4.and.p2.ge.5.d-4)then
-                this%parvdw(j,1)=p1
-                this%parvdw(j,2)=p2
-                this%tvdw(j)=tvdw
-             end if
+             this%parvdw(j,1)=p1
+             this%parvdw(j,2)=p2
+             this%tvdw(j)=tvdw
              goto 1
           end if
        end do
        do j=1,this%get_nspcs()
           do k=1,this%get_nspcs()
              if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
-                if(p1.ge.1.d-4.and.p2.ge.5.d-4)then
-                   this%parvdw(nx+1,1)=p1
-                   this%parvdw(nx+1,2)=p2
-                   this%tvdw(nx+1)=tvdw
-                   this%spcvdw(nx+1,1)=spcs1
-                   this%spcvdw(nx+1,2)=spcs2
-                   nx=nx+1
-                end if
+                this%parvdw(nx+1,1)=p1
+                this%parvdw(nx+1,2)=p2
+                this%tvdw(nx+1)=tvdw
+                this%spcvdw(nx+1,1)=spcs1
+                this%spcvdw(nx+1,2)=spcs2
+                nx=nx+1
                 goto 1
              end if
           end do
