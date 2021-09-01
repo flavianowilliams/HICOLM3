@@ -468,21 +468,25 @@ contains
        do j=1,this%get_nvdw()
           if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
                spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
-             this%parvdw(j,1)=p1
-             this%parvdw(j,2)=p2
-             this%tvdw(j)=tvdw
+             if(p1.ge.1.d-4.and.p2.ge.5.d-4)then
+                this%parvdw(j,1)=p1
+                this%parvdw(j,2)=p2
+                this%tvdw(j)=tvdw
+             end if
              goto 1
           end if
        end do
        do j=1,this%get_nspcs()
           do k=1,this%get_nspcs()
              if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
-                this%parvdw(nx+1,1)=p1
-                this%parvdw(nx+1,2)=p2
-                this%tvdw(nx+1)=tvdw
-                this%spcvdw(nx+1,1)=spcs1
-                this%spcvdw(nx+1,2)=spcs2
-                nx=nx+1
+                if(p1.ge.1.d-4.and.p2.ge.5.d-4)then
+                   this%parvdw(nx+1,1)=p1
+                   this%parvdw(nx+1,2)=p2
+                   this%tvdw(nx+1)=tvdw
+                   this%spcvdw(nx+1,1)=spcs1
+                   this%spcvdw(nx+1,2)=spcs2
+                   nx=nx+1
+                end if
                 goto 1
              end if
           end do
