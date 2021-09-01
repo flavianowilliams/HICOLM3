@@ -122,22 +122,11 @@ program HICOLM
         call prp%set_symmetry()                  ! calculando grupo de simetria
         call prp%sites()                         ! atribuindo coordenadas atomicas e Z
         call prp%translate()                     ! aplicando translação do sistema coordenadas
-!        call prp%molecule_prepare()              ! atribuindo informacoes moleculares
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_topology()
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
         call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
-!        call prp%set_coulop2()                   ! atribuindo potencial eletrostatico
-!        call prp%set_parbnd()                    ! atribuindo potenciais de ligacao
-!        call prp%set_parbend()                   ! atribuindo potenciais angulares
-!        call prp%set_partors()                   ! atribuindo potenciais de torsão
-!        call prp%set_paritors()                  ! atribuindo diedros improprios
-!        call prp%set_parvdw()                    ! atribuindo potenciais de Van der Waals
-!        call prp%set_extra_parbnd()              ! alterando potenciais de ligacao
-!        call prp%set_extra_parbend()             ! alterando potenciais angulares
-!        call prp%set_extra_partors()             ! alterando diedros
-!        call prp%set_extra_parvdw()              ! alterando potenciais de Van der Waals
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais
         call prp%print_sys()                     ! imprimindo estrutura em SYSTEM

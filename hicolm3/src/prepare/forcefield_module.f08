@@ -129,9 +129,6 @@ contains
     character(16)                    :: key
     character(10)                    :: cvar
     logical                          :: check,check2
-!    allocate(this%zatmol(this%get_nmol(),this%get_natom()))
-!    allocate(this%qatmol(this%get_nmol(),this%get_natom()))
-!    allocate(this%tpmol(this%get_nmol(),this%get_natom()))
     call this%forcefield_init()
     call this%set_parbnd()
     call this%set_parbend()
@@ -299,7 +296,6 @@ contains
     integer                          :: i,j,k,m,i1,i2,n1,n2
     logical                          :: check
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
-!    call this%forcefield_init()
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
