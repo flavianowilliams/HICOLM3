@@ -61,18 +61,18 @@ module forcefield_module
      procedure          :: set_parbend
      procedure          :: set_partors
      procedure          :: set_paritors
+     procedure          :: set_parvdw
      procedure          :: set_extra_bonds
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
      procedure          :: set_extra_vdw
-     procedure          :: set_parvdw
+     procedure          :: set_extra_coulop
      procedure          :: set_nvdw
      procedure          :: get_nvdw
      procedure          :: set_fscsalpha
      procedure          :: get_fscsalpha
      procedure          :: set_coulop
      procedure          :: get_coulop
-     procedure          :: set_extra_coulop
      procedure          :: set_topology
   end type forcefield
 
