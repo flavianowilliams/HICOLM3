@@ -173,7 +173,8 @@ class ForceField{
     + set_extra_bonds()
     + set_extra_angles()
     + set_extra_dihedrals()
-    + set_extra_parvdw()
+    + set_extra_vdw()
+    + set_extra_coulop()
     + set_parvdw()
     + set_nvdw()
     + get_nvdw()
@@ -181,7 +182,6 @@ class ForceField{
     + get_fscsalpha()
     + set_coulop()
     + get_coulop()
-    + set_coulop2()
 }
 Zmatrix <|-right- ForceField
 class Charmm{

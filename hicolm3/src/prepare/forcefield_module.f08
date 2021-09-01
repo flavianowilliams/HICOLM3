@@ -72,7 +72,7 @@ module forcefield_module
      procedure          :: get_fscsalpha
      procedure          :: set_coulop
      procedure          :: get_coulop
-     procedure          :: set_coulop2
+     procedure          :: set_extra_coulop
      procedure          :: set_topology
   end type forcefield
 
@@ -175,6 +175,10 @@ contains
           backspace(5)
           read(5,*)key,i3
           call this%set_extra_vdw(i3)
+       elseif(key.eq.'electrostatic')then
+          backspace(5)
+          read(5,*)key,cvar
+          call this%set_extra_coulop(cvar)
        elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
           check=.false.
        end if
@@ -492,7 +496,7 @@ contains
     end do
     call this%set_nvdw(nx)
     return
-2   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
+2   write(6,*)'ERROR: The type does not match with that defined in the SYSTEM section!'
     write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
     stop
   end subroutine set_extra_vdw
@@ -583,30 +587,28 @@ contains
     this%coulop=coulop
   end subroutine set_coulop
 
-  subroutine set_coulop2(this)
+  subroutine set_extra_coulop(this,coulop)
     implicit none
     class(forcefield), intent(inout) :: this
+    character(4), intent(in)         :: coulop
     real(8)                          :: fscsalpha
-    character(4)                     :: coulop
+    character(4)                     :: cvar
     character(13)                    :: key
-1   read(5,*,end=2)key
-    if(key.ne.'&FORCE_FIELD')goto 1
-    do while (key.ne.'&END')
-       read(5,*)key
-       if(key.eq.'electrostatic')then
-          backspace(5)
-          read(5,*)key,coulop
-          this%coulop=coulop
-          if(coulop.eq.'fscs')then
-             backspace(5)
-             read(5,*)key,coulop,fscsalpha
-             this%fscsalpha=fscsalpha
-          end if
-          goto 2
-       end if
-    end do
-2   rewind(5)
-  end subroutine set_coulop2
+    if(coulop.eq.'fscs')then
+       backspace(5)
+       read(5,*)key,cvar,fscsalpha
+       this%fscsalpha=fscsalpha
+       goto 1
+    elseif(coulop.eq.'coul')then
+       goto 1
+    end if
+    goto 2
+1   this%coulop=coulop
+    return
+2   write(6,*)'ERROR: The electrostatic does not an option!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
+  end subroutine set_extra_coulop
 
   character(4) function get_coulop(this)
     implicit none
