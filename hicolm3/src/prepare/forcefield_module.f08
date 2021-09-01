@@ -65,6 +65,7 @@ module forcefield_module
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
      procedure          :: set_extra_parvdw
+     procedure          :: set_extra_vdw
      procedure          :: set_parvdw
      procedure          :: set_nvdw
      procedure          :: get_nvdw
@@ -158,7 +159,6 @@ contains
           check2=.true.
           do while(check2)
              read(5,*)key
-             print*,key
              if(key.eq.'bonds')then
                 backspace(5)
                 call this%set_extra_bonds(i3)
@@ -172,6 +172,10 @@ contains
                 check2=.false.
              end if
           end do
+       elseif(key.eq.'vdw')then
+          backspace(5)
+          read(5,*)key,i3
+          call this%set_extra_vdw(i3)
        elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
           check=.false.
        end if
@@ -447,6 +451,51 @@ contains
     end do
   end subroutine set_paritors
 
+  subroutine set_extra_vdw(this,nvdw)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer, intent(in)              :: nvdw
+    integer                          :: i,j,k,nx
+    real(8)                          :: p1,p2
+    character(6)                     :: spcs1,spcs2
+    character(5)                     :: tvdw
+    nx=nvdw
+    do i=1,nvdw
+       read(5,*)spcs1,spcs2,tvdw,p1,p2
+       print*,spcs1
+       do j=1,this%get_nvdw()
+          if(spcs1.eq.this%spcvdw(j,1).and.spcs2.eq.this%spcvdw(j,2).or.&
+               spcs1.eq.this%spcvdw(j,2).and.spcs2.eq.this%spcvdw(j,1))then
+             this%parvdw(j,1)=p1
+             this%parvdw(j,2)=p2
+             this%tvdw(j)=tvdw
+             goto 1
+          end if
+       end do
+       do j=1,this%get_nspcs()
+          do k=1,this%get_nspcs()
+             if(spcs1.eq.this%spcs(j).and.spcs2.eq.this%spcs(k))then
+                this%parvdw(nx+1,1)=p1
+                this%parvdw(nx+1,2)=p2
+                this%tvdw(nx+1)=tvdw
+                this%spcvdw(nx+1,1)=spcs1
+                this%spcvdw(nx+1,2)=spcs2
+                nx=nx+1
+                goto 1
+             end if
+          end do
+       end do
+       goto 2
+1      continue
+    end do
+    call this%set_nvdw(nx)
+    rewind(5)
+    return
+2   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
+    write(6,*)'Hint: Check the input in the &FORCE_FIELD section.'
+    stop
+  end subroutine set_extra_vdw
+
   subroutine set_extra_parvdw(this)
     implicit none
     class(forcefield), intent(inout) :: this
@@ -500,7 +549,7 @@ contains
 !       end if
 !       if(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')check=.false.
 !    end do
-       call this%set_nvdw(nvdw)
+    call this%set_nvdw(nvdw)
     rewind(5)
     return
 3   write(6,*)'ERROR: The type does not match with that defined in the TOPOLOGY file!'
