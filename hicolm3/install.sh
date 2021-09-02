@@ -20,7 +20,7 @@ then
     rm HICOLM3
 fi
 make -s clean
-make -s all
+make all
 if [ ! -f "HICOLM3" ]
 then
     exit
