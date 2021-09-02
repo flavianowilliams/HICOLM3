@@ -29,7 +29,7 @@ program HICOLM
 
   implicit none
 
-  integer       :: i,j,k,i0,nx
+  integer       :: i,j,k,i0,i1,nx
   real(8)       :: t0,t1,t2,t3
   real(8)       :: sf_coul,sf_vdw
   real(8)       :: drmax
@@ -197,6 +197,7 @@ program HICOLM
         write(6,'(4x,111a1)')('-',i=1,84)
         drmax=md%get_drcutoff()
         i0=0
+        i1=md%get_verlchk()
         do i=1,md%get_nstep()
            if(md%get_ensble().eq.'nve')then
               call md%set_nve()
@@ -213,9 +214,10 @@ program HICOLM
                  call md%set_npt_nosehoover()
               end if
            end if
-           if(mod(i,md%get_verlchk()).eq.0)then
+           if(i1.ge.md%get_verlchk())then
               call md%verlet_list()
               call md%set_verlchk()
+              i0=i
            end if
            call md%set_verlchk()
            call md%print_geometry(i)
@@ -225,6 +227,7 @@ program HICOLM
                 md%get_temperature()*md%get_teconv(),md%get_pressure()*md%get_pconv(),&
                 md%get_etotal()*md%get_econv()
            call md%set_time(i*md%get_timestep())
+           i1=i-i0
         end do
         write(6,'(4x,111a1)')('-',i=1,84)
         write(6,*)

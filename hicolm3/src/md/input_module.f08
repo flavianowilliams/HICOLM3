@@ -96,46 +96,44 @@ contains
     implicit none
     class(input), intent(inout) :: this
     real(8)                     :: tstat,pstat
-    character(11)               :: key
+    character(23)               :: key
     character(3)                :: ensble
     character(9)                :: ensble_mt
-1   read(5,*,end=2)key
-    if(key.ne.'&MD')goto 1
-    do while (key.ne.'&END')
+    logical                     :: check
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&MOLECULAR_DYNAMICS'.or.key.eq.'&molecular_dynamics')&
+            check=.false.
+    end do
+    check=.true.
+    do while (check)
        read(5,*)key
        if(key.eq.'nstep')then
           backspace(5)
           read(5,*)key,this%nstep
-       end if
-       if(key.eq.'nrelax')then
+       elseif(key.eq.'nrelax')then
           backspace(5)
           read(5,*)key,this%nrelax
-       end if
-       if(key.eq.'nframes')then
+       elseif(key.eq.'nframes')then
           backspace(5)
           read(5,*)key,this%nframes
-       end if
-       if(key.eq.'timestep')then
+       elseif(key.eq.'timestep')then
           backspace(5)
           read(5,*)key,this%timestep
-       end if
-       if(key.eq.'pressure')then
+       elseif(key.eq.'pressure')then
           backspace(5)
           read(5,*)key,this%press
-       end if
-       if(key.eq.'temperature')then
+       elseif(key.eq.'temperature')then
           backspace(5)
           read(5,*)key,this%temp
-       end if
-       if(key.eq.'rcutoff')then
+       elseif(key.eq.'rcutoff')then
           backspace(5)
           read(5,*)key,this%rcutoff,this%drcutoff
-       end if
-       if(key.eq.'restart')then
+       elseif(key.eq.'restart')then
           backspace(5)
           read(5,*)key,this%restart
-       end if
-       if(key.eq.'ensemble')then
+       elseif(key.eq.'ensemble')then
           backspace(5)
           read(5,*)key,ensble
           if(ensble.eq.'nve')then
@@ -162,9 +160,12 @@ contains
                 this%pstat=pstat
              end if
           end if
+       elseif(key.eq.'&END_MOLECULAR_DYNAMICS'.or.key.eq.&
+            '&end_molecular_dynamics')then
+          check=.false.
        end if
     end do
-2   rewind(5)
+1   rewind(5)
   end subroutine set_input
 
   subroutine set_inopt(this)

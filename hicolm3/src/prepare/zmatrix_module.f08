@@ -44,7 +44,7 @@ module zmatrix_module
      integer, allocatable :: molbend(:,:,:)
      integer, allocatable :: moltors(:,:,:)
    contains
-     procedure, private :: zmatrix_init
+!     procedure, private :: zmatrix_init
      procedure          :: set_bonds
      procedure          :: set_bends
      procedure          :: set_torsion
@@ -60,28 +60,28 @@ module zmatrix_module
      procedure          :: get_itorsmax
      procedure          :: set_zmatrix_tol
      procedure          :: get_zmatrix_tol
-     procedure          :: set_zmatrixtol
+!     procedure          :: set_zmatrixtol
   end type zmatrix
 
-  interface zmatrix
-     module procedure constructor
-  end interface zmatrix
+!  interface zmatrix
+!     module procedure constructor
+!  end interface zmatrix
 
 contains
 
-  type(zmatrix) function constructor()
-    call constructor%zmatrix_init()
-  end function constructor
+!  type(zmatrix) function constructor()
+!    call constructor%zmatrix_init()
+!  end function constructor
 
-  subroutine zmatrix_init(this)
-    class(zmatrix), intent(inout) :: this
-    call this%set_zmatrix_tol()
-  end subroutine zmatrix_init
+!  subroutine zmatrix_init(this)
+!    class(zmatrix), intent(inout) :: this
+!    call this%set_zmatrix_tol()
+!  end subroutine zmatrix_init
 
   subroutine set_internal_coordinates(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    call this%zmatrix_init()
+!    call this%zmatrix_init()
     call this%set_bonds()
     call this%set_bends()
     call this%set_torsion()
@@ -284,34 +284,35 @@ contains
     get_itorsmax=this%itorsmax
   end function get_itorsmax
 
-  subroutine set_zmatrixtol(this,zmatrix_tol)
+  subroutine set_zmatrix_tol(this,zmatrix_tol)
     implicit none
     class(zmatrix), intent(inout) :: this
     real(8), intent(in)           :: zmatrix_tol
     this%zmatrix_tol=zmatrix_tol
-  end subroutine set_zmatrixtol
-
-  subroutine set_zmatrix_tol(this)
-    implicit none
-    class(zmatrix), intent(inout) :: this
-    character(11)                 :: key
-    logical                       :: check
-    check=.true.
-    do while(check)
-       read(5,*,end=1)key
-       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
-    end do
-    check=.true.
-    do while (check)
-       read(5,*)key
-       if(key.eq.'zmatrix')then
-          backspace(5)
-          read(5,*)key,this%zmatrix_tol
-       end if
-       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
-    end do
-1   rewind(5)
   end subroutine set_zmatrix_tol
+
+!  subroutine set_zmatrix_tol(this,zmatrix_tol)
+!    implicit none
+!    class(zmatrix), intent(inout) :: this
+!    real(8), intent(in)           :: zmatrix_tol
+!    character(11)                 :: key
+!    logical                       :: check
+!    check=.true.
+!    do while(check)
+!       read(5,*,end=1)key
+!       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
+!    end do
+!    check=.true.
+!    do while (check)
+!       read(5,*)key
+!       if(key.eq.'zmatrix')then
+!          backspace(5)
+!          read(5,*)key,this%zmatrix_tol
+!       end if
+!       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
+!    end do
+!1   rewind(5)
+!  end subroutine set_zmatrix_tol
 
   double precision function get_zmatrix_tol(this)
     implicit none

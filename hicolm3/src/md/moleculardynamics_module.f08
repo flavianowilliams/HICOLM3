@@ -59,7 +59,7 @@ contains
     call constructor%set_press(1.0d0)
     call constructor%set_temp(0.0d0)
     call constructor%set_rcutoff(0.0d0)
-    call constructor%set_drcutoff(0.1d0)
+    call constructor%set_drcutoff(1.0d0)
     call constructor%set_ensble('nve')
     call constructor%set_bfactor(4.9d-5)
     call constructor%ensemble_init()

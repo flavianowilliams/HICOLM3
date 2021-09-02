@@ -54,7 +54,7 @@ contains
        end do
        constructor%sys_shift(i)=0.d0
     end do
-    call constructor%set_zmatrixtol(0.5d0)
+    call constructor%set_zmatrix_tol(0.5d0)
     call constructor%set_coulop('fscs')
     call constructor%set_fscsalpha(0.25d0)
     call constructor%set_bondmax(100)

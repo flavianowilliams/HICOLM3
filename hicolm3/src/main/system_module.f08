@@ -22,14 +22,14 @@ module system_module
   !*******************************************************************************************
   !*******************************************************************************************
 
-  use molecule_module
+  use zmatrix_module
 
   implicit none
 
   private
   public :: system
 
-  type, extends(molecule) :: system
+  type, extends(zmatrix) :: system
      real(8), private :: qtotal
      real(8), private :: mtotal
    contains
@@ -50,6 +50,7 @@ contains
     integer                      :: ntmol(10),nxmol(10),zatmol(10,1000)
     character(6)                 :: tpmol(10,1000)
     real(8)                      :: qatmol(10,1000)
+    real(8)                      :: zmatrix_tol
     character(10)                :: namemol(10)
     character(11)                :: key
     logical                      :: check
@@ -66,8 +67,7 @@ contains
        if(key.eq.'cell')then
           backspace(5)
           read(5,*)key,this%v(1,1),this%v(2,2),this%v(3,3)
-       end if
-       if(key.eq.'nmol')then
+       elseif(key.eq.'nmol')then
           backspace(5)
           read(5,*)key,nmol
           do i=1,nmol
@@ -77,12 +77,16 @@ contains
              read(5,*)(qatmol(i,k),k=1,nxmol(i))
              nxmolmax=max(nxmolmax,nxmol(i))
           end do
-       end if
-       if(key.eq.'translate')then
+       elseif(key.eq.'translate')then
           backspace(5)
           read(5,*)key,(this%sys_shift(i),i=1,3)
+       elseif(key.eq.'zmatrix')then
+          backspace(5)
+          read(5,*)key,zmatrix_tol
+          call this%set_zmatrix_tol(zmatrix_tol)
+       elseif(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')then
+          check=.false.
        end if
-       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
     end do
     call this%set_nmol(nmol)
     if(this%get_nmol().le.0)goto 2
