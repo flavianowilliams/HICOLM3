@@ -1,0 +1,517 @@
+@startuml
+package main{
+class Constants{
+    - pi: double
+    - kb: double
+    - n0: double
+    - kelect: double
+    - mconv: double
+    - aconv: double
+    - hcconv: double
+    - elconv: double
+    - keconv: double
+    - econv: double
+    - rconv: double
+    - pconv: double
+    - tconv: double
+    + constants_prepare()
+    + get_pi()
+    + get_kb()
+    + get_n0()
+    + get_kelect()
+    + get_mconv()
+    + get_aconv()
+    + get_hcconv()
+    + get_elconv()
+    + get_keconv()
+    + get_econv()
+    + get_rconv()
+    + get_pconv()
+    + get_tconv()
+    + get_teconv()
+    + get_kconv()
+}
+class Structure{
+    - nmol: integer
+    - natom: integer
+    - nfree: integer
+    - gsym: character
+    + ntmol[]: integer
+    + nxmol[]: integer
+    + namemol[]: character
+    - volume: double
+    - a: double
+    - b: double
+    - c: double
+    - alpha: double
+    - beta: double
+    - gamma: double
+    + xa[]: double
+    + ya[]: double
+    + za[]: double
+    + v[]: double
+    + sys_shift[]: double
+    - structure_init()
+    + sites()
+    + translate()
+    + molecules()
+    + translate()
+    + set_lattice_angles()
+    + set_symmetry()
+    + set_nmol()
+    + get_nmol()
+    + set_natom()
+    + get_natom()
+    + set_namemol()
+    + set_ntmol()
+    + set_nxmol()
+    + set_volume()
+    + get_volume()
+    + set_volume2()
+    + set_nfree()
+    + get_nfree()
+    + set_a()
+    + get_a()
+    + set_b()
+    + get_b()
+    + set_c()
+    + get_c()
+    + get_alpha()
+    + get_beta()
+    + get_gamma()
+    + get_gsym()
+    + ccp()
+    + mic()
+    + random_coordinates()
+}
+Constants <|-right- Structure
+class Molecule{
+    + zatom[]: integer
+    + sf_coul[]: double
+    + sf_vdw[]: double
+    + qatmol[]: double
+    + massmol[]: double
+    + mmolar[]: double
+    + tpmol[]: double
+    + set_tpmol()
+    + set_zatmol()
+    + molecule_init()
+    + set_molecule()
+    + set_massmol()
+    + set_mmolar()
+    + set_scale_factor()
+    + set_global()
+}
+Structure <|-right- Molecule
+class System{
+    - qtotal: double
+    - mtotal: double
+    + set_qtotal()
+    + get_qtotal()
+    + set_mtotal()
+    + get_mtotal()
+    + set_system()
+}
+Molecule <|-right- Zmatrix
+Zmatrix <|-right- System
+class Zmatrix{
+    - zmatrix_tol: double
+    - bondmax: integer
+    - bendmax: integer
+    - torsmax: integer
+    - itorsmax: integer
+    + bondscnt[]: integer
+    + bendscnt[]: integer
+    + torscnt[]: integer
+    + molbond[]: integer
+    + molbend[]: integer
+    + moltors[]: integer
+    - zmatrix_init()
+    + set_bonds()
+    + get_bonds()
+    + set_torsion()
+    + covalent_radius()
+    + set_internal_coordinates()
+    + set_bondmax()
+    + get_bondmax()
+    + set_bendmax()
+    + get_bendmax()
+    + set_torsmax()
+    + get_torsmax()
+    + set_itorsmax()
+    + get_itorsmax()
+    + set_zmatrix_tol()
+    + get_zmatrix_tol()
+    + set_zmatrixtol()
+}
+System <|-right- ForceField
+class ForceField{
+    - nspcs: integer
+    - nvdw: integer
+    + itorscnt[]: integer
+    + molitors[]: integer
+    - coulop: character
+    - fscsalpha: double
+    + parbnd[]: double
+    + parbend[]: double
+    + paritors[]: double
+    + parvdw[]: double
+    + spcs[]: character
+    + spcvdw[]: character
+    + tbonds[]: character
+    + tbends[]: character
+    + ttors[]: character
+    + titors[]: character
+    + tvdw[]: character
+    - forcefield_init()
+    + set_spcs()
+    + set_nspcs()
+    + get_nspcs()
+    + set_parbnd()
+    + set_parbend()
+    + set_partors()
+    + set_paritors()
+    + set_extra_bonds()
+    + set_extra_angles()
+    + set_extra_dihedrals()
+    + set_extra_vdw()
+    + set_extra_coulop()
+    + set_parvdw()
+    + set_nvdw()
+    + get_nvdw()
+    + set_check_vdw()
+    + set_fscsalpha()
+    + get_fscsalpha()
+    + set_coulop()
+    + get_coulop()
+}
+class Charmm{
+    + natp: integer
+    + prms_vdw[]: double
+    + prms_itors[]: double
+    + prms_tors[]: double
+    + prms_angles[]: double
+    + prms_bonds[]: double
+    + atp[]: double
+    + set_natp()
+    + get_natp()
+    + set_charmmtypes()
+    + set_charmmbonds()
+    + set_charmmangles()
+    + set_charmmdihedrals()
+    + set_charmmidihedrals()
+    + set_charmmvdw()
+}
+ForceField -right-* Charmm
+class Prepare{
+    + check()
+    + print_sys()
+    + print_top()
+    + print_out()
+}
+ForceField <|-- Prepare
+}
+' Fim do pacote main
+package md {
+class Input{
+    - nstep: integer
+    - nrelax: integer
+    - nframes: integer
+    - nhist: integer
+    - timestep: double
+    - press: double
+    - temp: double 
+    - rcutoff: double 
+    - drcutoff: double
+    - pstat: double 
+    - tstat: double 
+    - bfactor: double
+    - checkenergy: double
+    - tolerance: double
+    - restart: character
+    - ensble: character
+    - ensble_mt: character
+    + set_input()
+    + set_inopt()
+    + set_topology()
+    + set_molecules()
+    + set_latticevectors()
+    + set_restart()
+    + get_restart()
+    + set_nstep()
+    + get_nstep()
+    + set_nrelax()
+    + get_nrelax()
+    + set_nframes()
+    + get_nframes()
+    + set_nhist()
+    + get_nhist()
+    + set_timestep()
+    + get_timestep()
+    + set_press()
+    + get_press()
+    + set_temp()
+    + get_temp()
+    + set_rcutoff2()
+    + set_rcutoff()
+    + get_rcutoff()
+    + set_drcutoff()
+    + get_drcutoff()
+    + set_pstat()
+    + get_pstat()
+    + set_tstat()
+    + get_tstat()
+    + set_ensble()
+    + get_ensble()
+    + set_ensble_mt()
+    + get_ensble_mt()
+    + set_bfactor()
+    + get_bfactor()
+    + set_checkenergy()
+    + get_checkenergy()
+    + set_tolerance()
+    + get_tolerance()
+}
+Input ---|> ForceField
+class Atoms{
+    + zat[]: integer
+    + mass[]: double
+    + qat[]: double
+    + vax[]: double
+    + vay[]: double 
+    + vaz[]: double 
+    + fax[]: double 
+    + fay[]: double 
+    + faz[]: double 
+    + tpa[]: character
+    + set_zat()
+    + set_mass()
+    + set_qat()
+    + set_tpa()
+}
+Atoms -right-|> Input
+class NeighbourList{
+    - verlchk: integer
+    + ilist[]: integer
+    + nlist[]: integer
+    + neighbour_prepare()
+    + verlet_list()
+    + set_verlchk()
+    + get_verlchk()
+}
+NeighbourList -right-|> Atoms
+class Interaction{
+    - enpot: double 
+    - virtot: double 
+    - encorr: double 
+    - vircorr: double 
+    - fbi[]: double 
+    - fbj[]: double 
+    - fbk[]: double 
+    - fbl[]: double 
+    + interaction_init()
+    + set_forcefield()
+    + set_intraff()
+    + set_interff()
+    + set_force2()
+    + set_force3()
+    + set_force4()
+    + set_force()
+    + set_enpot()
+    + get_enpot()
+    + set_virtot()
+    + get_virtot()
+    + set_vdwcorr()
+    + get_encorr()
+    + get_vircorr()
+}
+Interaction -right-|> NeighbourList
+class Thermodynamics{
+    - temperature: double 
+    - pressure: double 
+    - ekinetic: double 
+    - etotal: double 
+    - sigma: double 
+    - qmass: double 
+    - pmass: double 
+    + set_temperature()
+    + get_temperature()
+    + set_pressure()
+    + get_pressure()
+    + set_ekinetic()
+    + get_ekinetic()
+    + set_etotal()
+    + get_etotal()
+    + set_sigma()
+    + get_sigma()
+    + set_qmass()
+    + get_qmass()
+    + set_pmass()
+    + get_pmass()
+}
+Thermodynamics -right-|> Interaction
+class VanderWaals{
+    - envdw: double
+    - virvdw: double 
+    - rcutoff: double 
+    - force: double 
+    + set_vanderwaals()
+    + vanderwaals_prepare()
+    + set_envdw()
+    + get_envdw()
+    + set_virvdw()
+    + get_virvdw()
+    + get_force()
+}
+Interaction <|-- VanderWaals
+class Coulomb{
+    - encoul: double 
+    - vircoul: double 
+    - rcutoff: double 
+    - kconv: double 
+    - pi: double 
+    - force: double 
+    - alcoul: double 
+    - coulop: character
+    + set_coulomb()
+    + coulomb_init()
+    + set_encoul()
+    + get_encoul()
+    + set_vircoul()
+    + get_vircoul()
+    + get_force()
+}
+Interaction <|-- Coulomb
+class Bonds{
+    - enbond: double 
+    - virbond: double 
+    - force: double 
+    + set_bonds()
+    + set_enbond()
+    + get_enbond()
+    + set_virbond()
+    + get_virbond()
+    + get_force()
+}
+Interaction <|-- Bonds
+class Angles{
+    - enbend: double 
+    - virbend: double 
+    - force: double 
+    + set_angles()
+    + set_enbend()
+    + get_enbend()
+    + set_virbend()
+    + get_virbend()
+    + get_force()
+}
+Interaction <|-- Angles
+class Dihedrals{
+    - entors: double 
+    - virtors: double 
+    - force: double 
+    + set_dihedrals()
+    + set_entors()
+    + get_entors()
+    + set_virtors()
+    + get_virtors()
+    + get_force()
+}
+Interaction <|-- Dihedrals
+class Ensemble{
+    - tfcnvt: double 
+    - tfcnpt: double 
+    - bfc: double 
+    - rcm[]: double 
+    - vcm[]: double 
+    + ensemble_init()
+    + set_nve()
+    + set_nvt_berendsen()
+    + set_npt_berendsen()
+    + set_nvt_berendsen()
+    + set_npt_berendsen()
+    + set_tfcnvt()
+    + get_tfcnvt()
+    + set_tfcnpt()
+    + get_tfcnpt()
+    + set_bfc()
+    + get_bfc()
+    + set_bfc2()
+    + check_lattice()
+    + check_energy()
+    + set_rcm()
+    + get_rcm()
+}
+Ensemble <|-right- Thermodynamics
+class MolecularDynamics{
+    - time: double 
+    + check()
+    + print_geometry()
+    + print_dataframes()
+    + set_canonicalvariables()
+    + print_out()
+    + print()
+    + set_time()
+    + get_time()
+    + convert_units()
+}
+MolecularDynamics <|-right- Ensemble
+}
+package opt {
+class Interopt{
+    - d1bond: double 
+    - d2bond: double 
+    - d1bend: double 
+    - d2bend: double 
+    + set_bondopt()
+    + set_angleopt()
+    + set_vanderwaals()
+    + set_coulomb()
+    + get_d1bond()
+    + get_d2bond()
+    + get_d1bend()
+    + get_d2bend()
+}
+Interopt --|> NeighbourList
+class GradientDescent{
+    - nmatrix: integer
+    - lsearch: double 
+    - enpot: double 
+    - maxforce: double 
+    + res[]: double 
+    + hess[]: double
+    + dralpha: double
+    + drbetaalpha: double
+    + gd_init()
+    + set_loop()
+    + set_dralpha()
+    + get_dralpha()
+    + set_drbetaalpha()
+    + get_drbetaalpha()
+    + set_residue()
+    + set_residue2()
+    + set_residue3()
+    + set_hessian()
+    + set_hessian2()
+    + set_hessian3()
+    + set_nmatrix()
+    + get_nmatrix()
+    + set_lsearch()
+    + get_lsearch()
+    + set_enpot()
+    + get_enpot()
+    + set_maxforce()
+    + get_maxforce()
+}
+GradientDescent -right-|> Interopt
+class Optimize{
+    + check()
+    + print()
+    + convert_units()
+    + set_canonicalvariables()
+    + print_geometry()
+    + print_dataframes()
+}
+Optimize -right-|> GradientDescent
+}
+@enduml

@@ -1,0 +1,26 @@
+# Choose the method to be evaluated. For molecular dynamics use @MDRUNNING and optimization
+# @MDPREPARE. The default optin is optimization procedure.
+
+#@MDPREPARE # optimizing initial system
+@PREPARE
+
+# Structure settings. Type the coordinates of the lattice vectors of the unit cell.
+
+&SYS
+ cell 21.0 21.0 21.0
+ nmol 1
+ C2H4 1 6
+&END
+
+&FORCE_FIELD
+ electrostatic fscs 0.25
+ molecule C2H4
+  6 6 1 1 1 1
+  CC321 CC321 HCA2 HCA2 HCA2 HCA2
+  0.0 0.0 0.0 0.0 0.0 0.0
+  dihedrals 3
+  1 3 1 2 5 harm 1.0 180.0
+  2 3 1 2 6 harm 1.0 0.0
+  4 4 1 2 6 harm 1.0 180.0
+ end_molecule
+&END

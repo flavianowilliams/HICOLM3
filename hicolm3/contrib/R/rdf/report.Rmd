@@ -1,0 +1,24 @@
+---
+title: "Report"
+author: ""
+date: ""
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+  knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+  rm(list = ls())
+  graphics.off()
+  library(tidyverse)
+  setwd(getwd())
+```
+
+```{r, include=FALSE}
+  source("import_and_clean_data.R",local = knitr::knit_global())
+  source("model.R",local = knitr::knit_global())
+```
+
+```{r}
+  system(command = "read")
+  print(teste)
+```
