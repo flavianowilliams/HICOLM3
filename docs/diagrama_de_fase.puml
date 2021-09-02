@@ -112,7 +112,8 @@ class System{
     + get_mtotal()
     + set_system()
 }
-Molecule <|-right- System
+Molecule <|-right- Zmatrix
+Zmatrix <|-right- System
 class Zmatrix{
     - zmatrix_tol: double
     - bondmax: integer
@@ -143,7 +144,7 @@ class Zmatrix{
     + get_zmatrix_tol()
     + set_zmatrixtol()
 }
-System <|-right- Zmatrix
+System <|-right- ForceField
 class ForceField{
     - nspcs: integer
     - nvdw: integer
@@ -184,7 +185,6 @@ class ForceField{
     + set_coulop()
     + get_coulop()
 }
-Zmatrix <|-right- ForceField
 class Charmm{
     + natp: integer
     + prms_vdw[]: double
