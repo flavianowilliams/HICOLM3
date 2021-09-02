@@ -326,7 +326,7 @@ contains
             'mass',',','charge',',','x',',','y',',','z',',','fx',',','fy',',','fz',',',&
             'vx',',','vy',',','vz'
        write(7,15)'step',',','time',',','volume',',','temperature',',','pressure',',',&
-            'kinetic',',','potential',',','energy',',','density'
+            'kinetic',',','intramolecular',',','intermolecular',',','energy'
        write(8,25)'step',',','time',',','ax',',','ay',',','az',',','bx',',','by',',','bz',&
             ',','cx',',','cy',',','cz',',','a',',','b',',','c'
     end if
@@ -364,15 +364,16 @@ contains
             this%get_temperature()*this%get_teconv(),',',&
             this%get_pressure()*this%get_pconv(),',',&
             this%get_ekinetic()*this%get_econv(),',',&
-            this%get_enpot()*this%get_econv(),',',&
-            this%get_etotal()*this%get_econv(),',',&
-            (this%get_mtotal()/this%get_volume())*this%get_mconv()/&
-            (this%get_n0()*1.d-24*this%get_rconv()**3)
+            this%get_eintra()*this%get_econv(),',',&
+            this%get_einter()*this%get_econv(),',',&
+            this%get_etotal()*this%get_econv()
+!            (this%get_mtotal()/this%get_volume())*this%get_mconv()/&
+!            (this%get_n0()*1.d-24*this%get_rconv()**3)
     end if
 5   format(7x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,2x,a4,a1,7x,a4,a1,9x,a6,a1,10x,&
          3(a1,a1,13x),6(a2,a1,12x))
 10  format(3x,i12,a1,e14.6,a1,2(i8,a1),i5,a1,a7,a1,21(e14.6,a1))
-15  format(5x,a4,a1,10x,a4,a1,9x,a6,a1,6x,a11,a1,4x,a8,a1,5x,a8,a1,7x,a9,a1,6x,a6,a1,7x,a7)
+15  format(5x,a4,a1,10x,a4,a1,9x,a6,a1,6x,a11,a1,4x,a8,a1,5x,a8,a1,4x,a14,a1,1x,a14,a1,7x,a7)
 20  format(1x,i12,a1,13(e14.6,a1))
 25  format(2x,2(a4,a1,12x),12(a2,a1,12x))
   end subroutine print_dataframes
