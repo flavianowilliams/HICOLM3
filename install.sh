@@ -77,57 +77,7 @@ cp -r $path/hicolm/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
 #
 #sh ./hicolm/install.sh # -- HICOLM install script
 #
-<<<<<<< HEAD
-#echo -e "\e[33m-> Preparing R environment\e[0m"
-#Rscript $path/contrib/R/prepare.R
-#echo
-#
-# --preparing script to call HICOLM executable
-#
-if [ -f "$exe_dir/hicolm" ]
-then
-    rm $exe_dir/hicolm
-fi
-#
-touch $exe_dir/hicolm
-#
-echo "#!/bin/sh
-#
-if [ ! -d '/tmp/amber' ]
-then
-    cp -r $aux_dir/HICOLM/amber /tmp/amber
-else
-    if [ ! -f '/tmp/amber/amber_bonds.prm' ]
-    then
-        cp -r $aux_dir/HICOLM/amber/amber_bonds.prm /tmp/amber/amber_bonds.prm
-    fi
-    if [ ! -f '/tmp/amber/amber_angles.prm' ]
-    then
-        cp -r $aux_dir/HICOLM/amber/amber_angles.prm /tmp/amber/amber_angles.prm
-    fi
-    if [ ! -f '/tmp/amber/amber_dihedrals_general.prm' ]
-    then
-        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_general.prm /tmp/amber/amber_dihedrals_general.prm
-    fi
-    if [ ! -f '/tmp/amber/amber_dihedrals_proper.prm' ]
-    then
-        cp -r $aux_dir/HICOLM/amber/amber_dihedrals_proper.prm /tmp/amber/amber_dihedrals_proper.prm
-    fi
-    if [ ! -f '/tmp/amber/amber_vdw.prm' ]
-    then
-        cp -r $aux_dir/HICOLM/amber/amber_vdw.prm /tmp/amber/amber_vdw.prm
-    fi
-fi
-#
-$exe_dir/HICOLM.bin" >> $exe_dir/hicolm
-#
-#case "$supp" in
-#    yes|YES|Yes)
-#        echo "
-#if [ -d \"/home/\$USER/.hicolm\" ]
-=======
 #if [ ! -f "$path/hicolm/src/HICOLM" ]
->>>>>>> development
 #then
 #    echo -e "\e[31mError in compiling HICOLM. Installation aborted!"
 #    exit
