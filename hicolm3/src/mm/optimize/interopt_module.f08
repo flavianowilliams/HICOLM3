@@ -93,7 +93,12 @@ contains
     case('charmm')
        en=prm(1)*((prm(2)/dr)**12-2.0d0*(prm(2)/dr)**6)
        this%d1bond=-12.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)/dr
-       this%d2bond=12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
+       this%d2bond=&
+            12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
+    case('lj')
+       en=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
+       this%d1bond=-24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr
+       this%d2bond=24.d0*prm(1)*(26.d0*(prm(2)/dr)**12-7.d0*(prm(2)/dr)**6)/dr**2
     end select
   end subroutine set_vanderwaals
 
