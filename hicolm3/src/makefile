@@ -49,6 +49,6 @@ all: $(OBJ_UTILS) $(OBJ_SYSTEM) $(OBJ_TOPOLOGY) $(OBJ_PREPARE) $(OBJ_MD) $(OBJ_O
 	$(FC) -o HICOLM3 $(LDFLAGS) $(OBJ_UTILS) $(OBJ_SYSTEM) $(OBJ_TOPOLOGY) $(OBJ_PREPARE) $(OBJ_MD) $(OBJ_OPTIMIZE) $(OBJ_MAIN)
 #
 clean:
-	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o  $(ODIR5)/*.o  $(ODIR6)/*.o $(ODIR7)/*.o  *.o *.mod *.md
-#	rm -f $(OBJ_GEN) $(OBJ_MAIN) $(OBJ_MD) $(OBJ_OPT) *.md
+#	rm -f $(ODIR1)/*.o $(ODIR2)/*.o $(ODIR3)/*.o $(ODIR4)/*.o  $(ODIR5)/*.o  $(ODIR6)/*.o $(ODIR7)/*.o  *.o *.mod *.md
+	rm -f $(OBJ_MD) $(OBJ_OPTIMIZE) $(OBJ_MAIN) *.md
 #==========================================================================

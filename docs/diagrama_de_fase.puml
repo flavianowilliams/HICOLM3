@@ -301,6 +301,8 @@ class NeighbourList{
 }
 NeighbourList -right-|> Atoms
 class Interaction{
+    - eintra: double
+    - einter: double
     - enpot: double 
     - virtot: double 
     - encorr: double 
@@ -319,6 +321,10 @@ class Interaction{
     + set_force()
     + set_enpot()
     + get_enpot()
+    + set_eintra()
+    + get_eintra()
+    + set_inter()
+    + get_einter()
     + set_virtot()
     + get_virtot()
     + set_vdwcorr()

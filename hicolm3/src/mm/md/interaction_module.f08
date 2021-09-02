@@ -19,8 +19,8 @@
 !SOFTWARE.
 !
 module interaction_module
-  !*******************************************************************************************
-  !*******************************************************************************************
+  !*******************************************************************************
+  !*******************************************************************************
 
   use neighbourlist_module
   use bonds_module
@@ -40,6 +40,8 @@ module interaction_module
      type(coulomb)                 :: coul
      type(dihedrals)               :: dih
      type(vanderwaals)             :: vdw
+     real(8), private              :: eintra
+     real(8), private              :: einter
      real(8), private              :: enpot
      real(8), private              :: virtot
      real(8), private              :: encorr
@@ -59,6 +61,10 @@ module interaction_module
      generic   :: set_force => set_force2, set_force3, set_force4
      procedure :: set_enpot
      procedure :: get_enpot
+     procedure :: set_eintra
+     procedure :: get_eintra
+     procedure :: set_einter
+     procedure :: get_einter
      procedure :: set_virtot
      procedure :: get_virtot
      procedure :: set_vdwcorr
@@ -84,23 +90,25 @@ contains
        this%fay(i)=0.d0
        this%faz(i)=0.d0
     end do
-    call this%set_enpot(this%get_encorr())
     call this%set_virtot(this%get_vircorr())
     call this%set_intraff()
     call this%set_interff()
+    call this%set_enpot()
   end subroutine set_forcefield
 
   subroutine set_intraff(this)
     implicit none
     class(interaction), intent(inout) :: this
     integer                           :: i,j,k,l,m,n,o,ni,nj,nk,nl,nx
-    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot,theta,dr1,dr2
-    real(8)                           :: prm(3),drij(3),drik(3),drjk(3),drkl(3),ri(3),rj(3)
+    real(8)                           :: xvz,yvz,zvz,dr,virtot,theta,dr1,dr2
+    real(8)                           :: eintra
+    real(8)                           :: prm(3),drij(3),drik(3),drjk(3)
+    real(8)                           :: drkl(3),ri(3),rj(3)
     real(8)                           :: rk(3),rl(3)
     real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
     character(7)                      :: ptrm
     nx=0
-    enpot=0.d0
+    eintra=0.d0
     virtot=0.d0
     do i=1,this%get_nmol()
        do j=1,this%ntmol(i)
@@ -116,7 +124,7 @@ contains
              call this%bnd%set_bonds(dr,prm,ptrm)
              call this%set_force(ni,nj,xvz,yvz,zvz,this%bnd%get_force())
              call this%bnd%set_virbond(this%bnd%get_force(),dr)
-             enpot=enpot+this%bnd%get_enbond()
+             eintra=eintra+this%bnd%get_enbond()
              virtot=virtot+this%bnd%get_virbond()
           end do
           do k=1,this%bendscnt(i)
@@ -136,7 +144,7 @@ contains
              call this%set_force&
                   (ni,nj,nk,drij,drik,dr1,dr2,theta,this%tht%get_force())
              call this%tht%set_virbend(this%fbj,this%fbk,drij,drik)
-             enpot=enpot+this%tht%get_enbend()
+             eintra=eintra+this%tht%get_enbend()
              virtot=virtot+this%tht%get_virbend()
           end do
           do k=1,this%torscnt(i)
@@ -202,7 +210,7 @@ contains
                    call this%set_force&
                         (ni,nj,xvz,yvz,zvz,this%coul%get_force()*this%sf_coul(i))
                    call this%coul%set_vircoul(this%coul%get_force()*this%sf_coul(i),dr)
-                   enpot=enpot+this%coul%get_encoul()*this%sf_coul(i)
+                   eintra=eintra+this%coul%get_encoul()*this%sf_coul(i)
                    virtot=virtot+this%coul%get_vircoul()
                 end if
                 do m=1,this%get_nvdw()
@@ -218,7 +226,7 @@ contains
                       call this%set_force&
                            (ni,nj,xvz,yvz,zvz,this%vdw%get_force()*this%sf_vdw(i))
                       call this%vdw%set_virvdw(this%vdw%get_force()*this%sf_vdw(i),dr)
-                      enpot=enpot+this%vdw%get_envdw()*this%sf_vdw(i)
+                      eintra=eintra+this%vdw%get_envdw()*this%sf_vdw(i)
                       virtot=virtot+this%vdw%get_virvdw()
                    end if
                 end do
@@ -229,7 +237,7 @@ contains
        end do
 2      continue
     end do
-    call this%set_enpot(enpot+this%get_enpot())
+    call this%set_eintra(eintra)
     call this%set_virtot(virtot+this%get_virtot())
   end subroutine set_intraff
 
@@ -237,10 +245,10 @@ contains
     implicit none
     class(interaction), intent(inout) :: this
     integer                           :: i,j,k,l,ni,nj
-    real(8)                           :: xvz,yvz,zvz,dr,enpot,virtot
+    real(8)                           :: xvz,yvz,zvz,dr,virtot,einter
     real(8)                           :: prm(3)
     character(7)                      :: ptrm
-    enpot=0.d0
+    einter=0.d0
     virtot=0.d0
     do i=1,this%get_natom()
        do j=1,this%nlist(i)
@@ -252,7 +260,7 @@ contains
              call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
              call this%set_force(ni,nj,xvz,yvz,zvz,this%coul%get_force())
              call this%coul%set_vircoul(this%coul%get_force(),dr)
-             enpot=enpot+this%coul%get_encoul()
+             einter=einter+this%coul%get_encoul()
              virtot=virtot+this%coul%get_vircoul()
           end if
           do k=1,this%get_nvdw()
@@ -265,13 +273,13 @@ contains
                 call this%vdw%set_vanderwaals(dr,prm,ptrm)
                 call this%set_force(ni,nj,xvz,yvz,zvz,this%vdw%get_force())
                 call this%vdw%set_virvdw(this%vdw%get_force(),dr)
-                enpot=enpot+this%vdw%get_envdw()
+                einter=einter+this%vdw%get_envdw()
                 virtot=virtot+this%vdw%get_virvdw()
              end if
           end do
        end do
     end do
-    call this%set_enpot(enpot+this%get_enpot())
+    call this%set_einter(einter)
     call this%set_virtot(virtot+this%get_virtot())
   end subroutine set_interff
 
@@ -379,11 +387,10 @@ contains
     this%faz(i4)=this%faz(i4)+this%fbl(3)
   end subroutine set_force4
 
-  subroutine set_enpot(this,enpot)
+  subroutine set_enpot(this)
     implicit none
     class(interaction), intent(inout) :: this
-    real(8), intent(in)               :: enpot
-    this%enpot=enpot
+    this%enpot=this%get_eintra()+this%get_einter()+this%get_encorr()
   end subroutine set_enpot
 
   double precision function get_enpot(this)
@@ -391,6 +398,32 @@ contains
     class(interaction), intent(in) :: this
     get_enpot=this%enpot
   end function get_enpot
+
+  subroutine set_eintra(this,eintra)
+    implicit none
+    class(interaction), intent(inout) :: this
+    real(8), intent(in)               :: eintra
+    this%eintra=eintra
+  end subroutine set_eintra
+
+  double precision function get_eintra(this)
+    implicit none
+    class(interaction), intent(in) :: this
+    get_eintra=this%eintra
+  end function get_eintra
+
+  subroutine set_einter(this,einter)
+    implicit none
+    class(interaction), intent(inout) :: this
+    real(8), intent(in)               :: einter
+    this%einter=einter
+  end subroutine set_einter
+
+  double precision function get_einter(this)
+    implicit none
+    class(interaction), intent(in) :: this
+    get_einter=this%einter
+  end function get_einter
 
   subroutine set_virtot(this,virtot)
     implicit none
