@@ -1,0 +1,54 @@
+@startuml
+folder src {
+
+}
+folder mm {
+
+}
+src -- mm
+folder main {
+
+}
+src -- main
+folder utils {
+    file constants_module.f08
+}
+mm ---- utils
+folder system {
+    file structure_module.f08
+    file molecule_module.f08
+    file zmatrix_module.f08
+    file system_module.f08
+}
+mm ---- system
+folder topology {
+    file forcefield_module.f08
+    file charmm_module.f08
+}
+mm ---- topology
+folder optimize {
+    file gradientdescent_module.f08
+    file interopt_module.f08
+    file optimize_module.f08
+}
+mm ---- optimize
+folder prepare {
+    file prepare_module.f08
+}
+mm ---- prepare
+folder md {
+    file angles_module.f08
+    file bonds_module.f08
+    file dihedrals_module.f08
+    file input_module.f08
+    file moleculardynamics_module.f08
+    file thermodynamics_module.f08
+    file atoms_module.f08
+    file coulomb_module.f08
+    file ensemble_module.f08
+    file interaction_module.f08
+    file neighbourlist_module.f08
+    file vanderwaals_module.f08
+}
+mm ---- md
+@enduml
