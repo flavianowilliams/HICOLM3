@@ -367,8 +367,6 @@ contains
             this%get_eintra()*this%get_econv(),',',&
             this%get_einter()*this%get_econv(),',',&
             this%get_etotal()*this%get_econv()
-!            (this%get_mtotal()/this%get_volume())*this%get_mconv()/&
-!            (this%get_n0()*1.d-24*this%get_rconv()**3)
     end if
 5   format(7x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,2x,a4,a1,7x,a4,a1,9x,a6,a1,10x,&
          3(a1,a1,13x),6(a2,a1,12x))
