@@ -373,9 +373,9 @@ contains
 5   format(7x,a4,a1,10x,a4,a1,7x,a8,a1,2x,a4,a1,a4,a1,2x,a4,a1,7x,a4,a1,9x,a6,a1,10x,&
          3(a1,a1,13x),6(a2,a1,12x))
 10  format(3x,i12,a1,e14.6,a1,2(i8,a1),i5,a1,a7,a1,21(e14.6,a1))
-15  format(5x,a4,a1,10x,a4,a1,9x,a6,a1,6x,a11,a1,4x,a8,a1,5x,a8,a1,4x,a14,a1,1x,a14,a1,7x,a7)
-20  format(1x,i12,a1,13(e14.6,a1))
-25  format(2x,2(a4,a1,12x),12(a2,a1,12x))
+15  format(5x,a4,a1,11x,a4,a1,11x,a6,a1,8x,a11,a1,6x,a8,a1,7x,a8,a1,6x,a14,a1,2x,a14,a1,5x,a7)
+20  format(1x,i12,a1,13(e16.8,a1))
+25  format(2x,2(a4,a1,13x),12(a2,a1,14x))
   end subroutine print_dataframes
 
   subroutine print_out(this)
