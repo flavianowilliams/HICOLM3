@@ -136,8 +136,8 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@MD')then
         call cpu_time(t1)
-        open(3,file='hicolm.axsf',status='unknown')        ! printing coordinates per frame
-        open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
+        open(3,file='hicolm.axsf',status='unknown')! printing coordinates per frame
+        open(4,file='atoms.csv',status='unknown') ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
         !

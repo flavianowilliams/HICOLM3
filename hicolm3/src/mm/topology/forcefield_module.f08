@@ -177,6 +177,11 @@ contains
           backspace(5)
           read(5,*)key,cvar
           call this%set_extra_coulop(cvar)
+       elseif(key.eq.'freeze')then
+          backspace(5)
+          read(5,*)key,i3
+          read(5,*)(this%ifreeze(i),i=1,n3)
+          call this%set_extra_freeze(i3,this%freeze)
        elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
           check=.false.
        end if
