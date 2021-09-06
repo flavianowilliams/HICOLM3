@@ -116,6 +116,7 @@ program HICOLM
         call prp%constants_prepare()             ! definindo constantes
         call prp%set_system()                    ! definindo parametros de estrut.
         call prp%set_natom()                     ! calculando qde de sitios atomico
+        call prp%set_freeze()                    ! definindo atomos congelados
         call prp%set_lattice_constants()         ! calculando constantes de rede
         call prp%set_lattice_angles()            ! calculando angulos de rede
         call prp%set_volume()                    ! calculando volume da supercelula
@@ -136,8 +137,8 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@MD')then
         call cpu_time(t1)
-        open(3,file='hicolm.axsf',status='unknown')        ! printing coordinates per frame
-        open(4,file='atoms.csv',status='unknown')          ! imprimindo informacoes atomicas
+        open(3,file='hicolm.axsf',status='unknown')! printing coordinates per frame
+        open(4,file='atoms.csv',status='unknown') ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
         !
@@ -324,9 +325,9 @@ program HICOLM
            if(gg.eq.0.d0)stop 'residue reached null value!'
            alpha=dgg/gg
            do j=1,opt%get_natom()
-              opt%xa(j)=opt%xa(j)+alpha*opt%res(3*j-2)
-              opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)
-              opt%za(j)=opt%za(j)+alpha*opt%res(3*j)
+              opt%xa(j)=opt%xa(j)+alpha*opt%res(3*j-2)*opt%freeze(j)
+              opt%ya(j)=opt%ya(j)+alpha*opt%res(3*j-1)*opt%freeze(j)
+              opt%za(j)=opt%za(j)+alpha*opt%res(3*j)*opt%freeze(j)
            end do
            call opt%ccp()
            call opt%verlet_list()

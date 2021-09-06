@@ -174,32 +174,36 @@ contains
     integer                     :: nstep
     real(8)                     :: tolerance
     character(9)                :: restart
-    character(13)               :: key
-1   read(5,*,end=2)key
-    if(key.ne.'&OPTIMIZATION')goto 1
-    do while (key.ne.'&END')
+    character(17)               :: key
+    logical                     :: check
+    check=.true.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&OPTIMIZATION'.or.key.eq.'&optimization')check=.false.
+    end do
+    check=.true.
+    do while (check)
        read(5,*)key
        if(key.eq.'nstep')then
           backspace(5)
           read(5,*)key,nstep
           call this%set_nstep(nstep)
-       end if
-       if(key.eq.'tolerance')then
+       elseif(key.eq.'tolerance')then
           backspace(5)
           read(5,*)key,tolerance
           call this%set_tolerance(tolerance)
-       end if
-       if(key.eq.'restart')then
+       elseif(key.eq.'restart')then
           backspace(5)
           read(5,*)key,restart
           call this%set_restart(restart)
-       end if
-       if(key.eq.'rcutoff')then
+       elseif(key.eq.'rcutoff')then
           backspace(5)
           read(5,*)key,this%rcutoff
+       elseif(key.eq.'&END_OPTIMIZATION'.or.key.eq.'&end_optimization')then
+          check=.false.
        end if
     end do
-2   rewind(5)
+1   rewind(5)
   end subroutine set_inopt
 
   subroutine set_topology(this)
@@ -347,13 +351,14 @@ contains
     read(10,'(1x,2i5)')nmol,natom
     call this%set_nmol(nmol)
     allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
-    allocate(this%xa(natom),this%ya(natom),this%za(natom))
+    allocate(this%xa(natom),this%ya(natom),this%za(natom),this%freeze(natom))
     nx=1
     do i=1,this%get_nmol()
        read(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
        do j=1,this%ntmol(i)
           do k=1,this%nxmol(i)
-             read(10,'(3f16.8)')this%xa(nx),this%ya(nx),this%za(nx)
+             read(10,'(3f16.8,i5)')&
+                  this%xa(nx),this%ya(nx),this%za(nx),this%freeze(nx)
              nx=nx+1
           end do
        end do
