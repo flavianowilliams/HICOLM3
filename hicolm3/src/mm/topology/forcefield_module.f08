@@ -127,9 +127,11 @@ contains
     implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i3,nx
+    integer, allocatable             :: freeze(:)
     character(16)                    :: key
     character(10)                    :: cvar
     logical                          :: check,check2
+    allocate(freeze(this%get_natom()))
     call this%forcefield_init()
     call this%set_parbnd()
     call this%set_parbend()
@@ -180,8 +182,8 @@ contains
        elseif(key.eq.'freeze')then
           backspace(5)
           read(5,*)key,i3
-          read(5,*)(this%ifreeze(i),i=1,n3)
-          call this%set_extra_freeze(i3,this%freeze)
+          read(5,*)(freeze(i),i=1,i3)
+          call this%set_extra_freeze(i3,freeze)
        elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
           check=.false.
        end if

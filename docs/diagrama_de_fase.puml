@@ -86,6 +86,7 @@ class Structure{
 }
 Constants <|-right- Structure
 class Molecule{
+    + freeze[]: integer
     + zatom[]: integer
     + sf_coul[]: double
     + sf_vdw[]: double
@@ -101,6 +102,8 @@ class Molecule{
     + set_mmolar()
     + set_scale_factor()
     + set_global()
+    + set_freeze()
+    + set_extra_freeze()
 }
 Structure <|-right- Molecule
 class System{

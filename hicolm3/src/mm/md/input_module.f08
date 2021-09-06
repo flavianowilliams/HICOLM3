@@ -351,13 +351,14 @@ contains
     read(10,'(1x,2i5)')nmol,natom
     call this%set_nmol(nmol)
     allocate(this%namemol(nmol),this%ntmol(nmol),this%nxmol(nmol))
-    allocate(this%xa(natom),this%ya(natom),this%za(natom))
+    allocate(this%xa(natom),this%ya(natom),this%za(natom),this%freeze(natom))
     nx=1
     do i=1,this%get_nmol()
        read(10,'(1x,a10,2(1x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i)
        do j=1,this%ntmol(i)
           do k=1,this%nxmol(i)
-             read(10,'(3f16.8)')this%xa(nx),this%ya(nx),this%za(nx)
+             read(10,'(3f16.8,i5)')&
+                  this%xa(nx),this%ya(nx),this%za(nx),this%freeze(nx)
              nx=nx+1
           end do
        end do

@@ -30,6 +30,7 @@ module molecule_module
   public :: molecule
 
   type, extends(structure) :: molecule
+     integer, allocatable      :: freeze(:)
      integer, allocatable      :: zatmol(:,:)
      real(8), allocatable      :: sf_coul(:)
      real(8), allocatable      :: sf_vdw(:)
@@ -44,6 +45,8 @@ module molecule_module
      procedure          :: set_massmol
      procedure          :: set_mmolar
      procedure          :: set_scale_factor
+     procedure          :: set_freeze
+     procedure          :: set_extra_freeze
   end type molecule
 
 contains
@@ -357,5 +360,26 @@ contains
        this%sf_vdw(i)=sf_vdw
     end do
   end subroutine set_scale_factor
+
+  subroutine set_freeze(this)
+    implicit none
+    class(molecule), intent(inout) :: this
+    integer                        :: i
+    allocate(this%freeze(this%get_natom()))
+    do i=1,this%get_natom()
+       this%freeze(i)=1
+    end do
+  end subroutine set_freeze
+
+  subroutine set_extra_freeze(this,ix,freeze)
+    implicit none
+    class(molecule), intent(inout) :: this
+    integer, intent(in)            :: ix
+    integer, intent(in)            :: freeze(:)
+    integer                        :: i
+    do i=1,ix
+       this%freeze(freeze(i))=0
+    end do
+  end subroutine set_extra_freeze
 
 end module molecule_module
