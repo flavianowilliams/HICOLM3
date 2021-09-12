@@ -320,101 +320,68 @@ contains
   subroutine set_parbnd(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i,j,k,m,i1,i2,n1,n2
-    logical                          :: check
+    integer                          :: i,j,m,i1,i2
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
+    open(12,file='/tmp/hicolm3/charmm/charmm_bonds.prm',status='old')
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           i1=this%molbond(i,j,1)
           i2=this%molbond(i,j,2)
-          n1=1
-          n2=1
-          do k=1,this%charmm%get_natp()
-             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
-          end do
-          check=.true.
+          call this%charmm%set_charmmbonds(this%tpmol(i,i1),this%tpmol(i,i2))
           do m=1,2
-             this%parbnd(i,j,m)=this%charmm%prms_bonds(n1,n2,m)
-             if(this%parbnd(i,j,m).lt.1.d-8)check=.false.
+             this%parbnd(i,j,m)=this%charmm%prms_bonds(m)
           end do
-          if(check.eqv..false.)then
-             do m=1,2
-                this%parbnd(i,j,m)=this%charmm%prms_bonds(n2,n1,m)
-             end do
-          end if
+          rewind(12)
        end do
     end do
+    close(12)
   end subroutine set_parbnd
 
   subroutine set_parbend(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i,j,k,m,i1,i2,i3,n1,n2,n3
-    logical                          :: check
+    integer                          :: i,j,m,i1,i2,i3
     allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
+    open(12,file='/tmp/hicolm3/charmm/charmm_angles.prm',status='old')
     do i=1,this%get_nmol()
        do j=1,this%bendscnt(i)
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
-          n1=1
-          n2=1
-          n3=1
-          do k=1,this%charmm%get_natp()
-             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i3))n3=k
-          end do
-          check=.true.
+          call this%charmm%set_charmmangles(this%tpmol(i,i1),this%tpmol(i,i2),&
+               this%tpmol(i,i3))
           do m=1,2
-             this%parbend(i,j,m)=this%charmm%prms_angles(n1,n2,n3,m)
-             if(this%parbend(i,j,m).lt.1.d-8)check=.false.
+             this%parbend(i,j,m)=this%charmm%prms_angles(m)
           end do
-          if(check.eqv..false.)then
-             do m=1,2
-                this%parbend(i,j,m)=this%charmm%prms_angles(n3,n2,n1,m)
-             end do
-          end if
+          rewind(12)
        end do
     end do
+    close(12)
   end subroutine set_parbend
 
   subroutine set_partors(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3,i4,i,j,k,m,n1,n2,n3,n4
-    logical                          :: check
+    integer                          :: i1,i2,i3,i4,i,j,m
     allocate(this%partors(this%get_nmol(),this%get_torsmax(),3))
+    open(12,file='/tmp/hicolm3/charmm/charmm_dihedrals.prm',status='old')
     do i=1,this%get_nmol()
        do j=1,this%torscnt(i)
           i1=this%moltors(i,j,1)
           i2=this%moltors(i,j,2)
           i3=this%moltors(i,j,3)
           i4=this%moltors(i,j,4)
-          n1=1
-          n2=1
-          n3=1
-          n4=1
-          do k=1,this%charmm%get_natp()
-             if(this%charmm%atp(k).eq.this%tpmol(i,i1))n1=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i2))n2=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i3))n3=k
-             if(this%charmm%atp(k).eq.this%tpmol(i,i4))n4=k
-          end do
-          check=.true.
+          call this%charmm%set_charmmdihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
+               this%tpmol(i,i3),this%tpmol(i,i4))
           do m=1,2
-             this%partors(i,j,m)=this%charmm%prms_tors(n1,n2,n3,n4,m)
-             if(this%partors(i,j,m).lt.1.d-8)check=.false.
+             this%partors(i,j,m)=this%charmm%prms_tors(m)
           end do
-          this%partors(i,j,3)=this%charmm%prms_tors(n1,n2,n3,n4,3)
-          if(check.eqv..false.)then
-             do m=1,3
-                this%partors(i,j,m)=this%charmm%prms_tors(n4,n3,n2,n1,m)
-             end do
-          end if
+          rewind(12)
        end do
     end do
+    print*,'parou na rotina set_partors...'
+    stop
+    close(12)
   end subroutine set_partors
 
   subroutine set_paritors(this)

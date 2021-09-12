@@ -198,7 +198,6 @@ class Charmm{
     + atp[]: double
     + set_natp()
     + get_natp()
-    + set_charmmtypes()
     + set_charmmbonds()
     + set_charmmangles()
     + set_charmmdihedrals()

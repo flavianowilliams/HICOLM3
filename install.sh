@@ -60,11 +60,17 @@ if [ -d "$aux_dir/HICOLM" ]
 then
     rm -rf $aux_dir/HICOLM
 fi
+if [ -d "$aux_dir/HICOLM3" ]
+then
+    rm -rf $aux_dir/HICOLM3
+fi
 #
 # -- creating new directories
 #
 mkdir $aux_dir/HICOLM
 mkdir $aux_dir/HICOLM/amber
+mkdir $aux_dir/HICOLM3
+mkdir $aux_dir/HICOLM3/charmm
 #
 # --copying auxiliary files--
 #
@@ -74,6 +80,7 @@ echo
 echo -e "\e[33m-> Moving files\e[0m"
 #
 cp -r $path/hicolm/contrib/amber/*.prm $aux_dir/HICOLM/amber/.
+cp -r $path/hicolm3/contrib/charmm/*.prm $aux_dir/HICOLM3/charmm/.
 #
 #sh ./hicolm/install.sh # -- HICOLM install script
 #

@@ -47,6 +47,29 @@ touch $exe_dir/hicolm3
 #
 echo "#!/bin/sh
 #
+if [ ! -d '/tmp/hicolm3' ]
+then
+    mkdir /tmp/hicolm3
+fi
+#
+if [ ! -d '/tmp/hicolm3/charmm' ]
+then
+    cp -r $aux_dir/HICOLM3/charmm /tmp/hicolm3/charmm
+else
+    if [ ! -f '/tmp/hicolm3/charmm/charmm_bonds.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/charmm/charmm_bonds.prm /tmp/hicolm3/charmm/charmm_bonds.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/charmm/charmm_angles.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/charmm/charmm_angles.prm /tmp/hicolm3/charmm/charmm_angles.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/charmm/charmm_dihedrals.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/charmm/charmm_dihedrals.prm /tmp/hicolm3/charmm/charmm_dihedrals.prm
+    fi
+fi
+#
 $exe_dir/HICOLM3.bin" >> $exe_dir/hicolm3
 #
 chmod +x $exe_dir/hicolm3
