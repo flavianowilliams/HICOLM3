@@ -47,8 +47,9 @@ touch $exe_dir/hicolm3
 #
 echo "#!/bin/sh
 #
-if [ ! -d '/tmp/hicolm3' ]
+if [ -d '/tmp/hicolm3' ]
 then
+    rm -rf /tmp/hicolm3
     mkdir /tmp/hicolm3
 fi
 #
@@ -67,6 +68,10 @@ else
     if [ ! -f '/tmp/hicolm3/charmm/charmm_dihedrals.prm' ]
     then
         cp -r $aux_dir/HICOLM3/charmm/charmm_dihedrals.prm /tmp/hicolm3/charmm/charmm_dihedrals.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/charmm/charmm_idihedrals.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/charmm/charmm_idihedrals.prm /tmp/hicolm3/charmm/charmm_idihedrals.prm
     fi
 fi
 #

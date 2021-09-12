@@ -30,7 +30,7 @@ module charmm_module
   type :: charmm
      integer                  :: natp
      real(8), allocatable     :: prms_vdw(:,:)
-     real(8), allocatable     :: prms_itors(:,:,:,:,:)
+     real(8)                  :: prms_itors(3)
      real(8)                  :: prms_tors(3)
      real(8)                  :: prms_angles(2)
      real(8)                  :: prms_bonds(2)
@@ -143,102 +143,87 @@ contains
 1   return
   end subroutine set_charmmdihedrals
 
-  subroutine set_charmmidihedrals(this)
+  subroutine set_charmmidihedrals(this,p1,p2,p3,p4)
+    implicit none
     class(charmm), intent(inout) :: this
-    integer                     :: i,j,k,l,m
-    allocate(&
-         this%prms_itors(this%get_natp(),this%get_natp(),this%get_natp(),this%get_natp(),4))
+    character(6), intent(in)     :: p1,p2,p3,p4
+    character(6)                 :: pa,pb,pc,pd
+    integer                      :: n1
+    real(8)                      :: x1,x2
+    logical                      :: check
+    this%prms_itors(1)=0.d0
+    this%prms_itors(2)=0.d0
+    this%prms_itors(3)=0.d0
+    check=.true.
+    do while(check)
+       read(12,*,end=1)pa,pb,pc,pd,x1,n1,x2
+       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
+          this%prms_itors(1)=dble(x1)
+          this%prms_itors(2)=dble(n1)
+          this%prms_itors(3)=dble(x2)
+          check=.false.
+       elseif(pd.eq.p1.and.pc.eq.p2.and.pb.eq.p3.and.pa.eq.p4)then
+          this%prms_itors(1)=dble(x1)
+          this%prms_itors(2)=dble(n1)
+          this%prms_itors(3)=dble(x2)
+          check=.false.
+       end if
+    end do
+1   return
+  end subroutine set_charmmidihedrals
+
+  subroutine set_charmmvdw(this)
+    class(charmm), intent(inout) :: this
+    integer                     :: i,j
+    allocate(this%prms_vdw(this%get_natp(),2))
     do i=1,this%get_natp()
-       do j=1,this%get_natp()
-          do k=1,this%get_natp()
-             do l=1,this%get_natp()
-                do m=1,4
-                   this%prms_itors(i,j,k,l,m)=0.d0
-                end do
-             end do
-          end do
+       do j=1,2
+          this%prms_vdw(i,j)=0.d0
        end do
     end do
-    this%prms_itors(1,28,40,41,1)=120.000d0
-    this%prms_itors(1,28,40,41,2)=0.0d0
-    this%prms_itors(2,5,42,42,1)=96.000d0
-    this%prms_itors(2,5,42,42,2)=0.0d0
-    this%prms_itors(2,8,42,42,1)=96.000d0
-    this%prms_itors(2,8,42,42,2)=0.0d0
-    this%prms_itors(2,19,42,42,1)=96.000d0
-    this%prms_itors(2,19,42,42,2)=0.0d0
-    this%prms_itors(2,20,42,42,1)=96.000d0
-    this%prms_itors(2,20,42,42,2)=0.0d0
-    this%prms_itors(4,11,44,38,1)=50.000d0
-    this%prms_itors(4,11,44,38,2)=0.0d0
-    this%prms_itors(4,28,44,38,1)=50.000d0
-    this%prms_itors(4,28,44,38,2)=0.0d0
-    this%prms_itors(40,1,7,36,1)=20.000d0
-    this%prms_itors(40,1,7,36,2)=0.0d0
-    this%prms_itors(40,1,8,36,1)=20.000d0
-    this%prms_itors(40,1,8,36,2)=0.0d0
-    this%prms_itors(40,1,17,36,1)=20.000d0
-    this%prms_itors(40,1,17,36,2)=0.0d0
-    this%prms_itors(40,1,28,36,1)=20.000d0
-    this%prms_itors(40,1,28,36,2)=0.0d0
-    this%prms_itors(43,11,23,3,1)=70.000d0
-    this%prms_itors(43,11,23,3,2)=0.0d0
-    this%prms_itors(43,28,28,3,1)=70.000d0
-    this%prms_itors(43,28,28,3,2)=0.0d0
- end subroutine set_charmmidihedrals
-
- subroutine set_charmmvdw(this)
-   class(charmm), intent(inout) :: this
-   integer                     :: i,j
-   allocate(this%prms_vdw(this%get_natp(),2))
-   do i=1,this%get_natp()
-      do j=1,2
-         this%prms_vdw(i,j)=0.d0
-      end do
-   end do
-   this%prms_vdw(1,1)=0.1100d0
-   this%prms_vdw(1,2)=2.0000d0
-   this%prms_vdw(2,1)=0.0700d0
-   this%prms_vdw(2,2)=2.0000d0
-   this%prms_vdw(3,1)=0.0900d0
-   this%prms_vdw(3,2)=2.0000d0
-   this%prms_vdw(4,1)=0.0600d0
-   this%prms_vdw(4,2)=1.8000d0
-   this%prms_vdw(5,1)=0.0320d0
-   this%prms_vdw(5,2)=2.0000d0
-   this%prms_vdw(6,1)=0.0320d0
-   this%prms_vdw(6,2)=2.0000d0
-   this%prms_vdw(7,1)=0.0320d0
-   this%prms_vdw(7,2)=2.0000d0
-   this%prms_vdw(8,1)=0.0320d0
-   this%prms_vdw(8,2)=2.0000d0
-   this%prms_vdw(9,1)=0.0320d0
-   this%prms_vdw(9,2)=2.0000d0
-   this%prms_vdw(10,1)=0.0320d0
-   this%prms_vdw(10,2)=2.0000d0
-   this%prms_vdw(11,1)=0.0320d0
-   this%prms_vdw(11,2)=2.0000d0
-   this%prms_vdw(12,1)=0.0320d0
-   this%prms_vdw(12,2)=2.0000d0
-   this%prms_vdw(13,1)=0.0320d0
-   this%prms_vdw(13,2)=2.0000d0
-   this%prms_vdw(14,1)=0.0320d0
-   this%prms_vdw(14,2)=2.0000d0
-   this%prms_vdw(15,1)=0.0320d0
-   this%prms_vdw(15,2)=2.0000d0
-   this%prms_vdw(16,1)=0.0320d0
-   this%prms_vdw(16,2)=2.0000d0
-   this%prms_vdw(17,1)=0.0320d0
-   this%prms_vdw(17,2)=2.0000d0
-   this%prms_vdw(18,1)=0.0320d0
-   this%prms_vdw(18,2)=2.0000d0
-   this%prms_vdw(19,1)=0.0320d0
-   this%prms_vdw(19,2)=2.0000d0
-   this%prms_vdw(20,1)=0.0560d0
-   this%prms_vdw(20,2)=2.0100d0
-   this%prms_vdw(21,1)=0.0560d0
-   this%prms_vdw(21,2)=2.0100d0
-   this%prms_vdw(22,1)=0.0560d0
+    this%prms_vdw(1,1)=0.1100d0
+    this%prms_vdw(1,2)=2.0000d0
+    this%prms_vdw(2,1)=0.0700d0
+    this%prms_vdw(2,2)=2.0000d0
+    this%prms_vdw(3,1)=0.0900d0
+    this%prms_vdw(3,2)=2.0000d0
+    this%prms_vdw(4,1)=0.0600d0
+    this%prms_vdw(4,2)=1.8000d0
+    this%prms_vdw(5,1)=0.0320d0
+    this%prms_vdw(5,2)=2.0000d0
+    this%prms_vdw(6,1)=0.0320d0
+    this%prms_vdw(6,2)=2.0000d0
+    this%prms_vdw(7,1)=0.0320d0
+    this%prms_vdw(7,2)=2.0000d0
+    this%prms_vdw(8,1)=0.0320d0
+    this%prms_vdw(8,2)=2.0000d0
+    this%prms_vdw(9,1)=0.0320d0
+    this%prms_vdw(9,2)=2.0000d0
+    this%prms_vdw(10,1)=0.0320d0
+    this%prms_vdw(10,2)=2.0000d0
+    this%prms_vdw(11,1)=0.0320d0
+    this%prms_vdw(11,2)=2.0000d0
+    this%prms_vdw(12,1)=0.0320d0
+    this%prms_vdw(12,2)=2.0000d0
+    this%prms_vdw(13,1)=0.0320d0
+    this%prms_vdw(13,2)=2.0000d0
+    this%prms_vdw(14,1)=0.0320d0
+    this%prms_vdw(14,2)=2.0000d0
+    this%prms_vdw(15,1)=0.0320d0
+    this%prms_vdw(15,2)=2.0000d0
+    this%prms_vdw(16,1)=0.0320d0
+    this%prms_vdw(16,2)=2.0000d0
+    this%prms_vdw(17,1)=0.0320d0
+    this%prms_vdw(17,2)=2.0000d0
+    this%prms_vdw(18,1)=0.0320d0
+    this%prms_vdw(18,2)=2.0000d0
+    this%prms_vdw(19,1)=0.0320d0
+    this%prms_vdw(19,2)=2.0000d0
+    this%prms_vdw(20,1)=0.0560d0
+    this%prms_vdw(20,2)=2.0100d0
+    this%prms_vdw(21,1)=0.0560d0
+    this%prms_vdw(21,2)=2.0100d0
+    this%prms_vdw(22,1)=0.0560d0
    this%prms_vdw(22,2)=2.0100d0
    this%prms_vdw(23,1)=0.0560d0
    this%prms_vdw(23,2)=2.0100d0

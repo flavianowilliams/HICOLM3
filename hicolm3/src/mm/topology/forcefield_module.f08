@@ -379,73 +379,32 @@ contains
           rewind(12)
        end do
     end do
-    print*,'parou na rotina set_partors...'
-    stop
     close(12)
   end subroutine set_partors
 
   subroutine set_paritors(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i1,i2,i3,i4,i,j,nx,n1,n2,n3,n4
-    allocate(this%paritors(this%get_nmol(),this%get_itorsmax(),4))
-    allocate(this%itorscnt(this%get_nmol()))
-    allocate(this%molitors(this%get_nmol(),this%get_itorsmax(),4))
+    integer                          :: i,j,m,i1,i2,i3,i4
+    allocate(this%paritors(this%get_nmol(),this%get_torsmax(),3))
+    open(12,file='/tmp/hicolm3/charmm/charmm_idihedrals.prm',status='old')
     do i=1,this%get_nmol()
-       nx=1
-       do i1=1,this%nxmol(i)
-          do j=1,this%charmm%get_natp()
-             if(this%charmm%atp(j).eq.this%tpmol(i,i1))n1=j
+       do j=1,this%torscnt(i)
+          i1=this%moltors(i,j,1)
+          i2=this%moltors(i,j,2)
+          i3=this%moltors(i,j,3)
+          i4=this%moltors(i,j,4)
+          call this%charmm%set_charmmidihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
+               this%tpmol(i,i3),this%tpmol(i,i4))
+          do m=1,2
+             this%paritors(i,j,m)=this%charmm%prms_itors(m)
           end do
-          do i2=1,this%nxmol(i)
-             if(i2.ne.i1)then
-                do j=1,this%charmm%get_natp()
-                   if(this%charmm%atp(j).eq.this%tpmol(i,i2))n2=j
-                end do
-                do i3=1,this%nxmol(i)
-                   if(i3.ne.i2.and.i3.ne.i1)then
-                      do j=1,this%charmm%get_natp()
-                         if(this%charmm%atp(j).eq.this%tpmol(i,i3))n3=j
-                      end do
-                      do i4=1,this%nxmol(i)
-                         if(i4.ne.i3.and.i4.ne.i2.and.i4.ne.i1)then
-                            do j=1,this%charmm%get_natp()
-                               if(this%charmm%atp(j).eq.this%tpmol(i,i4))n4=j
-                            end do
-                            if(this%charmm%prms_itors(n1,n2,n3,n4,1).gt.1.d-8)then
-                               if(n1.eq.n4.and.n2.eq.n3)then
-                                  if(i1.lt.i4)then
-                                     do k=1,4
-                                        this%paritors(i,nx,k)=&
-                                             this%charmm%prms_itors(n1,n2,n3,n4,k)
-                                     end do
-                                     this%molitors(i,nx,1)=i1
-                                     this%molitors(i,nx,2)=i2
-                                     this%molitors(i,nx,3)=i3
-                                     this%molitors(i,nx,4)=i4
-                                     nx=nx+1
-                                  end if
-                               else
-                                  do k=1,4
-                                     this%paritors(i,nx,k)=&
-                                          this%charmm%prms_itors(n1,n2,n3,n4,k)
-                                  end do
-                                  this%molitors(i,nx,1)=i1
-                                  this%molitors(i,nx,2)=i2
-                                  this%molitors(i,nx,3)=i3
-                                  this%molitors(i,nx,4)=i4
-                                  nx=nx+1
-                               end if
-                            end if
-                         end if
-                      end do
-                   end if
-                end do
-             end if
-          end do
+          rewind(12)
        end do
-       this%itorscnt(i)=nx-1
     end do
+    print*,'parou na rotina set_paritors...'
+    stop
+    close(12)
   end subroutine set_paritors
 
   subroutine set_extra_vdw(this,nvdw)
