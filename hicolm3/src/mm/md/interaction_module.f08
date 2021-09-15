@@ -27,6 +27,7 @@ module interaction_module
   use angles_module
   use coulomb_module
   use dihedrals_module
+  use idihedrals_module
   use vanderwaals_module
 
   implicit none
@@ -39,6 +40,7 @@ module interaction_module
      type(angles)                  :: tht
      type(coulomb)                 :: coul
      type(dihedrals)               :: dih
+     type(idihedrals)              :: idih
      type(vanderwaals)             :: vdw
      real(8), private              :: eintra
      real(8), private              :: einter

@@ -8,9 +8,9 @@ OBJ_TOPOLOGY = charmm_module.o forcefield_module.o
 OBJ_PREPARE = prepare_module.o
 #
 OBJ_MD = input_module.o atoms_module.o neighbourlist_module.o bonds_module.o \
-	angles_module.o dihedrals_module.o coulomb_module.o vanderwaals_module.o \
-	interaction_module.o thermodynamics_module.o ensemble_module.o \
-	moleculardynamics_module.o
+	angles_module.o idihedrals_module.o dihedrals_module.o coulomb_module.o \
+	vanderwaals_module.o interaction_module.o thermodynamics_module.o \
+	ensemble_module.o moleculardynamics_module.o
 #
 OBJ_OPTIMIZE = interopt_module.o gradientdescent_module.o optimize_module.o
 #
