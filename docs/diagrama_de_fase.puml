@@ -178,6 +178,7 @@ class ForceField{
     + set_extra_bonds()
     + set_extra_angles()
     + set_extra_dihedrals()
+    + set_extra_idihedrals()
     + set_extra_vdw()
     + set_extra_coulop()
     + set_parvdw()
@@ -188,6 +189,7 @@ class ForceField{
     + get_fscsalpha()
     + set_coulop()
     + get_coulop()
+    + set_topology()
 }
 class Charmm{
     + natp: integer

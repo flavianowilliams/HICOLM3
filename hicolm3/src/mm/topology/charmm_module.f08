@@ -38,7 +38,6 @@ module charmm_module
    contains
      procedure :: set_natp
      procedure :: get_natp
-!     procedure :: set_charmmtypes
      procedure :: set_charmmbonds
      procedure :: set_charmmangles
      procedure :: set_charmmdihedrals
@@ -58,11 +57,6 @@ contains
     class(charmm), intent(in) :: this
     get_natp=this%natp
   end function get_natp
-
-!  subroutine set_charmmtypes(this)
-!    class(charmm), intent(inout) :: this
-!    allocate(this%atp(this%get_natp()))
-!  end subroutine set_charmmtypes
 
   subroutine set_charmmbonds(this,p1,p2)
     implicit none
