@@ -64,6 +64,7 @@ module forcefield_module
      procedure          :: set_extra_bonds
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
+     procedure          :: set_extra_idihedrals
      procedure          :: set_extra_vdw
      procedure          :: set_extra_coulop
      procedure          :: set_nvdw
@@ -165,6 +166,9 @@ contains
              elseif(key.eq.'dihedrals')then
                 backspace(5)
                 call this%set_extra_dihedrals(i3)
+             elseif(key.eq.'idihedrals')then
+                backspace(5)
+                call this%set_extra_idihedrals(i3)
              elseif(key.eq.'END_MOLECULE'.or.key.eq.'end_molecule')then
                 check2=.false.
              end if
@@ -259,7 +263,7 @@ contains
   subroutine set_parvdw(this)
     implicit none
     class(forcefield), intent(inout) :: this
-    integer                          :: i,j,k,nx
+    integer                          :: i,j,nx
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     allocate(this%parvdw(this%get_nvdw(),2),this%spcvdw(this%get_nvdw(),2))
@@ -378,7 +382,7 @@ contains
     implicit none
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,m,i1,i2,i3,i4
-    allocate(this%paritors(this%get_nmol(),this%get_torsmax(),3))
+    allocate(this%paritors(this%get_nmol(),this%get_itorsmax(),3))
     open(12,file='/tmp/hicolm3/charmm/charmm_idihedrals.prm',status='old')
     do i=1,this%get_nmol()
        do j=1,this%itorscnt(i)
@@ -519,6 +523,37 @@ contains
        end select
     end do
   end subroutine set_extra_dihedrals
+
+  subroutine set_extra_idihedrals(this,i3)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer, intent(in)              :: i3
+    integer                          :: i1,i2,k,l
+    character(12)                    :: key
+    read(5,*)key,i1
+    do k=1,i1
+       read(5,*)i2
+       backspace(5)
+       read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+            this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2)
+       backspace(5)
+       select case(this%titors(i3,i2))
+       case('charmm')
+          read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+               this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2),&
+               this%paritors(i3,i2,1),this%paritors(i3,i2,3)
+          this%paritors(i3,i2,2)=0.d0
+       case('charmm2')
+          read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+               this%molitors(i3,i2,3),this%molitors(i3,i2,4),&
+               this%titors(i3,i2),(this%paritors(i3,i2,l),l=1,3)
+       case('harm')
+          read(5,*)i2,this%molitors(i3,i2,1),this%molitors(i3,i2,2),&
+               this%molitors(i3,i2,3),this%molitors(i3,i2,4),this%titors(i3,i2),&
+               (this%paritors(i3,i2,l),l=1,2)
+       end select
+    end do
+  end subroutine set_extra_idihedrals
 
   subroutine set_coulop(this,coulop)
     implicit none

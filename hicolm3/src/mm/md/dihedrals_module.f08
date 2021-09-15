@@ -51,7 +51,7 @@ contains
     case('charmm')
        this%entors=prm(1)*(1.0d0+cos(prm(2)*phi-prm(3)))
        this%force=-prm(1)*sin(prm(2)*phi-prm(3))
-    case('icharmm')
+    case('charmm2')
        this%entors=prm(1)*(phi-prm(2))**2
        this%force=2.0d0*prm(1)*(phi-prm(2))
     case('harm')

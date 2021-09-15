@@ -60,14 +60,8 @@ contains
     call constructor%set_bondmax(100)
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
-    call constructor%set_itorsmax(1000)
+    call constructor%set_itorsmax(100)
     call constructor%charmm%set_natp(205)
-!    call constructor%charmm%set_charmmtypes()
-!    call constructor%charmm%set_charmmbonds()
-!    call constructor%charmm%set_charmmangles()
-!    call constructor%charmm%set_charmmdihedrals()
-!    call constructor%charmm%set_charmmidihedrals()
-!    call constructor%charmm%set_charmmvdw()
   end function constructor
 
   subroutine check(this)
@@ -145,8 +139,8 @@ contains
     elseif(this%get_coulop().eq.'coul')then
        write(11,'(1x,a4)')this%get_coulop()
     end if
-    write(11,'(1x,i2,4(1x,i3))')this%get_nmol(),this%get_bondmax(),this%get_bendmax(),&
-         this%get_torsmax(),this%get_nspcs()
+    write(11,'(1x,i2,5(1x,i3))')this%get_nmol(),this%get_bondmax(),&
+         this%get_bendmax(),this%get_torsmax(),this%get_itorsmax(),this%get_nspcs()
     do i=1,this%get_nmol()
        write(11,'(1x,a10,2(1x,f8.6))')this%namemol(i),this%sf_coul(i),this%sf_vdw(i)
        write(11,'(15(1x,i2))')(this%zatmol(i,j),j=1,this%nxmol(i))
@@ -175,7 +169,7 @@ contains
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
        end do
-       write(11,'(1x,a9,1x,i3)')'dihedrals',(this%torscnt(i)+this%itorscnt(i))
+       write(11,'(1x,a9,1x,i3)')'dihedrals',this%torscnt(i)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('charmm')
@@ -184,7 +178,7 @@ contains
              f2=this%partors(i,j,3)
              write(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
-          case('icharmm')
+          case('charmm2')
              f1=this%partors(i,j,1)
              f2=this%partors(i,j,2)
              write(11,'(4(1x,i3),1x,a7,2(1x,f8.4))')&
@@ -196,13 +190,25 @@ contains
                   this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
           end select
        end do
+       write(11,'(1x,a10,1x,i3)')'idihedrals',this%itorscnt(i)
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('icharmm')
+          case('charmm2')
              f1=this%paritors(i,j,1)
-             f2=this%paritors(i,j,2)
+             i1=nint(this%paritors(i,j,2))
+             f2=this%paritors(i,j,3)
+             write(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
+                  (this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
+          case('charmm')
+             f1=this%paritors(i,j,1)
+             f2=this%paritors(i,j,3)
              write(11,'(4(1x,i3),1x,a7,2(1x,f8.4))')&
                   (this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
+          case('harm')
+             f1=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
+             write(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%molitors(i,j,k),k=1,4),&
+                  this%titors(i,j),this%paritors(i,j,1),this%paritors(i,j,2)
           end select
        end do
     end do

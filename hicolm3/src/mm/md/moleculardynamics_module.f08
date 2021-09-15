@@ -187,7 +187,6 @@ contains
     implicit none
     class(moleculardynamics), intent(inout) :: this
     integer                                 :: i,j,k,nx
-    open(1,file='hicolm.xsf',status='old')
     allocate(this%fax(this%get_natom()),this%fay(this%get_natom()),this%faz(this%get_natom()))
     allocate(this%vax(this%get_natom()),this%vay(this%get_natom()),this%vaz(this%get_natom()))
     select case(this%get_restart())
@@ -196,14 +195,15 @@ contains
        do i=1,this%get_nmol()
           do j=1,this%ntmol(i)
              do k=1,this%nxmol(i)
-                this%vax(nx)=sqrt(this%get_temp()/this%massmol(i,k))
-                this%vay(nx)=sqrt(this%get_temp()/this%massmol(i,k))
-                this%vaz(nx)=sqrt(this%get_temp()/this%massmol(i,k))
+                this%vax(nx)=sqrt(3.0d0*this%get_temp()/this%massmol(i,k))
+                this%vay(nx)=sqrt(3.0d0*this%get_temp()/this%massmol(i,k))
+                this%vaz(nx)=sqrt(3.0d0*this%get_temp()/this%massmol(i,k))
                 nx=nx+1
              end do
           end do
        end do
     case('position')
+       open(1,file='hicolm.xsf',status='old')
        nx=1
        do i=1,this%get_nmol()
           do j=1,this%ntmol(i)
@@ -227,6 +227,7 @@ contains
           read(1,'(5x,3f14.8)')this%xa(i),this%ya(i),this%za(i)
        end do
     case('velocity')
+       open(1,file='hicolm.xsf',status='old')
        do i=1,13
           read(1,*)
        end do
@@ -479,10 +480,10 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
        write(6,'(2x,a10,1x,i5)')'Dihedrals:',this%torscnt(i)
-       write(6,'(2x,90a1)')('-',j=1,90)
+       write(6,'(2x,90a1)')('-',j=1,52)
        write(6,'(2x,5(a4,1x),a4,4x,a10)')&
             ' i ','Site','Site','Site','Site','Type','Parameters'
-       write(6,'(2x,90a1)')('-',j=1,90)
+       write(6,'(2x,90a1)')('-',j=1,52)
        do j=1,this%torscnt(i)
           select case(this%ttors(i,j))
           case('charmm')
@@ -503,8 +504,31 @@ contains
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           end select
        end do
+       write(6,'(2x,111a1)')('-',j=1,52)
        write(6,*)
-       write(6,'(2x,90a1)')('*',j=1,90)
+       write(6,'(2x,a19,1x,i5)')'Improper dihedrals:',this%itorscnt(i)
+       write(6,'(2x,90a1)')('-',j=1,52)
+       write(6,'(2x,5(a4,1x),a4,4x,a10)')&
+            ' i ','Site','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,90a1)')('-',j=1,52)
+       do j=1,this%itorscnt(i)
+          select case(this%titors(i,j))
+          case('charmm')
+             f1=this%paritors(i,j,1)
+             f2=this%paritors(i,j,2)
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
+          case('charmm2')
+             f1=this%paritors(i,j,1)
+             i1=int(this%paritors(i,j,2))
+             f2=this%paritors(i,j,3)
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,i3,1x,f8.4)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
+          end select
+       end do
+       write(6,'(2x,111a1)')('-',j=1,52)
+       write(6,*)
+       write(6,'(2x,90a1)')('*',j=1,52)
        write(6,*)
     end do
     write(6,'(39x,a14)')'INTERMOLECULAR'

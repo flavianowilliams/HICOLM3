@@ -242,14 +242,16 @@ contains
        this%torscnt(imol)=nx-1
        nxx=max(nxx,this%torscnt(imol))
     end do
+    call this%set_torsmax(nxx)
   end subroutine set_torsion
 
   subroutine set_itorsion(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: i1,i2,i3,i4,k1,k2,k3,k4,nx,imol
+    integer                       :: i1,i2,k1,k2,nx,nxx,imol
     allocate(this%itorscnt(this%get_nmol()))
-    allocate(this%molitors(this%get_nmol(),this%torsmax,4))
+    allocate(this%molitors(this%get_nmol(),this%get_itorsmax(),4))
+    nxx=0
     do imol=1,this%get_nmol()
        nx=1
        do i1=1,this%bendscnt(imol)
@@ -277,7 +279,9 @@ contains
           end do
        end do
        this%itorscnt(imol)=nx-1
+       nxx=max(nxx,this%itorscnt(imol))
     end do
+    call this%set_itorsmax(nxx)
   end subroutine set_itorsion
 
   subroutine set_torsmax(this,torsmax)
