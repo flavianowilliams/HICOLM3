@@ -19,8 +19,8 @@
 !SOFTWARE.
 !
 module forcefield_module
-  !*******************************************************************************************
-  !*******************************************************************************************
+  !********************************************************************************
+  !********************************************************************************
 
   use system_module
   use charmm_module
@@ -36,8 +36,6 @@ module forcefield_module
      type(charmm)              :: charmm
      integer, private          :: nspcs
      integer, private          :: nvdw
-     integer, allocatable      :: itorscnt(:)
-     integer, allocatable      :: molitors(:,:,:)
      character(4), private     :: coulop
      real(8), private          :: fscsalpha
      real(8), allocatable      :: parbnd(:,:,:)
@@ -115,7 +113,7 @@ contains
           this%ttors(i,j)='charmm'
        end do
        do j=1,this%get_itorsmax()
-          this%titors(i,j)='icharmm'
+          this%titors(i,j)='charmm'
        end do
     end do
     do i=1,this%get_nvdw()
@@ -265,33 +263,27 @@ contains
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     allocate(this%parvdw(this%get_nvdw(),2),this%spcvdw(this%get_nvdw(),2))
+    open(12,file='/tmp/hicolm3/charmm/charmm_vdw.prm',status='old')
     nx=1
-    do i=1,this%nspcs
-       e1=0.d0
-       s1=0.d0
-       do k=1,this%charmm%get_natp()
-          if(this%spcs(i).eq.this%charmm%atp(k))then
-             e1=this%charmm%prms_vdw(k,1)
-             s1=this%charmm%prms_vdw(k,2)
-          end if
-       end do
-       do j=i,this%nspcs
-          e2=0.d0
-          s2=0.d0
-          do k=1,this%charmm%get_natp()
-             if(this%spcs(j).eq.this%charmm%atp(k))then
-                e2=this%charmm%prms_vdw(k,1)
-                s2=this%charmm%prms_vdw(k,2)
-             end if
-          end do
+    do i=1,this%get_nspcs()
+       call this%charmm%set_charmmvdw(this%spcs(i))
+       e1=this%charmm%prms_vdw(1)
+       s1=this%charmm%prms_vdw(2)
+       rewind(12)
+       do j=i,this%get_nspcs()
+          call this%charmm%set_charmmvdw(this%spcs(j))
+          e2=this%charmm%prms_vdw(1)
+          s2=this%charmm%prms_vdw(2)
           this%parvdw(nx,1)=sqrt(e1*e2)
           this%parvdw(nx,2)=s1+s2
           this%spcvdw(nx,1)=this%spcs(i)
           this%spcvdw(nx,2)=this%spcs(j)
+          rewind(12)
           nx=nx+1
        end do
     end do
     call this%set_nvdw(nx-1)
+    close(12)
   end subroutine set_parvdw
 
   subroutine check_vdw(this)
@@ -373,7 +365,7 @@ contains
           i4=this%moltors(i,j,4)
           call this%charmm%set_charmmdihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
                this%tpmol(i,i3),this%tpmol(i,i4))
-          do m=1,2
+          do m=1,3
              this%partors(i,j,m)=this%charmm%prms_tors(m)
           end do
           rewind(12)
@@ -389,21 +381,19 @@ contains
     allocate(this%paritors(this%get_nmol(),this%get_torsmax(),3))
     open(12,file='/tmp/hicolm3/charmm/charmm_idihedrals.prm',status='old')
     do i=1,this%get_nmol()
-       do j=1,this%torscnt(i)
-          i1=this%moltors(i,j,1)
-          i2=this%moltors(i,j,2)
-          i3=this%moltors(i,j,3)
-          i4=this%moltors(i,j,4)
+       do j=1,this%itorscnt(i)
+          i1=this%molitors(i,j,1)
+          i2=this%molitors(i,j,2)
+          i3=this%molitors(i,j,3)
+          i4=this%molitors(i,j,4)
           call this%charmm%set_charmmidihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
                this%tpmol(i,i3),this%tpmol(i,i4))
-          do m=1,2
+          do m=1,3
              this%paritors(i,j,m)=this%charmm%prms_itors(m)
           end do
           rewind(12)
        end do
     end do
-    print*,'parou na rotina set_paritors...'
-    stop
     close(12)
   end subroutine set_paritors
 

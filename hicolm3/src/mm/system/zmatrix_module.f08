@@ -26,8 +26,6 @@ module zmatrix_module
 
   implicit none
 
-  integer i,j,k,l
-
   private
   public :: zmatrix
 
@@ -40,14 +38,16 @@ module zmatrix_module
      integer, allocatable :: bondscnt(:)
      integer, allocatable :: bendscnt(:)
      integer, allocatable :: torscnt(:)
+     integer, allocatable :: itorscnt(:)
      integer, allocatable :: molbond(:,:,:)
      integer, allocatable :: molbend(:,:,:)
      integer, allocatable :: moltors(:,:,:)
+     integer, allocatable :: molitors(:,:,:)
    contains
-!     procedure, private :: zmatrix_init
      procedure          :: set_bonds
      procedure          :: set_bends
      procedure          :: set_torsion
+     procedure          :: set_itorsion
      procedure          :: covalent_radius
      procedure          :: set_internal_coordinates
      procedure          :: set_bondmax
@@ -60,37 +60,23 @@ module zmatrix_module
      procedure          :: get_itorsmax
      procedure          :: set_zmatrix_tol
      procedure          :: get_zmatrix_tol
-!     procedure          :: set_zmatrixtol
   end type zmatrix
 
-!  interface zmatrix
-!     module procedure constructor
-!  end interface zmatrix
-
 contains
-
-!  type(zmatrix) function constructor()
-!    call constructor%zmatrix_init()
-!  end function constructor
-
-!  subroutine zmatrix_init(this)
-!    class(zmatrix), intent(inout) :: this
-!    call this%set_zmatrix_tol()
-!  end subroutine zmatrix_init
 
   subroutine set_internal_coordinates(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-!    call this%zmatrix_init()
     call this%set_bonds()
     call this%set_bends()
     call this%set_torsion()
+    call this%set_itorsion()
   end subroutine set_internal_coordinates
 
   subroutine set_bonds(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,nxxx,imol,ia,ib
+    integer                       :: nx,nxx,nxxx,imol,ia,ib,i,j
     real(8)                       :: dr,rca,rcb
     allocate(this%bondscnt(this%get_nmol()))
     allocate(this%molbond(this%get_nmol(),this%bondmax,2))
@@ -139,7 +125,7 @@ contains
   subroutine set_bends(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol
+    integer                       :: nx,nxx,imol,i,j,k,l
     allocate(this%bendscnt(this%get_nmol()))
     allocate(this%molbend(this%get_nmol(),this%bendmax,3))
     nxx=0
@@ -181,7 +167,7 @@ contains
   subroutine set_torsion(this)
     implicit none
     class(zmatrix), intent(inout) :: this
-    integer                       :: nx,nxx,imol,ii,kk
+    integer                       :: nx,nxx,imol,ii,kk,i,j,k
     allocate(this%torscnt(this%get_nmol()))
     allocate(this%moltors(this%get_nmol(),this%torsmax,4))
     nxx=0
@@ -258,6 +244,42 @@ contains
     end do
   end subroutine set_torsion
 
+  subroutine set_itorsion(this)
+    implicit none
+    class(zmatrix), intent(inout) :: this
+    integer                       :: i1,i2,i3,i4,k1,k2,k3,k4,nx,imol
+    allocate(this%itorscnt(this%get_nmol()))
+    allocate(this%molitors(this%get_nmol(),this%torsmax,4))
+    do imol=1,this%get_nmol()
+       nx=1
+       do i1=1,this%bendscnt(imol)
+          do i2=1,i1-1
+             do k1=1,2
+                do k2=1,2
+                   if(this%molbend(imol,i1,2).eq.this%molbend(imol,i2,2).and.&
+                        this%molbend(imol,i1,2*k1-1).eq.this%molbend(imol,i2,2*k2-1))then
+                      this%molitors(imol,nx,1)=this%molbend(imol,i1,2)
+                      this%molitors(imol,nx,2)=this%molbend(imol,i1,2*k1-1)
+                      if((2*k1-1).eq.1)then
+                         this%molitors(imol,nx,3)=this%molbend(imol,i1,3)
+                      else
+                         this%molitors(imol,nx,3)=this%molbend(imol,i1,1)
+                      end if
+                      if((2*k2-1).eq.1)then
+                         this%molitors(imol,nx,4)=this%molbend(imol,i2,3)
+                      else
+                         this%molitors(imol,nx,4)=this%molbend(imol,i2,1)
+                      end if
+                      nx=nx+1
+                   end if
+                end do
+             end do
+          end do
+       end do
+       this%itorscnt(imol)=nx-1
+    end do
+  end subroutine set_itorsion
+
   subroutine set_torsmax(this,torsmax)
     implicit none
     class(zmatrix), intent(inout) :: this
@@ -290,29 +312,6 @@ contains
     real(8), intent(in)           :: zmatrix_tol
     this%zmatrix_tol=zmatrix_tol
   end subroutine set_zmatrix_tol
-
-!  subroutine set_zmatrix_tol(this,zmatrix_tol)
-!    implicit none
-!    class(zmatrix), intent(inout) :: this
-!    real(8), intent(in)           :: zmatrix_tol
-!    character(11)                 :: key
-!    logical                       :: check
-!    check=.true.
-!    do while(check)
-!       read(5,*,end=1)key
-!       if(key.eq.'&SYSTEM'.or.key.eq.'&system')check=.false.
-!    end do
-!    check=.true.
-!    do while (check)
-!       read(5,*)key
-!       if(key.eq.'zmatrix')then
-!          backspace(5)
-!          read(5,*)key,this%zmatrix_tol
-!       end if
-!       if(key.eq.'&END_SYSTEM'.or.key.eq.'&end_system')check=.false.
-!    end do
-!1   rewind(5)
-!  end subroutine set_zmatrix_tol
 
   double precision function get_zmatrix_tol(this)
     implicit none

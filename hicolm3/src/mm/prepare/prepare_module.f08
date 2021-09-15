@@ -330,7 +330,7 @@ contains
              f2=this%partors(i,j,3)
              write(6,'(2x,5(i3,2x),a6,2x,f8.4,1x,i1,1x,f8.4)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,i1,f2
-          case('icharmm')
+          case('charmm2')
              f1=this%partors(i,j,1)
              f2=this%partors(i,j,2)
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
@@ -351,11 +351,17 @@ contains
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
-          case('icharmm')
+          case('charmm')
              f1=this%paritors(i,j,1)
-             f2=this%paritors(i,j,2)
+             f2=this%paritors(i,j,3)
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
                   j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
+          case('charmm2')
+             f1=this%paritors(i,j,1)
+             i1=int(this%paritors(i,j,2))
+             f2=this%paritors(i,j,3)
+             write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,i3,1x,f8.4)')&
+                  j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)

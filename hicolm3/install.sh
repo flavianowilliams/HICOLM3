@@ -49,9 +49,10 @@ echo "#!/bin/sh
 #
 if [ -d '/tmp/hicolm3' ]
 then
-    rm -rf /tmp/hicolm3
-    mkdir /tmp/hicolm3
+    rm -r /tmp/hicolm3
 fi
+#
+mkdir /tmp/hicolm3
 #
 if [ ! -d '/tmp/hicolm3/charmm' ]
 then
@@ -72,6 +73,10 @@ else
     if [ ! -f '/tmp/hicolm3/charmm/charmm_idihedrals.prm' ]
     then
         cp -r $aux_dir/HICOLM3/charmm/charmm_idihedrals.prm /tmp/hicolm3/charmm/charmm_idihedrals.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/charmm/charmm_vdw.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/charmm/charmm_vdw.prm /tmp/hicolm3/charmm/charmm_vdw.prm
     fi
 fi
 #

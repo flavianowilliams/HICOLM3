@@ -126,13 +126,16 @@ class Zmatrix{
     + bondscnt[]: integer
     + bendscnt[]: integer
     + torscnt[]: integer
+    + itorscnt[]: integer
     + molbond[]: integer
     + molbend[]: integer
     + moltors[]: integer
+    + molitors[]: integer
     - zmatrix_init()
     + set_bonds()
     + get_bonds()
     + set_torsion()
+    + set_itorsion()
     + covalent_radius()
     + set_internal_coordinates()
     + set_bondmax()
@@ -151,8 +154,6 @@ System <|-right- ForceField
 class ForceField{
     - nspcs: integer
     - nvdw: integer
-    + itorscnt[]: integer
-    + molitors[]: integer
     - coulop: character
     - fscsalpha: double
     + parbnd[]: double
