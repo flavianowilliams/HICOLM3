@@ -105,7 +105,7 @@ contains
     real(8)                           :: xvz,yvz,zvz,dr,virtot,theta,dr1,dr2
     real(8)                           :: eintra
     real(8)                           :: prm(3),drij(3),drik(3),drjk(3)
-    real(8)                           :: drkl(3),ri(3),rj(3)
+    real(8)                           :: drkl(3),dril(3),ri(3),rj(3)
     real(8)                           :: rk(3),rl(3)
     real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
     character(7)                      :: ptrm
@@ -137,7 +137,8 @@ contains
              call this%mic(ni,nk,drik(1),drik(2),drik(3))
              dr1=sqrt(drij(1)**2+drij(2)**2+drij(3)**2)
              dr2=sqrt(drik(1)**2+drik(2)**2+drik(3)**2)
-             theta=acos((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
+             theta=acos&
+                  ((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
              do l=1,2
                 prm(l)=this%parbend(i,k,l)
              end do
@@ -185,7 +186,8 @@ contains
              rl(1)=this%xa(nl)
              rl(2)=this%ya(nl)
              rl(3)=this%za(nl)
-             call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             call this%dih%set_virtors&
+                  (this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
              virtot=virtot+this%dih%get_virtors()
           end do
           do k=1,this%itorscnt(i)
@@ -194,26 +196,24 @@ contains
              nk=nx+this%molitors(i,k,3)
              nl=nx+this%molitors(i,k,4)
              call this%mic(ni,nj,drij(1),drij(2),drij(3))
-             call this%mic(nj,nk,drjk(1),drjk(2),drjk(3))
-             call this%mic(nk,nl,drkl(1),drkl(2),drkl(3))
-             vc1x=drij(2)*drjk(3)-drij(3)*drjk(2)
-             vc1y=drij(3)*drjk(1)-drij(1)*drjk(3)
-             vc1z=drij(1)*drjk(2)-drij(2)*drjk(1)
-             vc2x=drjk(2)*drkl(3)-drjk(3)*drkl(2)
-             vc2y=drjk(3)*drkl(1)-drjk(1)*drkl(3)
-             vc2z=drjk(1)*drkl(2)-drjk(2)*drkl(1)
-             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rij x rjk|
-             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|rjk x rkn|
+             call this%mic(ni,nk,drik(1),drik(2),drik(3))
+             call this%mic(ni,nl,dril(1),dril(2),dril(3))
+             vc1x=drik(2)*drij(3)-drik(3)*drij(2)
+             vc1y=drik(3)*drij(1)-drik(1)*drij(3)
+             vc1z=drik(1)*drij(2)-drik(2)*drij(1)
+             vc2x=dril(2)*drij(3)-dril(3)*drij(2)
+             vc2y=dril(3)*drij(1)-dril(1)*drij(3)
+             vc2z=dril(1)*drij(2)-dril(2)*drij(1)
+             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rik x rij|
+             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|ril x rij|
              phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dr1*dr2))
-             print*,phi*180/3.14
-             stop
              do l=1,3
                 prm(l)=this%paritors(i,k,l)
              end do
              ptrm=this%titors(i,k)
              call this%idih%set_idihedrals(phi,prm,ptrm)
              call this%set_force&
-                  (ni,nj,nk,nl,drij,drjk,drkl,dr1,dr2,phi,this%dih%get_force())
+                  (ni,nj,nk,nl,drik,drij,dril,dr1,dr2,phi,this%idih%get_force())
              ri(1)=this%xa(ni)
              ri(2)=this%ya(ni)
              ri(3)=this%za(ni)
@@ -226,8 +226,9 @@ contains
              rl(1)=this%xa(nl)
              rl(2)=this%ya(nl)
              rl(3)=this%za(nl)
-             call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
-             virtot=virtot+this%dih%get_virtors()
+             call this%idih%set_viritors&
+                  (this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             virtot=virtot+this%idih%get_viritors()
           end do
           nx=nx+this%nxmol(i)
        end do

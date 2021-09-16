@@ -638,7 +638,7 @@ contains
           read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
                (this%partors(i3,i2,l),l=1,3)
-       case('icharmm')
+       case('charmm2')
           read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                this%moltors(i3,i2,3),this%moltors(i3,i2,4),&
                this%ttors(i3,i2),(this%partors(i3,i2,l),l=1,2)
