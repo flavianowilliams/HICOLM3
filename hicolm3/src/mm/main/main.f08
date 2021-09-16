@@ -126,6 +126,10 @@ program HICOLM
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_topology()
         call prp%check_vdw()
+        call prp%check_parbnd()
+        call prp%check_parbend()
+        call prp%check_partors()
+        call prp%check_paritors()
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
         call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4

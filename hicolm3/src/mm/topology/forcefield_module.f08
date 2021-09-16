@@ -61,6 +61,10 @@ module forcefield_module
      procedure          :: set_paritors
      procedure          :: set_parvdw
      procedure          :: check_vdw
+     procedure          :: check_parbnd
+     procedure          :: check_parbend
+     procedure          :: check_partors
+     procedure          :: check_paritors
      procedure          :: set_extra_bonds
      procedure          :: set_extra_angles
      procedure          :: set_extra_dihedrals
@@ -313,6 +317,127 @@ contains
     call this%set_nvdw(nx)
   end subroutine check_vdw
 
+  subroutine check_parbnd(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,nx
+    real(8)                          :: p1,p2
+    integer                          :: i1,i2
+    logical                          :: check
+    check=.true.
+    do i=1,this%get_nmol()
+       nx=0
+       do j=1,this%bondscnt(i)
+          p1=this%parbnd(i,j,1)
+          p2=this%parbnd(i,j,2)
+          i1=this%molbond(i,j,1)
+          i2=this%molbond(i,j,2)
+          if(p1.ge.1.d-4)then
+             this%parbnd(i,nx+1,1)=p1
+             this%parbnd(i,nx+1,2)=p2
+             this%molbond(i,nx+1,1)=i1
+             this%molbond(i,nx+1,2)=i2
+             nx=nx+1
+          end if
+       end do
+       if(nx.lt.this%bondscnt(i))check=.false.
+       this%bondscnt(i)=nx
+    end do
+    if(check.eqv..false.)goto 1
+    return
+1   write(6,*)'Warning: There is unexpected unbound atoms in some molecules.'
+    write(6,*)
+  end subroutine check_parbnd
+
+  subroutine check_parbend(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,nx
+    real(8)                          :: p1,p2
+    integer                          :: i1,i2,i3
+    do i=1,this%get_nmol()
+       nx=0
+       do j=1,this%bendscnt(i)
+          p1=this%parbend(i,j,1)
+          p2=this%parbend(i,j,2)
+          i1=this%molbend(i,j,1)
+          i2=this%molbend(i,j,2)
+          i3=this%molbend(i,j,3)
+          if(p1.ge.1.d-4)then
+             this%parbend(i,nx+1,1)=p1
+             this%parbend(i,nx+1,2)=p2
+             this%molbend(i,nx+1,1)=i1
+             this%molbend(i,nx+1,2)=i2
+             this%molbend(i,nx+1,3)=i3
+             nx=nx+1
+          end if
+       end do
+       this%bendscnt(i)=nx
+    end do
+  end subroutine check_parbend
+
+  subroutine check_partors(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,nx
+    real(8)                          :: p1,p2,p3
+    integer                          :: i1,i2,i3,i4
+    do i=1,this%get_nmol()
+       nx=0
+       do j=1,this%torscnt(i)
+          p1=this%partors(i,j,1)
+          p2=this%partors(i,j,2)
+          p3=this%partors(i,j,3)
+          i1=this%moltors(i,j,1)
+          i2=this%moltors(i,j,2)
+          i3=this%moltors(i,j,3)
+          i4=this%moltors(i,j,4)
+          if(p1.ge.1.d-4)then
+             this%partors(i,nx+1,1)=p1
+             this%partors(i,nx+1,2)=p2
+             this%partors(i,nx+1,3)=p3
+             this%moltors(i,nx+1,1)=i1
+             this%moltors(i,nx+1,2)=i2
+             this%moltors(i,nx+1,3)=i3
+             this%moltors(i,nx+1,4)=i4
+             nx=nx+1
+          end if
+       end do
+       this%torscnt(i)=nx
+    end do
+  end subroutine check_partors
+
+  subroutine check_paritors(this)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    integer                          :: i,nx
+    real(8)                          :: p1,p2,p3
+    integer                          :: i1,i2,i3,i4
+    do i=1,this%get_nmol()
+       nx=0
+       do j=1,this%itorscnt(i)
+          p1=this%paritors(i,j,1)
+          p2=this%paritors(i,j,2)
+          p3=this%paritors(i,j,3)
+          i1=this%molitors(i,j,1)
+          i2=this%molitors(i,j,2)
+          i3=this%molitors(i,j,3)
+          i4=this%molitors(i,j,4)
+          if(p1.ge.1.d-4)then
+             this%paritors(i,nx+1,1)=p1
+             this%paritors(i,nx+1,2)=p2
+             this%paritors(i,nx+1,3)=p3
+             this%molitors(i,nx+1,1)=i1
+             this%molitors(i,nx+1,2)=i2
+             this%molitors(i,nx+1,3)=i3
+             this%molitors(i,nx+1,4)=i4
+             nx=nx+1
+          end if
+       end do
+       this%itorscnt(i)=nx
+    end do
+  end subroutine check_paritors
+
   subroutine set_parbnd(this)
     implicit none
     class(forcefield), intent(inout) :: this
@@ -344,8 +469,8 @@ contains
           i1=this%molbend(i,j,1)
           i2=this%molbend(i,j,2)
           i3=this%molbend(i,j,3)
-          call this%charmm%set_charmmangles(this%tpmol(i,i1),this%tpmol(i,i2),&
-               this%tpmol(i,i3))
+          call this%charmm%set_charmmangles&
+               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
           do m=1,2
              this%parbend(i,j,m)=this%charmm%prms_angles(m)
           end do
@@ -390,7 +515,8 @@ contains
           i2=this%molitors(i,j,2)
           i3=this%molitors(i,j,3)
           i4=this%molitors(i,j,4)
-          call this%charmm%set_charmmidihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
+          call this%charmm%set_charmmidihedrals&
+               (this%tpmol(i,i1),this%tpmol(i,i2),&
                this%tpmol(i,i3),this%tpmol(i,i4))
           do m=1,3
              this%paritors(i,j,m)=this%charmm%prms_itors(m)

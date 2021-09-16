@@ -188,6 +188,47 @@ contains
              call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
              virtot=virtot+this%dih%get_virtors()
           end do
+          do k=1,this%itorscnt(i)
+             ni=nx+this%molitors(i,k,1)
+             nj=nx+this%molitors(i,k,2)
+             nk=nx+this%molitors(i,k,3)
+             nl=nx+this%molitors(i,k,4)
+             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             call this%mic(nj,nk,drjk(1),drjk(2),drjk(3))
+             call this%mic(nk,nl,drkl(1),drkl(2),drkl(3))
+             vc1x=drij(2)*drjk(3)-drij(3)*drjk(2)
+             vc1y=drij(3)*drjk(1)-drij(1)*drjk(3)
+             vc1z=drij(1)*drjk(2)-drij(2)*drjk(1)
+             vc2x=drjk(2)*drkl(3)-drjk(3)*drkl(2)
+             vc2y=drjk(3)*drkl(1)-drjk(1)*drkl(3)
+             vc2z=drjk(1)*drkl(2)-drjk(2)*drkl(1)
+             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rij x rjk|
+             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|rjk x rkn|
+             phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dr1*dr2))
+             print*,phi*180/3.14
+             stop
+             do l=1,3
+                prm(l)=this%paritors(i,k,l)
+             end do
+             ptrm=this%titors(i,k)
+             call this%idih%set_idihedrals(phi,prm,ptrm)
+             call this%set_force&
+                  (ni,nj,nk,nl,drij,drjk,drkl,dr1,dr2,phi,this%dih%get_force())
+             ri(1)=this%xa(ni)
+             ri(2)=this%ya(ni)
+             ri(3)=this%za(ni)
+             rj(1)=this%xa(nj)
+             rj(2)=this%ya(nj)
+             rj(3)=this%za(nj)
+             rk(1)=this%xa(nk)
+             rk(2)=this%ya(nk)
+             rk(3)=this%za(nk)
+             rl(1)=this%xa(nl)
+             rl(2)=this%ya(nl)
+             rl(3)=this%za(nl)
+             call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             virtot=virtot+this%dih%get_virtors()
+          end do
           nx=nx+this%nxmol(i)
        end do
        nx=0
