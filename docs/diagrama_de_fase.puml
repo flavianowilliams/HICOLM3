@@ -433,6 +433,18 @@ class Dihedrals{
     + get_force()
 }
 Interaction <|-- Dihedrals
+class Idihedrals{
+    - enitors: double 
+    - viritors: double 
+    - force: double 
+    + set_idihedrals()
+    + set_enitors()
+    + get_enitors()
+    + set_viritors()
+    + get_viritors()
+    + get_force()
+}
+Interaction <|-- Idihedrals
 class Ensemble{
     - tfcnvt: double 
     - tfcnpt: double 
@@ -462,6 +474,7 @@ class MolecularDynamics{
     - time: double 
     + check()
     + print_geometry()
+    + print_frames()
     + print_dataframes()
     + set_canonicalvariables()
     + print_out()

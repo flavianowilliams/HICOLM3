@@ -141,7 +141,6 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@MD')then
         call cpu_time(t1)
-        open(3,file='hicolm.axsf',status='unknown')! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown') ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
@@ -226,6 +225,7 @@ program HICOLM
            end if
            call md%set_verlchk()
            call md%print_geometry(i)
+           call md%print_frames(i)
            call md%print_dataframes(i)
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&

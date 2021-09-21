@@ -331,9 +331,35 @@ contains
     return
   end subroutine print_geometry
 
-  subroutine print_frames(this)
+  subroutine print_frames(this,nx)
     implicit none
     class(moleculardynamics), intent(inout) :: this
+    integer, intent(in)                     :: nx
+    integer                                 :: i,j,k,ix
+    k=1
+    if(nx.eq.1)then
+       open(3,file='hicolm.axsf',status='unknown')
+       ix=int((this%get_nstep()-this%get_nrelax())/this%get_nhist())
+       write(3,*)'# Historico de coordenadas'
+       write(3,'(a9,i5)')'ANIMSTEPS',ix
+       write(3,'(a7)')'CRYSTAL'
+    elseif(nx.gt.this%get_nrelax().and.&
+         mod(nx-this%get_nrelax(),this%get_nhist()).eq.0)then
+       ix=(nx-this%get_nrelax())/this%get_nhist()
+       write(3,'(a7,i5)')'PRIMVEC',ix
+       do i=1,3
+          write(3,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
+       end do
+       write(3,'(a9,i5)')'PRIMCOORD',ix
+       write(3,'(2i5)')this%get_natom(),k
+       do i=1,this%get_natom()
+          write(3,'(i5,7f14.8)')this%zat(i),this%xa(i)*this%get_rconv(),&
+               this%ya(i)*this%get_rconv(),this%za(i)*this%get_rconv(),&
+               this%fax(i)*this%get_econv()/this%get_rconv(),&
+               this%fay(i)*this%get_econv()/this%get_rconv(),&
+               this%faz(i)*this%get_econv()/this%get_rconv()
+       end do
+    end if
   end subroutine print_frames
 
   subroutine print_dataframes(this,nx)
