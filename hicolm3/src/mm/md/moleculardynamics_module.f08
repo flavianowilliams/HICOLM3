@@ -152,12 +152,25 @@ contains
           case('charmm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,3)=this%partors(i,j,3)/this%get_aconv()
-          case('icharmm')
+          case('charmm2')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
           case('harm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
+          end select
+       end do
+       do j=1,this%itorscnt(i)
+          select case(this%titors(i,j))
+          case('charmm2')
+             this%paritors(i,j,1)=this%paritors(i,j,1)/this%get_econv()
+             this%paritors(i,j,3)=this%paritors(i,j,3)/this%get_aconv()
+          case('charmm')
+             this%paritors(i,j,1)=this%paritors(i,j,1)/this%get_econv()
+             this%paritors(i,j,2)=this%paritors(i,j,2)/this%get_aconv()
+          case('harm')
+             this%paritors(i,j,1)=this%paritors(i,j,1)/this%get_econv()
+             this%paritors(i,j,2)=this%paritors(i,j,2)/this%get_aconv()
           end select
        end do
     end do
@@ -514,14 +527,14 @@ contains
        do j=1,this%itorscnt(i)
           select case(this%titors(i,j))
           case('charmm')
-             f1=this%paritors(i,j,1)
-             f2=this%paritors(i,j,2)
+             f1=this%paritors(i,j,1)*this%get_econv()
+             f2=this%paritors(i,j,2)*this%get_aconv()
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
                   j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,f2
           case('charmm2')
-             f1=this%paritors(i,j,1)
+             f1=this%paritors(i,j,1)*this%get_econv()
              i1=int(this%paritors(i,j,2))
-             f2=this%paritors(i,j,3)
+             f2=this%paritors(i,j,3)*this%get_aconv()
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,i3,1x,f8.4)')&
                   j,(this%molitors(i,j,k),k=1,4),this%titors(i,j),f1,i1,f2
           end select

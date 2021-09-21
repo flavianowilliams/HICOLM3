@@ -195,7 +195,7 @@ contains
              nj=nx+this%molitors(i,k,2)
              nk=nx+this%molitors(i,k,3)
              nl=nx+this%molitors(i,k,4)
-             call this%mic(ni,nj,drij(1),drij(2),drij(3))
+             call this%mic(nj,ni,drij(1),drij(2),drij(3))
              call this%mic(ni,nk,drik(1),drik(2),drik(3))
              call this%mic(ni,nl,dril(1),dril(2),dril(3))
              vc1x=drik(2)*drij(3)-drik(3)*drij(2)
@@ -204,8 +204,8 @@ contains
              vc2x=dril(2)*drij(3)-dril(3)*drij(2)
              vc2y=dril(3)*drij(1)-dril(1)*drij(3)
              vc2z=dril(1)*drij(2)-dril(2)*drij(1)
-             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rik x rij|
-             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|ril x rij|
+             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rik x rji|
+             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|ril x rji|
              phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dr1*dr2))
              do l=1,3
                 prm(l)=this%paritors(i,k,l)
@@ -213,7 +213,7 @@ contains
              ptrm=this%titors(i,k)
              call this%idih%set_idihedrals(phi,prm,ptrm)
              call this%set_force&
-                  (ni,nj,nk,nl,drik,drij,dril,dr1,dr2,phi,this%idih%get_force())
+                  (ni,nj,nk,nl,drij,drik,dril,dr1,dr2,phi,this%idih%get_force())
              ri(1)=this%xa(ni)
              ri(2)=this%ya(ni)
              ri(3)=this%za(ni)
