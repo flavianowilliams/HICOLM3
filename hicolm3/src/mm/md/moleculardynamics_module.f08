@@ -34,6 +34,7 @@ module moleculardynamics_module
    contains
      procedure :: check
      procedure :: print_geometry
+     procedure :: print_frames
      procedure :: print_dataframes
      procedure :: set_canonicalvariables
      procedure :: print_out
@@ -329,6 +330,11 @@ contains
     close(2)
     return
   end subroutine print_geometry
+
+  subroutine print_frames(this)
+    implicit none
+    class(moleculardynamics), intent(inout) :: this
+  end subroutine print_frames
 
   subroutine print_dataframes(this,nx)
     implicit none
