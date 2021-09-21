@@ -36,6 +36,7 @@ module optimize_module
      procedure :: convert_units
      procedure :: set_canonicalvariables
      procedure :: print_geometry
+     procedure :: print_frames
      procedure :: print_dataframes
   end type optimize
 
@@ -192,6 +193,34 @@ contains
     close(1)
     return
   end subroutine print_geometry
+
+  subroutine print_frames(this,nx)
+    implicit none
+    class(optimize), intent(inout) :: this
+    integer, intent(in)                     :: nx
+    integer                                 :: i,j,k
+    k=1
+    if(nx.eq.1)then
+       open(3,file='hicolm.axsf',status='unknown')
+       write(3,*)'# Historico de coordenadas'
+       write(3,'(a9,i5)')'ANIMSTEPS',this%get_nstep()
+       write(3,'(a7)')'CRYSTAL'
+    elseif(nx.gt.1)then
+       write(3,'(a7,i5)')'PRIMVEC',nx
+       do i=1,3
+          write(3,'(3(3x,f14.8))')(this%v(i,j)*this%get_rconv(),j=1,3)
+       end do
+       write(3,'(a9,i5)')'PRIMCOORD',nx
+       write(3,'(2i5)')this%get_natom(),k
+       do i=1,this%get_natom()
+          write(3,'(i5,7f14.8)')this%zat(i),this%xa(i)*this%get_rconv(),&
+               this%ya(i)*this%get_rconv(),this%za(i)*this%get_rconv()!,&
+!               this%fax(i)*this%get_econv()/this%get_rconv(),&
+!               this%fay(i)*this%get_econv()/this%get_rconv(),&
+!               this%faz(i)*this%get_econv()/this%get_rconv()
+       end do
+    end if
+  end subroutine print_frames
 
   subroutine print_dataframes(this,nx)
     implicit none

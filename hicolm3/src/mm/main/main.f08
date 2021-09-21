@@ -338,6 +338,7 @@ program HICOLM
            call opt%set_loop()
            call opt%set_lsearch(alpha)
            call opt%set_maxforce()
+           call opt%print_frames(nx)
            call opt%print_dataframes(nx)
            write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
                 ,opt%get_enpot()*opt%get_econv()&

@@ -538,6 +538,7 @@ class Optimize{
     + convert_units()
     + set_canonicalvariables()
     + print_geometry()
+    + print_frames()
     + print_dataframes()
 }
 Optimize -right-|> GradientDescent
