@@ -242,38 +242,46 @@ contains
                 do m=1,this%bendscnt(i)
                    do n=1,3
                       do o=n+1,3
-                         if(ni.eq.this%molbend(i,m,n).and.nj.eq.this%molbend(i,m,o))goto 1
-                         if(ni.eq.this%molbend(i,m,o).and.nj.eq.this%molbend(i,m,n))goto 1
+                         if(ni.eq.this%molbend(i,m,n).and.nj.eq.&
+                              this%molbend(i,m,o))goto 1
+                         if(ni.eq.this%molbend(i,m,o).and.nj.eq.&
+                              this%molbend(i,m,n))goto 1
                       end do
                    end do
                 end do
                 call this%mic(ni,nj,xvz,yvz,zvz)
                 dr=sqrt(xvz**2+yvz**2+zvz**2)
-                if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
-                   call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
-                   call this%set_force&
-                        (ni,nj,xvz,yvz,zvz,this%coul%get_force()*this%sf_coul(i))
-                   call this%coul%set_vircoul(this%coul%get_force()*this%sf_coul(i),dr)
-                   eintra=eintra+this%coul%get_encoul()*this%sf_coul(i)
-                   virtot=virtot+this%coul%get_vircoul()
-                end if
-                do m=1,this%get_nvdw()
-                   if(this%tpa(ni).eq.this%spcvdw(m,1).and.&
-                        this%tpa(nj).eq.this%spcvdw(m,2).or.&
-                        this%tpa(ni).eq.this%spcvdw(m,2).and.&
-                        this%tpa(nj).eq.this%spcvdw(m,1))then
-                      do n=1,2
-                         prm(n)=this%parvdw(m,n)
-                      end do
-                      ptrm='charmm'
-                      call this%vdw%set_vanderwaals(dr,prm,ptrm)
-                      call this%set_force&
-                           (ni,nj,xvz,yvz,zvz,this%vdw%get_force()*this%sf_vdw(i))
-                      call this%vdw%set_virvdw(this%vdw%get_force()*this%sf_vdw(i),dr)
-                      eintra=eintra+this%vdw%get_envdw()*this%sf_vdw(i)
-                      virtot=virtot+this%vdw%get_virvdw()
+                if(this%sf_coul(i).gt.1.d-8)then
+                   if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+                      call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
+                      call this%set_force(ni,nj,xvz,yvz,zvz,&
+                           this%coul%get_force()*this%sf_coul(i))
+                      call this%coul%set_vircoul&
+                           (this%coul%get_force()*this%sf_coul(i),dr)
+                      eintra=eintra+this%coul%get_encoul()*this%sf_coul(i)
+                      virtot=virtot+this%coul%get_vircoul()
                    end if
-                end do
+                end if
+                if(this%sf_vdw(i).gt.1.d-8)then
+                   do m=1,this%get_nvdw()
+                      if(this%tpa(ni).eq.this%spcvdw(m,1).and.&
+                           this%tpa(nj).eq.this%spcvdw(m,2).or.&
+                           this%tpa(ni).eq.this%spcvdw(m,2).and.&
+                           this%tpa(nj).eq.this%spcvdw(m,1))then
+                         do n=1,2
+                            prm(n)=this%parvdw(m,n)
+                         end do
+                         ptrm='charmm'
+                         call this%vdw%set_vanderwaals(dr,prm,ptrm)
+                         call this%set_force(ni,nj,xvz,yvz,zvz,&
+                              this%vdw%get_force()*this%sf_vdw(i))
+                         call this%vdw%set_virvdw&
+                              (this%vdw%get_force()*this%sf_vdw(i),dr)
+                         eintra=eintra+this%vdw%get_envdw()*this%sf_vdw(i)
+                         virtot=virtot+this%vdw%get_virvdw()
+                      end if
+                   end do
+                end if
 1               continue
              end do
           end do
