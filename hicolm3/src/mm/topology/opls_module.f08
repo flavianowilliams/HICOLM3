@@ -36,8 +36,8 @@ module opls_module
      real(8)                  :: prms_bonds(2)
      character(6),allocatable :: atp(:)
    contains
-     procedure :: set_natp
-     procedure :: get_natp
+!     procedure :: set_natp
+!     procedure :: get_natp
      procedure :: set_oplsbonds
      procedure :: set_oplsangles
      procedure :: set_oplsdihedrals
@@ -47,24 +47,24 @@ module opls_module
 
 contains
 
-  subroutine set_natp(this,natp)
-    class(charmm), intent(inout) :: this
-    integer, intent(in)         :: natp
-    this%natp=natp
-  end subroutine set_natp
+!  subroutine set_natp(this,natp)
+!    class(opls), intent(inout) :: this
+!    integer, intent(in)        :: natp
+!    this%natp=natp
+!  end subroutine set_natp
 
-  integer function get_natp(this)
-    class(charmm), intent(in) :: this
-    get_natp=this%natp
-  end function get_natp
+!  integer function get_natp(this)
+!    class(opls), intent(in) :: this
+!    get_natp=this%natp
+!  end function get_natp
 
   subroutine set_oplsbonds(this,p1,p2)
     implicit none
-    class(charmm), intent(inout) :: this
-    character(6), intent(in)     :: p1,p2
-    character(6)                 :: pa,pb
-    real(8)                      :: x1,x2
-    logical                      :: check
+    class(opls), intent(inout) :: this
+    character(6), intent(in)   :: p1,p2
+    character(6)               :: pa,pb
+    real(8)                    :: x1,x2
+    logical                    :: check
     this%prms_bonds(1)=0.d0
     this%prms_bonds(2)=0.d0
     check=.true.
@@ -85,7 +85,7 @@ contains
 
   subroutine set_oplsangles(this,p1,p2,p3)
     implicit none
-    class(charmm), intent(inout) :: this
+    class(opls), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3
     character(6)                 :: pa,pb,pc
     real(8)                      :: x1,x2
@@ -110,7 +110,7 @@ contains
 
   subroutine set_oplsdihedrals(this,p1,p2,p3,p4)
     implicit none
-    class(charmm), intent(inout) :: this
+    class(opls), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3,p4
     character(6)                 :: pa,pb,pc,pd
     integer                      :: n1
@@ -139,7 +139,7 @@ contains
 
   subroutine set_oplsidihedrals(this,p1,p2,p3,p4)
     implicit none
-    class(charmm), intent(inout) :: this
+    class(opls), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3,p4
     character(6)                 :: pa,pb,pc,pd
     integer                      :: n1
@@ -167,7 +167,7 @@ contains
   end subroutine set_oplsidihedrals
 
   subroutine set_oplsvdw(this,p1)
-    class(charmm), intent(inout) :: this
+    class(opls), intent(inout) :: this
     character(6), intent(in)     :: p1
     character(6)                 :: pa
     real(8)                      :: x1,x2

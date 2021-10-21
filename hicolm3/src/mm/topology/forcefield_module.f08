@@ -34,6 +34,7 @@ module forcefield_module
 
   type, extends(system) :: forcefield
      type(charmm)              :: charmm
+     type(opls)                :: opls
      integer, private          :: nspcs
      integer, private          :: nvdw
      character(4), private     :: coulop

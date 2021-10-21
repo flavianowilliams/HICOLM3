@@ -3,7 +3,7 @@ OBJ_UTILS = constants_module.o
 #
 OBJ_SYSTEM = structure_module.o molecule_module.o zmatrix_module.o system_module.o
 #
-OBJ_TOPOLOGY = charmm_module.o forcefield_module.o
+OBJ_TOPOLOGY = charmm_module.o opls_module.o forcefield_module.o
 #
 OBJ_PREPARE = prepare_module.o
 #

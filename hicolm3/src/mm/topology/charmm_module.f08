@@ -36,8 +36,8 @@ module charmm_module
      real(8)                  :: prms_bonds(2)
      character(6),allocatable :: atp(:)
    contains
-     procedure :: set_natp
-     procedure :: get_natp
+!     procedure :: set_natp
+!     procedure :: get_natp
      procedure :: set_charmmbonds
      procedure :: set_charmmangles
      procedure :: set_charmmdihedrals
@@ -47,16 +47,16 @@ module charmm_module
 
 contains
 
-  subroutine set_natp(this,natp)
-    class(charmm), intent(inout) :: this
-    integer, intent(in)         :: natp
-    this%natp=natp
-  end subroutine set_natp
+!  subroutine set_natp(this,natp)
+!    class(charmm), intent(inout) :: this
+!    integer, intent(in)         :: natp
+!    this%natp=natp
+!  end subroutine set_natp
 
-  integer function get_natp(this)
-    class(charmm), intent(in) :: this
-    get_natp=this%natp
-  end function get_natp
+!  integer function get_natp(this)
+!    class(charmm), intent(in) :: this
+!    get_natp=this%natp
+!  end function get_natp
 
   subroutine set_charmmbonds(this,p1,p2)
     implicit none
