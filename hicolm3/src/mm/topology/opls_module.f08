@@ -83,7 +83,7 @@ contains
 1   return
   end subroutine set_oplsbonds
 
-  subroutine set_charmmangles(this,p1,p2,p3)
+  subroutine set_oplsangles(this,p1,p2,p3)
     implicit none
     class(charmm), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3
@@ -106,9 +106,9 @@ contains
        end if
     end do
 1   return
-  end subroutine set_charmmangles
+  end subroutine set_oplsangles
 
-  subroutine set_charmmdihedrals(this,p1,p2,p3,p4)
+  subroutine set_oplsdihedrals(this,p1,p2,p3,p4)
     implicit none
     class(charmm), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3,p4
@@ -135,9 +135,9 @@ contains
        end if
     end do
 1   return
-  end subroutine set_charmmdihedrals
+  end subroutine set_oplsdihedrals
 
-  subroutine set_charmmidihedrals(this,p1,p2,p3,p4)
+  subroutine set_oplsidihedrals(this,p1,p2,p3,p4)
     implicit none
     class(charmm), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3,p4
@@ -164,9 +164,9 @@ contains
        end if
     end do
 1   return
-  end subroutine set_charmmidihedrals
+  end subroutine set_oplsidihedrals
 
-  subroutine set_charmmvdw(this,p1)
+  subroutine set_oplsvdw(this,p1)
     class(charmm), intent(inout) :: this
     character(6), intent(in)     :: p1
     character(6)                 :: pa
@@ -184,6 +184,6 @@ contains
        end if
     end do
 1   return
- end subroutine set_charmmvdw
+  end subroutine set_oplsvdw
 
 end module opls_module
