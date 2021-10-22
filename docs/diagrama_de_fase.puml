@@ -156,6 +156,7 @@ class ForceField{
     - nvdw: integer
     - coulop: character
     - fscsalpha: double
+    - ffmodel: character
     + parbnd[]: double
     + parbend[]: double
     + paritors[]: double
@@ -193,6 +194,8 @@ class ForceField{
     + get_fscsalpha()
     + set_coulop()
     + get_coulop()
+    + set_ffmodel()
+    + get_ffmodel()
     + set_topology()
 }
 class Charmm{

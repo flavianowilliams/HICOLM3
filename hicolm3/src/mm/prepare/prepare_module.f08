@@ -61,7 +61,7 @@ contains
     call constructor%set_bendmax(100)
     call constructor%set_torsmax(100)
     call constructor%set_itorsmax(100)
-    call constructor%charmm%set_natp(205)
+    call constructor%set_ffmodel('charmm')
   end function constructor
 
   subroutine check(this)
@@ -131,7 +131,7 @@ contains
     implicit none
     class(prepare), intent(inout) :: this
     integer                       :: i1,i,j,k
-    real(8)                       :: f1,f2
+    real(8)                       :: f1,f2,f3
     open(11,file='TOPOLOGY',status='unknown')
     write(11,'(1x,a2)')'MM'
     if(this%get_coulop().eq.'fscs')then
@@ -156,6 +156,9 @@ contains
           case('harm')
              write(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
                   this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          case('opls')
+             write(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(i,j,1),this%molbond(i,j,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           end select
        end do
        write(11,'(1x,a5,1x,i3)')'bends',this%bendscnt(i)
@@ -165,6 +168,9 @@ contains
              write(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           case('harm')
+             write(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
+                  this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+          case('opls')
              write(11,'(3(1x,i3),1x,a6,2(1x,f9.4))')(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
           end select
@@ -184,10 +190,16 @@ contains
              write(11,'(4(1x,i3),1x,a7,2(1x,f8.4))')&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           case('harm')
-             f1=this%partors(i,j,2)
-             f2=this%partors(i,j,3)
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
              write(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
-                  this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
+                  this%ttors(i,j),f1,f2
+          case('opls')
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
+             f3=this%partors(i,j,3)
+             write(11,'(4(1x,i3),1x,a7,3(1x,f9.4))')(this%moltors(i,j,k),k=1,4),&
+                  this%ttors(i,j),f1,f2,f3
           end select
        end do
        write(11,'(1x,a10,1x,i3)')'idihedrals',this%itorscnt(i)
@@ -221,6 +233,9 @@ contains
        case('lj')
           write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),&
                this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+       case('opls')
+          write(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        end select
     end do
   end subroutine print_top
@@ -229,7 +244,7 @@ contains
     implicit none
     class(prepare), intent(inout) :: this
     integer                       :: i1,i,j,k
-    real(8)                       :: f1,f2
+    real(8)                       :: f1,f2,f3
     write(6,*)('#',i=1,93)
     write(6,*)('SYSTEM ',i=1,13)
     write(6,*)('#',i=1,93)
@@ -303,6 +318,9 @@ contains
           case('harm')
              write(6,'(2x,3(i3,3x),a4,2f9.2)')&
                   j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+          case('opls')
+             write(6,'(2x,3(i3,3x),a4,2f9.2)')j,(this%molbond(i,j,k),k=1,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -315,10 +333,16 @@ contains
           select case(this%tbends(i,j))
           case('charmm')
              write(6,'(2x,4(i3,2x),a6,1x,2f8.1)')&
-                  j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+                  j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),&
+                  (this%parbend(i,j,k),k=1,2)
           case('harm')
              write(6,'(2x,4(i3,2x),a4,1x,2f8.1)')&
-                  j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),(this%parbend(i,j,k),k=1,2)
+                  j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),&
+                  (this%parbend(i,j,k),k=1,2)
+          case('opls')
+             write(6,'(2x,4(i3,2x),a4,1x,2f8.1)')&
+                  j,(this%molbend(i,j,k),k=1,3),this%tbends(i,j),&
+                  (this%parbend(i,j,k),k=1,2)
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -342,10 +366,16 @@ contains
              write(6,'(2x,5(i3,2x),a7,2x,f8.4,1x,f8.4)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
           case('harm')
-             f1=this%partors(i,j,2)
-             f2=this%partors(i,j,3)
-             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,(this%moltors(i,j,k),k=1,4),&
-                  this%ttors(i,j),this%partors(i,j,1),this%partors(i,j,2)
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
+             write(6,'(2x,5(i3,2x),1x,a4,1x,2f8.1)')j,&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
+          case('opls')
+             f1=this%partors(i,j,1)
+             f2=this%partors(i,j,2)
+             f3=this%partors(i,j,3)
+             write(6,'(2x,5(i3,2x),1x,a4,1x,3f8.1)')j,&
+                  (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2,f3
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -382,7 +412,8 @@ contains
     write(6,*)
     if(this%get_nspcs().le.10)then
        write(6,'(2x,a18,i3,2x,a2,10(1x,a6))')&
-            'Total of species:',this%get_nspcs(),'->',(this%spcs(i),i=1,this%get_nspcs())
+            'Total of species:',this%get_nspcs(),'->',&
+            (this%spcs(i),i=1,this%get_nspcs())
        write(6,*)
     else
        write(6,'(2x,a18,i3,2x,a2,10(1x,a2))')&
@@ -411,8 +442,11 @@ contains
           write(6,'(21x,a6,2x,a6,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
                this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        case('lj')
-          write(6,'(21x,a6,2x,a6,4x,a2,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
-               this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+          write(6,'(21x,a6,2x,a6,4x,a2,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
+       case('opls')
+          write(6,'(21x,a6,2x,a6,4x,a4,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1),this%parvdw(i,2)
        end select
     end do
     write(6,'(20x,111a1)')('-',i=1,52)

@@ -134,7 +134,12 @@ contains
              this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
              this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
           case('harm')
-             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)&
+                  /(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          case('opls')
+             this%parbnd(i,j,1)=this%parbnd(i,j,1)&
+                  /(this%get_econv()/this%get_rconv()**2)
              this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
           end select
        end do
@@ -144,6 +149,9 @@ contains
              this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           case('harm')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          case('opls')
              this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           end select
@@ -159,6 +167,10 @@ contains
           case('harm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
+          case('opls')
+             this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_econv()
+             this%partors(i,j,3)=this%partors(i,j,3)/this%get_econv()
           end select
        end do
        do j=1,this%itorscnt(i)
@@ -181,6 +193,9 @@ contains
           this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
           this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
        case('lj')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       case('opls')
           this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
           this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
        end select
@@ -426,7 +441,7 @@ contains
     implicit none
     class(moleculardynamics), intent(inout) :: this
     integer                                 :: i,j,k,i1
-    real(8)                                 :: f1,f2
+    real(8)                                 :: f1,f2,f3
     write(6,*)('#',i=1,93)
     write(6,*)('SYSTEM ',i=1,13)
     write(6,*)('#',i=1,93)
@@ -457,29 +472,32 @@ contains
     write(6,*)
     write(6,'(21x,a9)')'Molecules'
     write(6,'(20x,111a1)')('-',i=1,53)
-    write(6,'(21x,a4,6x,a3,5x,a6,4(4x,a5))')'Type','Qty','Sites','bonds','bends','dihdl'
+    write(6,'(21x,a4,6x,a3,5x,a6,4(4x,a5))')&
+         'Type','Qty','Sites','bonds','bends','dihdl'
     write(6,'(20x,111a1)')('-',i=1,53)
     do i=1,this%get_nmol()
-       write(6,'(22x,a6,1x,i5,4(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
-            this%bondscnt(i),this%bendscnt(i),this%torscnt(i)
+       write(6,'(22x,a6,1x,i5,4(4x,i5))')this%namemol(i),this%ntmol(i),&
+            this%nxmol(i),this%bondscnt(i),this%bendscnt(i),this%torscnt(i)
     end do
     write(6,'(20x,111a1)')('-',i=1,53)
-    write(6,'(22x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
-         sum(this%bondscnt*this%ntmol),sum(this%bendscnt*this%ntmol),&
-         sum(this%torscnt*this%ntmol)
+    write(6,'(22x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),&
+         sum(this%nxmol*this%ntmol),sum(this%bondscnt*this%ntmol),&
+         sum(this%bendscnt*this%ntmol),sum(this%torscnt*this%ntmol)
     write(6,*)
     do i=1,this%get_nmol()
        write(6,'(42x,a6)')this%namemol(i)
        write(6,'(2x,111a1)')('*',j=1,90)
        write(6,*)
-       write(6,'(2x,a24,1x,f8.3,1x,a5)')'Molar mass:',this%mmolar(i)*this%get_mconv(),'g/mol'
+       write(6,'(2x,a24,1x,f8.3,1x,a5)')&
+            'Molar mass:',this%mmolar(i)*this%get_mconv(),'g/mol'
        write(6,'(2x,a24,2x,f8.4)')'1-4 sf (electrostatic):',this%sf_coul(i)
        write(6,'(2x,a24,3x,f7.4)')'1-4 sf (Van der Waals):',this%sf_vdw(i)
        write(6,*)
        if(this%nxmol(i).le.10)then
           write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,this%nxmol(i))
           write(6,*)
-          write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(this%qatmol(i,j),j=1,this%nxmol(i))
+          write(6,'(5x,a8,10(1x,f6.3))')&
+               'Charges:',(this%qatmol(i,j),j=1,this%nxmol(i))
        else
           write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,10)
           write(6,'(13x,10(1x,a6))')(this%tpmol(i,j),j=11,this%nxmol(i))
@@ -495,11 +513,18 @@ contains
        do j=1,this%bondscnt(i)
           select case(this%tbonds(i,j))
           case('charmm')
-             write(6,'(2x,3(i3,3x),a6,2f9.2)')j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),&
+             write(6,'(2x,3(i3,3x),a6,2f9.2)')&
+                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),&
                   this%parbnd(i,j,1)*this%get_econv()/this%get_rconv()**2,&
                   this%parbnd(i,j,2)*this%get_rconv()
           case('harm')
-             write(6,'(2x,3(i3,3x),a4,2f9.2)')j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),&
+             write(6,'(2x,3(i3,3x),a4,2f9.2)')&
+                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),&
+                  this%parbnd(i,j,1)*this%get_econv()/this%get_rconv()**2,&
+                  this%parbnd(i,j,2)*this%get_rconv()
+          case('opls')
+             write(6,'(2x,3(i3,3x),a4,2f9.2)')&
+                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),&
                   this%parbnd(i,j,1)*this%get_econv()/this%get_rconv()**2,&
                   this%parbnd(i,j,2)*this%get_rconv()
           end select
@@ -508,7 +533,8 @@ contains
        write(6,*)
        write(6,'(2x,a6,1x,i5)')'Bends:',this%bendscnt(i)
        write(6,'(2x,111a1)')('-',j=1,52)
-       write(6,'(2x,4(a4,1x),a4,4x,a10)')' i ','Site','Site','Site','Type','Parameters'
+       write(6,'(2x,4(a4,1x),a4,4x,a10)')&
+            ' i ','Site','Site','Site','Type','Parameters'
        write(6,'(2x,111a1)')('-',j=1,52)
        do j=1,this%bendscnt(i)
           select case(this%tbends(i,j))
@@ -520,6 +546,10 @@ contains
              write(6,'(2x,4(i3,2x),a4,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
                   this%tbends(i,j),&
                   this%parbend(i,j,1)*this%get_econv(),this%parbend(i,j,2)*this%get_aconv()
+          case('opls')
+             write(6,'(2x,4(i3,2x),a4,1x,2f8.1)')j,(this%molbend(i,j,k),k=1,3),&
+                  this%tbends(i,j),this%parbend(i,j,1)*this%get_econv(),&
+                  this%parbend(i,j,2)*this%get_aconv()
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -547,6 +577,12 @@ contains
              f2=this%partors(i,j,2)*this%get_aconv()
              write(6,'(2x,5(i3,2x),a4,2x,2f8.1)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2
+          case('opls')
+             f1=this%partors(i,j,1)*this%get_econv()
+             f2=this%partors(i,j,2)*this%get_econv()
+             f3=this%partors(i,j,3)*this%get_econv()
+             write(6,'(2x,5(i3,2x),a4,2x,3f8.1)')&
+                  j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2,f3
           end select
        end do
        write(6,'(2x,111a1)')('-',j=1,52)
@@ -609,11 +645,17 @@ contains
     do i=1,this%get_nvdw()
        select case(this%tvdw(i))
        case('charmm')
-          write(6,'(21x,a6,2x,a6,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
-               this%tvdw(i),this%parvdw(i,1)*this%get_econv(),this%parvdw(i,2)*this%get_rconv()
+          write(6,'(21x,a6,2x,a6,4x,a6,3(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1)*this%get_econv(),&
+               this%parvdw(i,2)*this%get_rconv()
        case('lj')
-          write(6,'(21x,a6,2x,a6,4x,a2,3(1x,f9.4))')this%spcvdw(i,1),this%spcvdw(i,2),&
-               this%tvdw(i),this%parvdw(i,1)*this%get_econv(),this%parvdw(i,2)*this%get_rconv()
+          write(6,'(21x,a6,2x,a6,4x,a2,3(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1)*this%get_econv(),&
+               this%parvdw(i,2)*this%get_rconv()
+       case('opls')
+          write(6,'(21x,a6,2x,a6,4x,a4,2(1x,f9.4))')this%spcvdw(i,1),&
+               this%spcvdw(i,2),this%tvdw(i),this%parvdw(i,1)*this%get_econv(),&
+               this%parvdw(i,2)*this%get_rconv()
        end select
     end do
     write(6,'(20x,111a1)')('-',i=1,52)

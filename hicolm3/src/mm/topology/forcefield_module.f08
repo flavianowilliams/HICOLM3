@@ -24,6 +24,7 @@ module forcefield_module
 
   use system_module
   use charmm_module
+  use opls_module
 
   implicit none
 
@@ -38,6 +39,7 @@ module forcefield_module
      integer, private          :: nspcs
      integer, private          :: nvdw
      character(4), private     :: coulop
+     character(6), private     :: ffmodel
      real(8), private          :: fscsalpha
      real(8), allocatable      :: parbnd(:,:,:)
      real(8), allocatable      :: parbend(:,:,:)
@@ -78,6 +80,8 @@ module forcefield_module
      procedure          :: get_fscsalpha
      procedure          :: set_coulop
      procedure          :: get_coulop
+     procedure          :: set_ffmodel
+     procedure          :: get_ffmodel
      procedure          :: set_topology
   end type forcefield
 
@@ -108,23 +112,6 @@ contains
     allocate(this%ttors(this%get_nmol(),this%get_torsmax()))
     allocate(this%titors(this%get_nmol(),this%get_itorsmax()))
     allocate(this%tvdw(this%get_nvdw()))
-    do i=1,this%get_nmol()
-       do j=1,this%get_bondmax()
-          this%tbonds(i,j)='charmm'
-       end do
-       do j=1,this%get_bendmax()
-          this%tbends(i,j)='charmm'
-       end do
-       do j=1,this%get_torsmax()
-          this%ttors(i,j)='charmm'
-       end do
-       do j=1,this%get_itorsmax()
-          this%titors(i,j)='charmm'
-       end do
-    end do
-    do i=1,this%get_nvdw()
-       this%tvdw(i)='charmm'
-    end do
   end subroutine forcefield_init
 
   subroutine set_topology(this)
@@ -137,11 +124,30 @@ contains
     logical                          :: check,check2
     allocate(freeze(this%get_natom()))
     call this%forcefield_init()
+    check=.true.
+    check2=.false.
+    do while(check)
+       read(5,*,end=1)key
+       if(key.eq.'&FORCE_FIELD'.or.key.eq.'&force_field')then
+          check2=.true.
+          do while(check2)
+             read(5,*)key
+             if(key.eq.'ffmodel')then
+                backspace(5)
+                read(5,*)key,cvar
+                call this%set_ffmodel(cvar)
+                check2=.false.
+             end if
+          end do
+          check=.false.
+       end if
+    end do
     call this%set_parbnd()
     call this%set_parbend()
     call this%set_partors()
     call this%set_paritors()
     call this%set_parvdw()
+    rewind(5)
     check=.true.
     do while(check)
        read(5,*,end=1)key
@@ -272,25 +278,53 @@ contains
     real(8)                          :: e1,e2,s1,s2
     call this%set_spcs()
     allocate(this%parvdw(this%get_nvdw(),2),this%spcvdw(this%get_nvdw(),2))
-    open(12,file='/tmp/hicolm3/charmm/charmm_vdw.prm',status='old')
-    nx=1
-    do i=1,this%get_nspcs()
-       call this%charmm%set_charmmvdw(this%spcs(i))
-       e1=this%charmm%prms_vdw(1)
-       s1=this%charmm%prms_vdw(2)
-       rewind(12)
-       do j=i,this%get_nspcs()
-          call this%charmm%set_charmmvdw(this%spcs(j))
-          e2=this%charmm%prms_vdw(1)
-          s2=this%charmm%prms_vdw(2)
-          this%parvdw(nx,1)=sqrt(e1*e2)
-          this%parvdw(nx,2)=s1+s2
-          this%spcvdw(nx,1)=this%spcs(i)
-          this%spcvdw(nx,2)=this%spcs(j)
-          rewind(12)
-          nx=nx+1
+    if(this%get_ffmodel().eq.'charmm')then
+       do i=1,this%get_nvdw()
+          this%tvdw(i)='charmm'
        end do
-    end do
+       open(12,file='/tmp/hicolm3/charmm/charmm_vdw.prm',status='old')
+       nx=1
+       do i=1,this%get_nspcs()
+          call this%charmm%set_charmmvdw(this%spcs(i))
+          e1=this%charmm%prms_vdw(1)
+          s1=this%charmm%prms_vdw(2)
+          rewind(12)
+          do j=i,this%get_nspcs()
+             call this%charmm%set_charmmvdw(this%spcs(j))
+             e2=this%charmm%prms_vdw(1)
+             s2=this%charmm%prms_vdw(2)
+             this%parvdw(nx,1)=sqrt(e1*e2)
+             this%parvdw(nx,2)=s1+s2
+             this%spcvdw(nx,1)=this%spcs(i)
+             this%spcvdw(nx,2)=this%spcs(j)
+             rewind(12)
+             nx=nx+1
+          end do
+       end do
+    elseif(this%get_ffmodel().eq.'opls')then
+       do i=1,this%get_nvdw()
+          this%tvdw(i)='opls'
+       end do
+       open(12,file='/tmp/hicolm3/opls/opls_vdw.prm',status='old')
+       nx=1
+       do i=1,this%get_nspcs()
+          call this%opls%set_oplsvdw(this%spcs(i))
+          e1=this%opls%prms_vdw(1)
+          s1=this%opls%prms_vdw(2)
+          rewind(12)
+          do j=i,this%get_nspcs()
+             call this%opls%set_oplsvdw(this%spcs(j))
+             e2=this%opls%prms_vdw(1)
+             s2=this%opls%prms_vdw(2)
+             this%parvdw(nx,1)=sqrt(e1*e2)
+             this%parvdw(nx,2)=0.5d0*(s1+s2)
+             this%spcvdw(nx,1)=this%spcs(i)
+             this%spcvdw(nx,2)=this%spcs(j)
+             rewind(12)
+             nx=nx+1
+          end do
+       end do
+    end if
     call this%set_nvdw(nx-1)
     close(12)
   end subroutine set_parvdw
@@ -444,18 +478,43 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,m,i1,i2
     allocate(this%parbnd(this%get_nmol(),this%get_bondmax(),2))
-    open(12,file='/tmp/hicolm3/charmm/charmm_bonds.prm',status='old')
-    do i=1,this%get_nmol()
-       do j=1,this%bondscnt(i)
-          i1=this%molbond(i,j,1)
-          i2=this%molbond(i,j,2)
-          call this%charmm%set_charmmbonds(this%tpmol(i,i1),this%tpmol(i,i2))
-          do m=1,2
-             this%parbnd(i,j,m)=this%charmm%prms_bonds(m)
+    if(this%get_ffmodel().eq.'charmm')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_bondmax()
+             this%tbonds(i,j)='charmm'
           end do
-          rewind(12)
        end do
-    end do
+       open(12,file='/tmp/hicolm3/charmm/charmm_bonds.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%bondscnt(i)
+             i1=this%molbond(i,j,1)
+             i2=this%molbond(i,j,2)
+             call this%charmm%set_charmmbonds(this%tpmol(i,i1),this%tpmol(i,i2))
+             do m=1,2
+                this%parbnd(i,j,m)=this%charmm%prms_bonds(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    elseif(this%get_ffmodel().eq.'opls')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_bondmax()
+             this%tbonds(i,j)='opls'
+          end do
+       end do
+       open(12,file='/tmp/hicolm3/opls/opls_bonds.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%bondscnt(i)
+             i1=this%molbond(i,j,1)
+             i2=this%molbond(i,j,2)
+             call this%opls%set_oplsbonds(this%tpmol(i,i1),this%tpmol(i,i2))
+             do m=1,2
+                this%parbnd(i,j,m)=this%opls%prms_bonds(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    end if
     close(12)
   end subroutine set_parbnd
 
@@ -464,20 +523,47 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,m,i1,i2,i3
     allocate(this%parbend(this%get_nmol(),this%get_bendmax(),2))
-    open(12,file='/tmp/hicolm3/charmm/charmm_angles.prm',status='old')
-    do i=1,this%get_nmol()
-       do j=1,this%bendscnt(i)
-          i1=this%molbend(i,j,1)
-          i2=this%molbend(i,j,2)
-          i3=this%molbend(i,j,3)
-          call this%charmm%set_charmmangles&
-               (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
-          do m=1,2
-             this%parbend(i,j,m)=this%charmm%prms_angles(m)
+    if(this%get_ffmodel().eq.'charmm')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_bendmax()
+             this%tbends(i,j)='charmm'
           end do
-          rewind(12)
        end do
-    end do
+       open(12,file='/tmp/hicolm3/charmm/charmm_angles.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%bendscnt(i)
+             i1=this%molbend(i,j,1)
+             i2=this%molbend(i,j,2)
+             i3=this%molbend(i,j,3)
+             call this%charmm%set_charmmangles&
+                  (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
+             do m=1,2
+                this%parbend(i,j,m)=this%charmm%prms_angles(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    elseif(this%get_ffmodel().eq.'opls')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_bendmax()
+             this%tbends(i,j)='opls'
+          end do
+       end do
+       open(12,file='/tmp/hicolm3/opls/opls_angles.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%bendscnt(i)
+             i1=this%molbend(i,j,1)
+             i2=this%molbend(i,j,2)
+             i3=this%molbend(i,j,3)
+             call this%opls%set_oplsangles&
+                  (this%tpmol(i,i1),this%tpmol(i,i2),this%tpmol(i,i3))
+             do m=1,2
+                this%parbend(i,j,m)=this%opls%prms_angles(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    end if
     close(12)
   end subroutine set_parbend
 
@@ -486,21 +572,49 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: i1,i2,i3,i4,i,j,m
     allocate(this%partors(this%get_nmol(),this%get_torsmax(),3))
-    open(12,file='/tmp/hicolm3/charmm/charmm_dihedrals.prm',status='old')
-    do i=1,this%get_nmol()
-       do j=1,this%torscnt(i)
-          i1=this%moltors(i,j,1)
-          i2=this%moltors(i,j,2)
-          i3=this%moltors(i,j,3)
-          i4=this%moltors(i,j,4)
-          call this%charmm%set_charmmdihedrals(this%tpmol(i,i1),this%tpmol(i,i2),&
-               this%tpmol(i,i3),this%tpmol(i,i4))
-          do m=1,3
-             this%partors(i,j,m)=this%charmm%prms_tors(m)
+    if(this%get_ffmodel().eq.'charmm')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_torsmax()
+             this%ttors(i,j)='charmm'
           end do
-          rewind(12)
        end do
-    end do
+       open(12,file='/tmp/hicolm3/charmm/charmm_dihedrals.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%torscnt(i)
+             i1=this%moltors(i,j,1)
+             i2=this%moltors(i,j,2)
+             i3=this%moltors(i,j,3)
+             i4=this%moltors(i,j,4)
+             call this%charmm%set_charmmdihedrals(this%tpmol(i,i1),&
+                  this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
+             do m=1,3
+                this%partors(i,j,m)=this%charmm%prms_tors(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    elseif(this%get_ffmodel().eq.'opls')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_torsmax()
+             this%ttors(i,j)='opls'
+          end do
+       end do
+       open(12,file='/tmp/hicolm3/opls/opls_dihedrals.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%torscnt(i)
+             i1=this%moltors(i,j,1)
+             i2=this%moltors(i,j,2)
+             i3=this%moltors(i,j,3)
+             i4=this%moltors(i,j,4)
+             call this%opls%set_oplsdihedrals(this%tpmol(i,i1),&
+                  this%tpmol(i,i2),this%tpmol(i,i3),this%tpmol(i,i4))
+             do m=1,3
+                this%partors(i,j,m)=this%opls%prms_tors(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    end if
     close(12)
   end subroutine set_partors
 
@@ -509,22 +623,29 @@ contains
     class(forcefield), intent(inout) :: this
     integer                          :: i,j,m,i1,i2,i3,i4
     allocate(this%paritors(this%get_nmol(),this%get_itorsmax(),3))
-    open(12,file='/tmp/hicolm3/charmm/charmm_idihedrals.prm',status='old')
-    do i=1,this%get_nmol()
-       do j=1,this%itorscnt(i)
-          i1=this%molitors(i,j,1)
-          i2=this%molitors(i,j,2)
-          i3=this%molitors(i,j,3)
-          i4=this%molitors(i,j,4)
-          call this%charmm%set_charmmidihedrals&
-               (this%tpmol(i,i1),this%tpmol(i,i2),&
-               this%tpmol(i,i3),this%tpmol(i,i4))
-          do m=1,3
-             this%paritors(i,j,m)=this%charmm%prms_itors(m)
+    if(this%get_ffmodel().eq.'charmm')then
+       do i=1,this%get_nmol()
+          do j=1,this%get_itorsmax()
+             this%titors(i,j)='charmm'
           end do
-          rewind(12)
        end do
-    end do
+       open(12,file='/tmp/hicolm3/charmm/charmm_idihedrals.prm',status='old')
+       do i=1,this%get_nmol()
+          do j=1,this%itorscnt(i)
+             i1=this%molitors(i,j,1)
+             i2=this%molitors(i,j,2)
+             i3=this%molitors(i,j,3)
+             i4=this%molitors(i,j,4)
+             call this%charmm%set_charmmidihedrals&
+                  (this%tpmol(i,i1),this%tpmol(i,i2),&
+                  this%tpmol(i,i3),this%tpmol(i,i4))
+             do m=1,3
+                this%paritors(i,j,m)=this%charmm%prms_itors(m)
+             end do
+             rewind(12)
+          end do
+       end do
+    end if
     close(12)
   end subroutine set_paritors
 
@@ -591,6 +712,9 @@ contains
        case('harm')
           read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
                this%tbonds(i3,i2),(this%parbnd(i3,i2,j),j=1,2)
+       case('opls')
+          read(5,*)i2,this%molbond(i3,i2,1),this%molbond(i3,i2,2),&
+               this%tbonds(i3,i2),(this%parbnd(i3,i2,j),j=1,2)
        end select
     end do
   end subroutine set_extra_bonds
@@ -614,6 +738,10 @@ contains
                this%molbend(i3,i2,3),this%tbends(i3,i2),&
                (this%parbend(i3,i2,l),l=1,2)
        case('harm')
+          read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
+               this%molbend(i3,i2,3),this%tbends(i3,i2),&
+               (this%parbend(i3,i2,l),l=1,2)
+       case('opls')
           read(5,*)i2,this%molbend(i3,i2,1),this%molbend(i3,i2,2),&
                this%molbend(i3,i2,3),this%tbends(i3,i2),&
                (this%parbend(i3,i2,l),l=1,2)
@@ -647,6 +775,10 @@ contains
           read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
                this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
                (this%partors(i3,i2,l),l=1,2)
+       case('opls')
+          read(5,*)i2,this%moltors(i3,i2,1),this%moltors(i3,i2,2),&
+               this%moltors(i3,i2,3),this%moltors(i3,i2,4),this%ttors(i3,i2),&
+               (this%partors(i3,i2,l),l=1,3)
        end select
     end do
   end subroutine set_extra_dihedrals
@@ -730,5 +862,18 @@ contains
     class(forcefield), intent(in) :: this
     get_fscsalpha=this%fscsalpha
   end function get_fscsalpha
+
+  subroutine set_ffmodel(this,ffmodel)
+    implicit none
+    class(forcefield), intent(inout) :: this
+    character(6), intent(in)         :: ffmodel
+    this%ffmodel=ffmodel
+  end subroutine set_ffmodel
+
+  character(6) function get_ffmodel(this)
+    implicit none
+    class(forcefield), intent(in) :: this
+    get_ffmodel=this%ffmodel
+  end function get_ffmodel
 
 end module forcefield_module

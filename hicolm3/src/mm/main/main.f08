@@ -132,7 +132,7 @@ program HICOLM
         call prp%check_paritors()
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
-        call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
+        call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalon. 1-4
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais
         call prp%print_sys()                     ! imprimindo estrutura em SYSTEM

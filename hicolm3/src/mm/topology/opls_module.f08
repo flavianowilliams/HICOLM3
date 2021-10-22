@@ -36,8 +36,6 @@ module opls_module
      real(8)                  :: prms_bonds(2)
      character(6),allocatable :: atp(:)
    contains
-!     procedure :: set_natp
-!     procedure :: get_natp
      procedure :: set_oplsbonds
      procedure :: set_oplsangles
      procedure :: set_oplsdihedrals
@@ -46,17 +44,6 @@ module opls_module
   end type opls
 
 contains
-
-!  subroutine set_natp(this,natp)
-!    class(opls), intent(inout) :: this
-!    integer, intent(in)        :: natp
-!    this%natp=natp
-!  end subroutine set_natp
-
-!  integer function get_natp(this)
-!    class(opls), intent(in) :: this
-!    get_natp=this%natp
-!  end function get_natp
 
   subroutine set_oplsbonds(this,p1,p2)
     implicit none

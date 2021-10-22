@@ -79,6 +79,23 @@ else
         cp -r $aux_dir/HICOLM3/charmm/charmm_vdw.prm /tmp/hicolm3/charmm/charmm_vdw.prm
     fi
 fi
+if [ ! -d '/tmp/hicolm3/opls' ]
+then
+    cp -r $aux_dir/HICOLM3/opls /tmp/hicolm3/opls
+else
+    if [ ! -f '/tmp/hicolm3/opls/opls_vdw.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/opls/opls_vdw.prm /tmp/hicolm3/opls/opls_vdw.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/opls/opls_bonds.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/opls/opls_bonds.prm /tmp/hicolm3/opls/opls_bonds.prm
+    fi
+    if [ ! -f '/tmp/hicolm3/opls/opls_angles.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/opls/opls_angles.prm /tmp/hicolm3/opls/opls_angles.prm
+    fi
+fi
 #
 $exe_dir/HICOLM3.bin" >> $exe_dir/hicolm3
 #
