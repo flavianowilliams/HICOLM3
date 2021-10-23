@@ -211,7 +211,7 @@ contains
     class(input), intent(inout) :: this
     integer                     :: nmol,bondmax,bendmax,torsmax,itorsmax,nspcs
     integer                     :: i1,i,j,k,nx,nvdw
-    real(8)                     :: f1,f2,fscsalpha
+    real(8)                     :: f1,f2,f3,fscsalpha
     character(2)                :: mtd
     character(4)                :: coulop
     character(6)                :: tvdw,spcvdw1,spcvdw2
@@ -312,8 +312,16 @@ contains
                 this%partors(nx,j,2)=f2
              case('harm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
-                     this%ttors(nx,j),this%partors(nx,j,1),this%partors(nx,j,2)
+                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),&
+                     this%partors(nx,j,1),this%partors(nx,j,2)
+             case('opls')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,3(1x,f9.4))')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,f2,f3
+                this%partors(nx,j,1)=f1
+                this%partors(nx,j,2)=f2
+                this%partors(nx,j,3)=f3
              end select
           end do
           read(11,'(11x,i4)')this%itorscnt(nx)
@@ -354,6 +362,9 @@ contains
              read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
                   spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
           case('lj')
+             read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
+                  spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
+          case('opls')
              read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
                   spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
           end select

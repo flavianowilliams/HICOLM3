@@ -85,16 +85,23 @@ contains
     do i=1,this%get_nmol()
        do j=1,this%nxmol(i)
           this%qatmol(i,j)=this%qatmol(i,j)/this%get_elconv()
+          this%massmol(i,j)=this%massmol(i,j)/this%get_mconv()
        end do
     end do
     do i=1,this%get_nmol()
        do j=1,this%bondscnt(i)
           select case(this%tbonds(i,j))
           case('charmm')
-             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,1)=&
+                  this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
              this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
           case('harm')
-             this%parbnd(i,j,1)=this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,1)=&
+                  this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
+             this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
+          case('opls')
+             this%parbnd(i,j,1)=&
+                  this%parbnd(i,j,1)/(this%get_econv()/this%get_rconv()**2)
              this%parbnd(i,j,2)=this%parbnd(i,j,2)/this%get_rconv()
           end select
        end do
@@ -104,6 +111,9 @@ contains
              this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           case('harm')
+             this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
+             this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
+          case('opls')
              this%parbend(i,j,1)=this%parbend(i,j,1)/this%get_econv()
              this%parbend(i,j,2)=this%parbend(i,j,2)/this%get_aconv()
           end select
@@ -119,6 +129,10 @@ contains
           case('harm')
              this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
              this%partors(i,j,2)=this%partors(i,j,2)/this%get_aconv()
+          case('opls')
+             this%partors(i,j,1)=this%partors(i,j,1)/this%get_econv()
+             this%partors(i,j,2)=this%partors(i,j,2)/this%get_econv()
+             this%partors(i,j,3)=this%partors(i,j,3)/this%get_econv()
           end select
        end do
     end do
@@ -128,6 +142,9 @@ contains
           this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
           this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
        case('lj')
+          this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
+          this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
+       case('opls')
           this%parvdw(i,1)=this%parvdw(i,1)/this%get_econv()
           this%parvdw(i,2)=this%parvdw(i,2)/this%get_rconv()
        end select

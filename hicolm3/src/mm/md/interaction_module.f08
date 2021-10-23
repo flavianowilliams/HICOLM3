@@ -504,16 +504,24 @@ contains
           do j=1,2
              prm(j)=this%parvdw(i,j)
           end do
-          es=prm(1)*&
-               (prm(2)**12-6.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
-          vs=12.d0*prm(1)*&
-               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          es=prm(1)*(prm(2)**12-6.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=12.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
        case('lj')
           do j=1,2
              prm(j)=this%parvdw(i,j)
           end do
-          es=4.d0*prm(1)*&
-               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          es=4.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=24.d0*prm(1)*(2.d0*prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/&
+               (9.d0*this%get_rcutoff()**9)
+       case('opls')
+          do j=1,2
+             prm(j)=this%parvdw(i,j)
+          end do
+          es=4.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
           vs=24.d0*prm(1)*(2.d0*prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/&
                (9.d0*this%get_rcutoff()**9)
        end select
