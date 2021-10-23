@@ -39,7 +39,6 @@ module opls_module
      procedure :: set_oplsbonds
      procedure :: set_oplsangles
      procedure :: set_oplsdihedrals
-     procedure :: set_oplsidihedrals
      procedure :: set_oplsvdw
   end type opls
 
@@ -123,35 +122,6 @@ contains
     end do
 1   return
   end subroutine set_oplsdihedrals
-
-  subroutine set_oplsidihedrals(this,p1,p2,p3,p4)
-    implicit none
-    class(opls), intent(inout) :: this
-    character(6), intent(in)     :: p1,p2,p3,p4
-    character(6)                 :: pa,pb,pc,pd
-    integer                      :: n1
-    real(8)                      :: x1,x2
-    logical                      :: check
-    this%prms_itors(1)=0.d0
-    this%prms_itors(2)=0.d0
-    this%prms_itors(3)=0.d0
-    check=.true.
-    do while(check)
-       read(12,*,end=1)pa,pb,pc,pd,x1,n1,x2
-       if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
-          this%prms_itors(1)=dble(x1)
-          this%prms_itors(2)=dble(n1)
-          this%prms_itors(3)=dble(x2)
-          check=.false.
-       elseif(pd.eq.p1.and.pc.eq.p2.and.pb.eq.p3.and.pa.eq.p4)then
-          this%prms_itors(1)=dble(x1)
-          this%prms_itors(2)=dble(n1)
-          this%prms_itors(3)=dble(x2)
-          check=.false.
-       end if
-    end do
-1   return
-  end subroutine set_oplsidihedrals
 
   subroutine set_oplsvdw(this,p1)
     class(opls), intent(inout) :: this

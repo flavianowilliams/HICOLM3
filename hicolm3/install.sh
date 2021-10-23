@@ -95,6 +95,10 @@ else
     then
         cp -r $aux_dir/HICOLM3/opls/opls_angles.prm /tmp/hicolm3/opls/opls_angles.prm
     fi
+    if [ ! -f '/tmp/hicolm3/opls/opls_dihedrals.prm' ]
+    then
+        cp -r $aux_dir/HICOLM3/opls/opls_dihedrals.prm /tmp/hicolm3/opls/opls_dihedrals.prm
+    fi
 fi
 #
 $exe_dir/HICOLM3.bin" >> $exe_dir/hicolm3
