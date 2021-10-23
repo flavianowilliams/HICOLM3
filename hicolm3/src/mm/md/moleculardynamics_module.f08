@@ -581,7 +581,7 @@ contains
              f1=this%partors(i,j,1)*this%get_econv()
              f2=this%partors(i,j,2)*this%get_econv()
              f3=this%partors(i,j,3)*this%get_econv()
-             write(6,'(2x,5(i3,2x),a4,2x,3f8.1)')&
+             write(6,'(2x,5(i3,2x),a4,2x,3f8.4)')&
                   j,(this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2,f3
           end select
        end do

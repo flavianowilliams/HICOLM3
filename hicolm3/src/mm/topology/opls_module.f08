@@ -30,7 +30,6 @@ module opls_module
   type :: opls
      integer                  :: natp
      real(8)                  :: prms_vdw(2)
-     real(8)                  :: prms_itors(3)
      real(8)                  :: prms_tors(3)
      real(8)                  :: prms_angles(2)
      real(8)                  :: prms_bonds(2)
@@ -99,24 +98,23 @@ contains
     class(opls), intent(inout) :: this
     character(6), intent(in)     :: p1,p2,p3,p4
     character(6)                 :: pa,pb,pc,pd
-    integer                      :: n1
-    real(8)                      :: x1,x2
+    real(8)                      :: x1,x2,x3
     logical                      :: check
     this%prms_tors(1)=0.d0
     this%prms_tors(2)=0.d0
     this%prms_tors(3)=0.d0
     check=.true.
     do while(check)
-       read(12,*,end=1)pa,pb,pc,pd,x1,n1,x2
+       read(12,*,end=1)pa,pb,pc,pd,x1,x2,x3
        if(pa.eq.p1.and.pb.eq.p2.and.pc.eq.p3.and.pd.eq.p4)then
           this%prms_tors(1)=dble(x1)
-          this%prms_tors(2)=dble(n1)
-          this%prms_tors(3)=dble(x2)
+          this%prms_tors(2)=dble(x2)
+          this%prms_tors(3)=dble(x3)
           check=.false.
        elseif(pd.eq.p1.and.pc.eq.p2.and.pb.eq.p3.and.pa.eq.p4)then
           this%prms_tors(1)=dble(x1)
-          this%prms_tors(2)=dble(n1)
-          this%prms_tors(3)=dble(x2)
+          this%prms_tors(2)=dble(x2)
+          this%prms_tors(3)=dble(x3)
           check=.false.
        end if
     end do

@@ -214,14 +214,27 @@ class Charmm{
     + set_charmmidihedrals()
     + set_charmmvdw()
 }
-ForceField -right-* Charmm
+ForceField --* Charmm
 class Prepare{
     + check()
     + print_sys()
     + print_top()
     + print_out()
 }
-ForceField <|-- Prepare
+ForceField --* Opls
+class Opls{
+    + natp: integer
+    + prms_vdw[]: double
+    + prms_tors[]: double
+    + prms_angles[]: double
+    + prms_bonds[]: double
+    + atp[]: character
+    + set_oplsbonds()
+    + set_oplsangles()
+    + set_oplsdihedrals()
+    + set_oplsvdw()
+}
+ForceField <|-right- Prepare
 }
 ' Fim do pacote main
 package md {

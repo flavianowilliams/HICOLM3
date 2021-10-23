@@ -137,6 +137,9 @@ contains
                 read(5,*)key,cvar
                 call this%set_ffmodel(cvar)
                 check2=.false.
+             elseif(key.eq.'&END_FORCE_FIELD'.or.key.eq.'&end_force_field')then
+                check2=.false.
+                check=.false.
              end if
           end do
           check=.false.
@@ -427,15 +430,28 @@ contains
           i2=this%moltors(i,j,2)
           i3=this%moltors(i,j,3)
           i4=this%moltors(i,j,4)
-          if(p1.ge.1.d-4)then
-             this%partors(i,nx+1,1)=p1
-             this%partors(i,nx+1,2)=p2
-             this%partors(i,nx+1,3)=p3
-             this%moltors(i,nx+1,1)=i1
-             this%moltors(i,nx+1,2)=i2
-             this%moltors(i,nx+1,3)=i3
-             this%moltors(i,nx+1,4)=i4
-             nx=nx+1
+          if(this%get_ffmodel().eq.'charmm')then
+             if(p1.ge.1.d-4)then
+                this%partors(i,nx+1,1)=p1
+                this%partors(i,nx+1,2)=p2
+                this%partors(i,nx+1,3)=p3
+                this%moltors(i,nx+1,1)=i1
+                this%moltors(i,nx+1,2)=i2
+                this%moltors(i,nx+1,3)=i3
+                this%moltors(i,nx+1,4)=i4
+                nx=nx+1
+             end if
+          elseif(this%get_ffmodel().eq.'opls')then
+             if(p1.ge.1.d-4.or.p2.ge.1.d-4.or.p3.ge.1.d-4)then
+                this%partors(i,nx+1,1)=p1
+                this%partors(i,nx+1,2)=p2
+                this%partors(i,nx+1,3)=p3
+                this%moltors(i,nx+1,1)=i1
+                this%moltors(i,nx+1,2)=i2
+                this%moltors(i,nx+1,3)=i3
+                this%moltors(i,nx+1,4)=i4
+                nx=nx+1
+             end if
           end if
        end do
        this%torscnt(i)=nx

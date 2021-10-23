@@ -253,7 +253,8 @@ contains
     write(6,*)
     write(6,*)'Real space:'
     write(6,*)
-    write(6,'(a16,3f15.8)')'Lattice constts:',this%get_a(),this%get_b(),this%get_c()
+    write(6,'(a16,3f15.8)')&
+         'Lattice constts:',this%get_a(),this%get_b(),this%get_c()
     write(6,'(a16,3f15.8)')' Lattice angles:',this%get_alpha()*this%get_aconv(),&
          this%get_beta()*this%get_aconv(),this%get_gamma()*this%get_aconv()
     write(6,*)
@@ -278,11 +279,13 @@ contains
          'Type','Qty','Sites','bonds','bends','dihdl','idihd'
     write(6,'(15x,111a1)')('-',i=1,62)
     do i=1,this%get_nmol()
-       write(6,'(17x,a6,1x,i5,5(4x,i5))')this%namemol(i),this%ntmol(i),this%nxmol(i),&
+       write(6,'(17x,a6,1x,i5,5(4x,i5))')&
+            this%namemol(i),this%ntmol(i),this%nxmol(i),&
             this%bondscnt(i),this%bendscnt(i),this%torscnt(i),this%itorscnt(i)
     end do
     write(6,'(15x,111a1)')('-',i=1,62)
-    write(6,'(17x,a6,1x,i5,5(4x,i5))')'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
+    write(6,'(17x,a6,1x,i5,5(4x,i5))')&
+         'Total:',sum(this%ntmol),sum(this%nxmol*this%ntmol),&
          sum(this%bondscnt*this%ntmol),sum(this%bendscnt*this%ntmol),&
          sum(this%torscnt*this%ntmol),sum(this%itorscnt*this%ntmol)
     write(6,*)
@@ -297,7 +300,8 @@ contains
        if(this%nxmol(i).le.10)then
           write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,this%nxmol(i))
           write(6,*)
-          write(6,'(5x,a8,10(1x,f6.3))')'Charges:',(this%qatmol(i,j),j=1,this%nxmol(i))
+          write(6,'(5x,a8,10(1x,f6.3))')&
+               'Charges:',(this%qatmol(i,j),j=1,this%nxmol(i))
        else
           write(6,'(7x,a6,10(1x,a6))')'Sites:',(this%tpmol(i,j),j=1,10)
           write(6,'(13x,10(1x,a6))')(this%tpmol(i,j),j=11,this%nxmol(i))
@@ -313,11 +317,11 @@ contains
        do j=1,this%bondscnt(i)
           select case(this%tbonds(i,j))
           case('charmm')
-             write(6,'(2x,3(i3,3x),a6,2f9.2)')&
-                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+             write(6,'(2x,3(i3,3x),a6,2f9.2)')j,(this%molbond(i,j,k),k=1,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           case('harm')
-             write(6,'(2x,3(i3,3x),a4,2f9.2)')&
-                  j,(this%molbond(i,j,k),k=1,2),this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
+             write(6,'(2x,3(i3,3x),a4,2f9.2)')j,(this%molbond(i,j,k),k=1,2),&
+                  this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
           case('opls')
              write(6,'(2x,3(i3,3x),a4,2f9.2)')j,(this%molbond(i,j,k),k=1,2),&
                   this%tbonds(i,j),(this%parbnd(i,j,k),k=1,2)
@@ -374,7 +378,7 @@ contains
              f1=this%partors(i,j,1)
              f2=this%partors(i,j,2)
              f3=this%partors(i,j,3)
-             write(6,'(2x,5(i3,2x),1x,a4,1x,3f8.1)')j,&
+             write(6,'(2x,5(i3,2x),1x,a4,1x,3f8.4)')j,&
                   (this%moltors(i,j,k),k=1,4),this%ttors(i,j),f1,f2,f3
           end select
        end do
