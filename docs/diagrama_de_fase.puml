@@ -1,4 +1,4 @@
-@startuml
+@startuml HICOLM3
 package main{
 class Constants{
     - pi: double
