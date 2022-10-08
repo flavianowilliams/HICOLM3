@@ -51,12 +51,19 @@ contains
     case('charmm')
        this%entors=prm(1)*(1.0d0+cos(prm(2)*phi-prm(3)))
        this%force=-prm(1)*sin(prm(2)*phi-prm(3))
-    case('icharmm')
+    case('charmm2')
        this%entors=prm(1)*(phi-prm(2))**2
        this%force=2.0d0*prm(1)*(phi-prm(2))
     case('harm')
        this%entors=0.5d0*prm(1)*(phi-prm(2))**2
        this%force=prm(1)*(phi-prm(2))
+    case('opls')
+       this%entors=0.5d0*(prm(1)*(1.d0+cos(1.d0*phi))&
+            +prm(2)*(1.d0-cos(2.d0*phi))&
+            +prm(3)*(1.d0+cos(3.d0*phi)))
+       this%force=0.5d0*(-prm(1)*sin(1.d0*phi)&
+            +prm(2)*sin(2.d0*phi)&
+            -prm(3)*sin(3.d0*phi))
     end select
   end subroutine set_dihedrals
 

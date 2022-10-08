@@ -27,6 +27,7 @@ module interaction_module
   use angles_module
   use coulomb_module
   use dihedrals_module
+  use idihedrals_module
   use vanderwaals_module
 
   implicit none
@@ -39,6 +40,7 @@ module interaction_module
      type(angles)                  :: tht
      type(coulomb)                 :: coul
      type(dihedrals)               :: dih
+     type(idihedrals)              :: idih
      type(vanderwaals)             :: vdw
      real(8), private              :: eintra
      real(8), private              :: einter
@@ -103,7 +105,7 @@ contains
     real(8)                           :: xvz,yvz,zvz,dr,virtot,theta,dr1,dr2
     real(8)                           :: eintra
     real(8)                           :: prm(3),drij(3),drik(3),drjk(3)
-    real(8)                           :: drkl(3),ri(3),rj(3)
+    real(8)                           :: drkl(3),dril(3),ri(3),rj(3)
     real(8)                           :: rk(3),rl(3)
     real(8)                           :: vc1x,vc1y,vc1z,vc2x,vc2y,vc2z,phi
     character(7)                      :: ptrm
@@ -135,7 +137,8 @@ contains
              call this%mic(ni,nk,drik(1),drik(2),drik(3))
              dr1=sqrt(drij(1)**2+drij(2)**2+drij(3)**2)
              dr2=sqrt(drik(1)**2+drik(2)**2+drik(3)**2)
-             theta=acos((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
+             theta=acos&
+                  ((drij(1)*drik(1)+drij(2)*drik(2)+drij(3)*drik(3))/(dr1*dr2))
              do l=1,2
                 prm(l)=this%parbend(i,k,l)
              end do
@@ -183,8 +186,49 @@ contains
              rl(1)=this%xa(nl)
              rl(2)=this%ya(nl)
              rl(3)=this%za(nl)
-             call this%dih%set_virtors(this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             call this%dih%set_virtors&
+                  (this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
              virtot=virtot+this%dih%get_virtors()
+          end do
+          do k=1,this%itorscnt(i)
+             ni=nx+this%molitors(i,k,1)
+             nj=nx+this%molitors(i,k,2)
+             nk=nx+this%molitors(i,k,3)
+             nl=nx+this%molitors(i,k,4)
+             call this%mic(nj,ni,drij(1),drij(2),drij(3))
+             call this%mic(ni,nk,drik(1),drik(2),drik(3))
+             call this%mic(ni,nl,dril(1),dril(2),dril(3))
+             vc1x=drik(2)*drij(3)-drik(3)*drij(2)
+             vc1y=drik(3)*drij(1)-drik(1)*drij(3)
+             vc1z=drik(1)*drij(2)-drik(2)*drij(1)
+             vc2x=dril(2)*drij(3)-dril(3)*drij(2)
+             vc2y=dril(3)*drij(1)-dril(1)*drij(3)
+             vc2z=dril(1)*drij(2)-dril(2)*drij(1)
+             dr1=sqrt(vc1x**2+vc1y**2+vc1z**2) !-|rik x rji|
+             dr2=sqrt(vc2x**2+vc2y**2+vc2z**2) !-|ril x rji|
+             phi=acos((vc1x*vc2x+vc1y*vc2y+vc1z*vc2z)/(dr1*dr2))
+             do l=1,3
+                prm(l)=this%paritors(i,k,l)
+             end do
+             ptrm=this%titors(i,k)
+             call this%idih%set_idihedrals(phi,prm,ptrm)
+             call this%set_force&
+                  (ni,nj,nk,nl,drij,drik,dril,dr1,dr2,phi,this%idih%get_force())
+             ri(1)=this%xa(ni)
+             ri(2)=this%ya(ni)
+             ri(3)=this%za(ni)
+             rj(1)=this%xa(nj)
+             rj(2)=this%ya(nj)
+             rj(3)=this%za(nj)
+             rk(1)=this%xa(nk)
+             rk(2)=this%ya(nk)
+             rk(3)=this%za(nk)
+             rl(1)=this%xa(nl)
+             rl(2)=this%ya(nl)
+             rl(3)=this%za(nl)
+             call this%idih%set_viritors&
+                  (this%fbi,this%fbj,this%fbk,this%fbl,ri,rj,rk,rl)
+             virtot=virtot+this%idih%get_viritors()
           end do
           nx=nx+this%nxmol(i)
        end do
@@ -198,38 +242,46 @@ contains
                 do m=1,this%bendscnt(i)
                    do n=1,3
                       do o=n+1,3
-                         if(ni.eq.this%molbend(i,m,n).and.nj.eq.this%molbend(i,m,o))goto 1
-                         if(ni.eq.this%molbend(i,m,o).and.nj.eq.this%molbend(i,m,n))goto 1
+                         if(ni.eq.this%molbend(i,m,n).and.nj.eq.&
+                              this%molbend(i,m,o))goto 1
+                         if(ni.eq.this%molbend(i,m,o).and.nj.eq.&
+                              this%molbend(i,m,n))goto 1
                       end do
                    end do
                 end do
                 call this%mic(ni,nj,xvz,yvz,zvz)
                 dr=sqrt(xvz**2+yvz**2+zvz**2)
-                if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
-                   call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
-                   call this%set_force&
-                        (ni,nj,xvz,yvz,zvz,this%coul%get_force()*this%sf_coul(i))
-                   call this%coul%set_vircoul(this%coul%get_force()*this%sf_coul(i),dr)
-                   eintra=eintra+this%coul%get_encoul()*this%sf_coul(i)
-                   virtot=virtot+this%coul%get_vircoul()
-                end if
-                do m=1,this%get_nvdw()
-                   if(this%tpa(ni).eq.this%spcvdw(m,1).and.&
-                        this%tpa(nj).eq.this%spcvdw(m,2).or.&
-                        this%tpa(ni).eq.this%spcvdw(m,2).and.&
-                        this%tpa(nj).eq.this%spcvdw(m,1))then
-                      do n=1,2
-                         prm(n)=this%parvdw(m,n)
-                      end do
-                      ptrm='charmm'
-                      call this%vdw%set_vanderwaals(dr,prm,ptrm)
-                      call this%set_force&
-                           (ni,nj,xvz,yvz,zvz,this%vdw%get_force()*this%sf_vdw(i))
-                      call this%vdw%set_virvdw(this%vdw%get_force()*this%sf_vdw(i),dr)
-                      eintra=eintra+this%vdw%get_envdw()*this%sf_vdw(i)
-                      virtot=virtot+this%vdw%get_virvdw()
+                if(this%sf_coul(i).gt.1.d-8)then
+                   if(abs(this%qat(ni)*this%qat(nj)).gt.1.d-8)then
+                      call this%coul%set_coulomb(dr,this%qat(ni),this%qat(nj))
+                      call this%set_force(ni,nj,xvz,yvz,zvz,&
+                           this%coul%get_force()*this%sf_coul(i))
+                      call this%coul%set_vircoul&
+                           (this%coul%get_force()*this%sf_coul(i),dr)
+                      eintra=eintra+this%coul%get_encoul()*this%sf_coul(i)
+                      virtot=virtot+this%coul%get_vircoul()
                    end if
-                end do
+                end if
+                if(this%sf_vdw(i).gt.1.d-8)then
+                   do m=1,this%get_nvdw()
+                      if(this%tpa(ni).eq.this%spcvdw(m,1).and.&
+                           this%tpa(nj).eq.this%spcvdw(m,2).or.&
+                           this%tpa(ni).eq.this%spcvdw(m,2).and.&
+                           this%tpa(nj).eq.this%spcvdw(m,1))then
+                         do n=1,2
+                            prm(n)=this%parvdw(m,n)
+                         end do
+                         ptrm='charmm'
+                         call this%vdw%set_vanderwaals(dr,prm,ptrm)
+                         call this%set_force(ni,nj,xvz,yvz,zvz,&
+                              this%vdw%get_force()*this%sf_vdw(i))
+                         call this%vdw%set_virvdw&
+                              (this%vdw%get_force()*this%sf_vdw(i),dr)
+                         eintra=eintra+this%vdw%get_envdw()*this%sf_vdw(i)
+                         virtot=virtot+this%vdw%get_virvdw()
+                      end if
+                   end do
+                end if
 1               continue
              end do
           end do
@@ -452,16 +504,24 @@ contains
           do j=1,2
              prm(j)=this%parvdw(i,j)
           end do
-          es=prm(1)*&
-               (prm(2)**12-6.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
-          vs=12.d0*prm(1)*&
-               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          es=prm(1)*(prm(2)**12-6.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=12.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
        case('lj')
           do j=1,2
              prm(j)=this%parvdw(i,j)
           end do
-          es=4.d0*prm(1)*&
-               (prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          es=4.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
+          vs=24.d0*prm(1)*(2.d0*prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/&
+               (9.d0*this%get_rcutoff()**9)
+       case('opls')
+          do j=1,2
+             prm(j)=this%parvdw(i,j)
+          end do
+          es=4.d0*prm(1)*(prm(2)**12-3.d0&
+               *(this%get_rcutoff()*prm(2))**6)/(9.d0*this%get_rcutoff()**9)
           vs=24.d0*prm(1)*(2.d0*prm(2)**12-3.d0*(this%get_rcutoff()*prm(2))**6)/&
                (9.d0*this%get_rcutoff()**9)
        end select

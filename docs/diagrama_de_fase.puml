@@ -126,13 +126,16 @@ class Zmatrix{
     + bondscnt[]: integer
     + bendscnt[]: integer
     + torscnt[]: integer
+    + itorscnt[]: integer
     + molbond[]: integer
     + molbend[]: integer
     + moltors[]: integer
+    + molitors[]: integer
     - zmatrix_init()
     + set_bonds()
     + get_bonds()
     + set_torsion()
+    + set_itorsion()
     + covalent_radius()
     + set_internal_coordinates()
     + set_bondmax()
@@ -151,10 +154,9 @@ System <|-right- ForceField
 class ForceField{
     - nspcs: integer
     - nvdw: integer
-    + itorscnt[]: integer
-    + molitors[]: integer
     - coulop: character
     - fscsalpha: double
+    - ffmodel: character
     + parbnd[]: double
     + parbend[]: double
     + paritors[]: double
@@ -177,16 +179,24 @@ class ForceField{
     + set_extra_bonds()
     + set_extra_angles()
     + set_extra_dihedrals()
+    + set_extra_idihedrals()
     + set_extra_vdw()
     + set_extra_coulop()
     + set_parvdw()
     + set_nvdw()
     + get_nvdw()
-    + set_check_vdw()
+    + check_vdw()
+    + check_parbnd()
+    + check_parbend()
+    + check_partors()
+    + check_paritors()
     + set_fscsalpha()
     + get_fscsalpha()
     + set_coulop()
     + get_coulop()
+    + set_ffmodel()
+    + get_ffmodel()
+    + set_topology()
 }
 class Charmm{
     + natp: integer
@@ -198,21 +208,33 @@ class Charmm{
     + atp[]: double
     + set_natp()
     + get_natp()
-    + set_charmmtypes()
     + set_charmmbonds()
     + set_charmmangles()
     + set_charmmdihedrals()
     + set_charmmidihedrals()
     + set_charmmvdw()
 }
-ForceField -right-* Charmm
+ForceField --* Charmm
 class Prepare{
     + check()
     + print_sys()
     + print_top()
     + print_out()
 }
-ForceField <|-- Prepare
+ForceField --* Opls
+class Opls{
+    + natp: integer
+    + prms_vdw[]: double
+    + prms_tors[]: double
+    + prms_angles[]: double
+    + prms_bonds[]: double
+    + atp[]: character
+    + set_oplsbonds()
+    + set_oplsangles()
+    + set_oplsdihedrals()
+    + set_oplsvdw()
+}
+ForceField <|-right- Prepare
 }
 ' Fim do pacote main
 package md {
@@ -427,6 +449,18 @@ class Dihedrals{
     + get_force()
 }
 Interaction <|-- Dihedrals
+class Idihedrals{
+    - enitors: double 
+    - viritors: double 
+    - force: double 
+    + set_idihedrals()
+    + set_enitors()
+    + get_enitors()
+    + set_viritors()
+    + get_viritors()
+    + get_force()
+}
+Interaction <|-- Idihedrals
 class Ensemble{
     - tfcnvt: double 
     - tfcnpt: double 
@@ -456,6 +490,7 @@ class MolecularDynamics{
     - time: double 
     + check()
     + print_geometry()
+    + print_frames()
     + print_dataframes()
     + set_canonicalvariables()
     + print_out()
@@ -519,6 +554,7 @@ class Optimize{
     + convert_units()
     + set_canonicalvariables()
     + print_geometry()
+    + print_frames()
     + print_dataframes()
 }
 Optimize -right-|> GradientDescent

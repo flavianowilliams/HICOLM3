@@ -65,7 +65,7 @@ program HICOLM
   write(6,'(39x,a14)')'Version: x.x.x'
   write(6,*)
   !
-  !===========================================================================================
+  !================================================================================
   !
   !-print copyright
   !
@@ -98,8 +98,8 @@ program HICOLM
   !=========================================================================================
   ! assign 1-4 scale factor according AMBER force field
   !
-  sf_coul=1.d0/1.2d0
-  sf_vdw=1.d0/2.d0
+  sf_coul=0.d0
+  sf_vdw=0.d0
 
   !========================================================
   !
@@ -126,9 +126,13 @@ program HICOLM
         call prp%set_internal_coordinates()      ! atribuindo coordenadas internas
         call prp%set_topology()
         call prp%check_vdw()
+        call prp%check_parbnd()
+        call prp%check_parbend()
+        call prp%check_partors()
+        call prp%check_paritors()
         call prp%set_massmol()                   ! calculando massa molecular
         call prp%set_mmolar()                    ! calculando massa molecular
-        call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalonamento 1-4
+        call prp%set_scale_factor(sf_coul,sf_vdw)! atribuindo fatores escalon. 1-4
         call prp%check()                         ! checando parametros de entrada
         call prp%set_global()                    ! imprimindo propriedades globais
         call prp%print_sys()                     ! imprimindo estrutura em SYSTEM
@@ -137,7 +141,6 @@ program HICOLM
         lval=.true.
      elseif(in.eq.'@MD')then
         call cpu_time(t1)
-        open(3,file='hicolm.axsf',status='unknown')! printing coordinates per frame
         open(4,file='atoms.csv',status='unknown') ! imprimindo informacoes atomicas
         open(7,file='thermodynamics.csv',status='unknown') ! imprimindo informacoes termodin.
         open(8,file='lattice.csv',status='unknown')        ! imprimindo informacoes da rede
@@ -222,6 +225,7 @@ program HICOLM
            end if
            call md%set_verlchk()
            call md%print_geometry(i)
+           call md%print_frames(i)
            call md%print_dataframes(i)
            if(mod(i,25).eq.0)write(6,20)&
                 'MD',i,md%get_time()*md%get_tconv(),md%get_volume()*md%get_rconv()**3,&
@@ -334,6 +338,7 @@ program HICOLM
            call opt%set_loop()
            call opt%set_lsearch(alpha)
            call opt%set_maxforce()
+           call opt%print_frames(nx)
            call opt%print_dataframes(nx)
            write(6,40)'SD',i,alpha*opt%get_rconv()**2/opt%get_econv()&
                 ,opt%get_enpot()*opt%get_econv()&

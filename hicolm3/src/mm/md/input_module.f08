@@ -19,8 +19,8 @@
 !SOFTWARE.
 !
 module input_module
-  !*******************************************************************************************
-  !*******************************************************************************************
+  !*******************************************************************************
+  !*******************************************************************************
 
   use forcefield_module
 
@@ -209,12 +209,13 @@ contains
   subroutine set_topology(this)
     implicit none
     class(input), intent(inout) :: this
-    integer                     :: nmol,bondmax,bendmax,torsmax,nspcs,nvdw,i1,i,j,k,nx
-    real(8)                     :: f1,f2,fscsalpha
+    integer                     :: nmol,bondmax,bendmax,torsmax,itorsmax,nspcs
+    integer                     :: i1,i,j,k,nx,nvdw
+    real(8)                     :: f1,f2,f3,fscsalpha
     character(2)                :: mtd
     character(4)                :: coulop
     character(6)                :: tvdw,spcvdw1,spcvdw2
-    character(7)                :: ttors
+    character(7)                :: ttors,titors
     character(10), allocatable  :: namemol(:)
     logical                     :: chk
     open(11,file='TOPOLOGY',status='old')
@@ -227,18 +228,21 @@ contains
           call this%set_fscsalpha(fscsalpha)
        end if
        call this%set_coulop(coulop)
-       read(11,'(1x,i2,4(1x,i3))')nmol,bondmax,bendmax,torsmax,nspcs
+       read(11,'(1x,i2,5(1x,i3))')nmol,bondmax,bendmax,torsmax,itorsmax,nspcs
        call this%set_nmol(nmol)
-       allocate(this%zatmol(nmol,this%get_natom()),this%qatmol(nmol,this%get_natom()))
+       allocate(this%zatmol(nmol,this%get_natom()))
+       allocate(this%qatmol(nmol,this%get_natom()))
        allocate(this%tpmol(nmol,this%get_natom()))
        allocate(this%sf_coul(nmol),this%sf_vdw(nmol))
        allocate(this%massmol(this%get_nmol(),this%get_natom()))
        allocate(this%bondscnt(nmol),this%bendscnt(nmol),this%torscnt(nmol))
-       allocate(this%tbonds(nmol,bondmax),this%tbends(nmol,bendmax),this%ttors(nmol,torsmax))
+       allocate(this%itorscnt(nmol))
+       allocate(this%tbonds(nmol,bondmax),this%tbends(nmol,bendmax))
+       allocate(this%ttors(nmol,torsmax),this%titors(nmol,itorsmax))
        allocate(this%molbond(nmol,bondmax,2),this%molbend(nmol,bendmax,3))
-       allocate(this%moltors(nmol,torsmax,4))
+       allocate(this%moltors(nmol,torsmax,4),this%molitors(nmol,itorsmax,4))
        allocate(this%parbnd(nmol,bondmax,2),this%parbend(nmol,bendmax,2))
-       allocate(this%partors(nmol,torsmax,4))
+       allocate(this%partors(nmol,torsmax,3),this%paritors(nmol,itorsmax,3))
        allocate(namemol(this%get_nmol()))
        do i=1,this%get_nmol()
           do j=1,bondmax
@@ -252,8 +256,13 @@ contains
              end do
           end do
           do j=1,torsmax
-             do k=1,4
+             do k=1,3
                 this%partors(i,j,k)=0.d0
+             end do
+          end do
+          do j=1,itorsmax
+             do k=1,3
+                this%paritors(i,j,k)=0.d0
              end do
           end do
        end do
@@ -267,14 +276,16 @@ contains
           end do
           goto 2
 1         backspace(11)
-          read(11,'(1x,a10,2(1x,f8.6))')this%namemol(nx),this%sf_coul(nx),this%sf_vdw(nx)
+          read(11,'(1x,a10,2(1x,f8.6))')&
+               this%namemol(nx),this%sf_coul(nx),this%sf_vdw(nx)
           read(11,'(15(1x,i2))')(this%zatmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(15(1x,a8))')(this%tpmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(15(1x,f8.4))')(this%massmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(15(1x,f8.4))')(this%qatmol(nx,j),j=1,this%nxmol(nx))
           read(11,'(7x,i3)')this%bondscnt(nx)
           do j=1,this%bondscnt(nx)
-             read(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')this%molbond(nx,j,1),this%molbond(nx,j,2),&
+             read(11,'(2(1x,i3),1x,a6,2(1x,f9.4))')&
+                  this%molbond(nx,j,1),this%molbond(nx,j,2),&
                   this%tbonds(nx,j),(this%parbnd(nx,j,k),k=1,2)
           end do
           read(11,'(7x,i3)')this%bendscnt(nx)
@@ -293,7 +304,7 @@ contains
                 this%partors(nx,j,1)=f1
                 this%partors(nx,j,2)=i1
                 this%partors(nx,j,3)=f2
-             case('icharmm')
+             case('charmm2')
                 backspace(11)
                 read(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,f8.4)')&
                      (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,f2
@@ -301,8 +312,40 @@ contains
                 this%partors(nx,j,2)=f2
              case('harm')
                 backspace(11)
-                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')(this%moltors(nx,j,k),k=1,4),&
-                     this%ttors(nx,j),this%partors(nx,j,1),this%partors(nx,j,2)
+                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),&
+                     this%partors(nx,j,1),this%partors(nx,j,2)
+             case('opls')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,3(1x,f9.4))')&
+                     (this%moltors(nx,j,k),k=1,4),this%ttors(nx,j),f1,f2,f3
+                this%partors(nx,j,1)=f1
+                this%partors(nx,j,2)=f2
+                this%partors(nx,j,3)=f3
+             end select
+          end do
+          read(11,'(11x,i4)')this%itorscnt(nx)
+          do j=1,this%itorscnt(nx)
+             read(11,'(17x,a7)')titors
+             select case(titors)
+             case('charmm2')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,i2,1x,f8.4)')&
+                     (this%molitors(nx,j,k),k=1,4),this%titors(nx,j),f1,i1,f2
+                this%paritors(nx,j,1)=f1
+                this%paritors(nx,j,2)=i1
+                this%paritors(nx,j,3)=f2
+             case('charmm')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,1x,f8.4,1x,f8.4)')&
+                     (this%molitors(nx,j,k),k=1,4),this%titors(nx,j),f1,f2
+                this%paritors(nx,j,1)=f1
+                this%paritors(nx,j,2)=f2
+             case('harm')
+                backspace(11)
+                read(11,'(4(1x,i3),1x,a7,2(1x,f9.4))')&
+                     (this%molitors(nx,j,k),k=1,4),this%titors(nx,j),&
+                     this%paritors(nx,j,1),this%paritors(nx,j,2)
              end select
           end do
        end do
@@ -321,6 +364,9 @@ contains
           case('lj')
              read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
                   spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
+          case('opls')
+             read(11,'(2(1x,a6),1x,a6,2(1x,f9.4))')&
+                  spcvdw1,spcvdw2,tvdw,(this%parvdw(i,j),j=1,2)
           end select
           this%spcvdw(i,1)=spcvdw1
           this%spcvdw(i,2)=spcvdw2
@@ -336,10 +382,13 @@ contains
     end do
     if(chk.eqv..false.)goto 3
     return
-2   write(6,*)'ERROR: There is a molecule that does not belong to the physical system!'
-    write(6,*)'Hint: Check the TOPOLOGY file.'
+2   write(6,*)&
+         'ERROR: There is a molecule that does not belong to the physical system!'
+    write(6,*)&
+         'Hint: Check the TOPOLOGY file.'
     stop
-3   write(6,*)'ERROR: There is a lack in the description of molecules in the force field!'
+3   write(6,*)&
+         'ERROR: There is a lack in the description of molecules in the force field!'
     write(6,*)'Hint: Check the TOPOLOGY file.'
     stop
   end subroutine set_topology

@@ -62,6 +62,10 @@ contains
        en=0.5d0*prm(1)*(dr-prm(2))**2
        this%d1bond=prm(1)*(dr-prm(2))
        this%d2bond=prm(1)
+    case('opls')
+       en=0.5d0*prm(1)*(dr-prm(2))**2
+       this%d1bond=prm(1)*(dr-prm(2))
+       this%d2bond=prm(1)
     end select
   end subroutine set_bondopt
 
@@ -77,6 +81,10 @@ contains
        this%d1bend=2.d0*prm(1)*(theta-prm(2))
        this%d2bend=2.d0*prm(1)
     case('harm')
+       en=0.5d0*prm(1)*(theta-prm(2))**2
+       this%d1bend=prm(1)*(theta-prm(2))
+       this%d2bend=prm(1)
+    case('opls')
        en=0.5d0*prm(1)*(theta-prm(2))**2
        this%d1bend=prm(1)*(theta-prm(2))
        this%d2bend=prm(1)
@@ -96,6 +104,10 @@ contains
        this%d2bond=&
             12.d0*prm(1)*(13.0d0*(prm(2)/dr)**12-7.0d0*(prm(2)/dr)**6)/dr**2
     case('lj')
+       en=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
+       this%d1bond=-24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr
+       this%d2bond=24.d0*prm(1)*(26.d0*(prm(2)/dr)**12-7.d0*(prm(2)/dr)**6)/dr**2
+    case('opls')
        en=4.d0*prm(1)*((prm(2)/dr)**12-(prm(2)/dr)**6)
        this%d1bond=-24.d0*prm(1)*(2.d0*(prm(2)/dr)**12-(prm(2)/dr)**6)/dr
        this%d2bond=24.d0*prm(1)*(26.d0*(prm(2)/dr)**12-7.d0*(prm(2)/dr)**6)/dr**2
